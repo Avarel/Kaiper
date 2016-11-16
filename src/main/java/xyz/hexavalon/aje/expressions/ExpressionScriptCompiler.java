@@ -1,5 +1,7 @@
 package xyz.hexavalon.aje.expressions;
 
+import xyz.hexavalon.aje.Function;
+import xyz.hexavalon.aje.FunctionBuilder;
 import xyz.hexavalon.aje.Pool;
 import xyz.hexavalon.aje.operators.DefaultOperators;
 import xyz.hexavalon.aje.operators.Operator;
@@ -35,12 +37,12 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         return line.substring(start, pos);
     }
     
-    protected static boolean isLiteral(char c)
+    private static boolean isLiteral(char c)
     {
         return Character.isLetter(c) || c >= '0' && c <= '9' || c == '_';
     }
     
-    protected static boolean isNumeric(char c)
+    private static boolean isNumeric(char c)
     {
         return c >= '0' && c <= '9' || c == '.';
     }
@@ -171,9 +173,17 @@ public class ExpressionScriptCompiler extends TokenizingUnit
             int start = pos;
             while (!nextIs(';') && pos < line.length()) nextChar();
             String script = this.line.substring(start, pos);
-            
-            pool.allocateFunction(name, script, parameters);
-            
+
+
+            Function f = new FunctionBuilder()
+                    .setName(name)
+                    .setScript(script)
+                    .setPool(pool.copy())
+                    .addParameter(parameters)
+                    .build();
+
+            pool.makeFunc(f);
+
             return;
         }
         throw makeError("Expected function name.");

@@ -126,21 +126,21 @@ public class Pool
         return null;
     }
     
-    public void allocateFunction(Function function)
+    public void makeFunc(Function function)
     {
         functions.add(function);
     }
     
-    public void allocateFunction(String name, String script, List<String> parameters)
+    public void makeFunc(String name, String script, List<String> parameters)
     {
         functions.add(new Function(name, script, this.copy(), parameters));
     }
-    
+
     public boolean hasFunction(String name)
     {
         for (Function func : functions)
         {
-            if (func.getInvoker().equals(name))
+            if (func.getName().equals(name))
             {
                 return true;
             }
@@ -153,7 +153,7 @@ public class Pool
     {
         for (Function func : functions)
         {
-            if (func.getInvoker().equals(name))
+            if (func.getName().equals(name))
             {
                 if (func.getInputsRequired() == argsSize)
                 {
@@ -165,7 +165,7 @@ public class Pool
         // Varargs lowest priority.
         for (Function func : functions)
         {
-            if (func.getInvoker().equals(name))
+            if (func.getName().equals(name))
             {
                 if (func.getInputsRequired() == 0)
                 {
@@ -180,7 +180,7 @@ public class Pool
     {
         for (Function func : functions)
         {
-            if (func.getInvoker().equals(name))
+            if (func.getName().equals(name))
             {
                 if (func.getInputsRequired() == argsSize)
                 {
@@ -192,7 +192,7 @@ public class Pool
         // Varargs lowest priority.
         for (Function func : functions)
         {
-            if (func.getInvoker().equals(name))
+            if (func.getName().equals(name))
             {
                 if (func.getInputsRequired() == 0)
                 {

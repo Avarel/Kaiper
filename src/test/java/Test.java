@@ -1,4 +1,5 @@
 import xyz.hexavalon.aje.Function;
+import xyz.hexavalon.aje.MathExpression;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -31,13 +32,13 @@ public class Test
                 
                 //Function exp = new Function(input);
     
-                Function function = new Function(input);
+                MathExpression exp = new MathExpression(input);
     
                 //System.out.println(function);
                 
                 long start = System.nanoTime();
                 
-                double[] values = function.evalList();
+                double[] values = exp.evalList();
                 //List<Number> results = exp.evalScript();
                 
                 long end = System.nanoTime();

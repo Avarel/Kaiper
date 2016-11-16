@@ -8,6 +8,8 @@ Arraxer is a math-centered scripting language/expression evaluator for the Java 
 * Lists literals and operations.
 * User-defined variables and functions.
 
+
+
 #### Variable
 Define variables and use them. Reassignment is also possible.
 ```

@@ -9,41 +9,31 @@ import java.util.List;
 
 public class Function implements Evaluable
 {
-    protected final String script;
-    protected final List<Expression> expressions;
+    private final String script;
+    private final List<Expression> expressions;
     
-    protected final String invoker;
-    protected final List<String> parameters;
+    private final String name;
+    private final List<String> parameters;
     
-    protected final Pool env;
+    private final Pool pool;
     
-    protected final int inputsRequired;
-    
-    public Function(String script)
+    private final int inputsRequired;
+
+    protected Function(String name, String script, String... parameters)
     {
-        this(script, new String[0]);
+        this(name, script, new Pool(), Arrays.asList(parameters));
+    }
+
+    protected Function(String name, String script, Pool pool, String... parameters)
+    {
+        this(name, script, pool, Arrays.asList(parameters));
     }
     
-    public Function(String script, String... parameters)
+    protected Function(String name, String script, Pool pool, List<String> parameters)
     {
-        this(script, new Pool(), parameters);
-    }
-    
-    public Function(String script, Pool env, String... parameters)
-    {
-        this(null, script, env, parameters);
-    }
-    
-    Function(String invoker, String script, Pool env, String... parameters)
-    {
-        this(invoker, script, env, Arrays.asList(parameters));
-    }
-    
-    Function(String invoker, String script, Pool env, List<String> parameters)
-    {
-        this.invoker = invoker;
+        this.name = name;
         this.script = script;
-        this.env = env;
+        this.pool = pool;
         this.parameters = parameters;
         this.inputsRequired = parameters.size();
         this.expressions = new ArrayList<>();
@@ -53,17 +43,17 @@ public class Function implements Evaluable
     {
         return evalList(args)[0];
     }
-    
+
     public double eval(List<Double> args)
     {
         return evalList(args)[0];
     }
-    
+
     public double[] evalList(List<Double> args)
     {
         double[] _args = new double[args.size()];
         for (int i = 0; i < _args.length; i++) _args[i] = args.get(i);
-        
+
         return evalList(_args);
     }
     
@@ -75,17 +65,17 @@ public class Function implements Evaluable
     
         for (int i = 0; i < args.length; i++)
         {
-            env.variable(parameters.get(i)).assign(args[i]);
+            pool.variable(parameters.get(i)).assign(args[i]);
         }
     
-        if (expressions.isEmpty()) expressions.addAll(env.getCompiler().compileScript(script));
+        if (expressions.isEmpty()) expressions.addAll(pool.getCompiler().compileScript(script));
         
         double[] value = new double[0];
         
         for (Expression exp : expressions)
         {
             value = exp.evalList();
-            env.variable("ans").assign(value);
+            pool.variable("ans").assign(value);
         }
         
         return value;
@@ -95,12 +85,12 @@ public class Function implements Evaluable
     @Override
     public String toString()
     {
-        return "func " + (invoker != null ? invoker : Integer.toHexString(hashCode())) + "() = { " + script + " }";
+        return "func " + (name != null ? name : Integer.toHexString(hashCode())) + "() = { " + script + " }";
     }
     
-    public String getInvoker()
+    public String getName()
     {
-        return invoker;
+        return name;
     }
     
     public List<String> getParameters()
@@ -111,5 +101,10 @@ public class Function implements Evaluable
     public int getInputsRequired()
     {
         return inputsRequired;
+    }
+
+    public List<Expression> getExpressions()
+    {
+        return expressions;
     }
 }
