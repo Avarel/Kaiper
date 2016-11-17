@@ -408,16 +408,10 @@ public class ExpressionScriptCompiler extends TokenizingUnit
             }
             else throw makeError("Can not resolve reference `" + name + "`.");
         }
-        else if (pool.hasVariable(Character.toString(current)))
-        {
-            String name = Character.toString(current);
-            consume(current);
-            return new VariableExpression(pool.variable(name));
-        }
         else throw makeError("Unexpected token: " + current);
     }
     
-    public RuntimeException makeError(String message)
+    private RuntimeException makeError(String message)
     {
         return new RuntimeException(message + " " + currentInfo());
     }

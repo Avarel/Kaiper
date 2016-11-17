@@ -90,9 +90,8 @@ public class Pool
     {
         variable("ans");
         variable("pi").assign(Math.PI);
-        variable("π").assign(Math.PI);
         variable("e").assign(Math.E);
-        variable("φ").assign(1.61803398875);
+        variable("golden_ratio").assign(1.61803398875);
     }
     
     public Variable variable(String name)
@@ -128,6 +127,10 @@ public class Pool
     
     public void makeFunc(Function function)
     {
+        if (function.getName() == null || function.getName().isEmpty())
+        {
+            throw new RuntimeException("Declared functions' name can't be empty.");
+        }
         functions.add(function);
     }
     

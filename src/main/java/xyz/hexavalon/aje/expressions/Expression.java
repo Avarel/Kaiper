@@ -17,6 +17,11 @@ public interface Expression
         return list.length > 0 ? list[0] : Double.NaN;
     }
     
+    default SpreadExpression spread()
+    {
+        return new SpreadExpression(this);
+    }
+    
     static Expression ofValue(double value)
     {
         return ofValues(new double[] { value });
@@ -25,11 +30,6 @@ public interface Expression
     static Expression ofValues(double[] values)
     {
         return () -> values;
-    }
-    
-    default SpreadExpression spread()
-    {
-        return new SpreadExpression(this);
     }
     
     static Expression ofRange(Expression a, Expression b, Expression c)
@@ -91,7 +91,7 @@ public interface Expression
     {
         private final Expression exp;
     
-        public SpreadExpression(Expression exp)
+        SpreadExpression(Expression exp)
         {
             this.exp = exp;
         }

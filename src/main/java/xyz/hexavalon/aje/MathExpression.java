@@ -5,7 +5,7 @@ import xyz.hexavalon.aje.expressions.Expression;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MathExpression
+public class MathExpression implements Expression
 {
     private final String script;
     private final List<Expression> expressions;

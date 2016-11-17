@@ -1,6 +1,6 @@
-Arraxer
+AJE
 ===
-Arraxer is a math-centered scripting language/expression evaluator for the Java programming language.
+AJE is a math-centered scripting language/expression evaluator for the Java programming language.
 
 ### Features
 * Mathematical evaluation.
@@ -8,7 +8,14 @@ Arraxer is a math-centered scripting language/expression evaluator for the Java 
 * Lists literals and operations.
 * User-defined variables and functions.
 
+#### Get Started
+Get started by importing the `MathExpression.java` class.
+Then create a new instance with the desired script and evaluate.
+```
+import xyz.hexavalon.aje.MathExpression;
 
+double result = new MathExpression("3pi + 2").eval();
+```
 
 #### Variable
 Define variables and use them. Reassignment is also possible.
@@ -60,7 +67,7 @@ Expression | [1,2,3,4,5]@[1 ... 3]
 
 Expression | [1, -1 ... -9]
     Result | [1.0, -1.0, -3.0, -5.0, -7.0, -9.0]
-   ```
+```
 Lists can be concatenated by inserting them inside a new list literal, like `[list_a, list_b]`.
 To access a specific element of a list, use the access operator: `[list]@index` like `[1,2,3,4,5]@2`. You can also perform a sub-list operation using the same operator, by doing `[list]@[range]` like `[1,2,3,4,5]@[1 ... 3]`.
 To define a simple interval/range, just use the range notation: `[start ... end]`. If you want to obtain spaced intervals within lists, the list must have exactly only 3 explicit contents: `[first, second ... last]`. The change in each value is defined as the second minus the first item.
