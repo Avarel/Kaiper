@@ -120,7 +120,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         {
             String name = nextLiteral();
         
-            if (pool.hasVariable(name))
+            if (pool.hasVar(name))
             {
                 throw makeError("Value '" + name + "' is already defined.");
             }
@@ -135,7 +135,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
                 exp = compileExpression();
             }
             
-            return new VariableAssignment(pool.variable(name), exp);
+            return new VariableAssignment(pool.allocVar(name), exp);
         }
         throw makeError("Expected variable name.");
     }
@@ -159,7 +159,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
             }
             while (!consume(')') && consume(','));
             
-            if (pool.hasFunction(name, parameters.size()))
+            if (pool.hasFunc(name, parameters.size()))
             {
                 throw makeError("Function '" + name + "' is already defined.");
             }
@@ -182,7 +182,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
                     .addParameter(parameters)
                     .build();
 
-            pool.makeFunc(f);
+            pool.allocFunc(f);
 
             return;
         }
@@ -363,9 +363,9 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         {
             String name = nextLiteral();
 
-            if (pool.hasVariable(name))
+            if (pool.hasVar(name))
             {
-                return new VariableExpression(pool.variable(name));
+                return new VariableExpression(pool.allocVar(name));
             }
 
             // FUNCTIONS LOOKUP
@@ -402,7 +402,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
                 while (consume(','));
             }
 
-            if (pool.hasFunction(name, args.size()))
+            if (pool.hasFunc(name, args.size()))
             {
                 return new FunctionExpression(pool, name, args);
             }

@@ -65,7 +65,7 @@ public class Function implements Evaluable
     
         for (int i = 0; i < args.length; i++)
         {
-            pool.variable(parameters.get(i)).assign(args[i]);
+            pool.allocVar(parameters.get(i)).assign(args[i]);
         }
     
         if (expressions.isEmpty()) expressions.addAll(pool.getCompiler().compileScript(script));
@@ -75,7 +75,7 @@ public class Function implements Evaluable
         for (Expression exp : expressions)
         {
             value = exp.evalList();
-            pool.variable("ans").assign(value);
+            pool.getVar("ans").assign(value);
         }
         
         return value;

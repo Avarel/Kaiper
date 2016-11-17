@@ -22,7 +22,7 @@ public class FunctionExpression implements Expression
     @Override
     public double[] evalList()
     {
-        if (!pool.hasFunction(invoking, args.size()))
+        if (!pool.hasFunc(invoking, args.size()))
             throw new RuntimeException("Function '"+invoking+"' isn't defined.");
     
         double[][] lists = new double[args.size()][];
@@ -76,7 +76,7 @@ public class FunctionExpression implements Expression
                 args0.add(arg[i]);
             }
             
-            double[] res = pool.getFunction(invoking, args.size()).evalList(args0);
+            double[] res = pool.getFunc(invoking, args.size()).evalList(args0);
 
             if (res.length == 1)
             {

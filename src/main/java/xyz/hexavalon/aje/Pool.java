@@ -88,26 +88,29 @@ public class Pool
     
     public Pool()
     {
-        variable("ans");
-        variable("pi").assign(Math.PI);
-        variable("e").assign(Math.E);
-        variable("golden_ratio").assign(1.61803398875);
+        allocVar("ans");
+        allocVar("pi").assign(Math.PI);
+        allocVar("e").assign(Math.E);
+        allocVar("golden_ratio").assign(1.61803398875);
     }
     
-    public Variable variable(String name)
+    public Variable allocVar(String name)
     {
-        Variable var;
-        
-        if (hasVariable(name))
-        {
-            var = getVariable(name);
-        }
-        else getVariables().add(var = new Variable(name));
-        
+        deallocVar(name);
+        Variable var = new Variable(name);
+        variables.add(var);
         return var;
     }
+
+    public void deallocVar(String name)
+    {
+        if (hasVar(name))
+        {
+            variables.remove(getVar(name));
+        }
+    }
     
-    public boolean hasVariable(String name)
+    public boolean hasVar(String name)
     {
         for (Variable val : variables)
         {
@@ -116,7 +119,7 @@ public class Pool
         return false;
     }
     
-    public Variable getVariable(String name)
+    public Variable getVar(String name)
     {
         for (Variable val : variables)
         {
@@ -125,7 +128,7 @@ public class Pool
         return null;
     }
     
-    public void makeFunc(Function function)
+    public void allocFunc(Function function)
     {
         if (function.getName() == null || function.getName().isEmpty())
         {
@@ -134,12 +137,12 @@ public class Pool
         functions.add(function);
     }
     
-    public void makeFunc(String name, String script, List<String> parameters)
+    public void allocFunc(String name, String script, List<String> parameters)
     {
         functions.add(new Function(name, script, this.copy(), parameters));
     }
 
-    public boolean hasFunction(String name)
+    public boolean hasFunc(String name)
     {
         for (Function func : functions)
         {
@@ -152,7 +155,7 @@ public class Pool
         return false;
     }
     
-    public boolean hasFunction(String name, int argsSize)
+    public boolean hasFunc(String name, int argsSize)
     {
         for (Function func : functions)
         {
@@ -179,7 +182,7 @@ public class Pool
         return false;
     }
     
-    public Function getFunction(String name, int argsSize)
+    public Function getFunc(String name, int argsSize)
     {
         for (Function func : functions)
         {
