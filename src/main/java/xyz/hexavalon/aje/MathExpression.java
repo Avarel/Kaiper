@@ -21,7 +21,7 @@ public class MathExpression implements Expression
 
     public MathExpression setVariable(String name, double value)
     {
-        pool.variable(name).assign(value);
+        pool.allocVar(name).assign(value);
         return this;
     }
 
@@ -43,7 +43,7 @@ public class MathExpression implements Expression
         for (Expression exp : expressions)
         {
             value = exp.evalList();
-            pool.variable("ans").assign(value);
+            pool.getVar("ans").assign(value);
         }
 
         return value;
