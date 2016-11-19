@@ -7,7 +7,8 @@ import java.util.List;
 public interface Expression
 {
     double[] EMPTY_DOUBLE_ARRAY = new double[0];
-    Expression NOTHING = () -> EMPTY_DOUBLE_ARRAY;
+    Expression NOTHING = ofValues(EMPTY_DOUBLE_ARRAY);
+    Expression NaN = ofValue(Double.NaN);
     
     double[] evalList();
     

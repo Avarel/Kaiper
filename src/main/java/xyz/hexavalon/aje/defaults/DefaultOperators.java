@@ -1,8 +1,10 @@
-package xyz.hexavalon.aje.operators;
+package xyz.hexavalon.aje.defaults;
 
 import xyz.hexavalon.aje.expressions.Expression;
 import xyz.hexavalon.aje.expressions.VariableAssignment;
 import xyz.hexavalon.aje.expressions.VariableExpression;
+import xyz.hexavalon.aje.operators.Operator;
+import xyz.hexavalon.aje.operators.Precedence;
 
 public enum DefaultOperators
 {
@@ -40,7 +42,7 @@ public enum DefaultOperators
     SCIENTIFIC_EX(new Operator("E", 2, Precedence.UNARY, args -> args[0] * Math.pow(10, args[1]))),
     
     DEGREES(new Operator("deg", 1, args -> Math.toRadians(args[0]))),
-    LIST_INDEX(new Operator("@", 2) {
+    ITEM_AT_LIST(new Operator("@", 2) {
         @Override
         public Expression compile(Expression a, Expression b)
         {
@@ -73,6 +75,20 @@ public enum DefaultOperators
             VariableExpression _a = (VariableExpression) a;
         
             return new VariableAssignment(_a.getVariable(), () -> new double[] { _a.eval() + 1 });
+        }
+    }),
+    DECREMENT(new Operator("--", 1) {
+        @Override
+        public Expression compile(Expression a)
+        {
+            if (!(a instanceof VariableExpression))
+            {
+                throw new RuntimeException("Left of assignment operation must be a variable expression.");
+            }
+            
+            VariableExpression _a = (VariableExpression) a;
+            
+            return new VariableAssignment(_a.getVariable(), () -> new double[] { _a.eval() - 1 });
         }
     }),
     

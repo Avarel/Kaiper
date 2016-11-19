@@ -1,6 +1,7 @@
 package xyz.hexavalon.aje;
 
 import xyz.hexavalon.aje.expressions.Expression;
+import xyz.hexavalon.aje.pool.Pool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class MathExpression implements Expression
     public MathExpression(String script)
     {
         this.script = script;
-        this.pool = new Pool();
+        this.pool = Pool.getDefaultPool();
         this.expressions = new ArrayList<>();
     }
 

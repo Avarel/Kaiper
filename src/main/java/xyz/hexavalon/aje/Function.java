@@ -2,6 +2,7 @@ package xyz.hexavalon.aje;
 
 import xyz.hexavalon.aje.expressions.Evaluable;
 import xyz.hexavalon.aje.expressions.Expression;
+import xyz.hexavalon.aje.pool.Pool;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,16 @@ public class Function implements Evaluable
         this.parameters = parameters;
         this.inputsRequired = parameters.size();
         this.expressions = new ArrayList<>();
+        
+        allocateParameters();
+    }
+    
+    private void allocateParameters()
+    {
+        for (String name : parameters)
+        {
+            pool.allocVar(name).lock();
+        }
     }
     
     public double eval(double... args)
@@ -65,7 +76,7 @@ public class Function implements Evaluable
     
         for (int i = 0; i < args.length; i++)
         {
-            pool.allocVar(parameters.get(i)).assign(args[i]);
+            pool.getVar(parameters.get(i)).assign(args[i]);
         }
     
         if (expressions.isEmpty()) expressions.addAll(pool.getCompiler().compileScript(script));

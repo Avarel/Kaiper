@@ -1,16 +1,19 @@
 package xyz.hexavalon.aje.operators;
 
+import xyz.hexavalon.aje.defaults.DefaultOperators;
+
 import java.util.*;
 
-public class Operators
+public class OperatorMap
 {
-    private static final Operators defaultOperators = new Operators();
+    private static final OperatorMap defaultOperators = new OperatorMap();
     
     static
     {
         defaultOperators.register(Precedence.ASSIGNMENT, DefaultOperators.VAR_ASSIGNMENT.get());
         
         defaultOperators.register(Precedence.POSTFIX, DefaultOperators.INCREMENT.get());
+        defaultOperators.register(Precedence.POSTFIX, DefaultOperators.DECREMENT.get());
         
         defaultOperators.register(Precedence.LOGICAL_OR, DefaultOperators.LOGICAL_OR.get());
         defaultOperators.register(Precedence.LOGICAL_AND, DefaultOperators.LOGICAL_AND.get());
@@ -46,15 +49,30 @@ public class Operators
         defaultOperators.register(Precedence.EXPONENTIAL, DefaultOperators.SCIENTIFIC_EX.get());
 
         defaultOperators.register(Precedence.POSTFIX, DefaultOperators.DEGREES.get());
-        defaultOperators.register(Precedence.POSTFIX, DefaultOperators.LIST_INDEX.get());
+        defaultOperators.register(Precedence.POSTFIX, DefaultOperators.ITEM_AT_LIST.get());
     }
     
-    public static Operators getDefaultOperators()
+    public static OperatorMap getDefaultOperators()
     {
-        return defaultOperators;
+        return new OperatorMap(defaultOperators);
     }
     
-    protected Map<Integer, Set<Operator>> operators = new TreeMap<>();
+    private Map<Integer, Set<Operator>> operators;
+    
+    public OperatorMap()
+    {
+        this(new TreeMap<>());
+    }
+    
+    public OperatorMap(OperatorMap toCopy)
+    {
+        this(new TreeMap<>(toCopy.operators));
+    }
+    
+    public OperatorMap(Map<Integer, Set<Operator>> operators)
+    {
+        this.operators = operators;
+    }
     
     public void register(int precedence, Operator operator)
     {

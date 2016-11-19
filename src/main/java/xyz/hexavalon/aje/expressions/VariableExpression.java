@@ -1,6 +1,6 @@
 package xyz.hexavalon.aje.expressions;
 
-import xyz.hexavalon.aje.Variable;
+import xyz.hexavalon.aje.pool.Variable;
 
 public class VariableExpression implements Expression
 {

@@ -1,5 +1,6 @@
-package xyz.hexavalon.aje;
+package xyz.hexavalon.aje.defaults;
 
+import xyz.hexavalon.aje.Function;
 import xyz.hexavalon.aje.expressions.Evaluable;
 
 import java.util.ArrayList;
@@ -9,15 +10,15 @@ public class NativeFunction extends Function
     private Evaluable evaluator;
     private final int inputsRequired;
     
-    public NativeFunction(String invoker, int inputsRequired)
+    public NativeFunction(String name, int inputsRequired)
     {
-        this(invoker, inputsRequired, null);
+        this(name, inputsRequired, null);
     }
     
     // 0 args size = varargs
-    public NativeFunction(String invoker, int inputsRequired, Evaluable evaluator)
+    public NativeFunction(String name, int inputsRequired, Evaluable evaluator)
     {
-        super(invoker, null, null, new ArrayList<>(inputsRequired));
+        super(name, null, null, new ArrayList<>(inputsRequired));
         this.evaluator = evaluator;
         this.inputsRequired = inputsRequired;
     }

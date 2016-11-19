@@ -1,9 +1,11 @@
-package xyz.hexavalon.aje;
+package xyz.hexavalon.aje.pool;
 
 import xyz.hexavalon.aje.expressions.Expression;
 
 public class Value extends Variable
 {
+    private boolean set = false;
+    
     public Value(String name)
     {
         this(name, Double.NaN);
@@ -17,18 +19,24 @@ public class Value extends Variable
     @Override
     public void assign(Expression exp)
     {
-        throw new RuntimeException("Attempting to change final value '"+name+"`.");
+        checkLock();
+        super.assign(exp);
+        lock();
     }
     
     @Override
     public void assign(double value)
     {
-        throw new RuntimeException("Attempting to change final value '"+name+"`.");
+        checkLock();
+        super.assign(value);
+        lock();
     }
     
     @Override
     public void assign(double[] value)
     {
-        throw new RuntimeException("Attempting to change final value '"+name+"`.");
+        checkLock();
+        super.assign(value);
+        lock();
     }
 }

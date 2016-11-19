@@ -1,10 +1,15 @@
 package xyz.hexavalon.aje.expressions;
 
-import xyz.hexavalon.aje.Variable;
+import xyz.hexavalon.aje.pool.Variable;
 
 public class VariableAssignment extends VariableExpression
 {
     private final Expression exp;
+    
+    public VariableAssignment(Variable var)
+    {
+        this(var, null);
+    }
     
     public VariableAssignment(Variable var, Expression exp)
     {
@@ -20,7 +25,7 @@ public class VariableAssignment extends VariableExpression
     @Override
     public double[] evalList()
     {
-        getVariable().assign(exp.evalList());
+        if (exp != null) getVariable().assign(exp.evalList());
         return getVariable().eval();
     }
 }

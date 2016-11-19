@@ -2,10 +2,10 @@ package xyz.hexavalon.aje.expressions;
 
 import xyz.hexavalon.aje.Function;
 import xyz.hexavalon.aje.FunctionBuilder;
-import xyz.hexavalon.aje.Pool;
-import xyz.hexavalon.aje.operators.DefaultOperators;
+import xyz.hexavalon.aje.pool.Pool;
+import xyz.hexavalon.aje.defaults.DefaultOperators;
 import xyz.hexavalon.aje.operators.Operator;
-import xyz.hexavalon.aje.operators.Operators;
+import xyz.hexavalon.aje.operators.OperatorMap;
 import xyz.hexavalon.aje.operators.Precedence;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
     }
     
     /** Return the next String name. */
-    protected String nextLiteral()
+    private String nextLiteral()
     {
         int start = pos;
         
@@ -52,7 +52,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         return compileLines(toLines(script));
     }
     
-    public List<String> toLines(String script)
+    private List<String> toLines(String script)
     {
         char s_current = script.charAt(++pos);
     
@@ -77,7 +77,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         return lines;
     }
     
-    public List<Expression> compileLines(List<String> lines)
+    private List<Expression> compileLines(List<String> lines)
     {
         List<Expression> exps = new ArrayList<>();
         
@@ -101,7 +101,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         return exps;
     }
     
-    public Expression compileLine(String target)
+    private Expression compileLine(String target)
     {
         setLine(target);
         resetPosition();
@@ -114,7 +114,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         return exp;
     }
     
-    protected Expression compileVariable()
+    private Expression compileVariable()
     {
         if (isLiteral(current))
         {
@@ -122,25 +122,47 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         
             if (pool.hasVar(name))
             {
-                throw makeError("Value '" + name + "' is already defined.");
+                throw makeError("Variable '" + name + "' is already defined.");
             }
             
-            Expression exp;
             if (!consume('='))
             {
-                exp = Expression.ofValue(Double.NaN);
+                return new VariableAssignment(pool.allocVar(name));
             }
             else
             {
-                exp = compileExpression();
+                return new VariableAssignment(pool.allocVar(name), compileExpression());
             }
             
-            return new VariableAssignment(pool.allocVar(name), exp);
+           
         }
-        throw makeError("Expected variable name.");
+        throw makeError("Expected name for variable.");
     }
     
-    protected void consumeFunction()
+    private Expression compileValue()
+    {
+        if (isLiteral(current))
+        {
+            String name = nextLiteral();
+            
+            if (pool.hasVar(name))
+            {
+                throw makeError("Value '" + name + "' is already defined.");
+            }
+            
+            if (!consume('='))
+            {
+                return new VariableAssignment(pool.allocVal(name));
+            }
+            else
+            {
+                return new VariableAssignment(pool.allocVal(name), compileExpression());
+            }
+        }
+        throw makeError("Expected name for value.");
+    }
+    
+    private void consumeFunction()
     {
         if (isLiteral(current))
         {
@@ -189,16 +211,16 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         throw makeError("Expected function name.");
     }
     
-    protected Expression compileExpression()
+    private Expression compileExpression()
     {
         return compileExpression(pool.getOperators().firstPrecedence());
     }
     
-    protected Expression compileExpression(int level)
+    private Expression compileExpression(int level)
     {
         if (level == -1) return compileMisc();
         
-        Operators operators = pool.getOperators();
+        OperatorMap operators = pool.getOperators();
         
         // Unary operations
         for (Operator operator : operators.get(level))
@@ -242,7 +264,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         return value;
     }
     
-    protected Expression compileMisc()
+    private Expression compileMisc()
     {
         Expression value;
         if (consume('('))
@@ -275,7 +297,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         return value;
     }
     
-    protected Expression compileLiteral()
+    private Expression compileLiteral()
     {
         int start = pos;
         
@@ -285,6 +307,10 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         if (consume("var"))
         {
             return compileVariable();
+        }
+        else if (consume("val"))
+        {
+            return compileValue();
         }
         
         if (isNumeric(current))
@@ -330,6 +356,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         // INTERVALS
         else if (consume('['))
         {
+            
             if (consume(']')) return Expression.NOTHING;
 
             List<Expression> items = new ArrayList<>();
@@ -365,7 +392,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
 
             if (pool.hasVar(name))
             {
-                return new VariableExpression(pool.allocVar(name));
+                return new VariableExpression(pool.getVar(name));
             }
 
             // FUNCTIONS LOOKUP
