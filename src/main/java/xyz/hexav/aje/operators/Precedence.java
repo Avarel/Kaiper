@@ -1,4 +1,4 @@
-package xyz.hexavalon.aje.operators;
+package xyz.hexav.aje.operators;
 
 public class Precedence
 {

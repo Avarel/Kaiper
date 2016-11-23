@@ -1,7 +1,7 @@
-package xyz.hexavalon.aje.operators;
+package xyz.hexav.aje.operators;
 
-import xyz.hexavalon.aje.expressions.Evaluable;
-import xyz.hexavalon.aje.expressions.Expression;
+import xyz.hexav.aje.expressions.Evaluable;
+import xyz.hexav.aje.expressions.Expression;
 
 public class Operator
 {

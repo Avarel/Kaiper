@@ -1,9 +1,9 @@
-package xyz.hexavalon.aje.pool;
+package xyz.hexav.aje.pool;
 
-import xyz.hexavalon.aje.Function;
-import xyz.hexavalon.aje.defaults.DefaultFunctions;
-import xyz.hexavalon.aje.expressions.ExpressionScriptCompiler;
-import xyz.hexavalon.aje.operators.OperatorMap;
+import xyz.hexav.aje.Function;
+import xyz.hexav.aje.defaults.DefaultFunctions;
+import xyz.hexav.aje.expressions.ExpressionCompiler;
+import xyz.hexav.aje.operators.OperatorMap;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -61,7 +61,7 @@ public class Pool
     
     private final OperatorMap operators;
     
-    private final ExpressionScriptCompiler compiler;
+    private final ExpressionCompiler compiler;
     
     public static Pool getDefaultPool()
     {
@@ -83,7 +83,7 @@ public class Pool
         this.operators = new OperatorMap(operators);
         this.functions = new HashSet<>(functions);
         this.variables = new HashSet<>(variables);
-        this.compiler = new ExpressionScriptCompiler(this);
+        this.compiler = new ExpressionCompiler(this);
         
         allocVar("ans");
     }
@@ -159,7 +159,7 @@ public class Pool
         {
             if (func.getName().equals(name))
             {
-                if (func.getInputsRequired() == argsSize)
+                if (func.getArgumentCount() == argsSize)
                 {
                     return true;
                 }
@@ -171,7 +171,7 @@ public class Pool
         {
             if (func.getName().equals(name))
             {
-                if (func.getInputsRequired() == 0)
+                if (func.getArgumentCount() == 0)
                 {
                     return true;
                 }
@@ -186,7 +186,7 @@ public class Pool
         {
             if (func.getName().equals(name))
             {
-                if (func.getInputsRequired() == argsSize)
+                if (func.getArgumentCount() == argsSize)
                 {
                     return func;
                 }
@@ -198,7 +198,7 @@ public class Pool
         {
             if (func.getName().equals(name))
             {
-                if (func.getInputsRequired() == 0)
+                if (func.getArgumentCount() == 0)
                 {
                     return func;
                 }
@@ -212,7 +212,7 @@ public class Pool
         return operators;
     }
     
-    public ExpressionScriptCompiler getCompiler()
+    public ExpressionCompiler getCompiler()
     {
         return compiler;
     }

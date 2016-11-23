@@ -1,12 +1,11 @@
-package xyz.hexavalon.aje.expressions;
+package xyz.hexav.aje.expressions;
 
-import xyz.hexavalon.aje.Function;
-import xyz.hexavalon.aje.FunctionBuilder;
-import xyz.hexavalon.aje.pool.Pool;
-import xyz.hexavalon.aje.defaults.DefaultOperators;
-import xyz.hexavalon.aje.operators.Operator;
-import xyz.hexavalon.aje.operators.OperatorMap;
-import xyz.hexavalon.aje.operators.Precedence;
+import xyz.hexav.aje.FunctionBuilder;
+import xyz.hexav.aje.defaults.DefaultOperators;
+import xyz.hexav.aje.operators.Operator;
+import xyz.hexav.aje.operators.OperatorMap;
+import xyz.hexav.aje.operators.Precedence;
+import xyz.hexav.aje.pool.Pool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +13,11 @@ import java.util.List;
 /**
  * Compiles string expressions into compiled Expression instances.
  */
-public class ExpressionScriptCompiler extends TokenizingUnit
+public class ExpressionCompiler extends TokenizingUnit
 {
     private final Pool pool;
     
-    public ExpressionScriptCompiler(Pool pool)
+    public ExpressionCompiler(Pool pool)
     {
         this.pool = pool;
     }
@@ -50,6 +49,19 @@ public class ExpressionScriptCompiler extends TokenizingUnit
     public List<Expression> compileScript(String script)
     {
         return compileLines(toLines(script));
+    }
+    
+    
+    public List<Expression> compileScripts(List<String> scripts)
+    {
+        List<String> lines = new ArrayList<>();
+        
+        for (String script : scripts)
+        {
+            lines.addAll(toLines(script));
+        }
+    
+        return compileLines(lines);
     }
     
     private List<String> toLines(String script)
@@ -167,21 +179,23 @@ public class ExpressionScriptCompiler extends TokenizingUnit
         if (isLiteral(current))
         {
             String name = nextLiteral();
+            int params = 0;
+            
+            FunctionBuilder fb = new FunctionBuilder(name);
             
             if (!consume('('))
             {
                 throw makeError("Expected '('.");
             }
-            
-            List<String> parameters = new ArrayList<>();
     
             if (!consume(')')) do
             {
-                parameters.add(nextLiteral());
+                fb.addParameter(nextLiteral());
+                params++;
             }
             while (!consume(')') && consume(','));
             
-            if (pool.hasFunc(name, parameters.size()))
+            if (pool.hasFunc(name, params))
             {
                 throw makeError("Function '" + name + "' is already defined.");
             }
@@ -195,16 +209,10 @@ public class ExpressionScriptCompiler extends TokenizingUnit
             int start = pos;
             while (!nextIs(';') && pos < line.length()) nextChar();
             String script = this.line.substring(start, pos);
-
-
-            Function f = new FunctionBuilder()
-                    .setName(name)
-                    .setScript(script)
-                    .setPool(pool.copy())
-                    .addParameter(parameters)
-                    .build();
-
-            pool.allocFunc(f);
+            
+            fb.addLine(script);
+            
+            pool.allocFunc(fb.build());
 
             return;
         }
@@ -431,7 +439,7 @@ public class ExpressionScriptCompiler extends TokenizingUnit
 
             if (pool.hasFunc(name, args.size()))
             {
-                return new FunctionExpression(pool, name, args);
+                return new FunctionExpression(pool.getFunc(name, args.size()), args);
             }
             else throw makeError("Can not resolve reference `" + name + "`.");
         }

@@ -1,6 +1,7 @@
-package xyz.hexavalon.aje.defaults;
+package xyz.hexav.aje.defaults;
 
-import xyz.hexavalon.aje.Function;
+import xyz.hexav.aje.Function;
+import xyz.hexav.aje.NativeFunction;
 
 public enum DefaultFunctions
 {
@@ -34,9 +35,9 @@ public enum DefaultFunctions
     
     LIST_SIZE(new NativeFunction("size", 0) {
         @Override
-        public double[] evalList(double... args)
+        public double[] evalList()
         {
-            return new double[] { args.length };
+            return new double[] { inputs.length };
         }
     }),
             
@@ -58,8 +59,9 @@ public enum DefaultFunctions
             
     QUADRATIC_ROOT(new NativeFunction("quadrt", 3) {
         @Override
-        public double[] evalList(double... args)
+        public double[] evalList()
         {
+            double[] args = inputs;
             double[] ans = new double[2];
             ans[0] = (-args[1] + Math.sqrt(Math.pow(args[1], 2) - (4 * args[0] * args[2]))) / (2 * args[0]);
             ans[1] = (-args[1] - Math.sqrt(Math.pow(args[1], 2) - (4 * args[0] * args[2]))) / (2 * args[0]);

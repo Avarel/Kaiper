@@ -1,6 +1,6 @@
-package xyz.hexavalon.aje.operators;
+package xyz.hexav.aje.operators;
 
-import xyz.hexavalon.aje.defaults.DefaultOperators;
+import xyz.hexav.aje.defaults.DefaultOperators;
 
 import java.util.*;
 

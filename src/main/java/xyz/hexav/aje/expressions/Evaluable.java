@@ -1,4 +1,4 @@
-package xyz.hexavalon.aje.expressions;
+package xyz.hexav.aje.expressions;
 
 @FunctionalInterface
 public interface Evaluable

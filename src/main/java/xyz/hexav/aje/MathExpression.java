@@ -1,28 +1,41 @@
-package xyz.hexavalon.aje;
+package xyz.hexav.aje;
 
-import xyz.hexavalon.aje.expressions.Expression;
-import xyz.hexavalon.aje.pool.Pool;
+import xyz.hexav.aje.expressions.Expression;
+import xyz.hexav.aje.pool.Pool;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MathExpression implements Expression
 {
-    private final String script;
+    private final List<String> scripts;
     private final List<Expression> expressions;
 
     private final Pool pool;
-
-    public MathExpression(String script)
+    
+    protected MathExpression(List<String> scripts, Pool pool)
     {
-        this.script = script;
-        this.pool = Pool.getDefaultPool();
+        this.scripts = scripts;
+        this.pool = pool;
         this.expressions = new ArrayList<>();
     }
-
+    
+    protected MathExpression(List<String> scripts, List<String> variables, Pool pool)
+    {
+        this(scripts, pool);
+    
+        if (variables != null)
+        {
+            for (String name : variables)
+            {
+                getPool().allocVar(name);
+            }
+        }
+    }
+    
     public MathExpression setVariable(String name, double value)
     {
-        pool.allocVar(name).assign(value);
+        pool.getVar(name).assign(value);
         return this;
     }
 
@@ -36,7 +49,7 @@ public class MathExpression implements Expression
     {
         if (expressions.isEmpty())
         {
-            expressions.addAll(pool.getCompiler().compileScript(script));
+            expressions.addAll(pool.getCompiler().compileScripts(scripts));
         }
 
         double[] value = new double[0];
@@ -48,5 +61,10 @@ public class MathExpression implements Expression
         }
 
         return value;
+    }
+    
+    public Pool getPool()
+    {
+        return pool;
     }
 }

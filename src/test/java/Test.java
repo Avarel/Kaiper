@@ -1,5 +1,5 @@
-import xyz.hexavalon.aje.Function;
-import xyz.hexavalon.aje.MathExpression;
+import xyz.hexav.aje.ExpressionBuilder;
+import xyz.hexav.aje.expressions.Expression;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -32,7 +32,10 @@ public class Test
                 
                 //Function exp = new Function(input);
     
-                MathExpression exp = new MathExpression(input);
+                Expression exp = new ExpressionBuilder(input)
+                        .addVariable("tau")
+                        .build()
+                        .setVariable("tau", Math.PI * 2);
     
                 //System.out.println(function);
                 

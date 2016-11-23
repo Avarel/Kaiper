@@ -9,12 +9,30 @@ AJE is a math-centered scripting language/expression evaluator for the Java prog
 * User-defined variables and functions.
 
 #### Get Started
-Get started by importing the `MathExpression.java` class.
-Then create a new instance with the desired script and evaluate.
-```
-import xyz.hexavalon.aje.MathExpression;
+Get started by importing the `ExpressionBuilder.java` class.
+Create a new instance with the desired script, then add additional lines of script, functions, operators and variables.
+```java
+import xyz.hexav.aje.ExpressionBuilder;
 
-double result = new MathExpression("3pi + 2").eval();
+Expression exp = new ExpressionBuilder("[1,2,3] * tau")
+                        .addVariable("tau")
+                        .build()
+                        .setVariable("tau", Math.PI * 2);
+                        
+double[] result = exp.evalList();
+// Expression#evalList() allows for the evaluation of AJE's list feature,
+```
+A similar builder class is also available for creating Functions, it is the `FunctionBuilder.java` class.
+```java
+import xyz.hexav.aje.FunctionBuilder;
+
+Function func = new FunctionBuilder("add", "x + y")
+                .addParameter("x", "y")
+                .build()
+                .input("x", 1)
+                .input("y", 2);
+                
+double result = func.eval();
 ```
 
 #### Variable

@@ -1,30 +1,24 @@
-package xyz.hexavalon.aje.expressions;
+package xyz.hexav.aje.expressions;
 
-import xyz.hexavalon.aje.pool.Pool;
+import xyz.hexav.aje.Function;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class FunctionExpression implements Expression
 {
-    private final Pool pool;
-    private final String invoking;
+    private final Function function;
     private final List<Expression> args;
     
-    public FunctionExpression(Pool env, String invoking, List<Expression> args)
+    public FunctionExpression(Function function, List<Expression> args)
     {
-        this.invoking = invoking;
-        this.pool = env;
+        this.function = function;
         this.args = args;
     }
     
     @Override
     public double[] evalList()
     {
-        if (!pool.hasFunc(invoking, args.size()))
-            throw new RuntimeException("Function '"+invoking+"' isn't defined.");
-    
         double[][] lists = new double[args.size()][];
     
         int length = 1;
@@ -69,14 +63,12 @@ public class FunctionExpression implements Expression
         index = 0;
         for (int i = 0; i < length; i++)
         {
-            final List<Double> args0 = new ArrayList<>(lists.length);
-            
-            for (double[] arg : lists)
+            for (int j = 0; j < lists.length; j++)
             {
-                args0.add(arg[i]);
+                function.input(j, lists[j][i]);
             }
             
-            double[] res = pool.getFunc(invoking, args.size()).evalList(args0);
+            double[] res = function.evalList();
 
             if (res.length == 1)
             {

@@ -1,10 +1,10 @@
-package xyz.hexavalon.aje.defaults;
+package xyz.hexav.aje.defaults;
 
-import xyz.hexavalon.aje.expressions.Expression;
-import xyz.hexavalon.aje.expressions.VariableAssignment;
-import xyz.hexavalon.aje.expressions.VariableExpression;
-import xyz.hexavalon.aje.operators.Operator;
-import xyz.hexavalon.aje.operators.Precedence;
+import xyz.hexav.aje.expressions.Expression;
+import xyz.hexav.aje.expressions.VariableExpression;
+import xyz.hexav.aje.operators.Precedence;
+import xyz.hexav.aje.expressions.VariableAssignment;
+import xyz.hexav.aje.operators.Operator;
 
 public enum DefaultOperators
 {

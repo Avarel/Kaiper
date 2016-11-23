@@ -1,4 +1,4 @@
-package xyz.hexavalon.aje.expressions;
+package xyz.hexav.aje.expressions;
 
 import java.util.ArrayList;
 import java.util.List;
