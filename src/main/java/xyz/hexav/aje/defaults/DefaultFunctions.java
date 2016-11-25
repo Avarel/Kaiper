@@ -1,7 +1,6 @@
 package xyz.hexav.aje.defaults;
 
 import xyz.hexav.aje.Function;
-import xyz.hexav.aje.NativeFunction;
 
 public enum DefaultFunctions
 {

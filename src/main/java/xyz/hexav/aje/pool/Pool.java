@@ -46,11 +46,10 @@ public class Pool
         nativePool.allocFunc(DefaultFunctions.HYPERBOLIC_COSINE.get());
         nativePool.allocFunc(DefaultFunctions.HYPERBOLIC_TANGENT.get());
         
-        nativePool.allocFunc(DefaultFunctions.LIST_SIZE.get());
-        
-        nativePool.allocFunc(DefaultFunctions.SUMMATION.get());
-        nativePool.allocFunc(DefaultFunctions.AVERAGE.get());
-        nativePool.allocFunc(DefaultFunctions.PRODUCT.get());
+//        nativePool.allocFunc(DefaultFunctions.LIST_SIZE.get());
+//        nativePool.allocFunc(DefaultFunctions.SUMMATION.get());
+//        nativePool.allocFunc(DefaultFunctions.AVERAGE.get());
+//        nativePool.allocFunc(DefaultFunctions.PRODUCT.get());
         
         nativePool.allocFunc(DefaultFunctions.QUADRATIC_ROOT.get());
     }
@@ -159,7 +158,7 @@ public class Pool
         {
             if (func.getName().equals(name))
             {
-                if (func.getArgumentCount() == argsSize)
+                if (func.getParametersCount() == argsSize)
                 {
                     return true;
                 }
@@ -171,7 +170,7 @@ public class Pool
         {
             if (func.getName().equals(name))
             {
-                if (func.getArgumentCount() == 0)
+                if (func.getParametersCount() == 0)
                 {
                     return true;
                 }
@@ -186,7 +185,7 @@ public class Pool
         {
             if (func.getName().equals(name))
             {
-                if (func.getArgumentCount() == argsSize)
+                if (func.getParametersCount() == argsSize)
                 {
                     return func;
                 }
@@ -198,7 +197,7 @@ public class Pool
         {
             if (func.getName().equals(name))
             {
-                if (func.getArgumentCount() == 0)
+                if (func.getParametersCount() == 0)
                 {
                     return func;
                 }

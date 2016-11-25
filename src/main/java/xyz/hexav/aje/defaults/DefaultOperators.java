@@ -63,7 +63,7 @@ public enum DefaultOperators
         }
     }),
     
-    INCREMENT(new Operator("++", 1) {
+    POST_INCREMENT(new Operator("++", 1) {
         @Override
         public Expression compile(Expression a)
         {
@@ -74,16 +74,63 @@ public enum DefaultOperators
         
             VariableExpression _a = (VariableExpression) a;
         
-            return new VariableAssignment(_a.getVariable(), () -> new double[] { _a.eval() + 1 });
+            return new VariableAssignment(_a.getVariable(), () -> new double[] { _a.eval() + 1 })
+            {
+                @Override
+                public double[] evalList()
+                {
+                    double[] result = getVariable().eval();
+                    if (getExpression() != null) getVariable().assign(getExpression().evalList());
+                    return result;
+                }
+            };
         }
     }),
-    DECREMENT(new Operator("--", 1) {
+    POST_DECREMENT(new Operator("--", 1) {
+        @Override
+        public Expression compile(Expression a)
+        {
+            if (!(a instanceof VariableExpression))
+            {
+                throw new RuntimeException("Left of assignment operation must be a variable.");
+            }
+            
+            VariableExpression _a = (VariableExpression) a;
+            
+            return new VariableAssignment(_a.getVariable(), () -> new double[] { _a.eval() - 1 })
+            {
+                @Override
+                public double[] evalList()
+                {
+                    double[] result = getVariable().eval();
+                    if (getExpression() != null) getVariable().assign(getExpression().evalList());
+                    return result;
+                }
+            };
+        }
+    }),
+    
+    PRE_INCREMENT(new Operator("++", -1) {
         @Override
         public Expression compile(Expression a)
         {
             if (!(a instanceof VariableExpression))
             {
                 throw new RuntimeException("Left of assignment operation must be a variable expression.");
+            }
+            
+            VariableExpression _a = (VariableExpression) a;
+            
+            return new VariableAssignment(_a.getVariable(), () -> new double[] { _a.eval() + 1 });
+        }
+    }),
+    PRE_DECREMENT(new Operator("--", -1) {
+        @Override
+        public Expression compile(Expression a)
+        {
+            if (!(a instanceof VariableExpression))
+            {
+                throw new RuntimeException("Left of assignment operation must be a variable.");
             }
             
             VariableExpression _a = (VariableExpression) a;
@@ -98,14 +145,15 @@ public enum DefaultOperators
         {
             if (!(a instanceof VariableExpression))
             {
-                throw new RuntimeException("Left of assignment operation must be a variable expression.");
+                throw new RuntimeException("Left of assignment operation must be a variable.");
             }
             
             VariableExpression _a = (VariableExpression) a;
             
             return new VariableAssignment(_a.getVariable(), b);
         }
-    })
+    }),
+    
     ;
     
     private final Operator operator;

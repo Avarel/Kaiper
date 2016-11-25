@@ -75,7 +75,7 @@ public class MathFunction extends MathExpression implements Function
     }
     
     @Override
-    public int getArgumentCount()
+    public int getParametersCount()
     {
         return parameters.size();
     }

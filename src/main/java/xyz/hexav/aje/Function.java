@@ -16,5 +16,5 @@ public interface Function extends Expression
     
     String getName();
     
-    int getArgumentCount();
+    int getParametersCount();
 }

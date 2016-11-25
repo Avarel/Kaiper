@@ -12,9 +12,6 @@ public class OperatorMap
     {
         defaultOperators.register(Precedence.ASSIGNMENT, DefaultOperators.VAR_ASSIGNMENT.get());
         
-        defaultOperators.register(Precedence.POSTFIX, DefaultOperators.INCREMENT.get());
-        defaultOperators.register(Precedence.POSTFIX, DefaultOperators.DECREMENT.get());
-        
         defaultOperators.register(Precedence.LOGICAL_OR, DefaultOperators.LOGICAL_OR.get());
         defaultOperators.register(Precedence.LOGICAL_AND, DefaultOperators.LOGICAL_AND.get());
     
@@ -39,7 +36,9 @@ public class OperatorMap
         defaultOperators.register(Precedence.SHIFT, DefaultOperators.ZERO_FILL_RIGHT_SHIFT.get());
         defaultOperators.register(Precedence.SHIFT, DefaultOperators.RIGHT_SHIFT.get());
         defaultOperators.register(Precedence.SHIFT, DefaultOperators.LEFT_SHIFT.get());
-
+    
+        defaultOperators.register(Precedence.UNARY, DefaultOperators.PRE_INCREMENT.get());
+        defaultOperators.register(Precedence.UNARY, DefaultOperators.PRE_DECREMENT.get());
         defaultOperators.register(Precedence.UNARY, DefaultOperators.UNARY_PLUS.get());
         defaultOperators.register(Precedence.UNARY, DefaultOperators.UNARY_MINUS.get());
         defaultOperators.register(Precedence.UNARY, DefaultOperators.BITWISE_COMPLEMENT.get());
@@ -47,7 +46,10 @@ public class OperatorMap
 
         defaultOperators.register(Precedence.EXPONENTIAL, DefaultOperators.EXPONENTATION.get());
         defaultOperators.register(Precedence.EXPONENTIAL, DefaultOperators.SCIENTIFIC_EX.get());
-
+        
+        defaultOperators.register(Precedence.POSTFIX, DefaultOperators.POST_INCREMENT.get());
+        defaultOperators.register(Precedence.POSTFIX, DefaultOperators.POST_DECREMENT.get());
+        
         defaultOperators.register(Precedence.POSTFIX, DefaultOperators.DEGREES.get());
         defaultOperators.register(Precedence.POSTFIX, DefaultOperators.ITEM_AT_LIST.get());
     }

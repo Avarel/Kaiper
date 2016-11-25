@@ -1,5 +1,6 @@
-package xyz.hexav.aje;
+package xyz.hexav.aje.defaults;
 
+import xyz.hexav.aje.Function;
 import xyz.hexav.aje.expressions.Evaluable;
 
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class NativeFunction implements Function
     }
     
     @Override
-    public int getArgumentCount()
+    public int getParametersCount()
     {
         return parameters.size();
     }
