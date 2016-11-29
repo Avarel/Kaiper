@@ -39,6 +39,18 @@ public class MathExpression implements Expression
         return this;
     }
 
+    public MathExpression setVariable(String name, double[] value)
+    {
+        pool.getVar(name).assign(value);
+        return this;
+    }
+
+    public MathExpression setVariable(String name, Expression value)
+    {
+        pool.getVar(name).assign(value);
+        return this;
+    }
+
     public double eval()
     {
         return evalList()[0];

@@ -38,17 +38,51 @@ public abstract class AbstractBuilder<T extends AbstractBuilder<T>>
         this.pool = pool;
         return (T) this;
     }
-    
-    public T addVariable(String... variables)
+
+    public T addVariable(String variable)
     {
-        return addVariable(Arrays.asList(variables));
+        getPool().allocVar(variable);
+        return (T) this;
     }
     
-    public T addVariable(List<String> variables)
+    public T addVariables(String... variables)
     {
         for (String var : variables)
         {
-            getPool().allocVar(var);
+            addVariable(var);
+        }
+        return (T) this;
+    }
+    
+    public T addVariables(List<String> variables)
+    {
+        for (String var : variables)
+        {
+            addVariable(var);
+        }
+        return (T) this;
+    }
+
+    public T addValue(String value)
+    {
+        getPool().allocVar(value);
+        return (T) this;
+    }
+
+    public T addValues(String... values)
+    {
+        for (String var : values)
+        {
+            addValue(var);
+        }
+        return (T) this;
+    }
+
+    public T addValues(List<String> values)
+    {
+        for (String var : values)
+        {
+            addValue(var);
         }
         return (T) this;
     }

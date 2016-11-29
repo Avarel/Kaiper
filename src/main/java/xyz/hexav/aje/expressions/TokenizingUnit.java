@@ -4,7 +4,7 @@ package xyz.hexav.aje.expressions;
  * Provides useful methods to tokenize and to iterate
  * through a String.
  */
-public abstract class TokenizingUnit
+abstract class TokenizingUnit
 {
     protected int pos = -1;
     protected char current;
@@ -102,9 +102,24 @@ public abstract class TokenizingUnit
         skipWS();
         return current == prompt;
     }
-    
+
+    public int getPos()
+    {
+        return pos;
+    }
+
+    public String getLine()
+    {
+        return line;
+    }
+
+    public char getCurrentChar()
+    {
+        return current;
+    }
+
     protected String currentInfo()
     {
-        return "Line \""+line+"\" @ Index: "+pos+".";
+        return "Line=\""+line+"\"@"+pos+".";
     }
 }

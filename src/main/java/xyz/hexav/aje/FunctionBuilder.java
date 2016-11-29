@@ -21,6 +21,12 @@ public class FunctionBuilder extends AbstractBuilder<FunctionBuilder>
         addLine(script);
     }
 
+    public FunctionBuilder addParameter(String param)
+    {
+        this.parameters.add(param);
+        return this;
+    }
+
     public FunctionBuilder addParameter(String... parameters)
     {
         return addParameter(Arrays.asList(parameters));
@@ -31,7 +37,12 @@ public class FunctionBuilder extends AbstractBuilder<FunctionBuilder>
         this.parameters.addAll(parameters);
         return this;
     }
-    
+
+    public List<String> getParameters()
+    {
+        return parameters;
+    }
+
     public MathFunction build()
     {
         return new MathFunction(name, getLines(), parameters, getPool());
