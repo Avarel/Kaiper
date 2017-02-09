@@ -324,39 +324,39 @@ public class ExpressionCompiler extends TokenizingUnit
         
         if (isNumeric(current))
         {
-            if (consume('0'))
-            {
-                // BINARY
-                if (consume('b'))
-                {
-                    int _start = pos;
-                    
-                    while (isNumeric(current))
-                    {
-                        if (!(current == '0' || current == '1'))
-                        {
-                            throw makeError("Binary literals can only have '1' and '0'.");
-                        }
-                        nextChar();
-                    }
-                    return Expression.ofValue(Integer.valueOf(line.substring(_start, pos), 2).doubleValue());
-                }
-                // HEXADECIMAL
-                else if (consume('x'))
-                {
-                    int _start = pos;
-                    
-                    while (isLiteral(current))
-                    {
-                        if (!(current >= '0' && current <= '9' || current >= 'A' && current <= 'F'))
-                        {
-                            throw makeError("Hexadecimal literals can only have '1-9' and 'A-F'.");
-                        }
-                        nextChar();
-                    }
-                    return Expression.ofValue(Integer.valueOf(line.substring(_start, pos), 16).doubleValue());
-                }
-            }
+//            if (consume('0'))
+//            {
+//                // BINARY
+//                if (consume('b'))
+//                {
+//                    int _start = pos;
+//
+//                    while (isNumeric(current))
+//                    {
+//                        if (!(current == '0' || current == '1'))
+//                        {
+//                            throw makeError("Binary literals can only have '1' and '0'.");
+//                        }
+//                        nextChar();
+//                    }
+//                    return Expression.ofValue(Integer.valueOf(line.substring(_start, pos), 2).doubleValue());
+//                }
+//                // HEXADECIMAL
+//                else if (consume('x'))
+//                {
+//                    int _start = pos;
+//
+//                    while (isLiteral(current))
+//                    {
+//                        if (!(current >= '0' && current <= '9' || current >= 'A' && current <= 'F'))
+//                        {
+//                            throw makeError("Hexadecimal literals can only have '1-9' and 'A-F'.");
+//                        }
+//                        nextChar();
+//                    }
+//                    return Expression.ofValue(Integer.valueOf(line.substring(_start, pos), 16).doubleValue());
+//                }
+//            }
             while (isNumeric(current)) nextChar();
             
             double value = Double.parseDouble(line.substring(start, pos));
