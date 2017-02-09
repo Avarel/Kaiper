@@ -1,5 +1,6 @@
 package xyz.hexav.aje.expressions;
 
+import xyz.hexav.aje.AJEException;
 import xyz.hexav.aje.FunctionBuilder;
 import xyz.hexav.aje.defaults.DefaultOperators;
 import xyz.hexav.aje.operators.Operator;
@@ -364,7 +365,6 @@ public class ExpressionCompiler extends TokenizingUnit
         // INTERVALS
         else if (consume('['))
         {
-            
             if (consume(']')) return Expression.NOTHING;
 
             List<Expression> items = new ArrayList<>();
@@ -372,7 +372,7 @@ public class ExpressionCompiler extends TokenizingUnit
             do
             {
                 Expression a = compileExpression();
-                
+
                 if (consume("..."))
                 {
                     Expression b = compileExpression();
@@ -446,8 +446,8 @@ public class ExpressionCompiler extends TokenizingUnit
         else throw makeError("Unexpected token: " + current);
     }
     
-    private RuntimeException makeError(String message)
+    private AJEException makeError(String message)
     {
-        return new RuntimeException(message + " " + currentInfo());
+        return new AJEException(message + " " + currentInfo());
     }
 }

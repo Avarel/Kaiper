@@ -11,6 +11,8 @@ public interface Function extends Expression
     Function input(String param, double input);
     
     Function input(double... inputs);
+
+    // TODO implement varargs
     
     List<String> getParameters();
     

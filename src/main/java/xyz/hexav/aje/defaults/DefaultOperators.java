@@ -19,7 +19,18 @@ public enum DefaultOperators
     REMAINDER(new Operator("%", 2, args -> args[0] % args[1])),
     MODULUS(new Operator("mod", 2, args -> (((args[0] % args[1]) + args[1]) % args[1]))),
     PERCENTAGE(new Operator("% of ", 2, args -> args[0] / 100 * args[1])),
-    N_ROOT(new Operator("th root of ", 2, args -> Math.pow(args[1], 1.0 / args[0]))),
+    N_ROOT(new Operator("th root of ", 2, args ->
+    {
+        double result = Math.pow(args[1], 1.0 / args[0]);
+
+        if (Math.ceil(result) - result < 1E-10
+                || result - Math.floor(result) < 1E-10)
+        {
+            result = Math.round(result);
+        }
+
+        return result;
+    })),
     
     EQUALS(new Operator("==", 2, args -> args[0] == args[1] ? 1 : 0)),
     NOT_EQUALS(new Operator("!=", 2, args -> args[0] != args[1] ? 1 : 0)),
