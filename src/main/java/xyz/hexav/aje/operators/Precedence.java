@@ -1,7 +1,6 @@
 package xyz.hexav.aje.operators;
 
-public class Precedence
-{
+public class Precedence {
     public static final int POSTFIX = 1100;
     public static final int INFIX = 1000;
     public static final int EXPONENTIAL = 900;

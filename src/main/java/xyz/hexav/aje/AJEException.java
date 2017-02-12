@@ -1,7 +1,6 @@
 package xyz.hexav.aje;
 
-public class AJEException extends RuntimeException
-{
+public class AJEException extends RuntimeException {
     public AJEException(String msg) {
         super(msg);
     }

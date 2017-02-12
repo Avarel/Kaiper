@@ -4,17 +4,15 @@ import xyz.hexav.aje.defaults.DefaultOperators;
 
 import java.util.*;
 
-public class OperatorMap
-{
+public class OperatorMap {
     private static final OperatorMap defaultOperators = new OperatorMap();
-    
-    static
-    {
+
+    static {
         defaultOperators.register(Precedence.ASSIGNMENT, DefaultOperators.VAR_ASSIGNMENT.get());
-        
+
         defaultOperators.register(Precedence.LOGICAL_OR, DefaultOperators.LOGICAL_OR.get());
         defaultOperators.register(Precedence.LOGICAL_AND, DefaultOperators.LOGICAL_AND.get());
-    
+
         defaultOperators.register(Precedence.ADDITIVE, DefaultOperators.ADD.get());
         defaultOperators.register(Precedence.ADDITIVE, DefaultOperators.SUBTRACT.get());
 
@@ -36,7 +34,7 @@ public class OperatorMap
         defaultOperators.register(Precedence.SHIFT, DefaultOperators.ZERO_FILL_RIGHT_SHIFT.get());
         defaultOperators.register(Precedence.SHIFT, DefaultOperators.RIGHT_SHIFT.get());
         defaultOperators.register(Precedence.SHIFT, DefaultOperators.LEFT_SHIFT.get());
-    
+
         defaultOperators.register(Precedence.UNARY, DefaultOperators.PRE_INCREMENT.get());
         defaultOperators.register(Precedence.UNARY, DefaultOperators.PRE_DECREMENT.get());
         defaultOperators.register(Precedence.UNARY, DefaultOperators.UNARY_PLUS.get());
@@ -46,71 +44,59 @@ public class OperatorMap
 
         defaultOperators.register(Precedence.EXPONENTIAL, DefaultOperators.EXPONENTATION.get());
         defaultOperators.register(Precedence.EXPONENTIAL, DefaultOperators.SCIENTIFIC_EX.get());
-        
+
         defaultOperators.register(Precedence.POSTFIX, DefaultOperators.POST_INCREMENT.get());
         defaultOperators.register(Precedence.POSTFIX, DefaultOperators.POST_DECREMENT.get());
-        
+
         defaultOperators.register(Precedence.POSTFIX, DefaultOperators.DEGREES.get());
         defaultOperators.register(Precedence.POSTFIX, DefaultOperators.ITEM_AT_LIST.get());
     }
-    
-    public static OperatorMap getDefaultOperators()
-    {
-        return new OperatorMap(defaultOperators);
-    }
-    
+
     private Map<Integer, Set<Operator>> operators;
-    
-    public OperatorMap()
-    {
+
+    public OperatorMap() {
         this(new TreeMap<>());
     }
-    
-    public OperatorMap(OperatorMap toCopy)
-    {
+
+    public OperatorMap(OperatorMap toCopy) {
         this(new TreeMap<>(toCopy.operators));
     }
-    
-    public OperatorMap(Map<Integer, Set<Operator>> operators)
-    {
+
+    public OperatorMap(Map<Integer, Set<Operator>> operators) {
         this.operators = operators;
     }
-    
-    public void register(int precedence, Operator operator)
-    {
-        if (!operators.containsKey(precedence))
-        {
+
+    public static OperatorMap getDefaultOperators() {
+        return new OperatorMap(defaultOperators);
+    }
+
+    public void register(int precedence, Operator operator) {
+        if (!operators.containsKey(precedence)) {
             operators.put(precedence, new LinkedHashSet<>());
         }
         operators.get(precedence).add(operator);
     }
-    
-    public Set<Operator> get(int precedence)
-    {
+
+    public Set<Operator> get(int precedence) {
         return operators.get(precedence);
     }
-    
-    public int after(int precedence)
-    {
+
+    public int after(int precedence) {
         boolean flag = false;
-        for (int i : operators.keySet())
-        {
+        for (int i : operators.keySet()) {
             if (flag) return i;
             if (i == precedence) flag = true;
         }
         return -1;
     }
-    
-    public int firstPrecedence()
-    {
+
+    public int firstPrecedence() {
         return new ArrayList<>(operators.keySet()).get(0);
     }
-    
-    public int lastPrecedence()
-    {
+
+    public int lastPrecedence() {
         int last = 0;
-        for (int i : operators.keySet())
-        {
+        for (int i : operators.keySet()) {
             if (i > last) last = i;
         }
         return last;
