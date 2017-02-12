@@ -53,6 +53,7 @@ public class ExpressionCompiler extends TokenizingUnit {
 
         for (String script : scripts) {
             lines.addAll(toLines(script));
+            pos = -1;
         }
 
         return compileLines(lines);
