@@ -2,7 +2,6 @@ package xyz.hexav.aje.pool;
 
 import xyz.hexav.aje.Function;
 import xyz.hexav.aje.defaults.DefaultFunctions;
-import xyz.hexav.aje.expressions.ExpressionCompiler;
 import xyz.hexav.aje.operators.OperatorMap;
 
 import java.util.HashSet;
@@ -53,7 +52,6 @@ public class Pool {
     }
 
     private final OperatorMap operators;
-    private final ExpressionCompiler compiler;
     private Set<Variable> variables;
     private Set<Function> functions;
 
@@ -69,7 +67,6 @@ public class Pool {
         this.operators = new OperatorMap(operators);
         this.functions = new HashSet<>(functions);
         this.variables = new HashSet<>(variables);
-        this.compiler = new ExpressionCompiler(this);
 
         allocVar("ans");
     }
@@ -172,10 +169,6 @@ public class Pool {
 
     public OperatorMap getOperators() {
         return operators;
-    }
-
-    public ExpressionCompiler getCompiler() {
-        return compiler;
     }
 
     public Pool copy() {

@@ -37,6 +37,6 @@ public class FunctionBuilder extends AbstractBuilder<FunctionBuilder> {
     }
 
     public MathFunction build() {
-        return new MathFunction(name, getLines(), parameters, getPool());
+        return new MathFunction(name, getScript(), parameters, getPool());
     }
 }

@@ -45,6 +45,13 @@ public interface Expression {
         return list.length > 0 ? list[0] : Double.NaN;
     }
 
+    default Expression andThen(Expression e) {
+        return () -> {
+            evalList();
+            return e.evalList();
+        };
+    }
+
     default SpreadExpression spread() {
         return new SpreadExpression(this);
     }

@@ -1,24 +1,23 @@
 package xyz.hexav.aje;
 
 import xyz.hexav.aje.expressions.Expression;
+import xyz.hexav.aje.expressions.ExpressionCompiler;
 import xyz.hexav.aje.pool.Pool;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MathExpression implements Expression {
-    private final List<String> scripts;
-    private final List<Expression> expressions;
+    private final String script;
+    private Expression expression;
 
     private final Pool pool;
 
-    protected MathExpression(List<String> scripts, Pool pool) {
-        this.scripts = scripts;
+    protected MathExpression(String scripts, Pool pool) {
+        this.script = scripts;
         this.pool = pool;
-        this.expressions = new ArrayList<>();
     }
 
-    protected MathExpression(List<String> scripts, List<String> variables, Pool pool) {
+    protected MathExpression(String scripts, List<String> variables, Pool pool) {
         this(scripts, pool);
 
         if (variables != null) {
@@ -29,8 +28,8 @@ public class MathExpression implements Expression {
     }
 
     public MathExpression compile() {
-        if (expressions.isEmpty()) {
-            expressions.addAll(pool.getCompiler().compileScripts(scripts));
+        if (expression == null) {
+            expression = new ExpressionCompiler(pool, script).compile();
         }
         return this;
     }
@@ -58,16 +57,8 @@ public class MathExpression implements Expression {
      * Evaluate and return the result(s) of the function.
      */
     public double[] evalList() {
-        double[] value = new double[0];
-
         compile();
-
-        for (Expression exp : expressions) {
-            value = exp.evalList();
-            pool.getVar("ans").assign(value);
-        }
-
-        return value;
+        return expression.evalList();
     }
 
     public Pool getPool() {

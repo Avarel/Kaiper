@@ -9,8 +9,8 @@ public class MathFunction extends MathExpression implements Function {
     protected final double[] inputs;
     private final List<String> parameters;
 
-    protected MathFunction(String name, List<String> scripts, List<String> parameters, Pool pool) {
-        super(scripts, parameters, pool);
+    protected MathFunction(String name, String script, List<String> parameters, Pool pool) {
+        super(script, parameters, pool);
 
         this.name = name;
         this.parameters = parameters;

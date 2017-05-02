@@ -24,6 +24,11 @@ public class Operator {
         this.evaluator = evaluator;
     }
 
+    @Override
+    public String toString() {
+        return "Op(" + symbol + ", " + args + ")";
+    }
+
     public double eval(double... args) {
         return evaluator.eval(args);
     }
@@ -36,10 +41,9 @@ public class Operator {
             if (_a.length == 1 && _b.length == 1)
                 return new double[]{eval(_a[0], _b[0])};
 
-            final int length =
-                    _a.length == 1 ? _b.length :
-                            _b.length == 1 ? _a.length :
-                                    Math.min(_a.length, _b.length);
+            final int length = _a.length == 1
+                    ? _b.length : _b.length == 1
+                    ? _a.length : Math.min(_a.length, _b.length);
 
             final double[] result = new double[length];
 

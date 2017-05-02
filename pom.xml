@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>xyz.hexavalon</groupId>
+	<groupId>xyz.avarel</groupId>
 	<artifactId>AJE</artifactId>
-	<version>2.1</version>
+	<version>2.1.1</version>
 
 	<build>
 		<plugins>
@@ -49,9 +49,9 @@
 
 	<distributionManagement>
 		<repository>
-			<id>bintray-hexavalon-Kippers</id>
-			<name>hexavalon-Kippers</name>
-			<url>https://api.bintray.com/maven/hexavalon/Kippers/AJE/;publish=1</url>
+			<id>bintray-avarel-maven</id>
+			<name>avarel-maven</name>
+			<url>https://api.bintray.com/maven/avarel/maven/AJE/;publish=1</url>
 		</repository>
 	</distributionManagement>
 

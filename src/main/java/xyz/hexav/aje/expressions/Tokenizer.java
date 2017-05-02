@@ -4,22 +4,26 @@ package xyz.hexav.aje.expressions;
  * Provides useful methods to tokenize and to iterate
  * through a String.
  */
-abstract class TokenizingUnit {
-    protected int pos = -1;
-    protected char current;
-    protected String line;
+public class Tokenizer {
+    private int pos = -1;
+    private char current;
+    private final String target;
+
+    public Tokenizer(String target) {
+        this.target = target;
+    }
 
     /**
      * Get the next character and increase the position variable.
      */
-    protected char nextChar() {
-        return current = ++pos < line.length() ? line.charAt(pos) : (char) -1;
+    public char nextChar() {
+        return current = ++pos < target.length() ? target.charAt(pos) : (char) -1;
     }
 
     /**
      * Consume and return true if the next meaningful character is the prompt.
      */
-    protected boolean consume(char prompt) {
+    public boolean consume(char prompt) {
         return consume(prompt, false);
     }
 
@@ -28,7 +32,7 @@ abstract class TokenizingUnit {
      * @param strict If should skip whitespaces.
      * @return If the next character (skip whitespaces if not strict) is the prompt.
      */
-    protected boolean consume(char prompt, boolean strict) {
+    public boolean consume(char prompt, boolean strict) {
         if (!strict) skipWS();
         if (current == prompt) {
             nextChar();
@@ -48,9 +52,9 @@ abstract class TokenizingUnit {
 
         int start = pos;
         int _pos = start + prompt.length();
-        if (_pos > line.length()) return false;
+        if (_pos > target.length()) return false;
 
-        String text = line.substring(start, _pos);
+        String text = target.substring(start, _pos);
 
         if (text.equals(prompt)) {
             pos = _pos - 1;
@@ -69,9 +73,9 @@ abstract class TokenizingUnit {
         skipWS();
 
         int _pos = pos + prompt.length();
-        if (_pos > line.length()) return false;
+        if (_pos > target.length()) return false;
 
-        String text = line.substring(pos, _pos);
+        String text = target.substring(pos, _pos);
 
         return text.equals(prompt);
     }
@@ -86,38 +90,39 @@ abstract class TokenizingUnit {
     /**
      * Skip whitespaces.
      */
-    protected void skipWS() {
+    public void skipWS() {
         while (current == ' ' || current == '\n') nextChar();
     }
 
     /**
      * consume(prompt) without consuming the character.
      */
-    protected boolean nextIs(char prompt) {
+    public boolean nextIs(char prompt) {
         skipWS();
         return current == prompt;
     }
 
-    public int getPos() {
+    public int pos() {
         return pos;
     }
 
-    public String getLine() {
-        return line;
+    public void setPos(int pos) {
+        this.pos = pos;
     }
 
-    /**
-     * Set target compiling line.
-     */
-    protected void setLine(String line) {
-        this.line = line;
+    public String target() {
+        return target;
     }
 
-    public char getCurrentChar() {
+    public char currentChar() {
         return current;
     }
 
-    protected String dumpInfo() {
-        return "['" + line + "':" + pos + "]";
+    public void setCurrentChar(char current) {
+        this.current = current;
+    }
+
+    protected String currentInfo() {
+        return "['" + target + "':" + pos + "]";
     }
 }

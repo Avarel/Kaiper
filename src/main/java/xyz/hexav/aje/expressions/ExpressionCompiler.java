@@ -14,11 +14,13 @@ import java.util.List;
 /**
  * Compiles string expressions into compiled Expression instances.
  */
-public class ExpressionCompiler extends TokenizingUnit {
+public class ExpressionCompiler {
     private final Pool pool;
+    private final Tokenizer tokenizer;
 
-    public ExpressionCompiler(Pool pool) {
+    public ExpressionCompiler(Pool pool, String s) {
         this.pool = pool;
+        this.tokenizer = new Tokenizer(s);
     }
 
     private static boolean isLiteral(char c) {
@@ -33,94 +35,106 @@ public class ExpressionCompiler extends TokenizingUnit {
      * Return the next String name.
      */
     private String nextLiteral() {
-        int start = pos;
+        int start = tokenizer.pos();
 
-        if (!Character.isLetter(current)) {
+        if (!Character.isLetter(tokenizer.currentChar())) {
             throw makeError("Nominal literals must start with a letter.");
         }
 
-        while (isLiteral(current)) nextChar();
-        return line.substring(start, pos);
+        while (isLiteral(tokenizer.currentChar())) tokenizer.nextChar();
+        return tokenizer.target().substring(start, tokenizer.pos());
     }
+//
+//    public List<Expression> compileScript(String script) {
+//        return compileLines(toLines(script));
+//    }
 
-    public List<Expression> compileScript(String script) {
-        return compileLines(toLines(script));
-    }
 
+//    public List<Expression> compileScripts(List<String> scripts) {
+//        List<String> lines = new ArrayList<>();
+//
+//        for (String script : scripts) {
+//            lines.addAll(toLines(script));
+//            pos = -1;
+//        }
+//
+//        return compileLines(lines);
+//    }
 
-    public List<Expression> compileScripts(List<String> scripts) {
-        List<String> lines = new ArrayList<>();
+//    private List<String> toLines(String script) {
+//        char s_current = script.charAt(++pos);
+//
+//        List<String> lines = new ArrayList<>();
+//
+//        do {
+//            int start = pos;
+//
+//            while (s_current != ';' && ++pos < script.length()) {
+//                s_current = script.charAt(pos);
+//            }
+//
+//            lines.add(script.substring(start, pos).trim());
+//
+//            if (s_current != ';') break;
+//            else s_current = ++pos < script.length() ? script.charAt(pos) : (char) -1;
+//        }
+//        while (pos < script.length());
+//
+//        return lines;
+//    }
 
-        for (String script : scripts) {
-            lines.addAll(toLines(script));
-            pos = -1;
+//    private List<Expression> compileLines(List<String> lines) {
+//        List<Expression> exps = new ArrayList<>();
+//
+//        // Compile values and functions first.
+//        for (String line : lines) {
+//            resetPosition();
+//            setStr(line);
+//            nextChar();
+//
+//            if (consume("func")) {
+//                consumeFunction();
+//            } else {
+//                exps.add(compileLine(line));
+//            }
+//        }
+//
+//        return exps;
+//    }
+
+    public Expression compile() {
+        tokenizer.nextChar();
+        Expression e = compileExpression();
+
+        while (tokenizer.consume(';') && tokenizer.pos() < tokenizer.target().length()) {
+            e = e.andThen(compileExpression());
         }
 
-        return compileLines(lines);
+        if (tokenizer.pos() < tokenizer.target().length()) throw makeError("Unhandled character `" + tokenizer.currentChar() + "`.");
+
+        return e;
     }
 
-    private List<String> toLines(String script) {
-        char s_current = script.charAt(++pos);
-
-        List<String> lines = new ArrayList<>();
-
-        do {
-            int start = pos;
-
-            while (s_current != ';' && ++pos < script.length()) {
-                s_current = script.charAt(pos);
-            }
-
-            lines.add(script.substring(start, pos).trim());
-
-            if (s_current != ';') break;
-            else s_current = ++pos < script.length() ? script.charAt(pos) : (char) -1;
-        }
-        while (pos < script.length());
-
-        return lines;
-    }
-
-    private List<Expression> compileLines(List<String> lines) {
-        List<Expression> exps = new ArrayList<>();
-
-        // Compile values and functions first.
-        for (String line : lines) {
-            resetPosition();
-            setLine(line);
-            nextChar();
-
-            if (consume("func")) {
-                consumeFunction();
-            } else {
-                exps.add(compileLine(line));
-            }
-        }
-
-        return exps;
-    }
-
-    private Expression compileLine(String target) {
-        setLine(target);
-        resetPosition();
-        nextChar();
-
-        Expression exp = compileExpression();
-
-        if (pos < line.length()) throw makeError("Unhandled character `" + current + "`.");
-
-        return exp;
-    }
+//    private Expression compileLine(String target) {
+//        resetPosition();
+//        nextChar();
+//
+//        Expression exp = compileExpression();
+//
+//        if (pos < str.length()) throw makeError("Unhandled character `" + current + "`.");
+//
+//        return exp;
+//    }
 
     private Expression compileVariable() {
-        if (isLiteral(current)) {
+        if (isLiteral(tokenizer.currentChar())) {
             String name = nextLiteral();
 
             if (pool.hasVar(name)) {
                 throw makeError("Variable '" + name + "' is already defined.");
             }
 
-            if (!consume('=')) {
+            if (!tokenizer.consume('=')) {
                 return new VariableAssignment(pool.allocVar(name));
             } else {
                 return new VariableAssignment(pool.allocVar(name), compileExpression());
@@ -132,14 +146,14 @@ public class ExpressionCompiler extends TokenizingUnit {
     }
 
     private Expression compileValue() {
-        if (isLiteral(current)) {
+        if (isLiteral(tokenizer.currentChar())) {
             String name = nextLiteral();
 
             if (pool.hasVar(name)) {
                 throw makeError("Value '" + name + "' is already defined.");
             }
 
-            if (!consume('=')) {
+            if (!tokenizer.consume('=')) {
                 return new VariableAssignment(pool.allocVal(name));
             } else {
                 return new VariableAssignment(pool.allocVal(name), compileExpression());
@@ -149,34 +163,36 @@ public class ExpressionCompiler extends TokenizingUnit {
     }
 
     private void consumeFunction() {
-        if (isLiteral(current)) {
+        if (isLiteral(tokenizer.currentChar())) {
             String name = nextLiteral();
             int params = 0;
 
             FunctionBuilder fb = new FunctionBuilder(name);
 
-            if (!consume('(')) {
+            if (!tokenizer.consume('(')) {
                 throw makeError("Expected '('.");
             }
 
-            if (!consume(')')) do {
+            if (!tokenizer.consume(')')) do {
                 fb.addParameter(nextLiteral());
                 params++;
             }
-            while (!consume(')') && consume(','));
+            while (!tokenizer.consume(')') && tokenizer.consume(','));
 
             if (pool.hasFunc(name, params)) {
                 throw makeError("Function '" + name + "' is already defined.");
             }
 
-            if (!consume('=')) {
+            if (!tokenizer.consume('=')) {
                 throw makeError("Expected '='.");
             }
-            skipWS();
+            tokenizer.skipWS();
 
-            int start = pos;
-            while (!nextIs(';') && pos < line.length()) nextChar();
-            String script = this.line.substring(start, pos);
+            int start = tokenizer.pos();
+            while (!tokenizer.nextIs(';') && tokenizer.pos() < tokenizer.target().length()) {
+                tokenizer.nextChar();
+            }
+            String script = tokenizer.target().substring(start, tokenizer.pos());
 
             fb.addLine(script);
 
@@ -198,7 +214,8 @@ public class ExpressionCompiler extends TokenizingUnit {
 
         // Unary operations
         for (Operator operator : operators.get(level)) {
-            if (operator.args == -1 && consume(operator.symbol)) {
+            //System.out.println(operator);
+            if (operator.args == -1 && tokenizer.consume(operator.symbol)) {
                 Expression exp = compileExpression(level);
                 return operator.compile(exp);
             }
@@ -209,7 +226,7 @@ public class ExpressionCompiler extends TokenizingUnit {
         while (true) {
             boolean flag = false;
             for (Operator operator : operators.get(level)) {
-                if (operator.args == 2 && consume(operator.symbol)) {
+                if (operator.args == 2 && tokenizer.consume(operator.symbol)) {
                     final Expression
                             a = value,
                             b = compileExpression(
@@ -220,7 +237,7 @@ public class ExpressionCompiler extends TokenizingUnit {
                     value = operator.compile(a, b);
 
                     flag = true;
-                } else if (operator.args == 1 && consume(operator.symbol)) {
+                } else if (operator.args == 1 && tokenizer.consume(operator.symbol)) {
                     value = operator.compile(value);
                     flag = true;
                 }
@@ -233,15 +250,15 @@ public class ExpressionCompiler extends TokenizingUnit {
 
     private Expression compileMisc() {
         Expression value;
-        if (consume('(')) {
+        if (tokenizer.consume('(')) {
             value = compileExpression();
-            consume(')');
+            tokenizer.consume(')');
         } else value = compileLiteral();
 
         // Implicit multiplications.
-        if (nextIs('(') || isLiteral(current)) {
-            int _pos = pos;
-            char _current = current;
+        if (tokenizer.nextIs('(') || isLiteral(tokenizer.currentChar())) {
+            int _pos = tokenizer.pos();
+            char _current = tokenizer.currentChar();
             try {
                 final Expression
                         a = value,
@@ -249,8 +266,8 @@ public class ExpressionCompiler extends TokenizingUnit {
 
                 value = DefaultOperators.MULTIPLY.get().compile(a, b);
             } catch (RuntimeException e) {
-                pos = _pos;
-                current = _current;
+                tokenizer.setPos(_pos);
+                tokenizer.setCurrentChar(_current);
             }
         }
 
@@ -258,65 +275,69 @@ public class ExpressionCompiler extends TokenizingUnit {
     }
 
     private Expression compileLiteral() {
-        int start = pos;
+        while (tokenizer.currentChar() == ';') tokenizer.nextChar();
+        if (tokenizer.pos() == tokenizer.target().length()) return Expression.NOTHING;
+
+        int start = tokenizer.pos();
 
         // DEFINE VALUES
         // - NUMERICAL PARSING
 
-        if (consume("var")) {
+        if (tokenizer.consume("var")) {
             return compileVariable();
-        } else if (consume("val")) {
+        } else if (tokenizer.consume("val")) {
             return compileValue();
         }
 
-        if (isNumeric(current)) {
+        if (isNumeric(tokenizer.currentChar())) {
             // BINARY
-            if (consume("0b"))
+            if (tokenizer.consume("0b"))
             {
-                int _start = pos;
+                int _start = tokenizer.pos();
 
-                while (isNumeric(current))
+                while (isNumeric(tokenizer.currentChar()))
                 {
-                    if (!(current == '0' || current == '1'))
+                    if (!(tokenizer.currentChar() == '0' || tokenizer.currentChar() == '1'))
                     {
                         throw makeError("Binary literals can only have '1' and '0'.");
                     }
-                    nextChar();
+                    tokenizer.nextChar();
                 }
-                return Expression.ofValue(Integer.valueOf(line.substring(_start, pos), 2).doubleValue());
+                return Expression.ofValue(Integer.valueOf(tokenizer.target().substring(_start, tokenizer.pos()), 2).doubleValue());
             }
             // HEXADECIMAL
-            else if (consume("0x"))
+            else if (tokenizer.consume("0x"))
             {
-                int _start = pos;
+                int _start = tokenizer.pos();
 
-                while (isLiteral(current))
+                while (isLiteral(tokenizer.currentChar()))
                 {
-                    if (!(current >= '0' && current <= '9' || current >= 'A' && current <= 'F'))
+                    if (!(tokenizer.currentChar() >= '0' && tokenizer.currentChar() <= '9'
+                            || tokenizer.currentChar() >= 'A' && tokenizer.currentChar() <= 'F'))
                     {
                         throw makeError("Hexadecimal literals can only have '1-9' and 'A-F'.");
                     }
-                    nextChar();
+                    tokenizer.nextChar();
                 }
-                return Expression.ofValue(Integer.valueOf(line.substring(_start, pos), 16).doubleValue());
+                return Expression.ofValue(Integer.valueOf(tokenizer.target().substring(_start, tokenizer.pos()), 16).doubleValue());
             }
 
-            while (isNumeric(current)) nextChar();
+            while (isNumeric(tokenizer.currentChar())) tokenizer.nextChar();
 
-            double value = Double.parseDouble(line.substring(start, pos));
+            double value = Double.parseDouble(tokenizer.target().substring(start, tokenizer.pos()));
             return Expression.ofValue(value);
         }
         // INTERVALS
-        else if (consume('[')) {
+        else if (tokenizer.consume('[')) {
 
-            if (consume(']')) return Expression.NOTHING;
+            if (tokenizer.consume(']')) return Expression.NOTHING;
 
             List<Expression> items = new ArrayList<>();
 
             do {
                 Expression a = compileExpression();
 
-                if (consume("...")) {
+                if (tokenizer.consume("...")) {
                     Expression b = compileExpression();
 
                     Expression c = items.size() == 1 ? items.get(items.size() - 1) : null;
@@ -326,15 +347,15 @@ public class ExpressionCompiler extends TokenizingUnit {
                     items.add(a);
                 }
             }
-            while (consume(','));
+            while (tokenizer.consume(','));
 
-            if (!consume(']')) throw makeError("Expected list literal to close.");
+            if (!tokenizer.consume(']')) throw makeError("Expected list literal to close.");
 
             return Expression.ofList(items);
         }
 
         // FUNCTION AND CONSTANTS
-        else if (Character.isLetter(current)) {
+        else if (Character.isLetter(tokenizer.currentChar())) {
             String name = nextLiteral();
 
             if (pool.hasVar(name)) {
@@ -344,35 +365,35 @@ public class ExpressionCompiler extends TokenizingUnit {
             // FUNCTIONS LOOKUP
             List<Expression> args = new ArrayList<>();
 
-            if (consume('(')) {
-                if (!consume(')')) do {
+            if (tokenizer.consume('(')) {
+                if (!tokenizer.consume(')')) do {
                     Expression exp;
 
-                    if (consume('*')) {
+                    if (tokenizer.consume('*')) {
                         exp = compileExpression().spread();
                     } else exp = compileExpression();
                     args.add(exp);
                 }
-                while (!consume(')') && consume(','));
+                while (!tokenizer.consume(')') && tokenizer.consume(','));
             } else {
                 do {
                     Expression exp;
 
-                    if (consume('*')) {
+                    if (tokenizer.consume('*')) {
                         exp = compileExpression(Precedence.MULTIPLICATIVE).spread();
                     } else exp = compileExpression(Precedence.MULTIPLICATIVE);
                     args.add(exp);
                 }
-                while (consume(','));
+                while (tokenizer.consume(','));
             }
 
             if (pool.hasFunc(name, args.size())) {
                 return new FunctionExpression(pool.getFunc(name, args.size()), args);
             } else throw makeError("Can not resolve reference `" + name + "`.");
-        } else throw makeError("Unexpected token: " + current);
+        } else throw makeError("Unexpected token: " + tokenizer.currentChar());
     }
 
     private AJEException makeError(String message) {
-        return new AJEException(message + " " + dumpInfo());
+        return new AJEException(message + " " + tokenizer.currentInfo());
     }
 }

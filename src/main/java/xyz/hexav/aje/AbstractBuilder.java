@@ -6,6 +6,7 @@ import xyz.hexav.aje.pool.Pool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
@@ -91,5 +92,9 @@ public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
 
     public List<String> getLines() {
         return lines;
+    }
+
+    public String getScript() {
+        return lines.stream().collect(Collectors.joining(";"));
     }
 }
