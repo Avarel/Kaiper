@@ -16,7 +16,7 @@ public enum DefaultOperators {
     MULTIPLY(new Operator("*", 2, args -> args[0] * args[1])),
     DIVIDE(new Operator("/", 2, args -> args[0] / args[1])),
     REMAINDER(new Operator("%", 2, args -> args[0] % args[1])),
-    MODULUS(new Operator("mod", 2, args -> (((args[0] % args[1]) + args[1]) % args[1]))),
+    MODULUS(new Operator("mod", 2, args -> (args[0] % args[1] + args[1]) % args[1])),
     PERCENTAGE(new Operator("% of ", 2, args -> args[0] / 100 * args[1])),
     N_ROOT(new Operator("th root of ", 2, args -> {
         double result = Math.pow(args[1], 1.0 / args[0]);
