@@ -10,7 +10,7 @@ public class ListsTest extends TestCase {
     }
 
     public void testGet() {
-        MathExpression exp = new ExpressionBuilder("[0 ... 10]@index")
+        MathExpression exp = new ExpressionBuilder("[0..10]@index")
                 .addVariable("index")
                 .build()
                 .compile();
@@ -21,7 +21,7 @@ public class ListsTest extends TestCase {
     }
 
     public void testGetRange() {
-        MathExpression exp = new ExpressionBuilder("[0 ... 10]@index")
+        MathExpression exp = new ExpressionBuilder("[0..10]@index")
                 .addVariable("index")
                 .build()
                 .compile();

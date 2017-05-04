@@ -8,7 +8,7 @@ public class OperatorMap {
     private static final OperatorMap defaultOperators = new OperatorMap();
 
     static {
-        //defaultOperators.register(Precedence.ASSIGNMENT, DefaultOperators.VAR_ASSIGNMENT.get());
+        defaultOperators.register(Precedence.ASSIGNMENT, DefaultOperators.VAR_ASSIGNMENT.get());
 
         defaultOperators.register(Precedence.LOGICAL_OR, DefaultOperators.LOGICAL_OR.get());
         defaultOperators.register(Precedence.LOGICAL_AND, DefaultOperators.LOGICAL_AND.get());
@@ -49,7 +49,7 @@ public class OperatorMap {
 //        defaultOperators.register(Precedence.POSTFIX, DefaultOperators.POST_DECREMENT.get());
 
         defaultOperators.register(Precedence.POSTFIX, DefaultOperators.DEGREES.get());
-//        defaultOperators.register(Precedence.POSTFIX, DefaultOperators.ITEM_AT_LIST.get());
+        defaultOperators.register(Precedence.POSTFIX, DefaultOperators.ITEM_AT_LIST.get());
     }
 
     private Map<Integer, Set<Operator>> operators;

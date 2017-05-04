@@ -4,6 +4,7 @@ import xyz.hexav.aje.expressions.VariableAssignment;
 import xyz.hexav.aje.operators.Operator;
 import xyz.hexav.aje.operators.Precedence;
 import xyz.hexav.aje.pool.Variable;
+import xyz.hexav.aje.types.AJEList;
 import xyz.hexav.aje.types.AJEValue;
 
 public enum DefaultOperators {
@@ -52,25 +53,16 @@ public enum DefaultOperators {
     DEGREES(new Operator("deg", 1, args -> Math.toRadians(args[0].value()))),
 
 
-//    ITEM_AT_LIST(new Operator("@", 2) {
-//        @Override
-//        public AJENumber compile(AJENumber a, AJENumber b) {
-//            return {
-//
-//
-//                double items = a.value();
-//                double access = b.value();
-//
-//                double[] results = new double[access.length];
-//
-//                for (int i = 0; i < access.length; i++) {
-//                    results[i] = items[(int) access[i]];
-//                }
-//
-//                return results;
-//            };
-//        }
-//    }),
+    ITEM_AT_LIST(new Operator("@", 2) {
+        @Override
+        public AJEValue compile(AJEValue a, AJEValue b) {
+            if (a instanceof AJEList) {
+                AJEList list = (AJEList) a;
+                return list.get((int) b.value());
+            }
+            throw new RuntimeException("Attempted to use get at `@` operator on a non-list.");
+        }
+    }),
 
 //    POST_INCREMENT(new Operator("++", 1) {
 //        @Override

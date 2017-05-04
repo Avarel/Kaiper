@@ -28,9 +28,8 @@ public class MathExpression implements AJEValue {
     }
 
     public MathExpression compile() {
-        if (expression == null) {
-            expression = new ExpressionCompiler(pool, script).compile();
-        }
+        //TODO ADD RECOMPILE FLAG
+        expression = new ExpressionCompiler(pool, script).compile();
         return this;
     }
 
