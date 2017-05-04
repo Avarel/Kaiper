@@ -1,11 +1,11 @@
 package xyz.hexav.aje.types;
 
-public class AJERange extends AJEList {
-    private final AJEValue start;
-    private final AJEValue end;
-    private final AJEValue c;
+public class Range extends Slice {
+    private final Expression start;
+    private final Expression end;
+    private final Expression c;
 
-    public AJERange(AJEValue start, AJEValue end, AJEValue c) {
+    public Range(Expression start, Expression end, Expression c) {
         super();
         this.start = start;
         this.end = end;
@@ -18,7 +18,7 @@ public class AJERange extends AJEList {
         final int
                 init = (int) start.value(),
                 end = (int) this.end.value(),
-                before = c != null && !(c instanceof AJERange) ? (int) c.value() : init - 1,
+                before = c != null && !(c instanceof Range) ? (int) c.value() : init - 1,
                 delta = Math.abs(init - before);
 
         if (init < end) {

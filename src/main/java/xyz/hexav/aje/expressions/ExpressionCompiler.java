@@ -2,14 +2,14 @@ package xyz.hexav.aje.expressions;
 
 import xyz.hexav.aje.AJEException;
 import xyz.hexav.aje.FunctionBuilder;
-import xyz.hexav.aje.defaults.DefaultOperators;
 import xyz.hexav.aje.operators.Operator;
 import xyz.hexav.aje.operators.OperatorMap;
+import xyz.hexav.aje.operators.Precedence;
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.AJEList;
-import xyz.hexav.aje.types.AJENothing;
-import xyz.hexav.aje.types.AJERange;
-import xyz.hexav.aje.types.AJEValue;
+import xyz.hexav.aje.types.Slice;
+import xyz.hexav.aje.types.Nothing;
+import xyz.hexav.aje.types.Range;
+import xyz.hexav.aje.types.Expression;
 
 /**
  * Compiles string expressions into compiled Expression instances.
@@ -102,13 +102,14 @@ public class ExpressionCompiler {
 //        return exps;
 //    }
 
-    public AJEValue compile() {
+    public Expression compile() {
         tokenizer.nextChar();
-        AJEValue e = compileExpression();
+        Expression e = compileExpression();
 
         while (tokenizer.consume(';') && tokenizer.pos() < tokenizer.target().length()) {
             e = e.andThen(compileExpression());
         }
+
 
         if (tokenizer.pos() < tokenizer.target().length()) throw makeError("Unhandled character `" + tokenizer.currentChar() + "`.");
 
@@ -126,7 +127,7 @@ public class ExpressionCompiler {
 //        return exp;
 //    }
 
-    private AJEValue compileVariable() {
+    private Expression compileVariable() {
         if (isLiteral(tokenizer.currentChar())) {
             String name = nextLiteral();
 
@@ -145,7 +146,7 @@ public class ExpressionCompiler {
         throw makeError("Expected name for variable.");
     }
 
-    private AJEValue compileValue() {
+    private Expression compileValue() {
         if (isLiteral(tokenizer.currentChar())) {
             String name = nextLiteral();
 
@@ -203,42 +204,36 @@ public class ExpressionCompiler {
         throw makeError("Expected function name.");
     }
 
-    private AJEValue compileExpression() {
+    private Expression compileExpression() {
         return compileExpression(pool.getOperators().firstPrecedence());
     }
 
-    private AJEValue compileExpression(int level) {
+    private Expression compileExpression(int level) {
         if (level == -1) return compileMisc();
 
         OperatorMap operators = pool.getOperators();
 
         // Unary operations
         for (Operator operator : operators.get(level)) {
-            //System.out.println(operator);
-            if (operator.args == -1 && tokenizer.consume(operator.symbol)) {
-                AJEValue exp = compileExpression(level);
-                return operator.compile(exp);
+            if (operator.getArgs() == -1 && tokenizer.consume(operator.getSymbol())) {
+                Expression exp = compileExpression(level);
+                return exp.compile(operator);
             }
         }
 
-        AJEValue value = compileExpression(operators.after(level));
+        Expression value = compileExpression(operators.after(level));
 
         while (true) {
             boolean flag = false;
             for (Operator operator : operators.get(level)) {
-                if (operator.args == 2 && tokenizer.consume(operator.symbol)) {
-                    final AJEValue
-                            a = value,
-                            b = compileExpression(
-                                    operator.next != -1 ?
-                                            operator.next :
-                                            operators.after(level));
+                if (operator.getArgs() == 2 && tokenizer.consume(operator.getSymbol())) {
+                    final Expression a = value;
+                    final Expression b = compileExpression(operator.isLeftAssoc() ? Precedence.UNARY : operators.after(level));
 
-                    value = operator.compile(a, b);
-
+                    value = a.compile(operator, b);
                     flag = true;
-                } else if (operator.args == 1 && tokenizer.consume(operator.symbol)) {
-                    value = operator.compile(value);
+                } else if (operator.getArgs() == 1 && tokenizer.consume(operator.getSymbol())) {
+                    value = value.compile(operator);
                     flag = true;
                 }
             }
@@ -248,35 +243,35 @@ public class ExpressionCompiler {
         return value;
     }
 
-    private AJEValue compileMisc() {
-        AJEValue value;
+    private Expression compileMisc() {
+        Expression value;
         if (tokenizer.consume('(')) {
             value = compileExpression();
             tokenizer.consume(')');
         } else value = compileLiteral();
 
-        // Implicit multiplications.
-        if (tokenizer.nextIs('(') || isLiteral(tokenizer.currentChar())) {
-            int _pos = tokenizer.pos();
-            char _current = tokenizer.currentChar();
-            try {
-                final AJEValue
-                        a = value,
-                        b = compileMisc();
-
-                value = DefaultOperators.MULTIPLY.get().compile(a, b);
-            } catch (RuntimeException e) {
-                tokenizer.setPos(_pos);
-                tokenizer.setCurrentChar(_current);
-            }
-        }
+//        // Implicit multiplications.
+//        if (tokenizer.nextIs('(') || isLiteral(tokenizer.currentChar())) {
+//            int _pos = tokenizer.pos();
+//            char _current = tokenizer.currentChar();
+//            try {
+//                final AJEValue
+//                        a = value,
+//                        b = compileMisc();
+//
+//                value = DefaultOperators.MULTIPLY.get().compile(a, b);
+//            } catch (RuntimeException e) {
+//                tokenizer.setPos(_pos);
+//                tokenizer.setCurrentChar(_current);
+//            }
+//        }
 
         return value;
     }
 
-    private AJEValue compileLiteral() {
+    private Expression compileLiteral() {
         while (tokenizer.currentChar() == ';') tokenizer.nextChar();
-        if (tokenizer.pos() == tokenizer.target().length()) return AJENothing.VALUE;
+        if (tokenizer.pos() == tokenizer.target().length()) return Nothing.VALUE;
 
         int start = tokenizer.pos();
 
@@ -328,23 +323,23 @@ public class ExpressionCompiler {
         // LISTS
         else if (tokenizer.consume('[')) {
 
-            if (tokenizer.consume(']')) return AJEList.EMPTY;
+            if (tokenizer.consume(']')) return Slice.EMPTY;
 
-            AJEList list = new AJEList();
+            Slice list = new Slice();
 
             do {
-                AJEValue a = compileExpression();
+                Expression a = compileExpression();
 
                 if (tokenizer.consume("..")) {
-                    AJEValue b = compileExpression();
-                    AJEValue c = list.size() == 1 ? list.get(list.size() - 1) : null;
-                    list.add(new AJERange(a, b, c));
+                    Expression b = compileExpression();
+                    Expression c = list.size() == 1 ? list.get(list.size() - 1) : null;
+                    list.addAll(new Range(a, b, c));
                 } else if (tokenizer.consume("til")) {
-                    AJEValue b = compileExpression();
-                    AJEValue c = list.size() == 1 ? list.get(list.size() - 1) : null;
-                    list.add(new AJERange(a, () -> b.value() - 1, c));
+                    Expression b = compileExpression();
+                    Expression c = list.size() == 1 ? list.get(list.size() - 1) : null;
+                    list.addAll(new Range(a, () -> b.value() - 1, c));
                 } else {
-                    list.add(a);
+                    list.addAll(a);
                 }
             }
             while (tokenizer.consume(','));

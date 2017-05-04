@@ -1,5 +1,5 @@
 import xyz.hexav.aje.ExpressionBuilder;
-import xyz.hexav.aje.types.AJEValue;
+import xyz.hexav.aje.types.Expression;
 
 import java.util.Scanner;
 
@@ -26,7 +26,7 @@ public class TestLoop {
 
                 //Function exp = new Function(input);
 
-                AJEValue exp = new ExpressionBuilder(input)
+                Expression exp = new ExpressionBuilder(input)
                         .addVariable("tau")
                         .build()
                         .setVariable("tau", Math.PI * 2);

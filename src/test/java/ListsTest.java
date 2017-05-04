@@ -26,8 +26,10 @@ public class ListsTest extends TestCase {
                 .build()
                 .compile();
 
-        for (double i = 0; i < 10; i++) {
-            assertEquals(exp.setVariable("index", i).value(), i);
+        System.out.println("after compile");
+
+        for (int i = 0; i < 10; i++) {
+            assertEquals(exp.setVariable("index", i).value(), (double) i);
         }
     }
 }

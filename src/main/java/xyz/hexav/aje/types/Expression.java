@@ -1,17 +1,43 @@
 package xyz.hexav.aje.types;
 
+import java.util.function.BinaryOperator;
+
 /*
  * Every operation results in a number.
  * Everything must be returned in the form of AJENumber.
  *      Except for eval();
  */
-public interface AJEValue {
-    AJEValue NaN = ofValue(Double.NaN);
+public interface Expression {
+    Expression NaN = ofValue(Double.NaN);
 
-    AJEValue TRUE = ofValue(1);
-    AJEValue FALSE = ofValue(0);
+    Expression TRUE = ofValue(1);
+    Expression FALSE = ofValue(0);
 
     double value();
+
+    default Expression compile(BinaryOperator<Expression> operation) {
+        return compile(operation, null);
+    }
+
+    default Expression compile(BinaryOperator<Expression> operation, Expression number) {
+        return operation.apply(this, number);
+    }
+
+    default Expression andThen(Expression number) {
+        return () -> {
+            value();
+            return number.value();
+        };
+    }
+
+    default String asString() {
+        return String.valueOf(value());
+    }
+
+    static Expression ofValue(double value) {
+        return () -> value;
+    }
+}
 
 //    default AJEValue add(AJEValue number) {
 //        return () -> this.value() + number.value();
@@ -67,29 +93,3 @@ public interface AJEValue {
 //            return AJEValue.FALSE;
 //        }
 //    }
-
-    default AJEValue andThen(AJEValue number) {
-        return () -> {
-            value();
-            return number.value();
-        };
-    }
-
-    default String asString() {
-        return String.valueOf(value());
-    }
-
-//    default AJENumber invoke() {
-//
-//    }
-//
-//    default AJENumber invoke(List<AJENumber> args) {
-//        return NOTHING;
-//    }
-
-
-
-    static AJEValue ofValue(double value) {
-        return () -> value;
-    }
-}

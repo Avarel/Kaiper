@@ -2,13 +2,13 @@ package xyz.hexav.aje;
 
 import xyz.hexav.aje.expressions.ExpressionCompiler;
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.AJEValue;
+import xyz.hexav.aje.types.Expression;
 
 import java.util.List;
 
-public class MathExpression implements AJEValue {
+public class MathExpression implements Expression {
     private final String script;
-    private AJEValue expression;
+    private Expression expression;
 
     private final Pool pool;
 
@@ -28,8 +28,9 @@ public class MathExpression implements AJEValue {
     }
 
     public MathExpression compile() {
-        //TODO ADD RECOMPILE FLAG
-        expression = new ExpressionCompiler(pool, script).compile();
+        if (expression == null) {
+            expression = new ExpressionCompiler(pool, script).compile();
+        }
         return this;
     }
 
@@ -38,7 +39,7 @@ public class MathExpression implements AJEValue {
         return this;
     }
 
-    public MathExpression setVariable(String name, AJEValue value) {
+    public MathExpression setVariable(String name, Expression value) {
         pool.getVar(name).assign(value);
         return this;
     }
@@ -54,7 +55,7 @@ public class MathExpression implements AJEValue {
         return expression.asString();
     }
 
-    public AJEValue getExpression() {
+    public Expression getExpression() {
         return expression;
     }
 

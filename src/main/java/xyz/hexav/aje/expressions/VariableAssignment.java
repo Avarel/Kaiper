@@ -1,21 +1,21 @@
 package xyz.hexav.aje.expressions;
 
 import xyz.hexav.aje.pool.Variable;
-import xyz.hexav.aje.types.AJEValue;
+import xyz.hexav.aje.types.Expression;
 
 public class VariableAssignment extends VariableExpression {
-    private final AJEValue exp;
+    private final Expression exp;
 
     public VariableAssignment(Variable var) {
         this(var, null);
     }
 
-    public VariableAssignment(Variable var, AJEValue exp) {
+    public VariableAssignment(Variable var, Expression exp) {
         super(var);
         this.exp = exp;
     }
 
-    public AJEValue getExpression() {
+    public Expression getExpression() {
         return exp;
     }
 

@@ -2,6 +2,7 @@ package xyz.hexav.aje;
 
 import xyz.hexav.aje.operators.Operator;
 import xyz.hexav.aje.operators.Precedence;
+import xyz.hexav.aje.pool.DefaultPool;
 import xyz.hexav.aje.pool.Pool;
 
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
     }
 
     public Pool getPool() {
-        return pool != null ? pool : (pool = Pool.getDefaultPool());
+        return pool != null ? pool : (pool = DefaultPool.INSTANCE.copy());
     }
 
     public T setPool(Pool pool) {

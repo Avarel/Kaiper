@@ -1,62 +1,19 @@
 package xyz.hexav.aje.pool;
 
 import xyz.hexav.aje.Function;
-import xyz.hexav.aje.defaults.DefaultFunctions;
+import xyz.hexav.aje.operators.DefaultOperatorMap;
 import xyz.hexav.aje.operators.OperatorMap;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class Pool {
-    private final static Pool nativePool = new Pool();
-
-    static {
-        nativePool.allocVal("pi").assign(Math.PI);
-        nativePool.allocVal("e").assign(Math.E);
-        nativePool.allocVal("golden_ratio").assign(1.61803398875);
-
-        nativePool.allocFunc(DefaultFunctions.ABSOLUTE_VALUE.get());
-        nativePool.allocFunc(DefaultFunctions.SQUARE_ROOT.get());
-        nativePool.allocFunc(DefaultFunctions.CUBE_ROOT.get());
-
-        nativePool.allocFunc(DefaultFunctions.FLOOR.get());
-        nativePool.allocFunc(DefaultFunctions.CEILING.get());
-        nativePool.allocFunc(DefaultFunctions.ROUND.get());
-        nativePool.allocFunc(DefaultFunctions.SIGN.get());
-
-        nativePool.allocFunc(DefaultFunctions.MAX.get());
-        nativePool.allocFunc(DefaultFunctions.MIN.get());
-
-        nativePool.allocFunc(DefaultFunctions.LOG_NATURAL.get());
-        nativePool.allocFunc(DefaultFunctions.LOG_10.get());
-        nativePool.allocFunc(DefaultFunctions.EXPONENTIAL.get());
-
-        nativePool.allocFunc(DefaultFunctions.SINE.get());
-        nativePool.allocFunc(DefaultFunctions.COSINE.get());
-        nativePool.allocFunc(DefaultFunctions.TANGENT.get());
-        nativePool.allocFunc(DefaultFunctions.ARCSINE.get());
-        nativePool.allocFunc(DefaultFunctions.ARCCOSINE.get());
-        nativePool.allocFunc(DefaultFunctions.ARCTANGENT.get());
-        nativePool.allocFunc(DefaultFunctions.ARCTANGENT2.get());
-
-        nativePool.allocFunc(DefaultFunctions.HYPERBOLIC_SINE.get());
-        nativePool.allocFunc(DefaultFunctions.HYPERBOLIC_COSINE.get());
-        nativePool.allocFunc(DefaultFunctions.HYPERBOLIC_TANGENT.get());
-
-//        nativePool.allocFunc(DefaultFunctions.LIST_SIZE.get());
-//        nativePool.allocFunc(DefaultFunctions.SUMMATION.get());
-//        nativePool.allocFunc(DefaultFunctions.AVERAGE.get());
-//        nativePool.allocFunc(DefaultFunctions.PRODUCT.get());
-
-//        nativePool.allocFunc(DefaultFunctions.QUADRATIC_ROOT.get());
-    }
-
     private final OperatorMap operators;
     private Set<Variable> variables;
     private Set<Function> functions;
 
     public Pool() {
-        this(OperatorMap.getDefaultOperators(), new HashSet<>(), new HashSet<>());
+        this(DefaultOperatorMap.INSTANCE.copy(), new HashSet<>(), new HashSet<>());
     }
 
     public Pool(Pool toCopy) {
@@ -69,10 +26,6 @@ public class Pool {
         this.variables = new HashSet<>(variables);
 
         allocVar("ans");
-    }
-
-    public static Pool getDefaultPool() {
-        return nativePool.copy();
     }
 
     public Variable allocVar(String name) {
@@ -105,7 +58,9 @@ public class Pool {
 
     public Variable getVar(String name) {
         for (Variable val : variables) {
-            if (val.getName().equals(name)) return val;
+            if (val.getName().equals(name)) {
+                return val;
+            }
         }
         return null;
     }

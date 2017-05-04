@@ -1,15 +1,15 @@
 package xyz.hexav.aje.expressions;
 
 import xyz.hexav.aje.Function;
-import xyz.hexav.aje.types.AJEValue;
+import xyz.hexav.aje.types.Expression;
 
 import java.util.List;
 
-public class FunctionExpression implements AJEValue {
+public class FunctionExpression implements Expression {
     private final Function function;
-    private final List<AJEValue> args;
+    private final List<Expression> args;
 
-    public FunctionExpression(Function function, List<AJEValue> args) {
+    public FunctionExpression(Function function, List<Expression> args) {
         this.function = function;
         this.args = args;
     }
