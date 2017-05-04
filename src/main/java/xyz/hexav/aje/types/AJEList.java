@@ -1,54 +1,77 @@
 package xyz.hexav.aje.types;
 
-import xyz.hexav.aje.expressions.Expression;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class AJEList extends AJENumber {
-    static final double[] EMPTY_DOUBLE_ARRAY = new double[0];
-    public static final AJEList EMPTY = ofValues(EMPTY_DOUBLE_ARRAY);
+public class AJEList implements AJEValue {
+    private static final double[] EMPTY_DOUBLE_ARRAY = new double[0];
+    public static final AJEList EMPTY = new AJEList(EMPTY_DOUBLE_ARRAY);
 
-    public AJEList(Expression exp) {
-        super(exp);
+    protected final List<AJEValue> values;
+
+    public AJEList() {
+        this.values = new ArrayList<>();
     }
 
-    public AJEList(double value) {
-        super(Expression.ofValue(value));
+    public AJEList(List<AJEValue> values) {
+        this.values = values;
     }
 
-    public AJEList(double... value) {
-        super(Expression.ofValues(value));
+    public AJEList(AJEValue... values) {
+        this.values = Arrays.asList(values);
     }
 
-    @Override
-    public AJENumber add(AJENumber number) {
-        return super.add(number);
+    public AJEList(double... values) {
+        this.values = Arrays.stream(values)
+                .mapToObj(AJEValue::ofValue)
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public AJENumber minus(AJENumber number) {
-        return super.minus(number);
+    public AJEValue get(int i) {
+        return values.get(i);
     }
 
-    @Override
-    public AJENumber times(AJENumber number) {
-        return super.times(number);
-    }
-
-    @Override
-    public AJENumber divide(AJENumber number) {
-        return super.divide(number);
-    }
-
-    @Override
-    public AJEList mod(AJENumber number) {
-        return new AJEList(0);
+    public int size() {
+        return values.size();
     }
 
     @Override
-    public AJEList isEqualTo(Object obj) {
-        return EMPTY;
+    public double value() {
+        return values()[0];
     }
 
-    static AJEList ofValues(double[] values) {
-        return new AJEList(() -> values);
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    public void add(AJEValue value) {
+        values.add(value);
+    }
+
+    public void add(AJEList list) {
+        if (list instanceof AJERange) {
+            AJERange range = (AJERange) list;
+            range.setup();
+        }
+        values.addAll(list.values);
+    }
+
+    public double[] values() {
+        double[] results = new double[size()];
+
+        for (int i = 0; i < size(); i++) {
+            results[i] = get(i).value();
+        }
+
+        return results;
+    }
+
+    public String asString() {
+        return Arrays.stream(values())
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining(", ", "[", "]"));
     }
 }

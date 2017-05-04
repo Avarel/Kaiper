@@ -48,7 +48,7 @@ public class Pool {
 //        nativePool.allocFunc(DefaultFunctions.AVERAGE.get());
 //        nativePool.allocFunc(DefaultFunctions.PRODUCT.get());
 
-        nativePool.allocFunc(DefaultFunctions.QUADRATIC_ROOT.get());
+//        nativePool.allocFunc(DefaultFunctions.QUADRATIC_ROOT.get());
     }
 
     private final OperatorMap operators;

@@ -1,7 +1,6 @@
 import xyz.hexav.aje.ExpressionBuilder;
-import xyz.hexav.aje.expressions.Expression;
+import xyz.hexav.aje.types.AJEValue;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class TestLoop {
@@ -27,7 +26,7 @@ public class TestLoop {
 
                 //Function exp = new Function(input);
 
-                Expression exp = new ExpressionBuilder(input)
+                AJEValue exp = new ExpressionBuilder(input)
                         .addVariable("tau")
                         .build()
                         .setVariable("tau", Math.PI * 2);
@@ -36,13 +35,13 @@ public class TestLoop {
 
                 long start = System.nanoTime();
 
-                double[] values = exp.evalList();
+                System.out.println("    Result | " + exp.asString());
                 //List<Number> results = exp.evalScript();
 
                 long end = System.nanoTime();
 
                 //System.out.println("    Result | " + results + "");
-                System.out.println("    Result | " + Arrays.toString(values));
+
                 System.out.println("   Elasped | " + (end - start));
                 System.out.println();
             } catch (RuntimeException e) {

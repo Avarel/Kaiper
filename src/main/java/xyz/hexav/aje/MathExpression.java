@@ -1,14 +1,14 @@
 package xyz.hexav.aje;
 
-import xyz.hexav.aje.expressions.Expression;
 import xyz.hexav.aje.expressions.ExpressionCompiler;
 import xyz.hexav.aje.pool.Pool;
+import xyz.hexav.aje.types.AJEValue;
 
 import java.util.List;
 
-public class MathExpression implements Expression {
+public class MathExpression implements AJEValue {
     private final String script;
-    private Expression expression;
+    private AJEValue expression;
 
     private final Pool pool;
 
@@ -39,26 +39,24 @@ public class MathExpression implements Expression {
         return this;
     }
 
-    public MathExpression setVariable(String name, double[] value) {
+    public MathExpression setVariable(String name, AJEValue value) {
         pool.getVar(name).assign(value);
         return this;
     }
 
-    public MathExpression setVariable(String name, Expression value) {
-        pool.getVar(name).assign(value);
-        return this;
-    }
-
-    public double eval() {
-        return evalList()[0];
-    }
-
-    /**
-     * Evaluate and return the result(s) of the function.
-     */
-    public double[] evalList() {
+    public double value() {
         compile();
-        return expression.evalList();
+        return expression.value();
+    }
+
+    @Override
+    public String asString() {
+        value();
+        return expression.asString();
+    }
+
+    public AJEValue getExpression() {
+        return expression;
     }
 
     public Pool getPool() {

@@ -1,6 +1,6 @@
 package xyz.hexav.aje.pool;
 
-import xyz.hexav.aje.expressions.Expression;
+import xyz.hexav.aje.types.AJEValue;
 
 public class Value extends Variable {
     public Value(String name) {
@@ -12,7 +12,7 @@ public class Value extends Variable {
     }
 
     @Override
-    public void assign(Expression exp) {
+    public void assign(AJEValue exp) {
         checkLock();
         super.assign(exp);
         lock();
@@ -20,13 +20,6 @@ public class Value extends Variable {
 
     @Override
     public void assign(double value) {
-        checkLock();
-        super.assign(value);
-        lock();
-    }
-
-    @Override
-    public void assign(double[] value) {
         checkLock();
         super.assign(value);
         lock();

@@ -10,6 +10,6 @@ public class GeneralTest extends TestCase {
                 .build()
                 .compile();
 
-        System.out.println(exp.eval());
+        System.out.println(exp.value());
     }
 }

@@ -30,8 +30,9 @@ public class NativeFunction implements Function {
         }
     }
 
-    public double[] evalList() {
-        return new double[]{evaluator.eval(inputs)};
+    @Override
+    public double value() {
+        return 0;
     }
 
     @Override

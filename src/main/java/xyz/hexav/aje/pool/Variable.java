@@ -1,31 +1,32 @@
 package xyz.hexav.aje.pool;
 
-import xyz.hexav.aje.expressions.Expression;
+import xyz.hexav.aje.types.AJENothing;
+import xyz.hexav.aje.types.AJEValue;
 
 public class Variable {
     protected final String name;
-    protected Expression exp;
-    protected double[] result = null;
+    protected AJEValue exp;
+    protected double result = Double.NaN;
 
     protected boolean lock = false;
 
     public Variable(String name) {
-        this(name, Expression.NOTHING);
+        this(name, AJENothing.VALUE);
     }
 
     public Variable(String name, double result) {
-        this(name, Expression.NOTHING);
-        this.result = new double[]{result};
+        this(name, AJENothing.VALUE);
+        this.result = result;
     }
 
-    public Variable(String name, Expression exp) {
+    public Variable(String name, AJEValue exp) {
         this.name = name;
         this.exp = exp;
     }
 
-    public double[] eval() {
-        if (result != null) return result;
-        return result = exp.evalList();
+    public double eval() {
+        if (!Double.isNaN(result)) return result;
+        return result = exp.value();
     }
 
     public String getName() {
@@ -35,21 +36,14 @@ public class Variable {
     public void assign(double value) {
         checkLock();
 
-        result = new double[]{value};
-        exp = Expression.NOTHING;
-    }
-
-    public void assign(double[] value) {
-        checkLock();
-
         result = value;
-        exp = Expression.NOTHING;
+        exp = AJENothing.VALUE;
     }
 
-    public void assign(Expression exp) {
+    public void assign(AJEValue exp) {
         checkLock();
 
-        result = null;
+        result = Double.NaN;
         this.exp = exp;
     }
 

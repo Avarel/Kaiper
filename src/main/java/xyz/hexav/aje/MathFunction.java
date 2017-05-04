@@ -42,20 +42,12 @@ public class MathFunction extends MathExpression implements Function {
     }
 
     @Override
-    public double eval() {
-        return evalList()[0];
-    }
-
-    /**
-     * Evaluate and return the result(s) of the function.
-     */
-    @Override
-    public double[] evalList() {
+    public double value() {
         for (int i = 0; i < inputs.length; i++) {
             getPool().getVar(getParameters().get(i)).assign(inputs[i]);
         }
 
-        return super.evalList();
+        return super.value();
     }
 
     @Override

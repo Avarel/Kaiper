@@ -33,7 +33,7 @@ public class Tokenizer {
      * @return If the next character (skip whitespaces if not strict) is the prompt.
      */
     public boolean consume(char prompt, boolean strict) {
-        if (!strict) skipWS();
+        if (!strict) skipWhitespace();
         if (current == prompt) {
             nextChar();
             return true;
@@ -45,21 +45,15 @@ public class Tokenizer {
      * Return true if the next characters in prompt.length() range is equal to prompt.
      */
     protected boolean consume(String prompt) {
-        // Use less expensive method of consuming a character.
+        // FASTPATH: Use less expensive method of consuming a character.
         if (prompt.length() == 1) return consume(prompt.charAt(0));
-
-        skipWS();
-
-        int start = pos;
-        int _pos = start + prompt.length();
-        if (_pos > target.length()) return false;
-
-        String text = target.substring(start, _pos);
+        skipWhitespace();
+        String text = target.substring(pos, Math.min(pos + prompt.length(), target.length()));
 
         if (text.equals(prompt)) {
-            pos = _pos - 1;
+            pos = pos + prompt.length() - 1;
             current = nextChar();
-            skipWS();
+            skipWhitespace();
             return true;
         }
 
@@ -70,13 +64,9 @@ public class Tokenizer {
         // Use less expensive method of consuming a character.
         if (prompt.length() == 1) return nextIs(prompt.charAt(0));
 
-        skipWS();
+        skipWhitespace();
 
-        int _pos = pos + prompt.length();
-        if (_pos > target.length()) return false;
-
-        String text = target.substring(pos, _pos);
-
+        String text = target.substring(pos, Math.min(pos + prompt.length(), target.length()));
         return text.equals(prompt);
     }
 
@@ -90,7 +80,7 @@ public class Tokenizer {
     /**
      * Skip whitespaces.
      */
-    public void skipWS() {
+    public void skipWhitespace() {
         while (current == ' ' || current == '\n') nextChar();
     }
 
@@ -98,7 +88,7 @@ public class Tokenizer {
      * consume(prompt) without consuming the character.
      */
     public boolean nextIs(char prompt) {
-        skipWS();
+        skipWhitespace();
         return current == prompt;
     }
 

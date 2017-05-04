@@ -1,6 +1,8 @@
 package xyz.hexav.aje.expressions;
 
+import xyz.hexav.aje.types.AJEValue;
+
 @FunctionalInterface
-public interface Evaluable {
-    double eval(double... args);
+public strictfp interface Evaluable {
+    double evalArgs(AJEValue... args);
 }

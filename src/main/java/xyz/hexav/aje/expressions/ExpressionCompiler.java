@@ -5,11 +5,11 @@ import xyz.hexav.aje.FunctionBuilder;
 import xyz.hexav.aje.defaults.DefaultOperators;
 import xyz.hexav.aje.operators.Operator;
 import xyz.hexav.aje.operators.OperatorMap;
-import xyz.hexav.aje.operators.Precedence;
 import xyz.hexav.aje.pool.Pool;
-
-import java.util.ArrayList;
-import java.util.List;
+import xyz.hexav.aje.types.AJEList;
+import xyz.hexav.aje.types.AJENothing;
+import xyz.hexav.aje.types.AJERange;
+import xyz.hexav.aje.types.AJEValue;
 
 /**
  * Compiles string expressions into compiled Expression instances.
@@ -102,9 +102,9 @@ public class ExpressionCompiler {
 //        return exps;
 //    }
 
-    public Expression compile() {
+    public AJEValue compile() {
         tokenizer.nextChar();
-        Expression e = compileExpression();
+        AJEValue e = compileExpression();
 
         while (tokenizer.consume(';') && tokenizer.pos() < tokenizer.target().length()) {
             e = e.andThen(compileExpression());
@@ -126,7 +126,7 @@ public class ExpressionCompiler {
 //        return exp;
 //    }
 
-    private Expression compileVariable() {
+    private AJEValue compileVariable() {
         if (isLiteral(tokenizer.currentChar())) {
             String name = nextLiteral();
 
@@ -145,7 +145,7 @@ public class ExpressionCompiler {
         throw makeError("Expected name for variable.");
     }
 
-    private Expression compileValue() {
+    private AJEValue compileValue() {
         if (isLiteral(tokenizer.currentChar())) {
             String name = nextLiteral();
 
@@ -186,7 +186,7 @@ public class ExpressionCompiler {
             if (!tokenizer.consume('=')) {
                 throw makeError("Expected '='.");
             }
-            tokenizer.skipWS();
+            tokenizer.skipWhitespace();
 
             int start = tokenizer.pos();
             while (!tokenizer.nextIs(';') && tokenizer.pos() < tokenizer.target().length()) {
@@ -203,11 +203,11 @@ public class ExpressionCompiler {
         throw makeError("Expected function name.");
     }
 
-    private Expression compileExpression() {
+    private AJEValue compileExpression() {
         return compileExpression(pool.getOperators().firstPrecedence());
     }
 
-    private Expression compileExpression(int level) {
+    private AJEValue compileExpression(int level) {
         if (level == -1) return compileMisc();
 
         OperatorMap operators = pool.getOperators();
@@ -216,18 +216,18 @@ public class ExpressionCompiler {
         for (Operator operator : operators.get(level)) {
             //System.out.println(operator);
             if (operator.args == -1 && tokenizer.consume(operator.symbol)) {
-                Expression exp = compileExpression(level);
+                AJEValue exp = compileExpression(level);
                 return operator.compile(exp);
             }
         }
 
-        Expression value = compileExpression(operators.after(level));
+        AJEValue value = compileExpression(operators.after(level));
 
         while (true) {
             boolean flag = false;
             for (Operator operator : operators.get(level)) {
                 if (operator.args == 2 && tokenizer.consume(operator.symbol)) {
-                    final Expression
+                    final AJEValue
                             a = value,
                             b = compileExpression(
                                     operator.next != -1 ?
@@ -248,8 +248,8 @@ public class ExpressionCompiler {
         return value;
     }
 
-    private Expression compileMisc() {
-        Expression value;
+    private AJEValue compileMisc() {
+        AJEValue value;
         if (tokenizer.consume('(')) {
             value = compileExpression();
             tokenizer.consume(')');
@@ -260,7 +260,7 @@ public class ExpressionCompiler {
             int _pos = tokenizer.pos();
             char _current = tokenizer.currentChar();
             try {
-                final Expression
+                final AJEValue
                         a = value,
                         b = compileMisc();
 
@@ -274,9 +274,9 @@ public class ExpressionCompiler {
         return value;
     }
 
-    private Expression compileLiteral() {
+    private AJEValue compileLiteral() {
         while (tokenizer.currentChar() == ';') tokenizer.nextChar();
-        if (tokenizer.pos() == tokenizer.target().length()) return Expression.NOTHING;
+        if (tokenizer.pos() == tokenizer.target().length()) return AJENothing.VALUE;
 
         int start = tokenizer.pos();
 
@@ -291,105 +291,108 @@ public class ExpressionCompiler {
 
         if (isNumeric(tokenizer.currentChar())) {
             // BINARY
-            if (tokenizer.consume("0b"))
-            {
+            if (tokenizer.consume("0b")) {
                 int _start = tokenizer.pos();
 
-                while (isNumeric(tokenizer.currentChar()))
-                {
-                    if (!(tokenizer.currentChar() == '0' || tokenizer.currentChar() == '1'))
-                    {
+                while (!isNumeric(tokenizer.currentChar())) {
+                    if (!(tokenizer.currentChar() == '0' || tokenizer.currentChar() == '1')) {
                         throw makeError("Binary literals can only have '1' and '0'.");
                     }
                     tokenizer.nextChar();
                 }
-                return Expression.ofValue(Integer.valueOf(tokenizer.target().substring(_start, tokenizer.pos()), 2).doubleValue());
+
+                double value = Integer.valueOf(tokenizer.target().substring(_start, tokenizer.pos()), 2).doubleValue();
+                return () -> value;
             }
             // HEXADECIMAL
-            else if (tokenizer.consume("0x"))
-            {
+            else if (tokenizer.consume("0x")) {
                 int _start = tokenizer.pos();
 
-                while (isLiteral(tokenizer.currentChar()))
-                {
+                while (isLiteral(tokenizer.currentChar())) {
                     if (!(tokenizer.currentChar() >= '0' && tokenizer.currentChar() <= '9'
-                            || tokenizer.currentChar() >= 'A' && tokenizer.currentChar() <= 'F'))
-                    {
+                            || tokenizer.currentChar() >= 'A' && tokenizer.currentChar() <= 'F')) {
                         throw makeError("Hexadecimal literals can only have '1-9' and 'A-F'.");
                     }
                     tokenizer.nextChar();
                 }
-                return Expression.ofValue(Integer.valueOf(tokenizer.target().substring(_start, tokenizer.pos()), 16).doubleValue());
+
+                double value = Integer.valueOf(tokenizer.target().substring(_start, tokenizer.pos()), 16).doubleValue();
+                return () -> value;
             }
 
-            while (isNumeric(tokenizer.currentChar())) tokenizer.nextChar();
+            while (!tokenizer.nextIs("..") && isNumeric(tokenizer.currentChar())) tokenizer.nextChar();
 
             double value = Double.parseDouble(tokenizer.target().substring(start, tokenizer.pos()));
-            return Expression.ofValue(value);
+            return () -> value;
         }
-        // INTERVALS
+        // LISTS
         else if (tokenizer.consume('[')) {
 
-            if (tokenizer.consume(']')) return Expression.NOTHING;
+            if (tokenizer.consume(']')) return AJEList.EMPTY;
 
-            List<Expression> items = new ArrayList<>();
+            AJEList list = new AJEList();
 
             do {
-                Expression a = compileExpression();
+                AJEValue a = compileExpression();
 
-                if (tokenizer.consume("...")) {
-                    Expression b = compileExpression();
-
-                    Expression c = items.size() == 1 ? items.get(items.size() - 1) : null;
-
-                    items.add(Expression.ofRange(a, b, c));
+                if (tokenizer.consume("..")) {
+                    AJEValue b = compileExpression();
+                    AJEValue c = list.size() == 1 ? list.get(list.size() - 1) : null;
+                    list.add(new AJERange(a, b, c));
+                } else if (tokenizer.consume("til")) {
+                    AJEValue b = compileExpression();
+                    AJEValue c = list.size() == 1 ? list.get(list.size() - 1) : null;
+                    list.add(new AJERange(a, () -> b.value() - 1, c));
                 } else {
-                    items.add(a);
+                    list.add(a);
                 }
             }
             while (tokenizer.consume(','));
 
             if (!tokenizer.consume(']')) throw makeError("Expected list literal to close.");
 
-            return Expression.ofList(items);
+            return list;
         }
 
         // FUNCTION AND CONSTANTS
         else if (Character.isLetter(tokenizer.currentChar())) {
             String name = nextLiteral();
 
+
+//
+//            // FUNCTIONS LOOKUP
+//            if (tokenizer.consume('(')) {
+//                List<Expression> args = new ArrayList<>();
+//                if (!tokenizer.consume(')')) do {
+//                    Expression exp;
+//
+//                    if (tokenizer.consume('*')) {
+//                        exp = compileExpression().spread();
+//                    } else exp = compileExpression();
+//                    args.add(exp);
+//                }
+//                while (!tokenizer.consume(')') && tokenizer.consume(','));
+//
+//                if (pool.hasFunc(name, args.size())) {
+//                    return new FunctionExpression(pool.getFunc(name, args.size()), args);
+//                } else {
+//                    StringBuilder sb = new StringBuilder();
+//                    sb.append('(');
+//                    for (int i = 0; i < args.size(); i++) {
+//                        sb.append("number");
+//                        if (i < args.size() - 1) {
+//                            sb.append(", ");
+//                        }
+//                    }
+//                    sb.append(')');
+//                    throw makeError("Can not resolve function `" + name + sb + "`.");
+//                }
+//            } else
             if (pool.hasVar(name)) {
                 return new VariableExpression(pool.getVar(name));
-            }
-
-            // FUNCTIONS LOOKUP
-            List<Expression> args = new ArrayList<>();
-
-            if (tokenizer.consume('(')) {
-                if (!tokenizer.consume(')')) do {
-                    Expression exp;
-
-                    if (tokenizer.consume('*')) {
-                        exp = compileExpression().spread();
-                    } else exp = compileExpression();
-                    args.add(exp);
-                }
-                while (!tokenizer.consume(')') && tokenizer.consume(','));
             } else {
-                do {
-                    Expression exp;
-
-                    if (tokenizer.consume('*')) {
-                        exp = compileExpression(Precedence.MULTIPLICATIVE).spread();
-                    } else exp = compileExpression(Precedence.MULTIPLICATIVE);
-                    args.add(exp);
-                }
-                while (tokenizer.consume(','));
+                throw makeError("Can not resolve reference `" + name + "`.");
             }
-
-            if (pool.hasFunc(name, args.size())) {
-                return new FunctionExpression(pool.getFunc(name, args.size()), args);
-            } else throw makeError("Can not resolve reference `" + name + "`.");
         } else throw makeError("Unexpected token: " + tokenizer.currentChar());
     }
 

@@ -6,57 +6,49 @@ package xyz.hexav.aje.types;
  * Every operation results in the same
  * instance, NOTHING.
  */
-public class AJENothing extends AJENumber {
-    public AJENothing VALUE = new AJENothing();
+public class AJENothing implements AJEValue {
+    public static AJENothing VALUE = new AJENothing();
 
     private AJENothing() {}
 
     @Override
-    public double eval() {
+    public double value() {
         return 0;
     }
 
-    // TODO remove this
-    @Override
-    public double[] evalList() {
-        return new double[0];
-    }
-
-    // TODO convert Expressions into single values.
-
     public AJENothing add(AJENothing number) {
-        return this;
+        return VALUE;
     }
 
     public AJENothing minus(AJENothing number) {
-        return this;
+        return VALUE;
     }
 
     public AJENothing times(AJENothing number) {
-        return this;
+        return VALUE;
     }
 
     public AJENothing divide(AJENothing number) {
-        return this;
+        return VALUE;
     }
 
     public AJENothing rem(AJENothing number) {
-        return this;
+        return VALUE;
     }
 
     public AJENothing mod(AJENothing number) {
-        return this;
+        return VALUE;
     }
 
     public AJENothing isEqualTo(Object obj) {
-        return this;
+        return VALUE;
     }
 
     public AJENothing greaterThan(Object obj) {
-        return this;
+        return VALUE;
     }
 
     public AJENothing lessThan(Object obj) {
-        return this;
+        return VALUE;
     }
 }
