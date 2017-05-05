@@ -25,7 +25,7 @@ public class Range extends Slice {
                 add(new NumericValue(i));
             }
         } else {
-            for (int i = init + 1; i >= end; i++) {
+            for (int i = init; i >= end; i--) {
                 add(new NumericValue(i));
             }
         }

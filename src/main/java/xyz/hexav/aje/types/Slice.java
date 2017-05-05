@@ -89,7 +89,7 @@ public class Slice implements Expression, Iterable<Expression> {
         return expressions.size();
     }
 
-    public Expression subslice(Slice indices) {
+    public Expression subslice(Slice indices) { //FIXME fix for lazy ranges (need to expand() when getting the first one?)
         Slice slice = new Slice();
         for (Expression exp : indices) {
             slice.add(get(exp));
