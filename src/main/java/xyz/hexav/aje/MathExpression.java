@@ -1,6 +1,5 @@
 package xyz.hexav.aje;
 
-import xyz.hexav.aje.expressions.ExpressionCompiler;
 import xyz.hexav.aje.pool.Pool;
 import xyz.hexav.aje.types.Expression;
 
@@ -31,6 +30,12 @@ public class MathExpression implements Expression {
         if (expression == null) {
             expression = new ExpressionCompiler(pool, script).compile();
         }
+        return this;
+    }
+
+    @Deprecated()
+    public MathExpression forceCompile() {
+        expression = new ExpressionCompiler(pool, script).compile();
         return this;
     }
 

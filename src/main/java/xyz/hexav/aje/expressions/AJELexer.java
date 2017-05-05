@@ -4,12 +4,12 @@ package xyz.hexav.aje.expressions;
  * Provides useful methods to tokenize and to iterate
  * through a String.
  */
-public class Tokenizer {
+public class AJELexer {
     private int pos = -1;
     private char current;
     private final String target;
 
-    public Tokenizer(String target) {
+    public AJELexer(String target) {
         this.target = target;
     }
 
@@ -44,7 +44,7 @@ public class Tokenizer {
     /**
      * Return true if the next characters in prompt.length() range is equal to prompt.
      */
-    protected boolean consume(String prompt) {
+    public boolean consume(String prompt) {
         // FASTPATH: Use less expensive method of consuming a character.
         if (prompt.length() == 1) return consume(prompt.charAt(0));
         skipWhitespace();
@@ -60,7 +60,7 @@ public class Tokenizer {
         return false;
     }
 
-    protected boolean nextIs(String prompt) {
+    public boolean nextIs(String prompt) {
         // Use less expensive method of consuming a character.
         if (prompt.length() == 1) return nextIs(prompt.charAt(0));
 
@@ -73,7 +73,7 @@ public class Tokenizer {
     /**
      * Resets the position of the compiling unit.
      */
-    protected void resetPosition() {
+    public void resetPosition() {
         pos = -1;
     }
 
@@ -112,7 +112,7 @@ public class Tokenizer {
         this.current = current;
     }
 
-    protected String currentInfo() {
+    public String currentInfo() {
         return "['" + target + "':" + pos + "]";
     }
 }

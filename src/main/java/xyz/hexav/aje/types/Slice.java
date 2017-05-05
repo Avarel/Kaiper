@@ -2,44 +2,35 @@ package xyz.hexav.aje.types;
 
 import xyz.hexav.aje.defaults.DefaultOperators;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class Slice implements Expression {
+public class Slice implements Expression, Iterable<Expression> {
     private static final double[] EMPTY_DOUBLE_ARRAY = new double[0];
     public static final Slice EMPTY = new Slice(EMPTY_DOUBLE_ARRAY);
 
-    protected final List<Expression> values;
+    protected final List<Expression> expressions;
 
     public Slice() {
-        this.values = new ArrayList<>();
+        this.expressions = new ArrayList<>();
     }
 
-    public Slice(Expression... values) {
-        this(Arrays.asList(values));
+    public Slice(Expression... expressions) {
+        this(Arrays.asList(expressions));
     }
 
-    public Slice(double... values) {
+    public Slice(double... expressions) {
         this();
-        for (double value : values) {
-            this.values.add(() -> value);
+        for (double value : expressions) {
+            this.expressions.add(() -> value);
         }
     }
 
-    public Slice(List<Expression> values) {
+    public Slice(List<Expression> expressions) {
         this();
-        this.values.addAll(values);
-    }
-
-    public Expression get(int i) {
-        return values.get(i);
-    }
-
-    public int size() {
-        return values.size();
+        this.expressions.addAll(expressions);
     }
 
     @Override
@@ -50,6 +41,8 @@ public class Slice implements Expression {
 
 
     public double[] values() {
+        expand();
+
         double[] results = new double[size()];
 
         for (int i = 0; i < size(); i++) {
@@ -57,6 +50,19 @@ public class Slice implements Expression {
         }
 
         return results;
+    }
+
+    // Basically when ranges/lists are put inside lists, they are lazily compiled as expressions.
+    // The internal lists are then expanded and then added to the final list.
+    protected void expand() {
+        int i = 0;
+        while (i < size()) {
+            if (get(i) instanceof Slice) {
+                Slice slice = (Slice) expressions.remove(i);
+                slice.expand();
+                addAll(i, slice);
+            } else i++;
+        }
     }
 
     @Override
@@ -70,21 +76,51 @@ public class Slice implements Expression {
                 .collect(Collectors.joining(", ", "[", "]"));
     }
 
-
-
-
-
-    public void addAll(Expression value) {
-        values.add(value);
+    public Expression get(int i) {
+        return expressions.get(i);
     }
 
-    public void addAll(Slice list) {
-        if (list instanceof Range) {
-            Range range = (Range) list;
-            range.setup();
+    public Expression get(Expression exp) {
+        return () -> (expressions.get((int) exp.value())).value();
+    }
+
+
+    public int size() {
+        return expressions.size();
+    }
+
+    public Expression subslice(Slice indices) {
+        Slice slice = new Slice();
+        for (Expression exp : indices) {
+            slice.add(get(exp));
         }
-        values.addAll(list.values);
+        return slice;
     }
+
+    public void add(Expression value) {
+        expressions.add(value);
+    }
+
+    public void addAll(int i, Slice list) {
+        expressions.addAll(i, list.expressions);
+    }
+
+    @Override
+    public Iterator<Expression> iterator() {
+        return expressions.iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super Expression> action) {
+        expressions.forEach(action);
+    }
+
+    @Override
+    public Spliterator<Expression> spliterator() {
+        return expressions.spliterator();
+    }
+
+
 
     @Override
     public boolean equals(Object obj) {
@@ -93,8 +129,8 @@ public class Slice implements Expression {
 
     @Override
     public Expression compile(BinaryOperator<Expression> operation, Expression number) {
-        if (operation == DefaultOperators.ITEM_AT_LIST.get()) {
-            return DefaultOperators.ITEM_AT_LIST.get().apply(this, number);
+        if (operation == DefaultOperators.LIST_INDEX) {
+            return DefaultOperators.LIST_INDEX.apply(this, number);
         }
         return Slice.listOperation(this,
                 operation,

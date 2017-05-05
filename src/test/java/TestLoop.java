@@ -1,5 +1,5 @@
 import xyz.hexav.aje.ExpressionBuilder;
-import xyz.hexav.aje.types.Expression;
+import xyz.hexav.aje.MathExpression;
 
 import java.util.Scanner;
 
@@ -26,7 +26,7 @@ public class TestLoop {
 
                 //Function exp = new Function(input);
 
-                Expression exp = new ExpressionBuilder(input)
+                MathExpression exp = new ExpressionBuilder(input)
                         .addVariable("tau")
                         .build()
                         .setVariable("tau", Math.PI * 2);
@@ -34,15 +34,12 @@ public class TestLoop {
                 //System.out.println(function);
 
                 long start = System.nanoTime();
-
-                System.out.println("    Result | " + exp.asString());
-                //List<Number> results = exp.evalScript();
-
+                exp.compile();
                 long end = System.nanoTime();
 
-                //System.out.println("    Result | " + results + "");
+                System.out.println("   Compile | " + (end - start));
+                System.out.println("    Result | " + exp.asString());
 
-                System.out.println("   Elasped | " + (end - start));
                 System.out.println();
             } catch (RuntimeException e) {
                 System.out.println("    Result | Caught an error: " + e.getMessage() + "\n");

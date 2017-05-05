@@ -1,26 +1,24 @@
-package xyz.hexav.aje.expressions;
+package xyz.hexav.aje;
 
-import xyz.hexav.aje.AJEException;
-import xyz.hexav.aje.FunctionBuilder;
+import xyz.hexav.aje.expressions.AJELexer;
+import xyz.hexav.aje.expressions.VariableAssignment;
+import xyz.hexav.aje.expressions.VariableExpression;
 import xyz.hexav.aje.operators.Operator;
 import xyz.hexav.aje.operators.OperatorMap;
 import xyz.hexav.aje.operators.Precedence;
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.Slice;
-import xyz.hexav.aje.types.Nothing;
-import xyz.hexav.aje.types.Range;
-import xyz.hexav.aje.types.Expression;
+import xyz.hexav.aje.types.*;
 
 /**
  * Compiles string expressions into compiled Expression instances.
  */
 public class ExpressionCompiler {
     private final Pool pool;
-    private final Tokenizer tokenizer;
+    private final AJELexer lexer;
 
     public ExpressionCompiler(Pool pool, String s) {
         this.pool = pool;
-        this.tokenizer = new Tokenizer(s);
+        this.lexer = new AJELexer(s);
     }
 
     private static boolean isLiteral(char c) {
@@ -35,14 +33,14 @@ public class ExpressionCompiler {
      * Return the next String name.
      */
     private String nextLiteral() {
-        int start = tokenizer.pos();
+        int start = lexer.pos();
 
-        if (!Character.isLetter(tokenizer.currentChar())) {
+        if (!Character.isLetter(lexer.currentChar())) {
             throw makeError("Nominal literals must start with a letter.");
         }
 
-        while (isLiteral(tokenizer.currentChar())) tokenizer.nextChar();
-        return tokenizer.target().substring(start, tokenizer.pos());
+        while (isLiteral(lexer.currentChar())) lexer.nextChar();
+        return lexer.target().substring(start, lexer.pos());
     }
 //
 //    public List<Expression> compileScript(String script) {
@@ -103,15 +101,15 @@ public class ExpressionCompiler {
 //    }
 
     public Expression compile() {
-        tokenizer.nextChar();
+        lexer.nextChar();
         Expression e = compileExpression();
 
-        while (tokenizer.consume(';') && tokenizer.pos() < tokenizer.target().length()) {
+        while (lexer.consume(';') && lexer.pos() < lexer.target().length()) {
             e = e.andThen(compileExpression());
         }
 
 
-        if (tokenizer.pos() < tokenizer.target().length()) throw makeError("Unhandled character `" + tokenizer.currentChar() + "`.");
+        if (lexer.pos() < lexer.target().length()) throw makeError("Unhandled character `" + lexer.currentChar() + "`.");
 
         return e;
     }
@@ -128,14 +126,14 @@ public class ExpressionCompiler {
 //    }
 
     private Expression compileVariable() {
-        if (isLiteral(tokenizer.currentChar())) {
+        if (isLiteral(lexer.currentChar())) {
             String name = nextLiteral();
 
             if (pool.hasVar(name)) {
                 throw makeError("Variable '" + name + "' is already defined.");
             }
 
-            if (!tokenizer.consume('=')) {
+            if (!lexer.consume('=')) {
                 return new VariableAssignment(pool.allocVar(name));
             } else {
                 return new VariableAssignment(pool.allocVar(name), compileExpression());
@@ -147,14 +145,14 @@ public class ExpressionCompiler {
     }
 
     private Expression compileValue() {
-        if (isLiteral(tokenizer.currentChar())) {
+        if (isLiteral(lexer.currentChar())) {
             String name = nextLiteral();
 
             if (pool.hasVar(name)) {
                 throw makeError("Value '" + name + "' is already defined.");
             }
 
-            if (!tokenizer.consume('=')) {
+            if (!lexer.consume('=')) {
                 return new VariableAssignment(pool.allocVal(name));
             } else {
                 return new VariableAssignment(pool.allocVal(name), compileExpression());
@@ -164,36 +162,36 @@ public class ExpressionCompiler {
     }
 
     private void consumeFunction() {
-        if (isLiteral(tokenizer.currentChar())) {
+        if (isLiteral(lexer.currentChar())) {
             String name = nextLiteral();
             int params = 0;
 
             FunctionBuilder fb = new FunctionBuilder(name);
 
-            if (!tokenizer.consume('(')) {
+            if (!lexer.consume('(')) {
                 throw makeError("Expected '('.");
             }
 
-            if (!tokenizer.consume(')')) do {
+            if (!lexer.consume(')')) do {
                 fb.addParameter(nextLiteral());
                 params++;
             }
-            while (!tokenizer.consume(')') && tokenizer.consume(','));
+            while (!lexer.consume(')') && lexer.consume(','));
 
             if (pool.hasFunc(name, params)) {
                 throw makeError("Function '" + name + "' is already defined.");
             }
 
-            if (!tokenizer.consume('=')) {
+            if (!lexer.consume('=')) {
                 throw makeError("Expected '='.");
             }
-            tokenizer.skipWhitespace();
+            lexer.skipWhitespace();
 
-            int start = tokenizer.pos();
-            while (!tokenizer.nextIs(';') && tokenizer.pos() < tokenizer.target().length()) {
-                tokenizer.nextChar();
+            int start = lexer.pos();
+            while (!lexer.nextIs(';') && lexer.pos() < lexer.target().length()) {
+                lexer.nextChar();
             }
-            String script = tokenizer.target().substring(start, tokenizer.pos());
+            String script = lexer.target().substring(start, lexer.pos());
 
             fb.addLine(script);
 
@@ -215,7 +213,7 @@ public class ExpressionCompiler {
 
         // Unary operations
         for (Operator operator : operators.get(level)) {
-            if (operator.getArgs() == -1 && tokenizer.consume(operator.getSymbol())) {
+            if (operator.getArgs() == -1 && lexer.consume(operator.getSymbol())) {
                 Expression exp = compileExpression(level);
                 return exp.compile(operator);
             }
@@ -226,13 +224,13 @@ public class ExpressionCompiler {
         while (true) {
             boolean flag = false;
             for (Operator operator : operators.get(level)) {
-                if (operator.getArgs() == 2 && tokenizer.consume(operator.getSymbol())) {
+                if (operator.getArgs() == 2 && lexer.consume(operator.getSymbol())) {
                     final Expression a = value;
                     final Expression b = compileExpression(operator.isLeftAssoc() ? Precedence.UNARY : operators.after(level));
 
                     value = a.compile(operator, b);
                     flag = true;
-                } else if (operator.getArgs() == 1 && tokenizer.consume(operator.getSymbol())) {
+                } else if (operator.getArgs() == 1 && lexer.consume(operator.getSymbol())) {
                     value = value.compile(operator);
                     flag = true;
                 }
@@ -245,9 +243,9 @@ public class ExpressionCompiler {
 
     private Expression compileMisc() {
         Expression value;
-        if (tokenizer.consume('(')) {
+        if (lexer.consume('(')) {
             value = compileExpression();
-            tokenizer.consume(')');
+            lexer.consume(')');
         } else value = compileLiteral();
 
 //        // Implicit multiplications.
@@ -270,87 +268,83 @@ public class ExpressionCompiler {
     }
 
     private Expression compileLiteral() {
-        while (tokenizer.currentChar() == ';') tokenizer.nextChar();
-        if (tokenizer.pos() == tokenizer.target().length()) return Nothing.VALUE;
+        while (lexer.currentChar() == ';') lexer.nextChar();
+        if (lexer.pos() == lexer.target().length()) return Nothing.VALUE;
 
-        int start = tokenizer.pos();
+        int start = lexer.pos();
 
         // DEFINE VALUES
         // - NUMERICAL PARSING
 
-        if (tokenizer.consume("var")) {
+        if (lexer.consume("var")) {
             return compileVariable();
-        } else if (tokenizer.consume("val")) {
+        } else if (lexer.consume("val")) {
             return compileValue();
         }
 
-        if (isNumeric(tokenizer.currentChar())) {
+        if (isNumeric(lexer.currentChar())) {
             // BINARY
-            if (tokenizer.consume("0b")) {
-                int _start = tokenizer.pos();
+            if (lexer.consume("0b")) {
+                int _start = lexer.pos();
 
-                while (!isNumeric(tokenizer.currentChar())) {
-                    if (!(tokenizer.currentChar() == '0' || tokenizer.currentChar() == '1')) {
+                while (!isNumeric(lexer.currentChar())) {
+                    if (!(lexer.currentChar() == '0' || lexer.currentChar() == '1')) {
                         throw makeError("Binary literals can only have '1' and '0'.");
                     }
-                    tokenizer.nextChar();
+                    lexer.nextChar();
                 }
 
-                double value = Integer.valueOf(tokenizer.target().substring(_start, tokenizer.pos()), 2).doubleValue();
-                return () -> value;
+                double value = Integer.valueOf(lexer.target().substring(_start, lexer.pos()), 2).doubleValue();
+                return new NumericValue(value);
             }
             // HEXADECIMAL
-            else if (tokenizer.consume("0x")) {
-                int _start = tokenizer.pos();
+            else if (lexer.consume("0x")) {
+                int _start = lexer.pos();
 
-                while (isLiteral(tokenizer.currentChar())) {
-                    if (!(tokenizer.currentChar() >= '0' && tokenizer.currentChar() <= '9'
-                            || tokenizer.currentChar() >= 'A' && tokenizer.currentChar() <= 'F')) {
+                while (isLiteral(lexer.currentChar())) {
+                    if (!(lexer.currentChar() >= '0' && lexer.currentChar() <= '9'
+                            || lexer.currentChar() >= 'A' && lexer.currentChar() <= 'F')) {
                         throw makeError("Hexadecimal literals can only have '1-9' and 'A-F'.");
                     }
-                    tokenizer.nextChar();
+                    lexer.nextChar();
                 }
 
-                double value = Integer.valueOf(tokenizer.target().substring(_start, tokenizer.pos()), 16).doubleValue();
-                return () -> value;
+                double value = Integer.valueOf(lexer.target().substring(_start, lexer.pos()), 16).doubleValue();
+                return new NumericValue(value);
             }
 
-            while (!tokenizer.nextIs("..") && isNumeric(tokenizer.currentChar())) tokenizer.nextChar();
+            while (!lexer.nextIs("..") && isNumeric(lexer.currentChar())) lexer.nextChar();
 
-            double value = Double.parseDouble(tokenizer.target().substring(start, tokenizer.pos()));
-            return () -> value;
+            double value = Double.parseDouble(lexer.target().substring(start, lexer.pos()));
+            return new NumericValue(value);
         }
         // LISTS
-        else if (tokenizer.consume('[')) {
+        else if (lexer.consume('[')) {
 
-            if (tokenizer.consume(']')) return Slice.EMPTY;
+            if (lexer.consume(']')) return Slice.EMPTY;
 
             Slice list = new Slice();
 
             do {
                 Expression a = compileExpression();
 
-                if (tokenizer.consume("..")) {
+                if (lexer.consume("..")) {
                     Expression b = compileExpression();
                     Expression c = list.size() == 1 ? list.get(list.size() - 1) : null;
-                    list.addAll(new Range(a, b, c));
-                } else if (tokenizer.consume("til")) {
-                    Expression b = compileExpression();
-                    Expression c = list.size() == 1 ? list.get(list.size() - 1) : null;
-                    list.addAll(new Range(a, () -> b.value() - 1, c));
+                    list.add(new Range(a, b, c));
                 } else {
-                    list.addAll(a);
+                    list.add(a);
                 }
             }
-            while (tokenizer.consume(','));
+            while (lexer.consume(','));
 
-            if (!tokenizer.consume(']')) throw makeError("Expected list literal to close.");
+            if (!lexer.consume(']')) throw makeError("Expected list literal to close.");
 
             return list;
         }
 
         // FUNCTION AND CONSTANTS
-        else if (Character.isLetter(tokenizer.currentChar())) {
+        else if (Character.isLetter(lexer.currentChar())) {
             String name = nextLiteral();
 
 
@@ -388,10 +382,10 @@ public class ExpressionCompiler {
             } else {
                 throw makeError("Can not resolve reference `" + name + "`.");
             }
-        } else throw makeError("Unexpected token: " + tokenizer.currentChar());
+        } else throw makeError("Unexpected token: " + lexer.currentChar());
     }
 
     private AJEException makeError(String message) {
-        return new AJEException(message + " " + tokenizer.currentInfo());
+        return new AJEException(message + " " + lexer.currentInfo());
     }
 }

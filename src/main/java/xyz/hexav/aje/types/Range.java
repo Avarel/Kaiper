@@ -3,46 +3,46 @@ package xyz.hexav.aje.types;
 public class Range extends Slice {
     private final Expression start;
     private final Expression end;
-    private final Expression c;
+    private boolean expanded;
 
     public Range(Expression start, Expression end, Expression c) {
         super();
         this.start = start;
         this.end = end;
-        this.c = c;
     }
 
-    public void setup() {
-        if (!super.values.isEmpty()) return;
+    @Override
+    protected void expand() {
+        if (expanded) return;
 
-        final int
-                init = (int) start.value(),
-                end = (int) this.end.value(),
-                before = c != null && !(c instanceof Range) ? (int) c.value() : init - 1,
-                delta = Math.abs(init - before);
+        System.out.println("range setting up");
+
+        int init = (int) start.value();
+        int end = (int) this.end.value();
 
         if (init < end) {
-            for (int i = init; i <= end; i += delta) {
-                int finalI = i;
-                super.values.add(() -> finalI);
+            for (int i = init; i <= end; i++) {
+                add(new NumericValue(i));
             }
         } else {
-            for (int i = init + 1; i >= end; i -= delta) {
-                int finalI = i;
-                super.values.add(() -> finalI);
+            for (int i = init + 1; i >= end; i++) {
+                add(new NumericValue(i));
             }
         }
+
+        super.expand();
+        expanded = true;
     }
 
     @Override
     public double value() {
-        setup();
+        expand();
         return super.value();
     }
 
     @Override
     public double[] values() {
-        setup();
+        expand();
         return super.values();
     }
 }
