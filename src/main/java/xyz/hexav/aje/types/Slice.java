@@ -2,43 +2,41 @@ package xyz.hexav.aje.types;
 
 import xyz.hexav.aje.defaults.DefaultOperators;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class Slice implements Expression, Iterable<Expression> {
+public class Slice extends ArrayList<Expression> implements Expression, Iterable<Expression> {
     private static final double[] EMPTY_DOUBLE_ARRAY = new double[0];
     public static final Slice EMPTY = new Slice(EMPTY_DOUBLE_ARRAY);
 
-    protected final List<Expression> expressions;
+    //protected final List<Expression> expressions;
 
     public Slice() {
-        this.expressions = new ArrayList<>();
+        super();
     }
 
     public Slice(Expression... expressions) {
-        this(Arrays.asList(expressions));
+        super(Arrays.asList(expressions));
     }
 
     public Slice(double... expressions) {
         this();
         for (double value : expressions) {
-            this.expressions.add(() -> value);
+            add(() -> value);
         }
     }
 
     public Slice(List<Expression> expressions) {
-        this();
-        this.expressions.addAll(expressions);
+        super(expressions);
     }
 
     @Override
     public double value() {
         return values()[0];
     }
-
-
 
     public double[] values() {
         expand();
@@ -58,7 +56,7 @@ public class Slice implements Expression, Iterable<Expression> {
         int i = 0;
         while (i < size()) {
             if (get(i) instanceof Slice) {
-                Slice slice = (Slice) expressions.remove(i);
+                Slice slice = (Slice) remove(i);
                 slice.expand();
                 addAll(i, slice);
             } else i++;
@@ -74,57 +72,6 @@ public class Slice implements Expression, Iterable<Expression> {
         return Arrays.stream(values())
                 .mapToObj(String::valueOf)
                 .collect(Collectors.joining(", ", "[", "]"));
-    }
-
-    public Expression get(int i) {
-        return expressions.get(i);
-    }
-
-    public Expression get(Expression exp) {
-        return () -> (expressions.get((int) exp.value())).value();
-    }
-
-
-    public int size() {
-        return expressions.size();
-    }
-
-    public Expression subslice(Slice indices) { //FIXME fix for lazy ranges (need to expand() when getting the first one?)
-        Slice slice = new Slice();
-        for (Expression exp : indices) {
-            slice.add(get(exp));
-        }
-        return slice;
-    }
-
-    public void add(Expression value) {
-        expressions.add(value);
-    }
-
-    public void addAll(int i, Slice list) {
-        expressions.addAll(i, list.expressions);
-    }
-
-    @Override
-    public Iterator<Expression> iterator() {
-        return expressions.iterator();
-    }
-
-    @Override
-    public void forEach(Consumer<? super Expression> action) {
-        expressions.forEach(action);
-    }
-
-    @Override
-    public Spliterator<Expression> spliterator() {
-        return expressions.spliterator();
-    }
-
-
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
     }
 
     @Override
@@ -156,5 +103,22 @@ public class Slice implements Expression, Iterable<Expression> {
         }
 
         return new Slice(evaluators);
+    }
+
+
+
+    /// LIST IMPLEMENTATIONS
+
+    public Expression get(Expression exp) {
+        return () -> (get((int) exp.value())).value();
+    }
+
+
+    public Slice subList(Slice indices) { //FIXME fix for lazy ranges (need to expand() when getting the first one?)
+        Slice slice = new Slice();
+        for (Expression exp : indices) {
+            slice.add(get(exp));
+        }
+        return slice;
     }
 }

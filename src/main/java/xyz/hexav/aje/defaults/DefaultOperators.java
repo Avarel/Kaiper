@@ -188,7 +188,7 @@ public enum DefaultOperators implements Operator {
                 Slice list = (Slice) a;
                 if (b instanceof Slice) {
                     Slice indices = (Slice) b;
-                    return list.subslice(indices);
+                    return list.subList(indices);
                 }
                 return () -> { //FIXME ranges
                     return (list.get((int) b.value())).value();
