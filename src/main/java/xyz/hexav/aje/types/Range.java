@@ -3,7 +3,6 @@ package xyz.hexav.aje.types;
 public class Range extends Slice {
     private final Expression start;
     private final Expression end;
-    private boolean expanded;
 
     public Range(Expression start, Expression end, Expression c) {
         super();
@@ -12,37 +11,36 @@ public class Range extends Slice {
     }
 
     @Override
-    protected void expand() {
-        if (expanded) return;
+    public Expression get(int i) {
+        return () -> {
+            int start = (int) this.start.value();
+            int end = (int) this.end.value();
 
-        System.out.println("range setting up");
-
-        int init = (int) start.value();
-        int end = (int) this.end.value();
-
-        if (init < end) {
-            for (int i = init; i <= end; i++) {
-                add(new NumericValue(i));
+            if (start > i || i > end) {
+                throw new IndexOutOfBoundsException();
             }
-        } else {
-            for (int i = init; i >= end; i--) {
-                add(new NumericValue(i));
-            }
-        }
 
-        super.expand();
-        expanded = true;
+            return i + start;
+        };
     }
 
     @Override
-    public double value() {
-        expand();
-        return super.value();
+    public boolean add(Expression expression) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public double[] values() {
-        expand();
-        return super.values();
+    public void add(int i, Expression expression) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Expression remove(int i) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        throw new UnsupportedOperationException();
     }
 }

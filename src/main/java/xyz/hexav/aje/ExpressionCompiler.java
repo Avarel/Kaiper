@@ -295,7 +295,7 @@ public class ExpressionCompiler {
                 }
 
                 double value = Integer.valueOf(lexer.target().substring(_start, lexer.pos()), 2).doubleValue();
-                return new NumericValue(value);
+                return NumericValue.of(value);
             }
             // HEXADECIMAL
             else if (lexer.consume("0x")) {
@@ -310,13 +310,13 @@ public class ExpressionCompiler {
                 }
 
                 double value = Integer.valueOf(lexer.target().substring(_start, lexer.pos()), 16).doubleValue();
-                return new NumericValue(value);
+                return NumericValue.of(value);
             }
 
             while (!lexer.nextIs("..") && isNumeric(lexer.currentChar())) lexer.nextChar();
 
             double value = Double.parseDouble(lexer.target().substring(start, lexer.pos()));
-            return new NumericValue(value);
+            return NumericValue.of(value);
         }
         // LISTS
         else if (lexer.consume('[')) {

@@ -12,7 +12,7 @@ public class Slice extends ArrayList<Expression> implements Expression, Iterable
     private static final double[] EMPTY_DOUBLE_ARRAY = new double[0];
     public static final Slice EMPTY = new Slice(EMPTY_DOUBLE_ARRAY);
 
-    //protected final List<Expression> expressions;
+    private int[] mapping;
 
     public Slice() {
         super();
@@ -39,8 +39,6 @@ public class Slice extends ArrayList<Expression> implements Expression, Iterable
     }
 
     public double[] values() {
-        expand();
-
         double[] results = new double[size()];
 
         for (int i = 0; i < size(); i++) {
@@ -48,19 +46,6 @@ public class Slice extends ArrayList<Expression> implements Expression, Iterable
         }
 
         return results;
-    }
-
-    // Basically when ranges/lists are put inside lists, they are lazily compiled as expressions.
-    // The internal lists are then expanded and then added to the final list.
-    protected void expand() {
-        int i = 0;
-        while (i < size()) {
-            if (get(i) instanceof Slice) {
-                Slice slice = (Slice) remove(i);
-                slice.expand();
-                addAll(i, slice);
-            } else i++;
-        }
     }
 
     @Override
@@ -105,7 +90,73 @@ public class Slice extends ArrayList<Expression> implements Expression, Iterable
         return new Slice(evaluators);
     }
 
+    private int[] calculateIndices() {
+        if (mapping != null) return mapping;
 
+        mapping = new int[size()];
+
+        int k = 0;
+        for (int i = 0; i < super.size(); i++) {
+            Expression e = super.get(i);
+            if (e instanceof Slice) {
+                Slice slice = ((Slice) e);
+                for (int j = 0; j < slice.size(); j++) {
+                    mapping[k] = i;
+                    k++;
+                }
+            } else {
+                mapping[k] = i;
+                k++;
+            }
+        }
+
+        System.out.println(Arrays.toString(mapping));
+
+        return mapping;
+    }
+
+    @Override
+    public int size() {
+        int size = 0;
+        for (Expression e : this) {
+            if (e instanceof Slice) {
+                size += ((Slice) e).size();
+            } else size++;
+        }
+        return size;
+    }
+
+    @Override
+    public boolean add(Expression expression) {
+        mapping = null;
+        return super.add(expression);
+    }
+
+    @Override
+    public void add(int i, Expression expression) {
+        mapping = null;
+        super.add(i, expression);
+    }
+
+    @Override
+    public Expression remove(int i) {
+        mapping = null;
+        return super.remove(i);
+    }
+
+    @Override
+    public Expression get(int i) {
+        calculateIndices();
+
+        Expression e = super.get(mapping[i]);
+
+        if (e instanceof Slice) {
+            Slice slice = ((Slice) e);
+            return slice.get(i - mapping[i]);
+        }
+
+        return e;
+    }
 
     /// LIST IMPLEMENTATIONS
 
