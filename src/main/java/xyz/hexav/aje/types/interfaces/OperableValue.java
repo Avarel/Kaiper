@@ -3,14 +3,15 @@ package xyz.hexav.aje.types.interfaces;
 import xyz.hexav.aje.AJEException;
 import xyz.hexav.aje.types.Truth;
 
+/**
+ * An interface containing all natively implemented operations.
+ * @param <T>
+ */
 public interface OperableValue<T extends OperableValue> extends Value {
     static void assertIs(Object a) {
         if(!(a instanceof OperableValue)) {
             throw new AJEException("This operator requires the value to be operable!");
         }
-    }
-    static <T extends OperableValue> OperableValue<T> wrap(T a) {
-        return (OperableValue<T>) a;
     }
 
     @Override
@@ -43,10 +44,32 @@ public interface OperableValue<T extends OperableValue> extends Value {
         throw new UnsupportedOperationException();
     }
 
+    default T root(T other) {
+        throw new UnsupportedOperationException();
+    }
+
     default T negative() {
         throw new UnsupportedOperationException();
     }
 
     // Boolean logic
-    Truth equals(T other);
+    default Truth equals(T other) {
+        throw new UnsupportedOperationException();
+    }
+
+    default Truth greaterThan(T other) {
+        throw new UnsupportedOperationException();
+    }
+
+    default Truth lessThan(T other) {
+        throw new UnsupportedOperationException();
+    }
+
+    default Truth greaterThanOrEqual(T other) {
+        throw new UnsupportedOperationException();
+    }
+
+    default Truth lessThanOrEqual(T other) {
+        throw new UnsupportedOperationException();
+    }
 }

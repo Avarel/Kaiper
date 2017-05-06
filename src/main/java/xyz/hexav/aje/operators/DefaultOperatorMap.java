@@ -10,32 +10,31 @@ public class DefaultOperatorMap extends OperatorMap {
         // TODO inline operators
 //        register(Precedence.ASSIGNMENT, DefaultOperators.VAR_ASSIGNMENT);
 
-        register(UnaryOperators.UNARY_PLUS);
-        register(UnaryOperators.UNARY_MINUS);
-        register(UnaryOperators.LOGICAL_NOT);
+        registerPrefix(Precedence.UNARY, UnaryOperators.UNARY_PLUS);
+        registerPrefix(Precedence.UNARY, UnaryOperators.UNARY_MINUS);
+        registerPrefix(Precedence.UNARY, UnaryOperators.LOGICAL_NOT);
 //
 
 
-        register(Precedence.LOGICAL_OR, BinaryOperators.LOGICAL_OR);
-        register(Precedence.LOGICAL_AND, BinaryOperators.LOGICAL_AND);
+        registerBinary(Precedence.LOGICAL_OR, BinaryOperators.LOGICAL_OR);
+        registerBinary(Precedence.LOGICAL_AND, BinaryOperators.LOGICAL_AND);
 
-        register(Precedence.ADDITIVE, BinaryOperators.ADD);
-        register(Precedence.ADDITIVE, BinaryOperators.SUBTRACT);
+        registerBinary(Precedence.ADDITIVE, BinaryOperators.ADD);
+        registerBinary(Precedence.ADDITIVE, BinaryOperators.SUBTRACT);
 
-        register(Precedence.MULTIPLICATIVE, BinaryOperators.MULTIPLY);
-        register(Precedence.MULTIPLICATIVE, BinaryOperators.DIVIDE);
-        register(Precedence.MULTIPLICATIVE, BinaryOperators.PERCENTAGE);
-        register(Precedence.MULTIPLICATIVE, BinaryOperators.REMAINDER);
-        //register(Precedence.MULTIPLICATIVE, DefaultOperators.MODULUS);
-        //register(Precedence.MULTIPLICATIVE, DefaultOperators.N_ROOT);
+        registerBinary(Precedence.MULTIPLICATIVE, BinaryOperators.MULTIPLY);
+        registerBinary(Precedence.MULTIPLICATIVE, BinaryOperators.DIVIDE);
+        registerBinary(Precedence.MULTIPLICATIVE, BinaryOperators.PERCENTAGE);
+        registerBinary(Precedence.MULTIPLICATIVE, BinaryOperators.REMAINDER);
+        registerBinary(Precedence.MULTIPLICATIVE, BinaryOperators.NTH_ROOT);
 
-        register(Precedence.EQUALITY, BinaryOperators.EQUALS);
-        register(Precedence.EQUALITY, BinaryOperators.NOT_EQUALS);
+        registerBinary(Precedence.EQUALITY, BinaryOperators.EQUALS);
+        registerBinary(Precedence.EQUALITY, BinaryOperators.NOT_EQUALS);
 //
-        register(Precedence.RELATIONAL, BinaryOperators.GREATER_OR_EQUAL);
-        register(Precedence.RELATIONAL, BinaryOperators.GREATER_THAN);
-        register(Precedence.RELATIONAL, BinaryOperators.LESSER_OR_EQUAL);
-        register(Precedence.RELATIONAL, BinaryOperators.LESSER_THAN);
+        registerBinary(Precedence.RELATIONAL, BinaryOperators.GREATER_OR_EQUAL);
+        registerBinary(Precedence.RELATIONAL, BinaryOperators.GREATER_THAN);
+        registerBinary(Precedence.RELATIONAL, BinaryOperators.LESSER_OR_EQUAL);
+        registerBinary(Precedence.RELATIONAL, BinaryOperators.LESSER_THAN);
 //
 //        register(Precedence.SHIFT, DefaultOperators.ZERO_FILL_RIGHT_SHIFT);
 //        register(Precedence.SHIFT, DefaultOperators.RIGHT_SHIFT);
@@ -46,8 +45,8 @@ public class DefaultOperatorMap extends OperatorMap {
 //        register(Precedence.UNARY, DefaultOperators.BITWISE_COMPLEMENT);
 
 //
-        register(Precedence.EXPONENTIAL, BinaryOperators.EXPONENTATION);
-        register(Precedence.EXPONENTIAL, BinaryOperators.SCIENTIFIC_EX);
+        registerBinary(Precedence.EXPONENTIAL, BinaryOperators.EXPONENTATION);
+        registerBinary(Precedence.EXPONENTIAL, BinaryOperators.SCIENTIFIC_EX);
 //
 ////        register(Precedence.POSTFIX, DefaultOperators.POST_INCREMENT);
 ////        register(Precedence.POSTFIX, DefaultOperators.POST_DECREMENT);

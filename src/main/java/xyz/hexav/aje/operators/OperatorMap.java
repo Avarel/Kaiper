@@ -3,44 +3,47 @@ package xyz.hexav.aje.operators;
 import java.util.*;
 
 public class OperatorMap {
-    private List<AJEUnaryOperator> unaryOperators;
-    private Map<Integer, Set<AJEBinaryOperator>> operators;
+    private Map<Integer, Set<AJEUnaryOperator>> unaryOperators;
+    private Map<Integer, Set<AJEBinaryOperator>> binaryOperators;
 
     public OperatorMap() {
-        this(new ArrayList<>(), new TreeMap<>());
+        this(new TreeMap<>(), new TreeMap<>());
     }
 
     public OperatorMap(OperatorMap toCopy) {
-        this(new ArrayList<>(toCopy.unaryOperators), new TreeMap<>(toCopy.operators));
+        this(new TreeMap<>(toCopy.unaryOperators), new TreeMap<>(toCopy.binaryOperators));
     }
 
-    public OperatorMap(List<AJEUnaryOperator> unaryOperators, Map<Integer, Set<AJEBinaryOperator>> operators) {
+    public OperatorMap(Map<Integer, Set<AJEUnaryOperator>> unaryOperators, Map<Integer, Set<AJEBinaryOperator>> binaryOperators) {
         this.unaryOperators = unaryOperators;
-        this.operators = operators;
+        this.binaryOperators = binaryOperators;
     }
 
     public OperatorMap copy() {
         return new OperatorMap(this);
     }
 
-    public void register(AJEUnaryOperator operator) {
-        unaryOperators.add(operator);
-    }
-
-    public void register(int precedence, AJEBinaryOperator operator) {
-        if (!operators.containsKey(precedence)) {
-            operators.put(precedence, new LinkedHashSet<>());
+    public void registerPrefix(int precedence, AJEUnaryOperator operator) {
+        if (!unaryOperators.containsKey(precedence)) {
+            unaryOperators.put(precedence, new LinkedHashSet<>());
         }
-        operators.get(precedence).add(operator);
+        unaryOperators.get(precedence).add(operator);
     }
 
-    public Set<AJEBinaryOperator> get(int precedence) {
-        return operators.get(precedence);
+    public void registerBinary(int precedence, AJEBinaryOperator operator) {
+        if (!binaryOperators.containsKey(precedence)) {
+            binaryOperators.put(precedence, new LinkedHashSet<>());
+        }
+        binaryOperators.get(precedence).add(operator);
+    }
+
+    public Map<Integer, Set<AJEBinaryOperator>> getBinaries() {
+        return binaryOperators;
     }
 
     public int after(int precedence) {
         boolean flag = false;
-        for (int i : operators.keySet()) {
+        for (int i : binaryOperators.keySet()) {
             if (flag) return i;
             if (i == precedence) flag = true;
         }
@@ -48,18 +51,18 @@ public class OperatorMap {
     }
 
     public int firstPrecedence() {
-        return new ArrayList<>(operators.keySet()).get(0);
+        return new ArrayList<>(binaryOperators.keySet()).get(0);
     }
 
     public int lastPrecedence() {
         int last = 0;
-        for (int i : operators.keySet()) {
+        for (int i : binaryOperators.keySet()) {
             if (i > last) last = i;
         }
         return last;
     }
 
-    public List<AJEUnaryOperator> getUnaryOperators() {
+    public Map<Integer, Set<AJEUnaryOperator>> getUnaries() {
         return unaryOperators;
     }
 }

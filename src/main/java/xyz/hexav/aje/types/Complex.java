@@ -17,10 +17,20 @@ public class Complex extends Numeric implements OperableValue<Numeric> {
         this.im = im;
     }
 
-    public static void assertIs(Object a) {
-        if(!(a instanceof Complex)) {
-            throw new AJEException("Value needs to be a complex number.");
+    public static void assertIs(Object... objs) {
+        for (Object a : objs) {
+            if(!(a instanceof Complex)) {
+                throw new AJEException("Value needs to be a complex number.");
+            }
         }
+    }
+
+    public static Complex of(double value) {
+        return Complex.of(value, 0);
+    }
+
+    public static Complex of(double re, double im) {
+        return new Complex(re, im);
     }
 
     public static Complex wrap(Numeric a) {
@@ -95,8 +105,8 @@ public class Complex extends Numeric implements OperableValue<Numeric> {
 
     public Complex pow(Complex other) {
         Complex result = log().multiply(other).exp();
-        double real = BigDecimal.valueOf(result.value()).setScale(7, BigDecimal.ROUND_HALF_UP).doubleValue();
-        double imag = BigDecimal.valueOf(result.im).setScale(7, BigDecimal.ROUND_HALF_UP).doubleValue();
+        double real = BigDecimal.valueOf(result.value()).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+        double imag = BigDecimal.valueOf(result.im).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();
         return new Complex(real, imag);
     }
 

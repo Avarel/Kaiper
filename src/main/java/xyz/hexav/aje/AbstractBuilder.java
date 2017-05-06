@@ -78,7 +78,7 @@ public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
     }
 
     public T addOperator(int precedence, AJEBinaryOperator operator) {
-        getPool().getOperators().register(precedence, operator);
+        getPool().getOperators().registerBinary(precedence, operator);
         return (T) this;
     }
 

@@ -1,7 +1,6 @@
 package xyz.hexav.aje.defaults;
 
 import xyz.hexav.aje.operators.AJEBinaryOperator;
-import xyz.hexav.aje.types.interfaces.ComparableValue;
 import xyz.hexav.aje.types.Numeric;
 import xyz.hexav.aje.types.interfaces.OperableValue;
 import xyz.hexav.aje.types.Truth;
@@ -11,16 +10,14 @@ public enum BinaryOperators implements AJEBinaryOperator {
     LOGICAL_OR("||") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
-            Truth.assertIs(a);
-            Truth.assertIs(b);
+            Truth.assertIs(a, b);
             return a.add(b);
         }
     },
     LOGICAL_AND("&&") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
-            Truth.assertIs(a);
-            Truth.assertIs(b);
+            Truth.assertIs(a, b);
             return a.multiply(b);
         }
     },
@@ -69,20 +66,12 @@ public enum BinaryOperators implements AJEBinaryOperator {
             return a.divide(new Numeric(100)).multiply(b);
         }
     },
-//    N_ROOT("th root of ", 2) {
-//        @Override
-//        public Value apply(Value a, Value b) {
-//            double result = Math.pow(b.value(), 1.0 / a.value());
-//
-//            if (Math.ceil(result) - result < 1E-10
-//                    || result - Math.floor(result) < 1E-10) {
-//                result = Math.round(result);
-//            }
-//
-//            double finalResult = result;
-//            return () -> finalResult;
-//        }
-//    },
+    NTH_ROOT("th root of ") {
+        @Override
+        public OperableValue apply(OperableValue a, OperableValue b) {
+            return a.root(b);
+        }
+    },
 
     EQUALS("==") {
         public OperableValue apply(OperableValue a, OperableValue b) {
@@ -97,30 +86,22 @@ public enum BinaryOperators implements AJEBinaryOperator {
 
     GREATER_OR_EQUAL(">=") {
         public OperableValue apply(OperableValue a, OperableValue b) {
-            ComparableValue.assertIs(a);
-            ComparableValue.assertIs(b);
-            return ComparableValue.wrap(a).greaterThanOrEqual(b);
+            return a.greaterThanOrEqual(b);
         }
     },
     GREATER_THAN(">") {
         public OperableValue apply(OperableValue a, OperableValue b) {
-            ComparableValue.assertIs(a);
-            ComparableValue.assertIs(b);
-            return ComparableValue.wrap(a).greaterThan(b);
+            return a.greaterThan(b);
         }
     },
     LESSER_OR_EQUAL("<=") {
         public OperableValue apply(OperableValue a, OperableValue b) {
-            ComparableValue.assertIs(a);
-            ComparableValue.assertIs(b);
-            return ComparableValue.wrap(a).lessThanOrEqual(b);
+            return a.lessThanOrEqual(b);
         }
     },
     LESSER_THAN("<") {
         public OperableValue apply(OperableValue a, OperableValue b) {
-            ComparableValue.assertIs(a);
-            ComparableValue.assertIs(b);
-            return ComparableValue.wrap(a).lessThan(b);
+            return a.lessThan(b);
         }
     },
 //

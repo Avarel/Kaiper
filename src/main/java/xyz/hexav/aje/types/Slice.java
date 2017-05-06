@@ -1,10 +1,9 @@
 package xyz.hexav.aje.types;
 
 import xyz.hexav.aje.AJEException;
-import xyz.hexav.aje.types.interfaces.ComparableValue;
 import xyz.hexav.aje.types.interfaces.OperableValue;
 
-public class Slice implements OperableValue<Slice>, ComparableValue<Slice> {
+public class Slice implements OperableValue<Slice> {
     private final double value;
 
     public Slice(double value) {

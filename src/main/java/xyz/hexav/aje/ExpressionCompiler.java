@@ -13,6 +13,8 @@ import xyz.hexav.aje.types.Truth;
 import xyz.hexav.aje.types.interfaces.OperableValue;
 import xyz.hexav.aje.types.interfaces.Value;
 
+import java.util.Collections;
+
 /**
  * Compiles string expressions into compiled Expression instances.
  */
@@ -128,31 +130,33 @@ public class ExpressionCompiler {
         return compileExpression(Precedence.LOGICAL_OR);
     }
 
-    private OperableValue compileExpression(int level) {
-        OperatorMap operators = pool.getOperators();
+    private OperableValue compileExpression(int prec) {
+        OperatorMap operatorMaps = pool.getOperators();
 
         //System.out.print(level + " ");
 
-        if (operators.get(level) == null) {
+        if (operatorMaps.getBinaries().get(prec) == null
+                && pool.getOperators().getUnaries().get(prec) == null) {
             return compileLiteral();
         }
 
         // Unary operations
-        for (AJEUnaryOperator operator : pool.getOperators().getUnaryOperators()) {
+        for (AJEUnaryOperator operator : pool.getOperators().getUnaries().getOrDefault(prec,
+                Collections.emptySet())) {
             if (lexer.consume(operator.getSymbol())) {
-                OperableValue exp = compileExpression(level);
+                OperableValue exp = compileExpression(prec);
                 return operator.apply(exp);
             }
         }
 
-        OperableValue value = compileExpression(level + 1);
+        OperableValue value = compileExpression(prec + 1);
 
         while (true) {
             boolean flag = false;
-            for (AJEBinaryOperator operator : operators.get(level)) {
+            for (AJEBinaryOperator operator : operatorMaps.getBinaries().getOrDefault(prec, Collections.emptySet())) {
                 if (lexer.consume(operator.getSymbol())) {
                     final OperableValue a = value;
-                    final OperableValue b = compileExpression(operator.isLeftAssoc() ? level + 1 : level);
+                    final OperableValue b = compileExpression(operator.isLeftAssoc() ? prec + 1 : prec);
 
                     value = operator.apply(a, b);
                     flag = true;
@@ -220,13 +224,13 @@ public class ExpressionCompiler {
             double value = Double.parseDouble(lexer.string().substring(start, lexer.pos()));
 
             if (lexer.consume('i')) {
-                return new Complex(0, value);
+                return Complex.of(0, value);
             }
 
-            return new Numeric((value));
+            return Numeric.of(value);
         }
         else if (lexer.consume('i')) {
-            return new Complex(0, 1);
+            return Complex.of(0, 1);
         }
 //        // LISTS
 //        else if (lexer.consume('[')) {

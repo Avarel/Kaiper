@@ -6,11 +6,4 @@ public interface Value {
     }
     Object toNativeObject();
     String getType();
-
-    default boolean isComparable() {
-        return this instanceof ComparableValue;
-    }
-    default boolean isOperable() {
-        return this instanceof OperableValue;
-    }
 }

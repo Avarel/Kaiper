@@ -40,7 +40,10 @@ public class TestLoop {
 
                 Object obj = result.toNativeObject();
 
-                System.out.println("  Time | " + (end - start));
+                long ns =  (end - start);
+                double ms = ns / 1000000D;
+
+                System.out.println("  Time | " + ms + "ms " + ns + "ns" );
                 System.out.println("Result | " + result + " : " + result.getType());
                 System.out.println("Native | " + obj + " : " + obj.getClass().getSimpleName());
 

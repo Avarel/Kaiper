@@ -1,9 +1,10 @@
 package xyz.hexav.aje.operators;
 
 public class Precedence {
-    public static final int POSTFIX = 10;
-    public static final int INFIX = 9;
-    public static final int EXPONENTIAL = 8;
+    public static final int POSTFIX = 11;
+    public static final int INFIX = 10;
+    public static final int EXPONENTIAL = 9;
+    public static final int UNARY = 8;
     public static final int MULTIPLICATIVE = 7;
     public static final int ADDITIVE = 6;
     public static final int SHIFT = 5;
