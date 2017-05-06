@@ -19,21 +19,33 @@ public class Numeric implements OperableValue<Numeric>, ComparableValue<Numeric>
 
     @Override
     public Numeric add(Numeric other) {
+        if (other instanceof Complex) {
+            return new Complex(value, 0).add((Complex) other);
+        }
         return new Numeric(value + other.value);
     }
 
     @Override
     public Numeric subtract(Numeric other) {
+        if (other instanceof Complex) {
+            return new Complex(value, 0).subtract((Complex) other);
+        }
         return new Numeric(value - other.value);
     }
 
     @Override
     public Numeric multiply(Numeric other) {
+        if (other instanceof Complex) {
+            return new Complex(value, 0).multiply((Complex) other);
+        }
         return new Numeric(value * other.value);
     }
 
     @Override
     public Numeric divide(Numeric other) {
+        if (other instanceof Complex) {
+            return new Complex(value, 0).divide((Complex) other);
+        }
         return new Numeric(value / other.value);
     }
 

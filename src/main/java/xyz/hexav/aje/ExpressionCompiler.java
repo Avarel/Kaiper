@@ -5,10 +5,7 @@ import xyz.hexav.aje.operators.Operator;
 import xyz.hexav.aje.operators.OperatorMap;
 import xyz.hexav.aje.operators.Precedence;
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.Truth;
-import xyz.hexav.aje.types.Nothing;
-import xyz.hexav.aje.types.Numeric;
-import xyz.hexav.aje.types.OperableValue;
+import xyz.hexav.aje.types.*;
 
 /**
  * Compiles string expressions into compiled Expression instances.
@@ -292,7 +289,15 @@ public class ExpressionCompiler {
             while (!lexer.nextIs("..") && isNumeric(lexer.currentChar())) lexer.nextChar();
 
             double value = Double.parseDouble(lexer.target().substring(start, lexer.pos()));
+
+            if (lexer.consume('i')) {
+                return new Complex(0, value);
+            }
+
             return new Numeric((value));
+        }
+        else if (lexer.consume('i')) {
+            return new Complex(0, 1);
         }
 //        // LISTS
 //        else if (lexer.consume('[')) {
