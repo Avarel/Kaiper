@@ -1,10 +1,10 @@
 package xyz.hexav.aje.operators;
 
-import xyz.hexav.aje.types.Expression;
+import xyz.hexav.aje.types.OperableValue;
 
 import java.util.function.BinaryOperator;
 
-public interface Operator extends BinaryOperator<Expression> {
+public interface Operator extends BinaryOperator<OperableValue> {
     String getSymbol();
 
     int getArgs();

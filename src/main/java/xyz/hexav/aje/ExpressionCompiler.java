@@ -1,13 +1,14 @@
 package xyz.hexav.aje;
 
 import xyz.hexav.aje.expressions.AJELexer;
-import xyz.hexav.aje.expressions.VariableAssignment;
-import xyz.hexav.aje.expressions.VariableExpression;
 import xyz.hexav.aje.operators.Operator;
 import xyz.hexav.aje.operators.OperatorMap;
 import xyz.hexav.aje.operators.Precedence;
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.*;
+import xyz.hexav.aje.types.Truth;
+import xyz.hexav.aje.types.Nothing;
+import xyz.hexav.aje.types.Numeric;
+import xyz.hexav.aje.types.OperableValue;
 
 /**
  * Compiles string expressions into compiled Expression instances.
@@ -100,138 +101,134 @@ public class ExpressionCompiler {
 //        return exps;
 //    }
 
-    public Expression compile() {
+    public OperableValue compute() {
         lexer.nextChar();
-        Expression e = compileExpression();
+        OperableValue e = compileExpression();
 
-        while (lexer.consume(';') && lexer.pos() < lexer.target().length()) {
-            e = e.andThen(compileExpression());
-        }
-
+//        while (lexer.consume(';') && lexer.pos() < lexer.target().length()) {
+//            e = e.andThen(compileExpression());
+//        }
 
         if (lexer.pos() < lexer.target().length()) throw makeError("Unhandled character `" + lexer.currentChar() + "`.");
 
         return e;
     }
 
-//    private Expression compileLine(String target) {
-//        resetPosition();
-//        nextChar();
+//    private Expression compileVariable() {
+//        if (isLiteral(lexer.currentChar())) {
+//            String name = nextLiteral();
 //
-//        Expression exp = compileExpression();
+//            if (pool.hasVar(name)) {
+//                throw makeError("Variable '" + name + "' is already defined.");
+//            }
 //
-//        if (pos < str.length()) throw makeError("Unhandled character `" + current + "`.");
+//            if (!lexer.consume('=')) {
+//                return new VariableAssignment(pool.allocVar(name));
+//            } else {
+//                return new VariableAssignment(pool.allocVar(name), compileExpression());
+//            }
 //
-//        return exp;
+//        }
+//        throw makeError("Expected name for variable.");
+//    }
+//
+//    private Expression compileValue() {
+//        if (isLiteral(lexer.currentChar())) {
+//            String name = nextLiteral();
+//
+//            if (pool.hasVar(name)) {
+//                throw makeError("Value '" + name + "' is already defined.");
+//            }
+//
+//            if (!lexer.consume('=')) {
+//                return new VariableAssignment(pool.allocVal(name));
+//            } else {
+//                Expression e = compileExpression();
+//                return new VariableAssignment(pool.allocVal(name), e);
+//            }
+//        }
+//        throw makeError("Expected name for value.");
 //    }
 
-    private Expression compileVariable() {
-        if (isLiteral(lexer.currentChar())) {
-            String name = nextLiteral();
+//    private void consumeFunction() {
+//        if (isLiteral(lexer.currentChar())) {
+//            String name = nextLiteral();
+//            int params = 0;
+//
+//            FunctionBuilder fb = new FunctionBuilder(name);
+//
+//            if (!lexer.consume('(')) {
+//                throw makeError("Expected '('.");
+//            }
+//
+//            if (!lexer.consume(')')) do {
+//                fb.addParameter(nextLiteral());
+//                params++;
+//            }
+//            while (!lexer.consume(')') && lexer.consume(','));
+//
+//            if (pool.hasFunc(name, params)) {
+//                throw makeError("Function '" + name + "' is already defined.");
+//            }
+//
+//            if (!lexer.consume('=')) {
+//                throw makeError("Expected '='.");
+//            }
+//            lexer.skipWhitespace();
+//
+//            int start = lexer.pos();
+//            while (!lexer.nextIs(';') && lexer.pos() < lexer.target().length()) {
+//                lexer.nextChar();
+//            }
+//            String script = lexer.target().substring(start, lexer.pos());
+//
+//            fb.addLine(script);
+//
+//            pool.allocFunc(fb.build());
+//
+//            return;
+//        }
+//        throw makeError("Expected function name.");
+//    }
 
-            if (pool.hasVar(name)) {
-                throw makeError("Variable '" + name + "' is already defined.");
-            }
-
-            if (!lexer.consume('=')) {
-                return new VariableAssignment(pool.allocVar(name));
-            } else {
-                return new VariableAssignment(pool.allocVar(name), compileExpression());
-            }
-
-
-        }
-        throw makeError("Expected name for variable.");
+    private OperableValue compileExpression() {
+        return compileExpression(Precedence.LOGICAL_OR);
     }
 
-    private Expression compileValue() {
-        if (isLiteral(lexer.currentChar())) {
-            String name = nextLiteral();
-
-            if (pool.hasVar(name)) {
-                throw makeError("Value '" + name + "' is already defined.");
-            }
-
-            if (!lexer.consume('=')) {
-                return new VariableAssignment(pool.allocVal(name));
-            } else {
-                return new VariableAssignment(pool.allocVal(name), compileExpression());
-            }
-        }
-        throw makeError("Expected name for value.");
-    }
-
-    private void consumeFunction() {
-        if (isLiteral(lexer.currentChar())) {
-            String name = nextLiteral();
-            int params = 0;
-
-            FunctionBuilder fb = new FunctionBuilder(name);
-
-            if (!lexer.consume('(')) {
-                throw makeError("Expected '('.");
-            }
-
-            if (!lexer.consume(')')) do {
-                fb.addParameter(nextLiteral());
-                params++;
-            }
-            while (!lexer.consume(')') && lexer.consume(','));
-
-            if (pool.hasFunc(name, params)) {
-                throw makeError("Function '" + name + "' is already defined.");
-            }
-
-            if (!lexer.consume('=')) {
-                throw makeError("Expected '='.");
-            }
-            lexer.skipWhitespace();
-
-            int start = lexer.pos();
-            while (!lexer.nextIs(';') && lexer.pos() < lexer.target().length()) {
-                lexer.nextChar();
-            }
-            String script = lexer.target().substring(start, lexer.pos());
-
-            fb.addLine(script);
-
-            pool.allocFunc(fb.build());
-
-            return;
-        }
-        throw makeError("Expected function name.");
-    }
-
-    private Expression compileExpression() {
-        return compileExpression(pool.getOperators().firstPrecedence());
-    }
-
-    private Expression compileExpression(int level) {
-        if (level == -1) return compileMisc();
-
+    private OperableValue compileExpression(int level) {
         OperatorMap operators = pool.getOperators();
+
+        //System.out.print(level + " ");
+
+        if (operators.get(level) == null) {
+            return compileLiteral();
+        }
+
 
         // Unary operations
         for (Operator operator : operators.get(level)) {
             if (operator.getArgs() == -1 && lexer.consume(operator.getSymbol())) {
-                Expression exp = compileExpression(level);
-                return exp.compile(operator);
+                OperableValue exp = compileExpression(level);
+                return operator.apply(exp, null);
             }
         }
 
-        Expression value = compileExpression(operators.after(level));
+        OperableValue value = compileExpression(level + 1);
 
         while (true) {
             boolean flag = false;
             for (Operator operator : operators.get(level)) {
+               // System.out.print(operator.getSymbol() + " ");
                 if (operator.getArgs() == 2 && lexer.consume(operator.getSymbol())) {
-                    final Expression a = value;
-                    final Expression b = compileExpression(operator.isLeftAssoc() ? Precedence.UNARY : operators.after(level));
+                    final OperableValue a = value;
+                    final OperableValue b = compileExpression(operator.isLeftAssoc() ? level + 1 : level); // operator.isLeftAssoc() ? Precedence.UNARY :  level + 1
 
-                    value = a.compile(operator, b);
+                    //System.out.print(operator + " ");
+
+                    value = operator.apply(a, b);
                     flag = true;
                 } else if (operator.getArgs() == 1 && lexer.consume(operator.getSymbol())) {
-                    value = value.compile(operator);
+                    value = operator.apply(value, null);
                     flag = true;
                 }
             }
@@ -241,33 +238,13 @@ public class ExpressionCompiler {
         return value;
     }
 
-    private Expression compileMisc() {
-        Expression value;
+    private OperableValue compileLiteral() {
         if (lexer.consume('(')) {
-            value = compileExpression();
+            OperableValue value = compileExpression();
             lexer.consume(')');
-        } else value = compileLiteral();
+            return value;
+        }
 
-//        // Implicit multiplications.
-//        if (tokenizer.nextIs('(') || isLiteral(tokenizer.currentChar())) {
-//            int _pos = tokenizer.pos();
-//            char _current = tokenizer.currentChar();
-//            try {
-//                final AJEValue
-//                        a = value,
-//                        b = compileMisc();
-//
-//                value = DefaultOperators.MULTIPLY.get().compile(a, b);
-//            } catch (RuntimeException e) {
-//                tokenizer.setPos(_pos);
-//                tokenizer.setCurrentChar(_current);
-//            }
-//        }
-
-        return value;
-    }
-
-    private Expression compileLiteral() {
         while (lexer.currentChar() == ';') lexer.nextChar();
         if (lexer.pos() == lexer.target().length()) return Nothing.VALUE;
 
@@ -276,12 +253,11 @@ public class ExpressionCompiler {
         // DEFINE VALUES
         // - NUMERICAL PARSING
 
-        if (lexer.consume("var")) {
-            return compileVariable();
-        } else if (lexer.consume("val")) {
-            return compileValue();
-        }
-
+//        if (lexer.consume("var")) {
+//            return compileVariable();
+//        } else if (lexer.consume("val")) {
+//            return compileValue();
+//        }
         if (isNumeric(lexer.currentChar())) {
             // BINARY
             if (lexer.consume("0b")) {
@@ -295,7 +271,7 @@ public class ExpressionCompiler {
                 }
 
                 double value = Integer.valueOf(lexer.target().substring(_start, lexer.pos()), 2).doubleValue();
-                return NumericValue.of(value);
+                return new Numeric(value);
             }
             // HEXADECIMAL
             else if (lexer.consume("0x")) {
@@ -310,37 +286,42 @@ public class ExpressionCompiler {
                 }
 
                 double value = Integer.valueOf(lexer.target().substring(_start, lexer.pos()), 16).doubleValue();
-                return NumericValue.of(value);
+                return new Numeric(value);
             }
 
             while (!lexer.nextIs("..") && isNumeric(lexer.currentChar())) lexer.nextChar();
 
             double value = Double.parseDouble(lexer.target().substring(start, lexer.pos()));
-            return NumericValue.of(value);
+            return new Numeric((value));
         }
-        // LISTS
-        else if (lexer.consume('[')) {
-
-            if (lexer.consume(']')) return Slice.EMPTY;
-
-            Slice list = new Slice();
-
-            do {
-                Expression a = compileExpression();
-
-                if (lexer.consume("..")) {
-                    Expression b = compileExpression();
-                    Expression c = list.size() == 1 ? list.get(list.size() - 1) : null;
-                    list.add(new Range(a, b, c));
-                } else {
-                    list.add(a);
-                }
-            }
-            while (lexer.consume(','));
-
-            if (!lexer.consume(']')) throw makeError("Expected list literal to close.");
-
-            return list;
+//        // LISTS
+//        else if (lexer.consume('[')) {
+//
+//            if (lexer.consume(']')) return Slice.EMPTY;
+//
+//            Slice list = new Slice();
+//
+//            do {
+//                Expression a = compileExpression();
+//
+////                if (lexer.consume("..")) {
+////                    Expression b = compileExpression();
+////                    Expression c = list.size() == 1 ? list.get(list.size() - 1) : null;
+////                    list.add(new Range(a, b, c));
+////                } else {
+//                    list.add(a);
+////                }
+//            }
+//            while (lexer.consume(','));
+//
+//            if (!lexer.consume(']')) throw makeError("Expected list literal to close.");
+//
+//            return list;
+//        }
+        else if (lexer.consume("true")) {
+            return Truth.TRUE;
+        } else if (lexer.consume("false")) {
+            return Truth.FALSE;
         }
 
         // FUNCTION AND CONSTANTS
@@ -377,12 +358,14 @@ public class ExpressionCompiler {
 //                    throw makeError("Can not resolve function `" + name + sb + "`.");
 //                }
 //            } else
-            if (pool.hasVar(name)) {
-                return new VariableExpression(pool.getVar(name));
-            } else {
-                throw makeError("Can not resolve reference `" + name + "`.");
-            }
-        } else throw makeError("Unexpected token: " + lexer.currentChar());
+//            if (pool.hasVar(name)) {
+//                return pool.getVar(name);
+//            }
+//            else {
+//                throw makeError("Can not resolve reference `" + name + "`.");
+//            }
+        }
+        throw makeError("Unexpected token: " + lexer.currentChar());
     }
 
     private AJEException makeError(String message) {

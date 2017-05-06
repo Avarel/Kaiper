@@ -31,7 +31,7 @@ public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
     }
 
     public T addVariable(String variable) {
-        getPool().allocVar(variable);
+//        getPool().allocVar(variable);
         return (T) this;
     }
 
@@ -50,7 +50,7 @@ public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
     }
 
     public T addValue(String value) {
-        getPool().allocVar(value);
+//        getPool().allocVar(value);
         return (T) this;
     }
 

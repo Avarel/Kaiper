@@ -1,10 +1,8 @@
 package xyz.hexav.aje;
 
-import xyz.hexav.aje.types.Expression;
-
 import java.util.List;
 
-public interface Function extends Expression {
+public interface Function {
     Function input(int index, double input);
 
     Function input(String param, double input);

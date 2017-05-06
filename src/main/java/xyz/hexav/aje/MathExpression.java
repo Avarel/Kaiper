@@ -1,13 +1,13 @@
 package xyz.hexav.aje;
 
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.Expression;
+import xyz.hexav.aje.types.OperableValue;
 
 import java.util.List;
 
-public class MathExpression implements Expression {
+public class MathExpression {
     private final String script;
-    private Expression expression;
+    private OperableValue expression;
 
     private final Pool pool;
 
@@ -21,48 +21,53 @@ public class MathExpression implements Expression {
 
         if (variables != null) {
             for (String name : variables) {
-                getPool().allocVar(name);
+//                getPool().allocVar(name);
             }
         }
     }
 
     public MathExpression compile() {
         if (expression == null) {
-            expression = new ExpressionCompiler(pool, script).compile();
+            expression = new ExpressionCompiler(pool, script).compute();
         }
         return this;
     }
 
     @Deprecated()
     public MathExpression forceCompile() {
-        expression = new ExpressionCompiler(pool, script).compile();
+        expression = new ExpressionCompiler(pool, script).compute();
         return this;
     }
+//
+//    public MathExpression setVariable(String name, double value) {
+//        pool.getVar(name).assign(value);
+//        return this;
+//    }
 
-    public MathExpression setVariable(String name, double value) {
-        pool.getVar(name).assign(value);
-        return this;
-    }
+//    public MathExpression setVariable(String name, Expression value) {
+//        pool.getVar(name).assign(value);
+//        return this;
+//    }
 
-    public MathExpression setVariable(String name, Expression value) {
-        pool.getVar(name).assign(value);
-        return this;
-    }
-
-    public double value() {
+    public OperableValue eval() {
         compile();
-        return expression.value();
-    }
-
-    @Override
-    public String asString() {
-        value();
-        return expression.asString();
-    }
-
-    public Expression getExpression() {
         return expression;
     }
+//
+//    public double numValue() {
+//        compile();
+//        return ((Operable) expression).value();
+//    }
+//
+//    @Override
+//    public String asString() {
+//        eval();
+//        return expression.asString();
+//    }
+//
+//    public Expression getExpression() {
+//        return expression;
+//    }
 
     public Pool getPool() {
         return pool;

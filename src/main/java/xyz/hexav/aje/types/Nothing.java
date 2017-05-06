@@ -1,54 +1,51 @@
 package xyz.hexav.aje.types;
 
 /**
- * Created by s889542 on 5/3/2017.
- */ /*
  * Every operation results in the same
  * instance, NOTHING.
  */
-public class Nothing implements Expression {
+public class Nothing implements OperableValue<Nothing> {
     public static Nothing VALUE = new Nothing();
 
     private Nothing() {}
 
     @Override
     public double value() {
-        return 0;
+        return Double.NaN;
     }
 
-    public Nothing add(Nothing number) {
-        return VALUE;
+    @Override
+    public Nothing add(Nothing other) {
+        return this;
     }
 
-    public Nothing minus(Nothing number) {
-        return VALUE;
+    @Override
+    public Nothing subtract(Nothing other) {
+        return this;
     }
 
-    public Nothing times(Nothing number) {
-        return VALUE;
+    @Override
+    public Nothing multiply(Nothing other) {
+        return this;
     }
 
-    public Nothing divide(Nothing number) {
-        return VALUE;
+    @Override
+    public Nothing divide(Nothing other) {
+        return this;
     }
 
-    public Nothing rem(Nothing number) {
-        return VALUE;
+    @Override
+    public Nothing mod(Nothing other) {
+        return this;
     }
 
-    public Nothing mod(Nothing number) {
-        return VALUE;
+    @Override
+    public Nothing negative() {
+        return this;
     }
 
-    public Nothing isEqualTo(Object obj) {
-        return VALUE;
-    }
-
-    public Nothing greaterThan(Object obj) {
-        return VALUE;
-    }
-
-    public Nothing lessThan(Object obj) {
-        return VALUE;
+    @Override
+    public Truth equals(Nothing other) {
+        return this == other ? Truth.TRUE : Truth.FALSE;
     }
 }

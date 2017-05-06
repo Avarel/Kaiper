@@ -28,8 +28,8 @@ public class TestLoop {
 
                 MathExpression exp = new ExpressionBuilder(input)
                         .addVariable("tau")
-                        .build()
-                        .setVariable("tau", Math.PI * 2);
+                        .build();
+//                        .setVariable("tau", Math.PI * 2);
 
                 //System.out.println(function);
 
@@ -38,7 +38,7 @@ public class TestLoop {
                 long end = System.nanoTime();
 
                 System.out.println("   Compile | " + (end - start));
-                System.out.println("    Result | " + exp.asString());
+                System.out.println("    Result | " + exp.eval());
 
                 System.out.println();
             } catch (RuntimeException e) {

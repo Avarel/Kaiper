@@ -1,5 +1,6 @@
 package xyz.hexav.aje.pool;
 
+import com.sun.org.apache.xpath.internal.operations.Variable;
 import xyz.hexav.aje.Function;
 import xyz.hexav.aje.operators.DefaultOperatorMap;
 import xyz.hexav.aje.operators.OperatorMap;
@@ -9,61 +10,61 @@ import java.util.Set;
 
 public class Pool {
     private final OperatorMap operators;
-    private Set<Variable> variables;
+    //private Set<Variable> variables;
     private Set<Function> functions;
 
     public Pool() {
         this(DefaultOperatorMap.INSTANCE.copy(), new HashSet<>(), new HashSet<>());
     }
 
-    public Pool(Pool toCopy) {
-        this(toCopy.getOperators(), toCopy.getFunctions(), toCopy.getVariables());
+    public Pool(Pool toCopy) { //TODO FIX HERE
+        this(toCopy.getOperators(), toCopy.getFunctions(), null);
     }
 
     public Pool(OperatorMap operators, Set<Function> functions, Set<Variable> variables) {
         this.operators = new OperatorMap(operators);
         this.functions = new HashSet<>(functions);
-        this.variables = new HashSet<>(variables);
+        //this.variables = new HashSet<>(variables);
 
-        allocVar("ans");
+        //allocVar("ans");
     }
 
-    public Variable allocVar(String name) {
-        Variable var = new Variable(name);
-        variables.add(var);
-        return var;
-    }
-
-    public Value allocVal(String name) {
-        Value val = new Value(name);
-        variables.add(val);
-        return val;
-    }
-
-    public void deallocVar(String name) {
-        if (hasVar(name)) {
-            Variable var = getVar(name);
-            var.checkLock(); // Can't deallocate finalized variables.
-
-            variables.remove(getVar(name));
-        }
-    }
-
-    public boolean hasVar(String name) {
-        for (Variable val : variables) {
-            if (val.getName().equals(name)) return true;
-        }
-        return false;
-    }
-
-    public Variable getVar(String name) {
-        for (Variable val : variables) {
-            if (val.getName().equals(name)) {
-                return val;
-            }
-        }
-        return null;
-    }
+//    public Variable allocVar(String name) {
+//        Variable var = new Variable(name);
+//        variables.add(var);
+//        return var;
+//    }
+//
+//    public FinalVar allocVal(String name) {
+//        FinalVar val = new FinalVar(name);
+//        variables.add(val);
+//        return val;
+//    }
+//
+//    public void deallocVar(String name) {
+//        if (hasVar(name)) {
+//            Variable var = getVar(name);
+//            var.checkLock(); // Can't deallocate finalized variables.
+//
+//            variables.remove(getVar(name));
+//        }
+//    }
+//
+//    public boolean hasVar(String name) {
+//        for (Variable val : variables) {
+//            if (val.getName().equals(name)) return true;
+//        }
+//        return false;
+//    }
+//
+//    public Variable getVar(String name) {
+//        for (Variable val : variables) {
+//            if (val.getName().equals(name)) {
+//                return val;
+//            }
+//        }
+//        return null;
+//    }
 
     public void allocFunc(Function function) {
         if (function.getName() == null || function.getName().isEmpty()) {
@@ -130,9 +131,9 @@ public class Pool {
         return new Pool(this);
     }
 
-    public Set<Variable> getVariables() {
-        return variables;
-    }
+//    public Set<Variable> getVariables() {
+//        return variables;
+//    }
 
     public Set<Function> getFunctions() {
         return functions;
