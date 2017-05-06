@@ -1,13 +1,10 @@
 package xyz.hexav.aje.operators;
 
-import xyz.hexav.aje.types.OperableValue;
+import xyz.hexav.aje.types.interfaces.OperableValue;
 
 import java.util.function.BinaryOperator;
 
-public interface Operator extends BinaryOperator<OperableValue> {
+public interface AJEBinaryOperator extends BinaryOperator<OperableValue> {
     String getSymbol();
-
-    int getArgs();
-
     boolean isLeftAssoc();
 }

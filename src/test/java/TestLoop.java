@@ -1,5 +1,6 @@
 import xyz.hexav.aje.ExpressionBuilder;
 import xyz.hexav.aje.MathExpression;
+import xyz.hexav.aje.types.interfaces.Value;
 
 import java.util.Scanner;
 
@@ -14,7 +15,7 @@ public class TestLoop {
 
         while (running) {
             try {
-                System.out.print("Expression | ");
+                System.out.print("Script | ");
 
                 String input = sc.nextLine();
 
@@ -34,11 +35,14 @@ public class TestLoop {
                 //System.out.println(function);
 
                 long start = System.nanoTime();
-                exp.compile();
+                Value result = exp.eval();
                 long end = System.nanoTime();
 
-                System.out.println("   Compile | " + (end - start));
-                System.out.println("    Result | " + exp.eval());
+                Object obj = result.toNativeObject();
+
+                System.out.println("  Time | " + (end - start));
+                System.out.println("Result | " + result + " : " + result.getType());
+                System.out.println("Native | " + obj + " : " + obj.getClass().getSimpleName());
 
                 System.out.println();
             } catch (RuntimeException e) {

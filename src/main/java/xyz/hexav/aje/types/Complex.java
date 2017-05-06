@@ -1,40 +1,45 @@
 package xyz.hexav.aje.types;
 
+import xyz.hexav.aje.AJEException;
+import xyz.hexav.aje.types.interfaces.OperableValue;
+
+import java.math.BigDecimal;
+
 public class Complex extends Numeric implements OperableValue<Numeric> {
-    private final double re;
     private final double im;
+
+    public Complex(double re) {
+        this(re, 0);
+    }
 
     public Complex(double re, double im) {
         super(re);
-        this.re = re;
         this.im = im;
     }
 
-    public static boolean check(Object a) {
-        return a instanceof Complex;
-    }
-
-    public static Complex wrap(Object a) {
-        return (Complex) a;
+    public static void assertIs(Object a) {
+        if(!(a instanceof Complex)) {
+            throw new AJEException("Value needs to be a complex number.");
+        }
     }
 
     public static Complex wrap(Numeric a) {
-        if (check(a)) return (Complex) a;
-        return new Complex(a.value(), 0);
+        if (a instanceof Complex) return (Complex) a;
+        return new Complex(a.value());
     }
 
     @Override
-    public double value() {
-        return re;
+    public String getType() {
+        return "complex";
     }
 
     @Override
     public String toString() {
-        if (im == 0) return re + "";
-        if (re == 0 && im == 1) return "i";
-        if (re == 0) return im + "i";
-        if (im <  0) return re + " - " + (-im) + "i";
-        return re + " + " + im + "i";
+        if (im == 0) return value() + "";
+        if (value() == 0 && im == 1) return "i";
+        if (value() == 0) return im + "i";
+        if (im <  0) return value() + " - " + (-im) + "i";
+        return value() + " + " + im + "i";
     }
 
     @Override
@@ -43,7 +48,7 @@ public class Complex extends Numeric implements OperableValue<Numeric> {
     }
 
     public Complex add(Complex b) {
-        return new Complex(re + b.re, im + b.im);
+        return new Complex(value() + b.value(), im + b.im);
     }
 
     @Override
@@ -52,7 +57,7 @@ public class Complex extends Numeric implements OperableValue<Numeric> {
     }
 
     public Complex subtract(Complex b) {
-        return new Complex(re - b.re, im - b.im);
+        return new Complex(value() - b.value(), im - b.im);
     }
 
     @Override
@@ -61,7 +66,7 @@ public class Complex extends Numeric implements OperableValue<Numeric> {
     }
 
     public Complex multiply(Complex b) {
-        return new Complex(re * b.re - im * b.im, re * b.im + im * b.re);
+        return new Complex(value() * b.value() - im * b.im, value() * b.im + im * b.value());
     }
 
     @Override
@@ -74,8 +79,8 @@ public class Complex extends Numeric implements OperableValue<Numeric> {
     }
 
     public Complex reciprocal() {
-        double scale = re*re + im*im;
-        return new Complex(re / scale, -im / scale);
+        double scale = value() * value() + im*im;
+        return new Complex(value() / scale, -im / scale);
     }
 
     @Override
@@ -84,8 +89,48 @@ public class Complex extends Numeric implements OperableValue<Numeric> {
     }
 
     @Override
+    public Complex pow(Numeric other) {
+        return pow(wrap(other));
+    }
+
+    public Complex pow(Complex other) {
+        Complex result = log().multiply(other).exp();
+        double real = BigDecimal.valueOf(result.value()).setScale(7, BigDecimal.ROUND_HALF_UP).doubleValue();
+        double imag = BigDecimal.valueOf(result.im).setScale(7, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return new Complex(real, imag);
+    }
+
+    // Apache Commons Math
+    public double abs() {
+        if (Math.abs(value()) < Math.abs(im)) {
+            if (im == 0.0) {
+                return Math.abs(value());
+            }
+            double q = value() / im;
+            return Math.abs(im) * Math.sqrt(1 + q * q);
+        } else {
+            if (value() == 0.0) {
+                return Math.abs(im);
+            }
+            double q = im / value();
+            return Math.abs(value()) * Math.sqrt(1 + q * q);
+        }
+    }
+
+    // Apache Commons Math
+    public Complex log() {
+        return new Complex(Math.log(abs()), Math.atan2(im, value()));
+    }
+
+    // Apache Commons Math
+    private Complex exp() {
+        double exp = Math.exp(value());
+        return new Complex(exp *  Math.cos(im), exp * Math.sin(im));
+    }
+
+    @Override
     public Complex negative() {
-        return new Complex(-re, -im);
+        return new Complex(-value(), -im);
     }
 
     @Override
@@ -94,6 +139,6 @@ public class Complex extends Numeric implements OperableValue<Numeric> {
     }
 
     public Truth equals(Complex b) {
-        return re == b.re && im == b.im ? Truth.TRUE : Truth.FALSE;
+        return value() == b.value() && im == b.im ? Truth.TRUE : Truth.FALSE;
     }
 }

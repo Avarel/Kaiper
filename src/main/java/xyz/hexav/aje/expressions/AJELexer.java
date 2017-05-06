@@ -16,8 +16,8 @@ public class AJELexer {
     /**
      * Get the next character and increase the position variable.
      */
-    public char nextChar() {
-        return current = ++pos < target.length() ? target.charAt(pos) : (char) -1;
+    public void advance() {
+        current = ++pos < target.length() ? target.charAt(pos) : (char) -1;
     }
 
     /**
@@ -35,7 +35,7 @@ public class AJELexer {
     public boolean consume(char prompt, boolean strict) {
         if (!strict) skipWhitespace();
         if (current == prompt) {
-            nextChar();
+            advance();
             return true;
         }
         return false;
@@ -52,7 +52,7 @@ public class AJELexer {
 
         if (text.equals(prompt)) {
             pos = pos + prompt.length() - 1;
-            current = nextChar();
+            advance();
             skipWhitespace();
             return true;
         }
@@ -73,15 +73,16 @@ public class AJELexer {
     /**
      * Resets the position of the compiling unit.
      */
-    public void resetPosition() {
+    public void reset() {
         pos = -1;
+        current = (char) -1;
     }
 
     /**
      * Skip whitespaces.
      */
     public void skipWhitespace() {
-        while (current == ' ' || current == '\n') nextChar();
+        while (current == ' ') advance();
     }
 
     /**
@@ -100,7 +101,7 @@ public class AJELexer {
         this.pos = pos;
     }
 
-    public String target() {
+    public String string() {
         return target;
     }
 
@@ -108,11 +109,20 @@ public class AJELexer {
         return current;
     }
 
-    public void setCurrentChar(char current) {
-        this.current = current;
-    }
-
     public String currentInfo() {
         return "['" + target + "':" + pos + "]";
+    }
+
+    // next string
+    public String nextString() {
+        int start = pos;
+        while (Character.isAlphabetic(current)) advance();
+        return target.substring(start, pos);
+    }
+
+    public String nextNumber() {
+        int start = pos;
+        while (Character.isDigit(current)) advance();
+        return target.substring(start, pos);
     }
 }

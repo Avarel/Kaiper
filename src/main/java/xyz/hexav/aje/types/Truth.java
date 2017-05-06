@@ -1,69 +1,61 @@
 package xyz.hexav.aje.types;
 
 import xyz.hexav.aje.AJEException;
+import xyz.hexav.aje.types.interfaces.OperableValue;
 
 public enum Truth implements OperableValue<Truth> {
-    TRUE((byte) 1),
-    FALSE((byte) 0);
+    TRUE(true),
+    FALSE(false);
 
-    private final byte value;
+    private final boolean value;
 
-    Truth(byte value) {
+    Truth(boolean value) {
         this.value = value;
     }
 
-    public static void check(Object a, Object b) {
-        if(!(a instanceof Truth || b instanceof Truth)) {
-            throw new AJEException("This operator requires both values to be booleans");
+    public static void assertIs(Object a) {
+        if(!(a instanceof Truth)) {
+            throw new AJEException("Value needs to be a boolean.");
         }
     }
 
     @Override
-    public double value() {
+    public String toString() {
+        return Boolean.toString(value);
+    }
+
+    @Override
+    public Boolean toNativeObject() {
         return value;
     }
 
     @Override
-    public String toString() {
-        return this == TRUE ? "true" : "false";
+    public String getType() {
+        return "boolean";
     }
+
 
     @Override
     public Truth add(Truth other) {
-        if (this == TRUE) return TRUE;
-        if (other == TRUE) return TRUE;
+        if (value) return TRUE;
+        if (other.value) return TRUE;
         return FALSE;
     }
 
     @Override
-    public Truth subtract(Truth other) {
-        throw new AJEException("Boolean algebra does not have negative quantities.");
-    }
-
-    @Override
     public Truth multiply(Truth other) {
-        if (this == FALSE) return FALSE;
-        if (other == FALSE) return FALSE;
+        if (!value) return FALSE;
+        if (!other.value) return FALSE;
         return TRUE;
     }
 
     @Override
-    public Truth divide(Truth other) {
-        throw new AJEException("Boolean algebra does not have division.");
-    }
-
-    @Override
-    public Truth mod(Truth other) {
-        throw new AJEException("Boolean algebra does not have modulus.");
-    }
-
-    @Override
     public Truth negative() {
-        return this == TRUE ? FALSE : TRUE;
+        return value ? FALSE : TRUE;
     }
 
     @Override
     public Truth equals(Truth other) {
-        return this == other ? TRUE : FALSE;
+        return value == other.value ? TRUE : FALSE;
     }
 }

@@ -1,11 +1,17 @@
 package xyz.hexav.aje;
 
 import xyz.hexav.aje.expressions.AJELexer;
-import xyz.hexav.aje.operators.Operator;
+import xyz.hexav.aje.operators.AJEBinaryOperator;
+import xyz.hexav.aje.operators.AJEUnaryOperator;
 import xyz.hexav.aje.operators.OperatorMap;
 import xyz.hexav.aje.operators.Precedence;
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.*;
+import xyz.hexav.aje.types.Complex;
+import xyz.hexav.aje.types.Nothing;
+import xyz.hexav.aje.types.Numeric;
+import xyz.hexav.aje.types.Truth;
+import xyz.hexav.aje.types.interfaces.OperableValue;
+import xyz.hexav.aje.types.interfaces.Value;
 
 /**
  * Compiles string expressions into compiled Expression instances.
@@ -27,86 +33,16 @@ public class ExpressionCompiler {
         return c >= '0' && c <= '9' || c == '.';
     }
 
-    /**
-     * Return the next String name.
-     */
-    private String nextLiteral() {
-        int start = lexer.pos();
 
-        if (!Character.isLetter(lexer.currentChar())) {
-            throw makeError("Nominal literals must start with a letter.");
-        }
-
-        while (isLiteral(lexer.currentChar())) lexer.nextChar();
-        return lexer.target().substring(start, lexer.pos());
-    }
-//
-//    public List<Expression> compileScript(String script) {
-//        return compileLines(toLines(script));
-//    }
-
-
-//    public List<Expression> compileScripts(List<String> scripts) {
-//        List<String> lines = new ArrayList<>();
-//
-//        for (String script : scripts) {
-//            lines.addAll(toLines(script));
-//            pos = -1;
-//        }
-//
-//        return compileLines(lines);
-//    }
-
-//    private List<String> toLines(String script) {
-//        char s_current = script.charAt(++pos);
-//
-//        List<String> lines = new ArrayList<>();
-//
-//        do {
-//            int start = pos;
-//
-//            while (s_current != ';' && ++pos < script.length()) {
-//                s_current = script.charAt(pos);
-//            }
-//
-//            lines.add(script.substring(start, pos).trim());
-//
-//            if (s_current != ';') break;
-//            else s_current = ++pos < script.length() ? script.charAt(pos) : (char) -1;
-//        }
-//        while (pos < script.length());
-//
-//        return lines;
-//    }
-
-//    private List<Expression> compileLines(List<String> lines) {
-//        List<Expression> exps = new ArrayList<>();
-//
-//        // Compile values and functions first.
-//        for (String line : lines) {
-//            resetPosition();
-//            setStr(line);
-//            nextChar();
-//
-//            if (consume("func")) {
-//                consumeFunction();
-//            } else {
-//                exps.add(compileLine(line));
-//            }
-//        }
-//
-//        return exps;
-//    }
-
-    public OperableValue compute() {
-        lexer.nextChar();
+    public Value compute() {
+        lexer.advance();
         OperableValue e = compileExpression();
 
 //        while (lexer.consume(';') && lexer.pos() < lexer.target().length()) {
 //            e = e.andThen(compileExpression());
 //        }
 
-        if (lexer.pos() < lexer.target().length()) throw makeError("Unhandled character `" + lexer.currentChar() + "`.");
+        if (lexer.pos() < lexer.string().length()) throw makeError("Unhandled character `" + lexer.currentChar() + "`.");
 
         return e;
     }
@@ -201,12 +137,11 @@ public class ExpressionCompiler {
             return compileLiteral();
         }
 
-
         // Unary operations
-        for (Operator operator : operators.get(level)) {
-            if (operator.getArgs() == -1 && lexer.consume(operator.getSymbol())) {
+        for (AJEUnaryOperator operator : pool.getOperators().getUnaryOperators()) {
+            if (lexer.consume(operator.getSymbol())) {
                 OperableValue exp = compileExpression(level);
-                return operator.apply(exp, null);
+                return operator.apply(exp);
             }
         }
 
@@ -214,18 +149,12 @@ public class ExpressionCompiler {
 
         while (true) {
             boolean flag = false;
-            for (Operator operator : operators.get(level)) {
-               // System.out.print(operator.getSymbol() + " ");
-                if (operator.getArgs() == 2 && lexer.consume(operator.getSymbol())) {
+            for (AJEBinaryOperator operator : operators.get(level)) {
+                if (lexer.consume(operator.getSymbol())) {
                     final OperableValue a = value;
-                    final OperableValue b = compileExpression(operator.isLeftAssoc() ? level + 1 : level); // operator.isLeftAssoc() ? Precedence.UNARY :  level + 1
-
-                    //System.out.print(operator + " ");
+                    final OperableValue b = compileExpression(operator.isLeftAssoc() ? level + 1 : level);
 
                     value = operator.apply(a, b);
-                    flag = true;
-                } else if (operator.getArgs() == 1 && lexer.consume(operator.getSymbol())) {
-                    value = operator.apply(value, null);
                     flag = true;
                 }
             }
@@ -242,8 +171,8 @@ public class ExpressionCompiler {
             return value;
         }
 
-        while (lexer.currentChar() == ';') lexer.nextChar();
-        if (lexer.pos() == lexer.target().length()) return Nothing.VALUE;
+        while (lexer.currentChar() == ';') lexer.advance();
+        if (lexer.pos() == lexer.string().length()) return Nothing.VALUE;
 
         int start = lexer.pos();
 
@@ -264,10 +193,10 @@ public class ExpressionCompiler {
                     if (!(lexer.currentChar() == '0' || lexer.currentChar() == '1')) {
                         throw makeError("Binary literals can only have '1' and '0'.");
                     }
-                    lexer.nextChar();
+                    lexer.advance();
                 }
 
-                double value = Integer.valueOf(lexer.target().substring(_start, lexer.pos()), 2).doubleValue();
+                double value = Integer.valueOf(lexer.string().substring(_start, lexer.pos()), 2).doubleValue();
                 return new Numeric(value);
             }
             // HEXADECIMAL
@@ -279,16 +208,16 @@ public class ExpressionCompiler {
                             || lexer.currentChar() >= 'A' && lexer.currentChar() <= 'F')) {
                         throw makeError("Hexadecimal literals can only have '1-9' and 'A-F'.");
                     }
-                    lexer.nextChar();
+                    lexer.advance();
                 }
 
-                double value = Integer.valueOf(lexer.target().substring(_start, lexer.pos()), 16).doubleValue();
+                double value = Integer.valueOf(lexer.string().substring(_start, lexer.pos()), 16).doubleValue();
                 return new Numeric(value);
             }
 
-            while (!lexer.nextIs("..") && isNumeric(lexer.currentChar())) lexer.nextChar();
+            while (!lexer.nextIs("..") && isNumeric(lexer.currentChar())) lexer.advance();
 
-            double value = Double.parseDouble(lexer.target().substring(start, lexer.pos()));
+            double value = Double.parseDouble(lexer.string().substring(start, lexer.pos()));
 
             if (lexer.consume('i')) {
                 return new Complex(0, value);
@@ -331,7 +260,7 @@ public class ExpressionCompiler {
 
         // FUNCTION AND CONSTANTS
         else if (Character.isLetter(lexer.currentChar())) {
-            String name = nextLiteral();
+            String name = lexer.nextString();
 
 
 //

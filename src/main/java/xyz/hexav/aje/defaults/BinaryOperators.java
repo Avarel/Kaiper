@@ -1,52 +1,56 @@
 package xyz.hexav.aje.defaults;
 
-import xyz.hexav.aje.operators.Operator;
-import xyz.hexav.aje.types.ComparableValue;
-import xyz.hexav.aje.types.OperableValue;
+import xyz.hexav.aje.operators.AJEBinaryOperator;
+import xyz.hexav.aje.types.interfaces.ComparableValue;
+import xyz.hexav.aje.types.Numeric;
+import xyz.hexav.aje.types.interfaces.OperableValue;
 import xyz.hexav.aje.types.Truth;
 
-public enum DefaultOperators implements Operator {
-    LOGICAL_OR("||", 2) {
+@SuppressWarnings("unchecked")
+public enum BinaryOperators implements AJEBinaryOperator {
+    LOGICAL_OR("||") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
-            Truth.check(a, b);
+            Truth.assertIs(a);
+            Truth.assertIs(b);
             return a.add(b);
         }
     },
-    LOGICAL_AND("&&", 2) {
+    LOGICAL_AND("&&") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
-            Truth.check(a, b);
+            Truth.assertIs(a);
+            Truth.assertIs(b);
             return a.multiply(b);
         }
     },
 
-    ADD("+", 2) {
+    ADD("+") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
             return a.add(b);
         }
     },
-    SUBTRACT("-", 2) {
+    SUBTRACT("-") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
             return a.subtract(b);
         }
     },
 
-    MULTIPLY("*", 2) {
+    MULTIPLY("*") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
             return a.multiply(b);
         }
     },
-    DIVIDE("/", 2) {
+    DIVIDE("/") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
             return a.divide(b);
         }
     },
-    REMAINDER("%", 2) {
+    REMAINDER("%") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
             return a.mod(b);
@@ -59,12 +63,12 @@ public enum DefaultOperators implements Operator {
 //        }
 //    },
 
-//    PERCENTAGE("% of ", 2) {
-//        @Override
-//        public Value apply(Value a, Value b) {
-//            return  () -> a.value() / 100 * b.value();
-//        }
-//    },
+    PERCENTAGE("% of ") {
+        @Override
+        public OperableValue apply(OperableValue a, OperableValue b) {
+            return a.divide(new Numeric(100)).multiply(b);
+        }
+    },
 //    N_ROOT("th root of ", 2) {
 //        @Override
 //        public Value apply(Value a, Value b) {
@@ -80,38 +84,42 @@ public enum DefaultOperators implements Operator {
 //        }
 //    },
 
-    EQUALS("==", 2) {
+    EQUALS("==") {
         public OperableValue apply(OperableValue a, OperableValue b) {
             return a.equals(b);
         }
     },
-    NOT_EQUALS("!=", 2) {
+    NOT_EQUALS("!=") {
         public OperableValue apply(OperableValue a, OperableValue b) {
             return a.equals(b).negative();
         }
     },
 
-    GREATER_OR_EQUAL(">=", 2) {
+    GREATER_OR_EQUAL(">=") {
         public OperableValue apply(OperableValue a, OperableValue b) {
-            ComparableValue.check(a, b);
+            ComparableValue.assertIs(a);
+            ComparableValue.assertIs(b);
             return ComparableValue.wrap(a).greaterThanOrEqual(b);
         }
     },
-    GREATER_THAN(">", 2) {
+    GREATER_THAN(">") {
         public OperableValue apply(OperableValue a, OperableValue b) {
-            ComparableValue.check(a, b);
+            ComparableValue.assertIs(a);
+            ComparableValue.assertIs(b);
             return ComparableValue.wrap(a).greaterThan(b);
         }
     },
-    LESSER_OR_EQUAL("<=", 2) {
+    LESSER_OR_EQUAL("<=") {
         public OperableValue apply(OperableValue a, OperableValue b) {
-            ComparableValue.check(a, b);
+            ComparableValue.assertIs(a);
+            ComparableValue.assertIs(b);
             return ComparableValue.wrap(a).lessThanOrEqual(b);
         }
     },
-    LESSER_THAN("<", 2) {
+    LESSER_THAN("<") {
         public OperableValue apply(OperableValue a, OperableValue b) {
-            ComparableValue.check(a, b);
+            ComparableValue.assertIs(a);
+            ComparableValue.assertIs(b);
             return ComparableValue.wrap(a).lessThan(b);
         }
     },
@@ -135,43 +143,25 @@ public enum DefaultOperators implements Operator {
 //        }
 //    },
 //
-    UNARY_PLUS("+", -1) {
-        @Override
-        public OperableValue apply(OperableValue a, OperableValue b) {
-            return a;
-        }
-    },
-    UNARY_MINUS("-", -1) {
-        @Override
-        public OperableValue apply(OperableValue a, OperableValue b) {
-            return a.negative();
-        }
-    },
 //    BITWISE_COMPLEMENT("~", -1) {
 //        @Override
 //        public Value apply(Value a, Value b) {
 //            return () -> ~(int) a.value();
 //        }
 //    },
-//    LOGICAL_NOT("!", -1) {
-//        @Override
-//        public Value apply(Value a, Value b) {
-//            return () -> a.value() == 0 ? 1 : 0;
-//        }
-//    },
 //
-//    EXPONENTATION("^", 2, false) {
-//        @Override
-//        public Value apply(Value a, Value b) {
-//            return () -> Math.pow(a.value(), b.value());
-//        }
-//    },
-//    SCIENTIFIC_EX("E", 2, false) {
-//        @Override
-//        public Value apply(Value a, Value b) {
-//            return () -> a.value() * Math.pow(10, b.value());
-//        }
-//    },
+    EXPONENTATION("^", false) {
+        @Override
+        public OperableValue apply(OperableValue a, OperableValue b) {
+            return a.pow(b);
+        }
+    },
+    SCIENTIFIC_EX("E", false) {
+        public OperableValue apply(OperableValue a, OperableValue b) {
+            Numeric.assertIs(b);
+            return a.multiply(new Numeric(10).pow((Numeric) b));
+        }
+    },
 //
 //    DEGREES("deg", 1) {
 //        @Override
@@ -273,27 +263,20 @@ public enum DefaultOperators implements Operator {
 
 
     private final String symbol;
-    private final int args;
     private final boolean leftAssoc;
 
-    DefaultOperators(String symbol, int args) {
-        this(symbol, args, true);
+    BinaryOperators(String symbol) {
+        this(symbol, true);
     }
 
-    DefaultOperators(String symbol, int args, boolean leftAssoc) {
+    BinaryOperators(String symbol, boolean leftAssoc) {
         this.symbol = symbol;
-        this.args = args;
         this.leftAssoc = leftAssoc;
     }
 
     @Override
     public String getSymbol() {
         return symbol;
-    }
-
-    @Override
-    public int getArgs() {
-        return args;
     }
 
     @Override

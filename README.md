@@ -5,10 +5,12 @@ AJE is a math-centered scripting language/expression evaluator for the Java prog
 
 ### Features
 * Mathematical evaluation.
-* Built-in functions and operators.
-* Lists literals and operations.
-* User-defined variables and functions.
+* Boolean logic.
+* Complex numbers.
 
+
+# BEFORE 3.0 REWRITE (2.0 and below)
+Super outdated. None of these work anymore as of right nwo.
 #### Get Started
 Get started by importing the `ExpressionBuilder.java` class.
 Create a new instance with the desired script, then add additional lines of script, functions, operators and variables.

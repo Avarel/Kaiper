@@ -1,5 +1,7 @@
 package xyz.hexav.aje.types;
 
+import xyz.hexav.aje.types.interfaces.OperableValue;
+
 /**
  * Every operation results in the same
  * instance, NOTHING.
@@ -10,8 +12,18 @@ public class Nothing implements OperableValue<Nothing> {
     private Nothing() {}
 
     @Override
-    public double value() {
-        return Double.NaN;
+    public String toString() {
+        return "Nothing";
+    }
+
+    @Override
+    public Object toNativeObject() {
+        return Void.TYPE;
+    }
+
+    @Override
+    public String getType() {
+        return "nothing";
     }
 
     @Override

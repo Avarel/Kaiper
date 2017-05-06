@@ -1,5 +1,9 @@
 package xyz.hexav.aje.types;
 
+import xyz.hexav.aje.AJEException;
+import xyz.hexav.aje.types.interfaces.ComparableValue;
+import xyz.hexav.aje.types.interfaces.OperableValue;
+
 public class Numeric implements OperableValue<Numeric>, ComparableValue<Numeric> {
     private final double value;
 
@@ -7,9 +11,25 @@ public class Numeric implements OperableValue<Numeric>, ComparableValue<Numeric>
         this.value = value;
     }
 
+    public static void assertIs(Object a) {
+        if(!(a instanceof Numeric)) {
+            throw new AJEException("Value needs to be a number.");
+        }
+    }
+
     @Override
     public double value() {
         return value;
+    }
+
+    @Override
+    public Double toNativeObject() {
+        return value();
+    }
+
+    @Override
+    public String getType() {
+        return "number";
     }
 
     @Override
@@ -20,7 +40,7 @@ public class Numeric implements OperableValue<Numeric>, ComparableValue<Numeric>
     @Override
     public Numeric add(Numeric other) {
         if (other instanceof Complex) {
-            return new Complex(value, 0).add((Complex) other);
+            return Complex.wrap(this).add(other);
         }
         return new Numeric(value + other.value);
     }
@@ -28,7 +48,7 @@ public class Numeric implements OperableValue<Numeric>, ComparableValue<Numeric>
     @Override
     public Numeric subtract(Numeric other) {
         if (other instanceof Complex) {
-            return new Complex(value, 0).subtract((Complex) other);
+            return Complex.wrap(this).subtract(other);
         }
         return new Numeric(value - other.value);
     }
@@ -36,7 +56,7 @@ public class Numeric implements OperableValue<Numeric>, ComparableValue<Numeric>
     @Override
     public Numeric multiply(Numeric other) {
         if (other instanceof Complex) {
-            return new Complex(value, 0).multiply((Complex) other);
+            return Complex.wrap(this).multiply(other);
         }
         return new Numeric(value * other.value);
     }
@@ -44,9 +64,17 @@ public class Numeric implements OperableValue<Numeric>, ComparableValue<Numeric>
     @Override
     public Numeric divide(Numeric other) {
         if (other instanceof Complex) {
-            return new Complex(value, 0).divide((Complex) other);
+            return Complex.wrap(this).divide(other);
         }
         return new Numeric(value / other.value);
+    }
+
+    @Override
+    public Numeric pow(Numeric other) {
+        if (other instanceof Complex) {
+            return Complex.wrap(this).pow(other);
+        }
+        return new Numeric(Math.pow(value, other.value));
     }
 
     @Override

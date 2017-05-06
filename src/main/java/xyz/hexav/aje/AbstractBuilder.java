@@ -1,6 +1,6 @@
 package xyz.hexav.aje;
 
-import xyz.hexav.aje.operators.Operator;
+import xyz.hexav.aje.operators.AJEBinaryOperator;
 import xyz.hexav.aje.operators.Precedence;
 import xyz.hexav.aje.pool.DefaultPool;
 import xyz.hexav.aje.pool.Pool;
@@ -73,11 +73,11 @@ public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
         return (T) this;
     }
 
-    public T addOperator(Operator operator) {
+    public T addOperator(AJEBinaryOperator operator) {
         return addOperator(Precedence.INFIX, operator);
     }
 
-    public T addOperator(int precedence, Operator operator) {
+    public T addOperator(int precedence, AJEBinaryOperator operator) {
         getPool().getOperators().register(precedence, operator);
         return (T) this;
     }

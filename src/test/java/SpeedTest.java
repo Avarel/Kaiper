@@ -7,12 +7,12 @@ public class SpeedTest extends TestCase {
         // Performance hoggers
         // [1,2,[3,4,[5,6,[7,8],90, [91, 92],100]],9,10,[11, [50,52],12],13]
         // [0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]
-        String script = "1+2*3/4";
+        String script = "(8+2i)*(5i+3)";
         int testsAmt = 10000;
 
         System.out.println(testsAmt + " Tests");
         System.out.println("Precompiled: " + testPrecompiledSpeed(script, testsAmt) + "ns avg");
-        System.out.println("Recompile: " + testRecompileSpeed(script, testsAmt) + "ns avg");
+        System.out.println("  Recompile: " + testRecompileSpeed(script, testsAmt) + "ns avg");
     }
 
     private long testPrecompiledSpeed(String script, long tests) {

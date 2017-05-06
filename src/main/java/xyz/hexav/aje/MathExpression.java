@@ -1,13 +1,13 @@
 package xyz.hexav.aje;
 
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.OperableValue;
+import xyz.hexav.aje.types.interfaces.Value;
 
 import java.util.List;
 
 public class MathExpression {
     private final String script;
-    private OperableValue expression;
+    private Value expression;
 
     private final Pool pool;
 
@@ -49,7 +49,7 @@ public class MathExpression {
 //        return this;
 //    }
 
-    public OperableValue eval() {
+    public Value eval() {
         compile();
         return expression;
     }

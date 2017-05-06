@@ -1,16 +1,22 @@
-package xyz.hexav.aje.types;
+package xyz.hexav.aje.types.interfaces;
 
 import xyz.hexav.aje.AJEException;
+import xyz.hexav.aje.types.Truth;
 
-public interface ComparableValue<T> {
-    static void check(Object a, Object b) {
-        if(!(a instanceof ComparableValue || b instanceof ComparableValue)) {
+public interface ComparableValue<T> extends Value {
+    static void assertIs(Object a) {
+        if(!(a instanceof ComparableValue)) {
             throw new AJEException("This operator requires both values to be comparable!");
         }
     }
 
     static <T> ComparableValue<T> wrap(T a) {
         return (ComparableValue<T>) a;
+    }
+
+    @Override
+    default String getType() {
+        return "comparable";
     }
 
     //Truth equals(T other);

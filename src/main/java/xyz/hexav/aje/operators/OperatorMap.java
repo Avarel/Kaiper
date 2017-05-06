@@ -3,17 +3,19 @@ package xyz.hexav.aje.operators;
 import java.util.*;
 
 public class OperatorMap {
-    private Map<Integer, Set<Operator>> operators;
+    private List<AJEUnaryOperator> unaryOperators;
+    private Map<Integer, Set<AJEBinaryOperator>> operators;
 
     public OperatorMap() {
-        this(new TreeMap<>());
+        this(new ArrayList<>(), new TreeMap<>());
     }
 
     public OperatorMap(OperatorMap toCopy) {
-        this(new TreeMap<>(toCopy.operators));
+        this(new ArrayList<>(toCopy.unaryOperators), new TreeMap<>(toCopy.operators));
     }
 
-    public OperatorMap(Map<Integer, Set<Operator>> operators) {
+    public OperatorMap(List<AJEUnaryOperator> unaryOperators, Map<Integer, Set<AJEBinaryOperator>> operators) {
+        this.unaryOperators = unaryOperators;
         this.operators = operators;
     }
 
@@ -21,14 +23,18 @@ public class OperatorMap {
         return new OperatorMap(this);
     }
 
-    public void register(int precedence, Operator operator) {
+    public void register(AJEUnaryOperator operator) {
+        unaryOperators.add(operator);
+    }
+
+    public void register(int precedence, AJEBinaryOperator operator) {
         if (!operators.containsKey(precedence)) {
             operators.put(precedence, new LinkedHashSet<>());
         }
         operators.get(precedence).add(operator);
     }
 
-    public Set<Operator> get(int precedence) {
+    public Set<AJEBinaryOperator> get(int precedence) {
         return operators.get(precedence);
     }
 
@@ -51,5 +57,9 @@ public class OperatorMap {
             if (i > last) last = i;
         }
         return last;
+    }
+
+    public List<AJEUnaryOperator> getUnaryOperators() {
+        return unaryOperators;
     }
 }
