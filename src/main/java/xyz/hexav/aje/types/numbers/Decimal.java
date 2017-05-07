@@ -40,7 +40,7 @@ public class Decimal implements OperableValue<Decimal>, ImplicitCasts {
 
     @Override
     public String getType() {
-        return "double";
+        return "decimal";
     }
 
     @Override
@@ -64,17 +64,17 @@ public class Decimal implements OperableValue<Decimal>, ImplicitCasts {
     }
 
     @Override
-    public Decimal add(Decimal other) {
+    public Decimal plus(Decimal other) {
         return Decimal.of(value + other.value);
     }
 
     @Override
-    public Decimal subtract(Decimal other) {
+    public Decimal minus(Decimal other) {
         return Decimal.of(value - other.value);
     }
 
     @Override
-    public Decimal multiply(Decimal other) {
+    public Decimal times(Decimal other) {
         return Decimal.of(value * other.value);
     }
 

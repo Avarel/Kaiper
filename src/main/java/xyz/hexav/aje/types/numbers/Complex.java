@@ -73,23 +73,23 @@ public class Complex implements OperableValue<Complex>, ImplicitCasts {
     }
 
     @Override
-    public Complex add(Complex b) {
+    public Complex plus(Complex b) {
         return new Complex(re + b.re, im + b.im);
     }
 
     @Override
-    public Complex subtract(Complex b) {
+    public Complex minus(Complex b) {
         return new Complex(re - b.re, im - b.im);
     }
 
     @Override
-    public Complex multiply(Complex b) {
+    public Complex times(Complex b) {
         return new Complex(re * b.re - im * b.im, re * b.im + im * b.re);
     }
 
     @Override
     public Complex divide(Complex b) {
-        return multiply(b.reciprocal());
+        return times(b.reciprocal());
     }
 
     public Complex reciprocal() {
@@ -104,7 +104,7 @@ public class Complex implements OperableValue<Complex>, ImplicitCasts {
 
     @Override
     public Complex pow(Complex other) {
-        Complex result = log().multiply(other).exp();
+        Complex result = log().times(other).exp();
         double real = BigDecimal.valueOf(result.re).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();
         double imag = BigDecimal.valueOf(result.im).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();
         return new Complex(real, imag);

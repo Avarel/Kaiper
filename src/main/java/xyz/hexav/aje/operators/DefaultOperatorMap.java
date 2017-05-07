@@ -10,14 +10,14 @@ public class DefaultOperatorMap extends OperatorMap {
         // TODO inline operators
 //        register(Precedence.ASSIGNMENT, DefaultOperators.VAR_ASSIGNMENT);
 
-        registerPrefix(Precedence.UNARY, UnaryOperators.UNARY_PLUS);
-        registerPrefix(Precedence.UNARY, UnaryOperators.UNARY_MINUS);
-        registerPrefix(Precedence.UNARY, UnaryOperators.LOGICAL_NOT);
+        registerPrefix(Precedence.PREFIX, UnaryOperators.UNARY_PLUS);
+        registerPrefix(Precedence.PREFIX, UnaryOperators.UNARY_MINUS);
+        registerPrefix(Precedence.PREFIX, UnaryOperators.LOGICAL_NOT);
 //
+        registerBinary(Precedence.RANGE_TO, BinaryOperators.RANGE_TO);
 
-
-        registerBinary(Precedence.LOGICAL_OR, BinaryOperators.LOGICAL_OR);
-        registerBinary(Precedence.LOGICAL_AND, BinaryOperators.LOGICAL_AND);
+        registerBinary(Precedence.DISJUNCTION, BinaryOperators.LOGICAL_OR);
+        registerBinary(Precedence.CONJUNCTION, BinaryOperators.LOGICAL_AND);
 
         registerBinary(Precedence.ADDITIVE, BinaryOperators.ADD);
         registerBinary(Precedence.ADDITIVE, BinaryOperators.SUBTRACT);
@@ -31,10 +31,10 @@ public class DefaultOperatorMap extends OperatorMap {
         registerBinary(Precedence.EQUALITY, BinaryOperators.EQUALS);
         registerBinary(Precedence.EQUALITY, BinaryOperators.NOT_EQUALS);
 //
-        registerBinary(Precedence.RELATIONAL, BinaryOperators.GREATER_OR_EQUAL);
-        registerBinary(Precedence.RELATIONAL, BinaryOperators.GREATER_THAN);
-        registerBinary(Precedence.RELATIONAL, BinaryOperators.LESSER_OR_EQUAL);
-        registerBinary(Precedence.RELATIONAL, BinaryOperators.LESSER_THAN);
+        registerBinary(Precedence.COMPARISON, BinaryOperators.GREATER_OR_EQUAL);
+        registerBinary(Precedence.COMPARISON, BinaryOperators.GREATER_THAN);
+        registerBinary(Precedence.COMPARISON, BinaryOperators.LESSER_OR_EQUAL);
+        registerBinary(Precedence.COMPARISON, BinaryOperators.LESSER_THAN);
 //
 //        register(Precedence.SHIFT, DefaultOperators.ZERO_FILL_RIGHT_SHIFT);
 //        register(Precedence.SHIFT, DefaultOperators.RIGHT_SHIFT);
@@ -52,7 +52,7 @@ public class DefaultOperatorMap extends OperatorMap {
 ////        register(Precedence.POSTFIX, DefaultOperators.POST_DECREMENT);
 //
 //        register(Precedence.POSTFIX, DefaultOperators.DEGREES);
-//        register(Precedence.POSTFIX, DefaultOperators.LIST_INDEX);
+        registerBinary(Precedence.INFIX, BinaryOperators.LIST_INDEX);
     }
 
 }

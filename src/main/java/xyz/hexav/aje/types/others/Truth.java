@@ -46,14 +46,14 @@ public enum Truth implements OperableValue<Truth> {
 
 
     @Override
-    public Truth add(Truth other) {
+    public Truth plus(Truth other) {
         if (value) return TRUE;
         if (other.value) return TRUE;
         return FALSE;
     }
 
     @Override
-    public Truth multiply(Truth other) {
+    public Truth times(Truth other) {
         if (!value) return FALSE;
         if (!other.value) return FALSE;
         return TRUE;

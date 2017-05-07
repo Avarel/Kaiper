@@ -34,22 +34,6 @@ public class Slice extends ArrayList<OperableValue> implements OperableValue<Sli
         }
     }
 
-    public static Slice range(int start, int end) {
-        Slice slice = new Slice();
-
-        if (start < end) {
-            for (int i = start; i <= end; i++) {
-                slice.add(Decimal.of(i));
-            }
-        } else {
-            for (int i = start; i >= end; i--) {
-                slice.add(Decimal.of(i));
-            }
-        }
-
-        return slice;
-    }
-
     @Override
     public OperableValue[] implicitCastBy(OperableValue target, ImplicitBinaryOperator operator) {
         OperableValue[] objs = new OperableValue[] { this, target };
@@ -80,18 +64,18 @@ public class Slice extends ArrayList<OperableValue> implements OperableValue<Sli
     }
 
     @Override
-    public Slice add(Slice other) {
-        return listOperation(OperableValue::add, other);
+    public Slice plus(Slice other) {
+        return listOperation(OperableValue::plus, other);
     }
 
     @Override
-    public Slice subtract(Slice other) {
-        return listOperation(OperableValue::subtract, other);
+    public Slice minus(Slice other) {
+        return listOperation(OperableValue::minus, other);
     }
 
     @Override
-    public Slice multiply(Slice other) {
-        return listOperation(OperableValue::multiply, other);
+    public Slice times(Slice other) {
+        return listOperation(OperableValue::times, other);
     }
 
     @Override
@@ -112,6 +96,32 @@ public class Slice extends ArrayList<OperableValue> implements OperableValue<Sli
     @Override
     public Slice negative() {
         return listOperation(OperableValue::negative);
+    }
+
+
+    @Override
+    public boolean add(OperableValue operableValue) {
+        if (operableValue instanceof Slice) { // lets not do the virtual flatmapping again
+            return super.addAll((Slice) operableValue);
+        }
+        return super.add(operableValue);
+    }
+
+    @Override
+    public void add(int index, OperableValue element) {
+        if (element instanceof Slice) { // lets not do the virtual flatmapping again
+            super.addAll(index, (Slice) element);
+            return;
+        }
+        super.add(index, element);
+    }
+
+    public Slice get(Slice indices) {
+        Slice slice = new Slice();
+        for (OperableValue indice : indices) {
+            slice.add(get(((Int) indice).value()));
+        }
+        return slice;
     }
 
     @Override

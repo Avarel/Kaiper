@@ -1,6 +1,7 @@
 package xyz.hexav.aje.types;
 
 import xyz.hexav.aje.AJEException;
+import xyz.hexav.aje.types.others.Slice;
 import xyz.hexav.aje.types.others.Truth;
 
 /**
@@ -15,15 +16,15 @@ public interface OperableValue<T extends OperableValue> extends Value {
     }
 
     // Basic arithmetic
-    default T add(T other) {
+    default T plus(T other) {
         throw unsupported("addition");
     }
 
-    default T subtract(T other) {
+    default T minus(T other) {
         throw unsupported("subtraction");
     }
     
-    default T multiply(T other) {
+    default T times(T other) {
         throw unsupported("multiplication");
     }
 
@@ -70,5 +71,10 @@ public interface OperableValue<T extends OperableValue> extends Value {
 
     default Truth lessThanOrEqual(T other) {
         throw unsupported("less than or equal to comparison");
+    }
+
+    // Slices
+    default Slice rangeTo(T other) {
+        throw unsupported("range to");
     }
 }

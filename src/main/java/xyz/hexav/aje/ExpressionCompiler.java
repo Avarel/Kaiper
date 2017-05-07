@@ -129,7 +129,7 @@ public class ExpressionCompiler {
 //    }
 
     private OperableValue compileExpression() {
-        return compileExpression(Precedence.LOGICAL_OR);
+        return compileExpression(Precedence.DISJUNCTION);
     }
 
     private OperableValue compileExpression(int prec) {
@@ -244,17 +244,7 @@ public class ExpressionCompiler {
 
             do {
                 OperableValue value = compileExpression();
-
-                if (lexer.consume("..")) {
-                    OperableValue end = compileExpression();
-
-                    int a = ((Int) value).value();
-                    int b = ((Int) end).value();
-
-                    list.addAll(Slice.range(a, b));
-                } else {
-                    list.add(value);
-                }
+                list.add(value);
             }
             while (lexer.consume(','));
 

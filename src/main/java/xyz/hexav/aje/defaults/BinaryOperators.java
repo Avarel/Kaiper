@@ -1,44 +1,54 @@
 package xyz.hexav.aje.defaults;
 
+import xyz.hexav.aje.AJEException;
 import xyz.hexav.aje.operators.AJEBinaryOperator;
-import xyz.hexav.aje.types.numbers.Decimal;
 import xyz.hexav.aje.types.OperableValue;
+import xyz.hexav.aje.types.numbers.Decimal;
+import xyz.hexav.aje.types.numbers.Int;
+import xyz.hexav.aje.types.others.Slice;
 import xyz.hexav.aje.types.others.Truth;
 
 @SuppressWarnings("unchecked")
 public enum BinaryOperators implements AJEBinaryOperator {
+    RANGE_TO("..") {
+        @Override
+        public OperableValue apply(OperableValue a, OperableValue b) {
+            return a.rangeTo(b);
+        }
+    },
+
     LOGICAL_OR("||") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
             Truth.assertIs(a, b);
-            return a.add(b);
+            return a.plus(b);
         }
     },
     LOGICAL_AND("&&") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
             Truth.assertIs(a, b);
-            return a.multiply(b);
+            return a.times(b);
         }
     },
 
     ADD("+") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
-            return a.add(b);
+            return a.plus(b);
         }
     },
     SUBTRACT("-") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
-            return a.subtract(b);
+            return a.minus(b);
         }
     },
 
     MULTIPLY("*") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
-            return a.multiply(b);
+            return a.times(b);
         }
     },
     DIVIDE("/") {
@@ -63,7 +73,7 @@ public enum BinaryOperators implements AJEBinaryOperator {
     PERCENTAGE("% of ") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
-            return a.divide(new Decimal(100)).multiply(b);
+            return a.divide(new Decimal(100)).times(b);
         }
     },
     NTH_ROOT("th root of ") {
@@ -140,7 +150,7 @@ public enum BinaryOperators implements AJEBinaryOperator {
     SCIENTIFIC_EX("E", false) {
         public OperableValue apply(OperableValue a, OperableValue b) {
             Decimal.assertIs(b);
-            return a.multiply(new Decimal(10).pow((Decimal) b));
+            return a.times(new Decimal(10).pow((Decimal) b));
         }
     },
 //
@@ -152,20 +162,24 @@ public enum BinaryOperators implements AJEBinaryOperator {
 //    },
 //
 //
-//    LIST_INDEX("@", 2) {
-//        @Override
-//        public Value apply(Value a, Value b) {
-//            if (a instanceof Slice) {
-//                Slice list = (Slice) a;
-//                if (b instanceof Slice) {
-//                    Slice indices = (Slice) b;
-//                    return list.subList(indices);
-//                }
-//                return list.get(b);
-//            }
-//            throw new RuntimeException("Attempted to use get at `@` operator on a non-list.");
-//        }
-//    },
+    LIST_INDEX("@") {
+        @Override
+        public OperableValue compile(OperableValue a, OperableValue b) {
+            if (!(b instanceof Int || b instanceof Slice)) {
+                throw new AJEException(a.getType() + " get operations must take in an int or slice range.");
+            }
+            return apply(a, b);
+        }
+        @Override
+        public OperableValue apply(OperableValue a, OperableValue b) {
+            Slice.assertIs(a);
+            if (b instanceof Int) {
+                return ((Slice) a).get(((Int) b).value());
+            } else if (b instanceof Slice) {
+                return ((Slice) a).get(((Slice) b));
+            } else throw new AJEException("what");
+        }
+    },
 
 //    POST_INCREMENT("++", 1) {
 //        @Override

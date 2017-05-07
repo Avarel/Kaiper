@@ -27,17 +27,17 @@ public class Nothing implements OperableValue<Nothing> {
     }
 
     @Override
-    public Nothing add(Nothing other) {
+    public Nothing plus(Nothing other) {
         return this;
     }
 
     @Override
-    public Nothing subtract(Nothing other) {
+    public Nothing minus(Nothing other) {
         return this;
     }
 
     @Override
-    public Nothing multiply(Nothing other) {
+    public Nothing times(Nothing other) {
         return this;
     }
 

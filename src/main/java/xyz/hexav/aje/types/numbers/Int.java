@@ -18,7 +18,7 @@ public class Int implements OperableValue<Int>, ImplicitCasts {
     public static void assertIs(Object... objs) {
         for (Object a : objs) {
             if (!(a instanceof Int)) {
-                throw new AJEException("Value needs to be a number.");
+                throw new AJEException("Value needs to be an int.");
             }
         }
     }
@@ -38,7 +38,7 @@ public class Int implements OperableValue<Int>, ImplicitCasts {
 
     @Override
     public String getType() {
-        return "int";
+        return "integer";
     }
 
     @Override
@@ -72,17 +72,17 @@ public class Int implements OperableValue<Int>, ImplicitCasts {
     }
 
     @Override
-    public Int add(Int other) {
+    public Int plus(Int other) {
         return Int.of(value + other.value);
     }
 
     @Override
-    public Int subtract(Int other) {
+    public Int minus(Int other) {
         return Int.of(value - other.value);
     }
 
     @Override
-    public Int multiply(Int other) {
+    public Int times(Int other) {
         return Int.of(value * other.value);
     }
 
@@ -131,5 +131,22 @@ public class Int implements OperableValue<Int>, ImplicitCasts {
     @Override
     public Truth lessThanOrEqual(Int other) {
         return value <= other.value ? Truth.TRUE : Truth.FALSE;
+    }
+
+    @Override
+    public Slice rangeTo(Int other) {
+        Slice slice = new Slice();
+
+        if (value < other.value) {
+            for (int i = value; i <= other.value; i++) {
+                slice.add(Int.of(i));
+            }
+        } else {
+            for (int i = value; i >= other.value; i--) {
+                slice.add(Int.of(i));
+            }
+        }
+
+        return slice;
     }
 }
