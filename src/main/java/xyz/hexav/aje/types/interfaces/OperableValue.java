@@ -14,62 +14,61 @@ public interface OperableValue<T extends OperableValue> extends Value {
         }
     }
 
-    @Override
-    default String getType() {
-        return "operable";
-    }
-
     // Basic arithmetic
     default T add(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("addition");
     }
 
     default T subtract(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("subtraction");
     }
     
     default T multiply(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("multiplication");
     }
 
     default T divide(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("division");
     }
 
     default T mod(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("modulus");
     }
 
     default T pow(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("exponentiation");
     }
 
     default T root(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("root");
     }
 
     default T negative() {
-        throw new UnsupportedOperationException();
+        throw unsupported("negation");
+    }
+    
+    default RuntimeException unsupported(String desc) {
+        return new AJEException(getType() + " does not support " + desc + ".");
     }
 
     // Boolean logic
     default Truth equals(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("equality comparison");
     }
 
     default Truth greaterThan(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("greater than comparison");
     }
 
     default Truth lessThan(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("less than comparison");
     }
 
     default Truth greaterThanOrEqual(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("greater than or equal to comparison");
     }
 
     default Truth lessThanOrEqual(T other) {
-        throw new UnsupportedOperationException();
+        throw unsupported("less than or equal to comparison");
     }
 }

@@ -13,6 +13,14 @@ public enum Truth implements OperableValue<Truth> {
         this.value = value;
     }
 
+    public static void assertNot(Object... objs) {
+        for (Object a : objs) {
+            if(a instanceof Truth) {
+                throw new AJEException("Value can not be a boolean.");
+            }
+        }
+    }
+
     public static void assertIs(Object... objs) {
         for (Object a : objs) {
             if(!(a instanceof Truth)) {

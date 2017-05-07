@@ -17,8 +17,8 @@ public class Nothing implements OperableValue<Nothing> {
     }
 
     @Override
-    public Object toNativeObject() {
-        return Void.TYPE;
+    public Void toNativeObject() {
+        return null;
     }
 
     @Override

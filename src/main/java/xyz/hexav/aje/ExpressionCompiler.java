@@ -6,10 +6,7 @@ import xyz.hexav.aje.operators.AJEUnaryOperator;
 import xyz.hexav.aje.operators.OperatorMap;
 import xyz.hexav.aje.operators.Precedence;
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.Complex;
-import xyz.hexav.aje.types.Nothing;
-import xyz.hexav.aje.types.Numeric;
-import xyz.hexav.aje.types.Truth;
+import xyz.hexav.aje.types.*;
 import xyz.hexav.aje.types.interfaces.OperableValue;
 import xyz.hexav.aje.types.interfaces.Value;
 
@@ -40,11 +37,11 @@ public class ExpressionCompiler {
         lexer.advance();
         OperableValue e = compileExpression();
 
-//        while (lexer.consume(';') && lexer.pos() < lexer.target().length()) {
-//            e = e.andThen(compileExpression());
-//        }
+        while (lexer.consume(';') && lexer.pos() < lexer.string().length()) {
+            e = compileExpression();
+        }
 
-        if (lexer.pos() < lexer.string().length()) throw makeError("Unhandled character `" + lexer.currentChar() + "`.");
+        if (lexer.pos() < lexer.string().length()) throw error("Unhandled character `" + lexer.currentChar() + "`.");
 
         return e;
     }
@@ -158,7 +155,7 @@ public class ExpressionCompiler {
                     final OperableValue a = value;
                     final OperableValue b = compileExpression(operator.isLeftAssoc() ? prec + 1 : prec);
 
-                    value = operator.apply(a, b);
+                    value = operator.compile(a, b);
                     flag = true;
                 }
             }
@@ -195,7 +192,7 @@ public class ExpressionCompiler {
 
                 while (!isNumeric(lexer.currentChar())) {
                     if (!(lexer.currentChar() == '0' || lexer.currentChar() == '1')) {
-                        throw makeError("Binary literals can only have '1' and '0'.");
+                        throw error("Binary literals can only have '1' and '0'.");
                     }
                     lexer.advance();
                 }
@@ -210,7 +207,7 @@ public class ExpressionCompiler {
                 while (isLiteral(lexer.currentChar())) {
                     if (!(lexer.currentChar() >= '0' && lexer.currentChar() <= '9'
                             || lexer.currentChar() >= 'A' && lexer.currentChar() <= 'F')) {
-                        throw makeError("Hexadecimal literals can only have '1-9' and 'A-F'.");
+                        throw error("Hexadecimal literals can only have '1-9' and 'A-F'.");
                     }
                     lexer.advance();
                 }
@@ -232,30 +229,30 @@ public class ExpressionCompiler {
         else if (lexer.consume('i')) {
             return Complex.of(0, 1);
         }
-//        // LISTS
-//        else if (lexer.consume('[')) {
-//
-//            if (lexer.consume(']')) return Slice.EMPTY;
-//
-//            Slice list = new Slice();
-//
-//            do {
-//                Expression a = compileExpression();
-//
-////                if (lexer.consume("..")) {
-////                    Expression b = compileExpression();
-////                    Expression c = list.size() == 1 ? list.get(list.size() - 1) : null;
-////                    list.add(new Range(a, b, c));
-////                } else {
-//                    list.add(a);
-////                }
-//            }
-//            while (lexer.consume(','));
-//
-//            if (!lexer.consume(']')) throw makeError("Expected list literal to close.");
-//
-//            return list;
-//        }
+        // LISTS
+        else if (lexer.consume('[')) {
+
+            if (lexer.consume(']')) return Slice.EMPTY;
+
+            Slice list = new Slice();
+
+            do {
+                OperableValue value = compileExpression();
+
+//                if (lexer.consume("..")) {
+//                    Expression b = compileExpression();
+//                    Expression c = list.size() == 1 ? list.get(list.size() - 1) : null;
+//                    list.add(new Range(a, b, c));
+//                } else {
+                    list.add(value);
+//                }
+            }
+            while (lexer.consume(','));
+
+            if (!lexer.consume(']')) throw error("Expected list literal to close.");
+
+            return list;
+        }
         else if (lexer.consume("true")) {
             return Truth.TRUE;
         } else if (lexer.consume("false")) {
@@ -303,10 +300,10 @@ public class ExpressionCompiler {
 //                throw makeError("Can not resolve reference `" + name + "`.");
 //            }
         }
-        throw makeError("Unexpected token: " + lexer.currentChar());
+        throw error("Unexpected token: " + lexer.currentChar());
     }
 
-    private AJEException makeError(String message) {
+    private AJEException error(String message) {
         return new AJEException(message + " " + lexer.currentInfo());
     }
 }

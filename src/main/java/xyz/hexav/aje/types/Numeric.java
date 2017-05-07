@@ -1,11 +1,12 @@
 package xyz.hexav.aje.types;
 
 import xyz.hexav.aje.AJEException;
+import xyz.hexav.aje.types.interfaces.ImplicitCasts;
 import xyz.hexav.aje.types.interfaces.OperableValue;
 
 import java.math.BigDecimal;
 
-public class Numeric implements OperableValue<Numeric> {
+public class Numeric implements OperableValue<Numeric>, ImplicitCasts {
     private final double value;
 
     public Numeric(double value) {
@@ -14,7 +15,7 @@ public class Numeric implements OperableValue<Numeric> {
 
     public static void assertIs(Object... objs) {
         for (Object a : objs) {
-            if(!(a instanceof Numeric)) {
+            if (!(a instanceof Numeric)) {
                 throw new AJEException("Value needs to be a number.");
             }
         }
@@ -24,7 +25,6 @@ public class Numeric implements OperableValue<Numeric> {
         return new Numeric(value);
     }
 
-    @Override
     public double value() {
         return value;
     }
@@ -45,51 +45,45 @@ public class Numeric implements OperableValue<Numeric> {
     }
 
     @Override
-    public Numeric add(Numeric other) {
-        if (other instanceof Complex) {
-            return Complex.wrap(this).add(other);
+    public OperableValue[] implicitCastBy(OperableValue target) {
+        OperableValue[] objs = new OperableValue[] { this, target };
+
+        if (target instanceof Complex) {
+            objs[0] = Complex.of(value);
+        } else if (target instanceof Slice) {
+            objs[0] = new Slice(this);
         }
+
+        return objs;
+    }
+
+    @Override
+    public Numeric add(Numeric other) {
         return Numeric.of(value + other.value);
     }
 
     @Override
     public Numeric subtract(Numeric other) {
-        if (other instanceof Complex) {
-            return Complex.wrap(this).subtract(other);
-        }
         return Numeric.of(value - other.value);
     }
 
     @Override
     public Numeric multiply(Numeric other) {
-        if (other instanceof Complex) {
-            return Complex.wrap(this).multiply(other);
-        }
         return Numeric.of(value * other.value);
     }
 
     @Override
     public Numeric divide(Numeric other) {
-        if (other instanceof Complex) {
-            return Complex.wrap(this).divide(other);
-        }
         return Numeric.of(value / other.value);
     }
 
     @Override
     public Numeric pow(Numeric other) {
-        if (other instanceof Complex) {
-            return Complex.wrap(this).pow(other);
-        }
         return Numeric.of(Math.pow(value, other.value));
     }
 
     @Override
     public Numeric root(Numeric other) {
-        if (other instanceof Complex) {
-            return other.pow(Complex.of(1 / value));
-        }
-
         if (value == 1) {
             return other;
         } else if (value == 2) {

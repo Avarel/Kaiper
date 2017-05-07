@@ -8,12 +8,14 @@ public enum UnaryOperators implements AJEUnaryOperator {
     UNARY_PLUS("+") {
         @Override
         public OperableValue apply(OperableValue a) {
+            Truth.assertNot(a);
             return a;
         }
     },
     UNARY_MINUS("-") {
         @Override
         public OperableValue apply(OperableValue a) {
+            Truth.assertNot(a);
             return a.negative();
         }
     },
