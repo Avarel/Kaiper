@@ -1,9 +1,9 @@
 package xyz.hexav.aje.defaults;
 
 import xyz.hexav.aje.operators.AJEBinaryOperator;
-import xyz.hexav.aje.types.Numeric;
-import xyz.hexav.aje.types.interfaces.OperableValue;
-import xyz.hexav.aje.types.Truth;
+import xyz.hexav.aje.types.numbers.Decimal;
+import xyz.hexav.aje.types.OperableValue;
+import xyz.hexav.aje.types.others.Truth;
 
 @SuppressWarnings("unchecked")
 public enum BinaryOperators implements AJEBinaryOperator {
@@ -63,7 +63,7 @@ public enum BinaryOperators implements AJEBinaryOperator {
     PERCENTAGE("% of ") {
         @Override
         public OperableValue apply(OperableValue a, OperableValue b) {
-            return a.divide(new Numeric(100)).multiply(b);
+            return a.divide(new Decimal(100)).multiply(b);
         }
     },
     NTH_ROOT("th root of ") {
@@ -139,8 +139,8 @@ public enum BinaryOperators implements AJEBinaryOperator {
     },
     SCIENTIFIC_EX("E", false) {
         public OperableValue apply(OperableValue a, OperableValue b) {
-            Numeric.assertIs(b);
-            return a.multiply(new Numeric(10).pow((Numeric) b));
+            Decimal.assertIs(b);
+            return a.multiply(new Decimal(10).pow((Decimal) b));
         }
     },
 //

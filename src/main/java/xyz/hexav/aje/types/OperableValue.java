@@ -1,7 +1,7 @@
-package xyz.hexav.aje.types.interfaces;
+package xyz.hexav.aje.types;
 
 import xyz.hexav.aje.AJEException;
-import xyz.hexav.aje.types.Truth;
+import xyz.hexav.aje.types.others.Truth;
 
 /**
  * An interface containing all natively implemented operations.

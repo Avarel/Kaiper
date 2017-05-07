@@ -1,8 +1,8 @@
 package xyz.hexav.aje.defaults;
 
 import xyz.hexav.aje.operators.AJEUnaryOperator;
-import xyz.hexav.aje.types.Truth;
-import xyz.hexav.aje.types.interfaces.OperableValue;
+import xyz.hexav.aje.types.others.Truth;
+import xyz.hexav.aje.types.OperableValue;
 
 public enum UnaryOperators implements AJEUnaryOperator {
     UNARY_PLUS("+") {

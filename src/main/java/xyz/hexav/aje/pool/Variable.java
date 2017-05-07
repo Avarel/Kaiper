@@ -1,6 +1,6 @@
 //package xyz.hexav.aje.pool;
 //
-//import xyz.hexav.aje.types.Nothing;
+//import xyz.hexav.aje.types.others.Nothing;
 //
 //public class Variable implements Expression {
 //    protected final String name;

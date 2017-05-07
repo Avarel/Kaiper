@@ -6,9 +6,14 @@ import xyz.hexav.aje.operators.AJEUnaryOperator;
 import xyz.hexav.aje.operators.OperatorMap;
 import xyz.hexav.aje.operators.Precedence;
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.*;
-import xyz.hexav.aje.types.interfaces.OperableValue;
-import xyz.hexav.aje.types.interfaces.Value;
+import xyz.hexav.aje.types.OperableValue;
+import xyz.hexav.aje.types.Value;
+import xyz.hexav.aje.types.numbers.Complex;
+import xyz.hexav.aje.types.numbers.Decimal;
+import xyz.hexav.aje.types.numbers.Int;
+import xyz.hexav.aje.types.others.Nothing;
+import xyz.hexav.aje.types.others.Slice;
+import xyz.hexav.aje.types.others.Truth;
 
 import java.util.Collections;
 
@@ -138,8 +143,7 @@ public class ExpressionCompiler {
         }
 
         // Unary operations
-        for (AJEUnaryOperator operator : pool.getOperators().getUnaries().getOrDefault(prec,
-                Collections.emptySet())) {
+        for (AJEUnaryOperator operator : pool.getOperators().getUnaries().getOrDefault(prec, Collections.emptySet())) {
             if (lexer.consume(operator.getSymbol())) {
                 OperableValue exp = compileExpression(prec);
                 return operator.apply(exp);
@@ -197,8 +201,8 @@ public class ExpressionCompiler {
                     lexer.advance();
                 }
 
-                double value = Integer.valueOf(lexer.string().substring(_start, lexer.pos()), 2).doubleValue();
-                return new Numeric(value);
+                int value = Integer.parseInt(lexer.string().substring(_start, lexer.pos()), 2);
+                return new Int(value);
             }
             // HEXADECIMAL
             else if (lexer.consume("0x")) {
@@ -212,19 +216,21 @@ public class ExpressionCompiler {
                     lexer.advance();
                 }
 
-                double value = Integer.valueOf(lexer.string().substring(_start, lexer.pos()), 16).doubleValue();
-                return new Numeric(value);
+                int value = Integer.parseInt(lexer.string().substring(_start, lexer.pos()), 16);
+                return Int.of(value);
             }
 
             while (!lexer.nextIs("..") && isNumeric(lexer.currentChar())) lexer.advance();
 
-            double value = Double.parseDouble(lexer.string().substring(start, lexer.pos()));
+            String str = lexer.string().substring(start, lexer.pos()).trim();
 
             if (lexer.consume('i')) {
-                return Complex.of(0, value);
+                return Complex.of(0, Double.parseDouble(str));
+            } else if (!str.contains(".")) {
+                return Int.of(Integer.parseInt(str));
             }
 
-            return Numeric.of(value);
+            return Decimal.of(Double.parseDouble(str));
         }
         else if (lexer.consume('i')) {
             return Complex.of(0, 1);
@@ -239,13 +245,16 @@ public class ExpressionCompiler {
             do {
                 OperableValue value = compileExpression();
 
-//                if (lexer.consume("..")) {
-//                    Expression b = compileExpression();
-//                    Expression c = list.size() == 1 ? list.get(list.size() - 1) : null;
-//                    list.add(new Range(a, b, c));
-//                } else {
+                if (lexer.consume("..")) {
+                    OperableValue end = compileExpression();
+
+                    int a = ((Int) value).value();
+                    int b = ((Int) end).value();
+
+                    list.addAll(Slice.range(a, b));
+                } else {
                     list.add(value);
-//                }
+                }
             }
             while (lexer.consume(','));
 

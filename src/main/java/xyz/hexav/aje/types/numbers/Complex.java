@@ -1,8 +1,11 @@
-package xyz.hexav.aje.types;
+package xyz.hexav.aje.types.numbers;
 
 import xyz.hexav.aje.AJEException;
-import xyz.hexav.aje.types.interfaces.ImplicitCasts;
-import xyz.hexav.aje.types.interfaces.OperableValue;
+import xyz.hexav.aje.operators.ImplicitBinaryOperator;
+import xyz.hexav.aje.types.others.Slice;
+import xyz.hexav.aje.types.others.Truth;
+import xyz.hexav.aje.types.ImplicitCasts;
+import xyz.hexav.aje.types.OperableValue;
 
 import java.math.BigDecimal;
 
@@ -41,11 +44,13 @@ public class Complex implements OperableValue<Complex>, ImplicitCasts {
     }
 
     @Override
-    public OperableValue[] implicitCastBy(OperableValue target) {
+    public OperableValue[] implicitCastBy(OperableValue target, ImplicitBinaryOperator operator) {
         OperableValue[] objs = new OperableValue[] { this, target };
 
-        if (target instanceof Numeric) {
-            objs[1] = Complex.of(((Numeric) target).value());
+        if (target instanceof Decimal) {
+            objs[1] = Complex.of(((Decimal) target).value());
+        } else if (target instanceof Int) {
+            objs[1] = Complex.of(((Int) target).value());
         } else if (target instanceof Slice) {
             objs[0] = new Slice(this);
         }

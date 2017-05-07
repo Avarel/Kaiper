@@ -1,7 +1,7 @@
 package xyz.hexav.aje;
 
 import xyz.hexav.aje.pool.Pool;
-import xyz.hexav.aje.types.interfaces.Value;
+import xyz.hexav.aje.types.Value;
 
 import java.util.List;
 

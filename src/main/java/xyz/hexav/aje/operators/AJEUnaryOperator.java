@@ -1,6 +1,6 @@
 package xyz.hexav.aje.operators;
 
-import xyz.hexav.aje.types.interfaces.OperableValue;
+import xyz.hexav.aje.types.OperableValue;
 
 import java.util.function.UnaryOperator;
 

@@ -1,6 +1,6 @@
 import xyz.hexav.aje.ExpressionBuilder;
 import xyz.hexav.aje.MathExpression;
-import xyz.hexav.aje.types.interfaces.Value;
+import xyz.hexav.aje.types.Value;
 
 import java.util.Scanner;
 

@@ -1,28 +1,32 @@
-package xyz.hexav.aje.types;
+package xyz.hexav.aje.types.numbers;
 
 import xyz.hexav.aje.AJEException;
-import xyz.hexav.aje.types.interfaces.ImplicitCasts;
-import xyz.hexav.aje.types.interfaces.OperableValue;
+import xyz.hexav.aje.operators.ImplicitBinaryOperator;
+import xyz.hexav.aje.types.others.Slice;
+import xyz.hexav.aje.types.others.Truth;
+import xyz.hexav.aje.types.ImplicitCasts;
+import xyz.hexav.aje.types.OperableValue;
 
 import java.math.BigDecimal;
 
-public class Numeric implements OperableValue<Numeric>, ImplicitCasts {
+public class Decimal implements OperableValue<Decimal>, ImplicitCasts {
     private final double value;
 
-    public Numeric(double value) {
+    public Decimal(double value) {
         this.value = value;
     }
 
     public static void assertIs(Object... objs) {
         for (Object a : objs) {
-            if (!(a instanceof Numeric)) {
+
+            if (!(a instanceof Decimal)) {
                 throw new AJEException("Value needs to be a number.");
             }
         }
     }
 
-    public static Numeric of(double value) {
-        return new Numeric(value);
+    public static Decimal of(double value) {
+        return new Decimal(value);
     }
 
     public double value() {
@@ -36,7 +40,7 @@ public class Numeric implements OperableValue<Numeric>, ImplicitCasts {
 
     @Override
     public String getType() {
-        return "number";
+        return "double";
     }
 
     @Override
@@ -45,11 +49,13 @@ public class Numeric implements OperableValue<Numeric>, ImplicitCasts {
     }
 
     @Override
-    public OperableValue[] implicitCastBy(OperableValue target) {
+    public OperableValue[] implicitCastBy(OperableValue target, ImplicitBinaryOperator operator) {
         OperableValue[] objs = new OperableValue[] { this, target };
 
         if (target instanceof Complex) {
             objs[0] = Complex.of(value);
+        } else if (target instanceof Int) {
+            objs[1] = Decimal.of(((Int) target).value());
         } else if (target instanceof Slice) {
             objs[0] = new Slice(this);
         }
@@ -58,79 +64,79 @@ public class Numeric implements OperableValue<Numeric>, ImplicitCasts {
     }
 
     @Override
-    public Numeric add(Numeric other) {
-        return Numeric.of(value + other.value);
+    public Decimal add(Decimal other) {
+        return Decimal.of(value + other.value);
     }
 
     @Override
-    public Numeric subtract(Numeric other) {
-        return Numeric.of(value - other.value);
+    public Decimal subtract(Decimal other) {
+        return Decimal.of(value - other.value);
     }
 
     @Override
-    public Numeric multiply(Numeric other) {
-        return Numeric.of(value * other.value);
+    public Decimal multiply(Decimal other) {
+        return Decimal.of(value * other.value);
     }
 
     @Override
-    public Numeric divide(Numeric other) {
-        return Numeric.of(value / other.value);
+    public Decimal divide(Decimal other) {
+        return Decimal.of(value / other.value);
     }
 
     @Override
-    public Numeric pow(Numeric other) {
-        return Numeric.of(Math.pow(value, other.value));
+    public Decimal pow(Decimal other) {
+        return Decimal.of(Math.pow(value, other.value));
     }
 
     @Override
-    public Numeric root(Numeric other) {
+    public Decimal root(Decimal other) {
         if (value == 1) {
             return other;
         } else if (value == 2) {
-            return Numeric.of(Math.sqrt(other.value));
+            return Decimal.of(Math.sqrt(other.value));
         } else if (value == 3) {
-            return Numeric.of(Math.cbrt(other.value));
+            return Decimal.of(Math.cbrt(other.value));
         } else {
             double result = Math.pow(value, 1.0 / other.value);
             double val = BigDecimal.valueOf(result).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();
-            return Numeric.of(val);
+            return Decimal.of(val);
         }
     }
 
     @Override
-    public Numeric mod(Numeric other) {
-        Numeric n = Numeric.of((value % other.value + other.value) % other.value);
+    public Decimal mod(Decimal other) {
+        Decimal n = Decimal.of((value % other.value + other.value) % other.value);
         System.out.println(n);
         return n;
     }
 
     @Override
-    public Numeric negative() {
-        return Numeric.of(-value);
+    public Decimal negative() {
+        return Decimal.of(-value);
     }
 
     @Override
-    public Truth equals(Numeric other) {
+    public Truth equals(Decimal other) {
         return value == other.value ? Truth.TRUE : Truth.FALSE;
     }
 
     @Override
-    public Truth greaterThan(Numeric other) {
+    public Truth greaterThan(Decimal other) {
         return value > other.value ? Truth.TRUE : Truth.FALSE;
     }
 
     @Override
-    public Truth lessThan(Numeric other) {
+    public Truth lessThan(Decimal other) {
         return value < other.value ? Truth.TRUE : Truth.FALSE;
     }
 
     @Override
-    public Truth greaterThanOrEqual(Numeric other) {
+    public Truth greaterThanOrEqual(Decimal other) {
         return value >= other.value ? Truth.TRUE : Truth.FALSE;
     }
 
     @Override
-    public Truth lessThanOrEqual(Numeric other) {
+    public Truth lessThanOrEqual(Decimal other) {
         return value <= other.value ? Truth.TRUE : Truth.FALSE;
     }
 }

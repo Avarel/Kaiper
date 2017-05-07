@@ -1,4 +1,4 @@
-package xyz.hexav.aje.types.interfaces;
+package xyz.hexav.aje.types;
 
 public interface Value {
     Object toNativeObject();

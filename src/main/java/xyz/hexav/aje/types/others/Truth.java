@@ -1,7 +1,7 @@
-package xyz.hexav.aje.types;
+package xyz.hexav.aje.types.others;
 
 import xyz.hexav.aje.AJEException;
-import xyz.hexav.aje.types.interfaces.OperableValue;
+import xyz.hexav.aje.types.OperableValue;
 
 public enum Truth implements OperableValue<Truth> {
     TRUE(true),

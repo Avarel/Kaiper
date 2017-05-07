@@ -1,11 +1,15 @@
-package xyz.hexav.aje.types;
+package xyz.hexav.aje.types.others;
 
 import xyz.hexav.aje.AJEException;
 import xyz.hexav.aje.operators.ImplicitBinaryOperator;
-import xyz.hexav.aje.types.interfaces.ImplicitCasts;
-import xyz.hexav.aje.types.interfaces.OperableValue;
+import xyz.hexav.aje.types.ImplicitCasts;
+import xyz.hexav.aje.types.OperableValue;
+import xyz.hexav.aje.types.numbers.Complex;
+import xyz.hexav.aje.types.numbers.Decimal;
+import xyz.hexav.aje.types.numbers.Int;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
@@ -30,14 +34,30 @@ public class Slice extends ArrayList<OperableValue> implements OperableValue<Sli
         }
     }
 
+    public static Slice range(int start, int end) {
+        Slice slice = new Slice();
+
+        if (start < end) {
+            for (int i = start; i <= end; i++) {
+                slice.add(Decimal.of(i));
+            }
+        } else {
+            for (int i = start; i >= end; i--) {
+                slice.add(Decimal.of(i));
+            }
+        }
+
+        return slice;
+    }
+
     @Override
-    public OperableValue[] implicitCastBy(OperableValue target) {
+    public OperableValue[] implicitCastBy(OperableValue target, ImplicitBinaryOperator operator) {
         OperableValue[] objs = new OperableValue[] { this, target };
         objs[0] = this;
 
-        if (target instanceof Numeric) {
-            objs[1] = new Slice(target);
-        } else if (target instanceof Complex) {
+        if (target instanceof Decimal
+                || target instanceof Int
+                || target instanceof Complex) {
             objs[1] = new Slice(target);
         }
 
@@ -46,7 +66,7 @@ public class Slice extends ArrayList<OperableValue> implements OperableValue<Sli
 
     @Override
     public List<OperableValue> toNativeObject() {
-        return new ArrayList<>(this);
+        return Collections.unmodifiableList(this);
     }
 
     @Override
