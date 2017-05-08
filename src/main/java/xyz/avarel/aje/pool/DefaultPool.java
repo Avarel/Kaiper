@@ -1,17 +1,17 @@
 package xyz.avarel.aje.pool;
 
-import xyz.avarel.aje.defaults.Functions;
+import xyz.avarel.aje.defaults.DefaultFunction;
 
 public class DefaultPool extends Pool {
     public static DefaultPool INSTANCE = new DefaultPool();
     
     private DefaultPool() {
-        put("sin", Functions.SIN);
-        put("cos", Functions.COS);
-        put("tan", Functions.TAN);
-        put("asin", Functions.ASIN);
-        put("acos", Functions.ACOS);
-        put("atan", Functions.ATAN);
-        put("atan2", Functions.ATAN2);
+        put("sin", DefaultFunction.SIN);
+        put("cos", DefaultFunction.COS);
+        put("tan", DefaultFunction.TAN);
+        put("asin", DefaultFunction.ASIN);
+        put("acos", DefaultFunction.ACOS);
+        put("atan", DefaultFunction.ATAN);
+        put("atan2", DefaultFunction.ATAN2);
     }
 }

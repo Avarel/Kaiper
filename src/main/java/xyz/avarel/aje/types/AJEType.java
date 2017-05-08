@@ -1,6 +1,6 @@
 package xyz.avarel.aje.types;
 
-public class AJEType<T extends AJEObject> {
+public class AJEType<T> {
     private final AJEType parent;
     private final T prototype;
     private final String name;
