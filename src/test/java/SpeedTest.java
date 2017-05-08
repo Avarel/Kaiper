@@ -1,6 +1,6 @@
 import junit.framework.TestCase;
-import xyz.hexav.aje.ExpressionBuilder;
-import xyz.hexav.aje.MathExpression;
+import xyz.avarel.aje.ExpressionBuilder;
+import xyz.avarel.aje.MathExpression;
 
 public class SpeedTest extends TestCase {
     public void testSpeeds() {
@@ -34,6 +34,7 @@ public class SpeedTest extends TestCase {
 
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
+            //noinspection deprecation
             exp.forceCompile().eval();
         }
         long end = System.nanoTime();

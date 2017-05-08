@@ -1,0 +1,135 @@
+plugins {
+    id 'com.jfrog.bintray' version '1.7.2'
+    id 'java'
+    id 'maven'
+    id 'maven-publish'
+    id 'signing'
+    id 'com.github.ben-manes.versions' version '0.13.0'
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
+}
+
+def versionObj = new Version(major: 2, minor: 2, revision: 2)
+
+group = 'xyz.avarel'
+archivesBaseName = 'AJE'
+version = "$versionObj"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task sourcesForRelease(type: Copy) {
+    from 'src/main/java'
+    into 'build/filteredSrc'
+}
+
+compileJava {
+    source = sourcesForRelease.destinationDir
+    classpath = sourceSets.main.compileClasspath
+
+    options.encoding = 'UTF-8'
+
+    dependsOn sourcesForRelease
+}
+
+jar {
+    baseName = project.name
+    manifest {
+        attributes 'Implementation-Version': version
+    }
+}
+
+shadowJar {
+    classifier = "withDependencies"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from "${buildDir}/filteredSrc"
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+bintray {
+    user = bintrayUsername
+    key = bintrayApiKey
+    publications = ["BintrayRelease"]
+    pkg {
+        repo = 'maven'
+        name = 'AJE'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/Avarel/AJE.git'
+        publish = true
+        version {
+            name = project.version
+            released = new Date()
+        }
+    }
+}
+
+publishing {
+    publications {
+        BintrayRelease(MavenPublication) {
+            from components.java
+            groupId group
+            artifactId archivesBaseName
+            version version
+            artifact javadocJar
+            artifact sourcesJar
+        }
+    }
+}
+
+String getProjectProperty(String propertyName)
+{
+    String property = ""
+    if (hasProperty(propertyName))
+    {
+        property = this.properties[propertyName]
+    }
+    return property
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
+}
+
+
+build {
+    dependsOn clean
+    dependsOn jar
+    dependsOn javadocJar
+    dependsOn sourcesJar
+    dependsOn shadowJar
+
+    jar.mustRunAfter clean
+    javadocJar.mustRunAfter jar
+    sourcesJar.mustRunAfter javadocJar
+    shadowJar.mustRunAfter sourcesJar
+}
+
+bintrayUpload {
+    dependsOn build
+
+    onlyIf { !getProjectProperty("bintrayUsername").empty }
+    onlyIf { !getProjectProperty("bintrayApiKey").empty }
+}
+
+class Version {
+    String major, minor, revision
+
+
+    String toString() {
+        "${major}.${minor}.${revision}"
+    }
+}

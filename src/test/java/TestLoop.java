@@ -1,6 +1,6 @@
-import xyz.hexav.aje.ExpressionBuilder;
-import xyz.hexav.aje.MathExpression;
-import xyz.hexav.aje.types.Value;
+import xyz.avarel.aje.ExpressionBuilder;
+import xyz.avarel.aje.MathExpression;
+import xyz.avarel.aje.types.Value;
 
 import java.util.Scanner;
 
@@ -38,7 +38,7 @@ public class TestLoop {
                 Value result = exp.eval();
                 long end = System.nanoTime();
 
-                Object obj = result.toNativeObject();
+                Object obj = result.toNative();
 
                 long ns =  (end - start);
                 double ms = ns / 1000000D;
