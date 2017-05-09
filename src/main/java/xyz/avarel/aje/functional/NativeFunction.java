@@ -1,6 +1,5 @@
 package xyz.avarel.aje.functional;
 
-import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.others.Undefined;
@@ -9,8 +8,8 @@ import java.util.List;
 import java.util.function.Function;
 
 @SuppressWarnings("unchecked") // i'm sorry god
-public interface NativeFunction extends Any<NativeFunction>, NativeObject<Function<List<Any>, Any>> {
-    Type<NativeFunction> TYPE = new Type<>("native function");
+public interface NativeFunction extends AJEFunction<NativeFunction>, NativeObject<Function<List<Any>, Any>> {
+//    Type<NativeFunction> TYPE = new Type<>("native function");
 
     @Override
     default Any invoke(List<Any> args) {
@@ -26,10 +25,10 @@ public interface NativeFunction extends Any<NativeFunction>, NativeObject<Functi
         return Undefined.VALUE;
     }
 
-    @Override
-    default Type<NativeFunction> getType() {
-        return TYPE;
-    }
+//    @Override
+//    default Type<NativeFunction> getType() {
+//        return TYPE;
+//    }
 
     @Override
     default Function<List<Any>, Any> toNative() {

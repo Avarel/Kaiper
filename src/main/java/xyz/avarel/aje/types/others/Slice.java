@@ -88,7 +88,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
 
     @Override
     public boolean add(Any Any) {
-        if (Any instanceof Slice) { // lets not do the virtual flatmapping again
+        if (Any instanceof Slice) {
             return super.addAll((Slice) Any);
         }
         return super.add(Any);
@@ -96,7 +96,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
 
     @Override
     public void add(int index, Any element) {
-        if (element instanceof Slice) { // lets not do the virtual flatmapping again
+        if (element instanceof Slice) {
             super.addAll(index, (Slice) element);
             return;
         }

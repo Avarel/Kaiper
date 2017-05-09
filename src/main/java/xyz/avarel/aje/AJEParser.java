@@ -181,7 +181,7 @@ public class AJEParser {
             Any value = compileExpression();
             lexer.consume(')');
             any = value;
-        } else if (lexer.consume("function")) {
+        } else if (lexer.consume("fun")) {
             any = compileFunction();
         } else if (isNumeric(lexer.currentChar())) {
 //            // BINARY
