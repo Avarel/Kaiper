@@ -1,15 +1,15 @@
 package xyz.avarel.aje.types.numbers;
 
 import xyz.avarel.aje.AJEException;
-import xyz.avarel.aje.types.AJEType;
-import xyz.avarel.aje.types.AJEObject;
+import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.others.Truth;
 
 import java.math.BigDecimal;
 
-public class Complex implements AJEObject<Complex>, NativeObject<Double> {
-    public static final AJEType<Complex> TYPE = new AJEType<>(Complex.of(0), "complex");
+public class Complex implements Any<Complex>, NativeObject<Double> {
+    public static final Type<Complex> TYPE = new Type<>(Complex.of(0), "complex");
 
     private final double re;
     private final double im;
@@ -45,8 +45,18 @@ public class Complex implements AJEObject<Complex>, NativeObject<Double> {
     }
 
     @Override
-    public AJEType getType() {
+    public Type getType() {
         return TYPE;
+    }
+
+    @Override
+    public Any castDown(Type type) {
+        if (type.getPrototype() instanceof Int) {
+            return Int.of((int) re);
+        } else if (type.getPrototype() instanceof Decimal) {
+            return Decimal.of(re);
+        }
+        return this;
     }
 
     @Override
@@ -85,7 +95,7 @@ public class Complex implements AJEObject<Complex>, NativeObject<Double> {
 
     @Override
     public Complex root(Complex other) {
-        return other.pow(this.reciprocal());
+        return this.pow(other.reciprocal());
     }
 
     @Override

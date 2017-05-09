@@ -1,15 +1,15 @@
 package xyz.avarel.aje.types.numbers;
 
 import xyz.avarel.aje.AJEException;
-import xyz.avarel.aje.types.AJEType;
-import xyz.avarel.aje.types.AJEObject;
+import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.others.Truth;
 
 import java.math.BigDecimal;
 
-public class Decimal implements AJEObject<Decimal>, NativeObject<Double> {
-    public static final AJEType<Decimal> TYPE = new AJEType<>(Complex.TYPE, Decimal.of(0), "decimal");
+public class Decimal implements Any<Decimal>, NativeObject<Double> {
+    public static final Type<Decimal> TYPE = new Type<>(Decimal.of(0), "decimal", Complex.TYPE);
 
     private final double value;
 
@@ -40,7 +40,7 @@ public class Decimal implements AJEObject<Decimal>, NativeObject<Double> {
     }
 
     @Override
-    public AJEType<Decimal> getType() {
+    public Type<Decimal> getType() {
         return TYPE;
     }
 
@@ -50,11 +50,19 @@ public class Decimal implements AJEObject<Decimal>, NativeObject<Double> {
     }
 
     @Override
-    public AJEObject castTo(AJEType type) {
+    public Any castUp(Type type) {
         if (type.getPrototype() instanceof Decimal) {
             return this;
         } else if (type.getPrototype() instanceof Complex) {
             return Complex.of(value);
+        }
+        return this;
+    }
+
+    @Override
+    public Any castDown(Type type) {
+        if (type.getPrototype() instanceof Int) {
+            return Int.of((int) value);
         }
         return this;
     }
@@ -86,14 +94,14 @@ public class Decimal implements AJEObject<Decimal>, NativeObject<Double> {
 
     @Override
     public Decimal root(Decimal other) {
-        if (value == 1) {
+        if (other.value == 1) {
             return other;
-        } else if (value == 2) {
-            return Decimal.of(Math.sqrt(other.value));
-        } else if (value == 3) {
-            return Decimal.of(Math.cbrt(other.value));
+        } else if (other.value == 2) {
+            return Decimal.of(Math.sqrt(this.value));
+        } else if (other.value == 3) {
+            return Decimal.of(Math.cbrt(this.value));
         } else {
-            double result = Math.pow(value, 1.0 / other.value);
+            double result = Math.pow(other.value, 1.0 / value);
             double val = BigDecimal.valueOf(result).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();
             return Decimal.of(val);
         }

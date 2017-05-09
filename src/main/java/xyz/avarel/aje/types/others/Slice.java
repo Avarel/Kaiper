@@ -1,9 +1,9 @@
 package xyz.avarel.aje.types.others;
 
 import xyz.avarel.aje.AJEException;
-import xyz.avarel.aje.operators.ImplicitBinaryOperator;
-import xyz.avarel.aje.types.AJEObject;
-import xyz.avarel.aje.types.AJEType;
+import xyz.avarel.aje.operators.AJEBinaryOperator;
+import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.numbers.Int;
 
@@ -13,16 +13,16 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 
 @SuppressWarnings("unchecked")
-public class Slice extends ArrayList<AJEObject> implements AJEObject<Slice>, NativeObject<List<AJEObject>> {
+public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<List<Any>> {
     public static final Slice EMPTY = new Slice();
 
-    public static final AJEType<Slice> TYPE = new AJEType<>(EMPTY, "slice");
+    public static final Type<Slice> TYPE = new Type<>(EMPTY, "slice");
 
     public Slice() {
         super();
     }
 
-    public Slice(AJEObject value) {
+    public Slice(Any value) {
         this();
         add(value);
     }
@@ -36,12 +36,12 @@ public class Slice extends ArrayList<AJEObject> implements AJEObject<Slice>, Nat
     }
 
     @Override
-    public List<AJEObject> toNative() {
+    public List<Any> toNative() {
         return Collections.unmodifiableList(this);
     }
 
     @Override
-    public AJEType<Slice> getType() {
+    public Type<Slice> getType() {
         return TYPE;
     }
 
@@ -52,50 +52,50 @@ public class Slice extends ArrayList<AJEObject> implements AJEObject<Slice>, Nat
 
     @Override
     public Slice plus(Slice other) {
-        return listOperation(AJEObject::plus, other);
+        return listOperation(Any::plus, other);
     }
 
     @Override
     public Slice minus(Slice other) {
-        return listOperation(AJEObject::minus, other);
+        return listOperation(Any::minus, other);
     }
 
     @Override
     public Slice times(Slice other) {
-        return listOperation(AJEObject::times, other);
+        return listOperation(Any::times, other);
     }
 
     @Override
     public Slice divide(Slice other) {
-        return listOperation(AJEObject::divide, other);
+        return listOperation(Any::divide, other);
     }
 
     @Override
     public Slice pow(Slice other) {
-        return listOperation(AJEObject::pow, other);
+        return listOperation(Any::pow, other);
     }
 
     @Override
     public Slice root(Slice other) {
-        return listOperation(AJEObject::root, other);
+        return listOperation(Any::root, other);
     }
 
     @Override
     public Slice negative() {
-        return listOperation(AJEObject::negative);
+        return listOperation(Any::negative);
     }
 
 
     @Override
-    public boolean add(AJEObject AJEObject) {
-        if (AJEObject instanceof Slice) { // lets not do the virtual flatmapping again
-            return super.addAll((Slice) AJEObject);
+    public boolean add(Any Any) {
+        if (Any instanceof Slice) { // lets not do the virtual flatmapping again
+            return super.addAll((Slice) Any);
         }
-        return super.add(AJEObject);
+        return super.add(Any);
     }
 
     @Override
-    public void add(int index, AJEObject element) {
+    public void add(int index, Any element) {
         if (element instanceof Slice) { // lets not do the virtual flatmapping again
             super.addAll(index, (Slice) element);
             return;
@@ -105,7 +105,7 @@ public class Slice extends ArrayList<AJEObject> implements AJEObject<Slice>, Nat
 
     public Slice get(Slice indices) {
         Slice slice = new Slice();
-        for (AJEObject indice : indices) {
+        for (Any indice : indices) {
             slice.add(get(((Int) indice).value()));
         }
         return slice;
@@ -119,8 +119,8 @@ public class Slice extends ArrayList<AJEObject> implements AJEObject<Slice>, Nat
             return Truth.FALSE;
         }
 
-        Slice slice = listOperation(AJEObject::equals, other);
-        for (AJEObject o : slice) {
+        Slice slice = listOperation(Any::equals, other);
+        for (Any o : slice) {
             if (!(o instanceof Truth)) {
                 if (o == Truth.FALSE) {
                     return Truth.FALSE;
@@ -131,7 +131,7 @@ public class Slice extends ArrayList<AJEObject> implements AJEObject<Slice>, Nat
         return Truth.TRUE;
     }
 
-    private Slice listOperation(ImplicitBinaryOperator operator, Slice other) {
+    private Slice listOperation(AJEBinaryOperator operator, Slice other) {
         int len = size() == 1 ? other.size()
                 : other.size() == 1 ? size()
                 : Math.min(size(), other.size());
@@ -142,7 +142,7 @@ public class Slice extends ArrayList<AJEObject> implements AJEObject<Slice>, Nat
         return slice;
     }
 
-    private Slice listOperation(UnaryOperator<AJEObject> operator) {
+    private Slice listOperation(UnaryOperator<Any> operator) {
         Slice slice = new Slice();
         for (int i = 0; i < size(); i++) {
             slice.add(operator.apply(get(i % size())));

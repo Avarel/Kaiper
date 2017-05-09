@@ -1,14 +1,14 @@
 package xyz.avarel.aje.types.numbers;
 
 import xyz.avarel.aje.AJEException;
-import xyz.avarel.aje.types.AJEObject;
-import xyz.avarel.aje.types.AJEType;
+import xyz.avarel.aje.types.Any;
+import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.others.Slice;
 import xyz.avarel.aje.types.others.Truth;
 
-public class Int implements AJEObject<Int>, NativeObject<Integer> {
-    public static final AJEType<Int> TYPE = new AJEType<>(Decimal.TYPE, Int.of(0), "integer");
+public class Int implements Any<Int>, NativeObject<Integer> {
+    public static final Type<Int> TYPE = new Type<>(Int.of(0), "integer", Decimal.TYPE, Complex.TYPE);
 
     private final int value;
 
@@ -38,7 +38,7 @@ public class Int implements AJEObject<Int>, NativeObject<Integer> {
     }
 
     @Override
-    public AJEType<Int> getType() {
+    public Type<Int> getType() {
         return TYPE;
     }
 
@@ -48,7 +48,7 @@ public class Int implements AJEObject<Int>, NativeObject<Integer> {
     }
 
     @Override
-    public AJEObject castTo(AJEType type) {
+    public Any castUp(Type type) {
         if (type.getPrototype() instanceof Int) {
             return this;
         } else if (type.getPrototype() instanceof Complex) {
@@ -90,6 +90,8 @@ public class Int implements AJEObject<Int>, NativeObject<Integer> {
         System.out.println(n);
         return n;
     }
+
+
 
     @Override
     public Int negative() {

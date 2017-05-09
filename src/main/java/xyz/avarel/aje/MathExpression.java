@@ -1,13 +1,13 @@
 package xyz.avarel.aje;
 
 import xyz.avarel.aje.pool.Pool;
-import xyz.avarel.aje.types.Value;
+import xyz.avarel.aje.types.Any;
 
 import java.util.List;
 
 public class MathExpression {
     private final String script;
-    private Value expression;
+    private Any expression;
 
     private final Pool pool;
 
@@ -49,7 +49,7 @@ public class MathExpression {
 //        return this;
 //    }
 
-    public Value eval() {
+    public Any eval() {
         compile();
         return expression;
     }

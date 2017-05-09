@@ -2,7 +2,9 @@ package xyz.avarel.aje.defaults;
 
 import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.operators.AJEBinaryOperator;
-import xyz.avarel.aje.types.AJEObject;
+import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.Any;
+import xyz.avarel.aje.types.numbers.Complex;
 import xyz.avarel.aje.types.numbers.Decimal;
 import xyz.avarel.aje.types.numbers.Int;
 import xyz.avarel.aje.types.others.Slice;
@@ -12,21 +14,21 @@ import xyz.avarel.aje.types.others.Truth;
 public enum BinaryOperators implements AJEBinaryOperator {
     RANGE_TO("..") {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.rangeTo(b);
         }
     },
 
     LOGICAL_OR("||") {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             Truth.assertIs(a, b);
             return a.plus(b);
         }
     },
     LOGICAL_AND("&&") {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             Truth.assertIs(a, b);
             return a.times(b);
         }
@@ -34,32 +36,32 @@ public enum BinaryOperators implements AJEBinaryOperator {
 
     ADD("+") {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.plus(b);
         }
     },
     SUBTRACT("-") {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.minus(b);
         }
     },
 
     MULTIPLY("*") {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.times(b);
         }
     },
     DIVIDE("/") {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.divide(b);
         }
     },
     REMAINDER("%") {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.mod(b);
         }
     },
@@ -72,45 +74,58 @@ public enum BinaryOperators implements AJEBinaryOperator {
 
     PERCENTAGE("% of ") {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
-            return a.divide(new Decimal(100)).times(b);
+        public Any compile(Any a, Any b) {
+            return apply(a.castUp(Decimal.TYPE), b.castUp(Decimal.TYPE));
+        }
+        @Override
+        public Any apply(Any a, Any b) {
+            return a.divide(100).times(b);
         }
     },
     NTH_ROOT("th root of ") {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
-            return a.root(b);
+        public Any compile(Any a, Any b) {
+            if (b instanceof Int) {
+                return apply(b.castUp(Decimal.TYPE), a.castUp(Decimal.TYPE));
+            } else if (b instanceof Complex) {
+                return apply(b, a);
+            }
+            return super.compile(a, b);
+        }
+        @Override
+        public Any apply(Any a, Any b) {
+            return b.root(a);
         }
     },
 
     EQUALS("==") {
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.equals(b);
         }
     },
     NOT_EQUALS("!=") {
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.equals(b).negative();
         }
     },
 
     GREATER_OR_EQUAL(">=") {
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.greaterThanOrEqual(b);
         }
     },
     GREATER_THAN(">") {
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.greaterThan(b);
         }
     },
     LESSER_OR_EQUAL("<=") {
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.lessThanOrEqual(b);
         }
     },
     LESSER_THAN("<") {
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.lessThan(b);
         }
     },
@@ -143,12 +158,12 @@ public enum BinaryOperators implements AJEBinaryOperator {
 //
     EXPONENTATION("^", false) {
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             return a.pow(b);
         }
     },
     SCIENTIFIC_EX("E", false) {
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             Decimal.assertIs(b);
             return a.times(new Decimal(10).pow((Decimal) b));
         }
@@ -162,23 +177,37 @@ public enum BinaryOperators implements AJEBinaryOperator {
 //    },
 //
 //
-    CAST("->") {
+    CAST("as ") {
+        @Override
+        public Any compile(Any any, Any any2) {
+            if (!(any2 instanceof Type)) {
+                throw new AJEException("Second argument of cast must be an AJE type!");
+            }
+            Type type = any.getType();
+            for (Type implicits : type.getImplicitTypes()) {
+                if (implicits == any2) {
+                    return any.castUp(type);
+                }
+            }
+            return any.castDown((Type) any2);
+        }
+
     @Override
-    public AJEObject apply(AJEObject ajeObject, AJEObject ajeObject2) {
+    public Any apply(Any any, Any any2) {
         return null;
     }
 },
 
     LIST_INDEX("@") {
         @Override
-        public AJEObject compile(AJEObject a, AJEObject b) {
+        public Any compile(Any a, Any b) {
             if (!(b instanceof Int || b instanceof Slice)) {
                 throw new AJEException(a.getType() + " get operations must take in an int or slice range.");
             }
             return apply(a, b);
         }
         @Override
-        public AJEObject apply(AJEObject a, AJEObject b) {
+        public Any apply(Any a, Any b) {
             Slice.assertIs(a);
             if (b instanceof Int) {
                 return ((Slice) a).get(((Int) b).value());
@@ -280,6 +309,8 @@ public enum BinaryOperators implements AJEBinaryOperator {
     public String getSymbol() {
         return symbol;
     }
+
+
 
     @Override
     public boolean isLeftAssoc() {

@@ -52,6 +52,8 @@ public class DefaultOperatorMap extends OperatorMap {
 ////        register(Precedence.POSTFIX, DefaultOperators.POST_DECREMENT);
 //
 //        register(Precedence.POSTFIX, DefaultOperators.DEGREES);
+
+        registerBinary(Precedence.INFIX, BinaryOperators.CAST);
         registerBinary(Precedence.INFIX, BinaryOperators.LIST_INDEX);
     }
 

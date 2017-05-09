@@ -1,6 +1,6 @@
 import xyz.avarel.aje.ExpressionBuilder;
 import xyz.avarel.aje.MathExpression;
-import xyz.avarel.aje.types.Value;
+import xyz.avarel.aje.types.Any;
 
 import java.util.Scanner;
 
@@ -35,7 +35,7 @@ public class TestLoop {
                 //System.out.println(function);
 
                 long start = System.nanoTime();
-                Value result = exp.eval();
+                Any result = exp.eval();
                 long end = System.nanoTime();
 
                 Object obj = result.toNative();

@@ -5,18 +5,17 @@ import xyz.avarel.aje.operators.AJEUnaryOperator;
 import xyz.avarel.aje.operators.OperatorMap;
 import xyz.avarel.aje.operators.Precedence;
 import xyz.avarel.aje.pool.Pool;
-import xyz.avarel.aje.types.AJEObject;
-import xyz.avarel.aje.types.Value;
+import xyz.avarel.aje.types.Any;
+import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.compiled.CompiledFunction;
 import xyz.avarel.aje.types.numbers.Complex;
 import xyz.avarel.aje.types.numbers.Decimal;
 import xyz.avarel.aje.types.numbers.Int;
-import xyz.avarel.aje.types.others.Nothing;
 import xyz.avarel.aje.types.others.Slice;
 import xyz.avarel.aje.types.others.Truth;
+import xyz.avarel.aje.types.others.Undefined;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Compiles string expressions into compiled Expression instances.
@@ -39,13 +38,15 @@ public class AJEParser {
     }
 
 
-    public Value compute() {
+    public Any compute() {
         lexer.advance();
-        AJEObject e = compileExpression();
+        Any e = compileExpression();
 
         while (lexer.consume(';') && lexer.pos() < lexer.getStr().length()) {
             e = compileExpression();
         }
+
+        lexer.skipWhitespace();
 
         if (lexer.pos() < lexer.getStr().length()) throw error("Unhandled character `" + lexer.currentChar() + "`.");
 
@@ -88,52 +89,45 @@ public class AJEParser {
 //        throw makeError("Expected name for value.");
 //    }
 
-//    private void consumeFunction() {
+    private CompiledFunction compileFunction() {
+        lexer.skipWhitespace();
 //        if (isLiteral(lexer.currentChar())) {
-//            String name = nextLiteral();
-//            int params = 0;
-//
-//            FunctionBuilder fb = new FunctionBuilder(name);
-//
-//            if (!lexer.consume('(')) {
-//                throw makeError("Expected '('.");
-//            }
-//
-//            if (!lexer.consume(')')) do {
-//                fb.addParameter(nextLiteral());
-//                params++;
-//            }
-//            while (!lexer.consume(')') && lexer.consume(','));
-//
-//            if (pool.hasFunc(name, params)) {
-//                throw makeError("Function '" + name + "' is already defined.");
-//            }
-//
-//            if (!lexer.consume('=')) {
-//                throw makeError("Expected '='.");
-//            }
-//            lexer.skipWhitespace();
-//
-//            int start = lexer.pos();
-//            while (!lexer.nextIs(';') && lexer.pos() < lexer.target().length()) {
-//                lexer.nextChar();
-//            }
-//            String script = lexer.target().substring(start, lexer.pos());
-//
-//            fb.addLine(script);
-//
-//            pool.allocFunc(fb.build());
-//
-//            return;
-//        }
-//        throw makeError("Expected function name.");
-//    }
+//            String name = lexer.nextString();
 
-    private AJEObject compileExpression() {
+            Map<String, Type> parameters = new LinkedHashMap<>();
+
+            if (!lexer.consume('(')) throw error("srsly");
+
+            if (!lexer.consume(')')) {
+                do {
+                    String paramName = lexer.nextString();
+                    parameters.put(paramName, Any.TYPE);
+                } while (lexer.consume(','));
+
+                if (!lexer.consume(')')) throw error("bro");
+            }
+
+
+            if (!lexer.consume('{')) throw error("open sesame");
+
+            int start = lexer.pos();
+
+            if (!lexer.skipTo('}')) throw error("close sesame");
+            int end = lexer.pos();
+            lexer.consume('}');
+
+            String script = lexer.getStr().substring(start, end);
+
+            return new CompiledFunction(parameters, script);
+//        }
+//        throw error("what");
+    }
+
+    private Any compileExpression() {
         return compileExpression(Precedence.DISJUNCTION);
     }
 
-    private AJEObject compileExpression(int prec) {
+    private Any compileExpression(int prec) {
         OperatorMap operatorMaps = pool.getOperators();
 
         //System.out.print(level + " ");
@@ -146,19 +140,19 @@ public class AJEParser {
         // Unary operations
         for (AJEUnaryOperator operator : pool.getOperators().getUnaries().getOrDefault(prec, Collections.emptySet())) {
             if (lexer.consume(operator.getSymbol())) {
-                AJEObject exp = compileExpression(prec);
+                Any exp = compileExpression(prec);
                 return operator.apply(exp);
             }
         }
 
-        AJEObject value = compileExpression(prec + 1);
+        Any value = compileExpression(prec + 1);
 
         while (true) {
             boolean flag = false;
             for (AJEBinaryOperator operator : operatorMaps.getBinaries().getOrDefault(prec, Collections.emptySet())) {
                 if (lexer.consume(operator.getSymbol())) {
-                    final AJEObject a = value;
-                    final AJEObject b = compileExpression(operator.isLeftAssoc() ? prec + 1 : prec);
+                    final Any a = value;
+                    final Any b = compileExpression(operator.isLeftAssoc() ? prec + 1 : prec);
 
                     value = operator.compile(a, b);
                     flag = true;
@@ -170,17 +164,11 @@ public class AJEParser {
         return value;
     }
 
-    private AJEObject compileLiteral() {
-        if (lexer.consume('(')) {
-            AJEObject value = compileExpression();
-            lexer.consume(')');
-            return value;
-        }
-
+    private Any compileLiteral() {
         while (lexer.currentChar() == ';') lexer.advance();
-        if (lexer.pos() == lexer.getStr().length()) return Nothing.VALUE;
+        if (lexer.pos() >= lexer.getStr().length()) return Undefined.VALUE;
 
-        AJEObject obj = Nothing.VALUE;
+        Any any;
 
         int start = lexer.pos();
 
@@ -189,10 +177,13 @@ public class AJEParser {
 
 //        if (lexer.consume("var")) {
 //            return compileVariable();
-//        } else if (lexer.consume("val")) {
-//            return compileValue();
-//        }
-        if (isNumeric(lexer.currentChar())) {
+        if (lexer.consume('(')) {
+            Any value = compileExpression();
+            lexer.consume(')');
+            any = value;
+        } else if (lexer.consume("function")) {
+            any = compileFunction();
+        } else if (isNumeric(lexer.currentChar())) {
 //            // BINARY
 //            if (lexer.consume("0b")) {
 //                int _start = lexer.pos();
@@ -223,21 +214,21 @@ public class AJEParser {
 //                return Int.of(value);
 //            } else
             {
-                while (!lexer.nextIs("..") && isNumeric(lexer.currentChar())) lexer.advance();
+                while (!lexer.peek("..") && isNumeric(lexer.currentChar())) lexer.advance();
 
                 String str = lexer.getStr().substring(start, lexer.pos()).trim();
 
                 if (lexer.consume('i')) {
-                    obj = Complex.of(0, Double.parseDouble(str));
+                    any = Complex.of(0, Double.parseDouble(str));
                 } else if (!str.contains(".")) {
-                    obj = Int.of(Integer.parseInt(str));
+                    any = Int.of(Integer.parseInt(str));
                 } else {
-                    obj = Decimal.of(Double.parseDouble(str));
+                    any = Decimal.of(Double.parseDouble(str));
                 }
             }
         }
         else if (lexer.consume('i')) {
-            obj = Complex.of(0, 1);
+            any = Complex.of(0, 1);
         }
         // LISTS
         else if (lexer.consume('[')) {
@@ -246,29 +237,29 @@ public class AJEParser {
             Slice list = new Slice();
 
             do {
-                AJEObject value = compileExpression();
+                Any value = compileExpression();
                 list.add(value);
             }
             while (lexer.consume(','));
 
             if (!lexer.consume(']')) throw error("Expected list literal to close.");
 
-            obj = list;
+            any = list;
         }
 
         else if (lexer.consume("true")) {
-            obj = Truth.TRUE;
+            any = Truth.TRUE;
         } else if (lexer.consume("false")) {
-            obj = Truth.FALSE;
+            any = Truth.FALSE;
         }
 
         // FUNCTION AND CONSTANTS
         else if (Character.isLetter(lexer.currentChar())) {
             String name = lexer.nextString();
 
-            obj = pool.get(name);
+            any = pool.get(name);
 
-            if (obj == null) {
+            if (any == null) {
                 throw error("Could not resolve reference `" + name + "`.");
             }
 
@@ -277,7 +268,7 @@ public class AJEParser {
         }
 
         if (lexer.consume('(')) {
-            List<AJEObject> args = new ArrayList<>();
+            List<Any> args = new ArrayList<>();
 
             if (!lexer.consume(')')) {
 
@@ -289,10 +280,11 @@ public class AJEParser {
                     throw error("expected invocation to close");
                 }
             }
-            obj = obj.invoke(args);
+
+            any = any.invoke(args);
         }
 
-        return obj;
+        return any;
     }
 
     private AJEException error(String message) {

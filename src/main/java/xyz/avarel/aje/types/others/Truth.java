@@ -1,15 +1,15 @@
 package xyz.avarel.aje.types.others;
 
 import xyz.avarel.aje.AJEException;
-import xyz.avarel.aje.types.AJEType;
-import xyz.avarel.aje.types.AJEObject;
+import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
 
-public enum Truth implements AJEObject<Truth>, NativeObject<Boolean> {
+public enum Truth implements Any<Truth>, NativeObject<Boolean> {
     TRUE(true),
     FALSE(false);
 
-    public static final AJEType<Truth> TYPE = new AJEType<>(FALSE, "truth");
+    public static final Type<Truth> TYPE = new Type<>(FALSE, "truth");
 
     private final boolean value;
 
@@ -44,7 +44,7 @@ public enum Truth implements AJEObject<Truth>, NativeObject<Boolean> {
     }
 
     @Override
-    public AJEType<Truth> getType() {
+    public Type<Truth> getType() {
         return TYPE;
     }
 

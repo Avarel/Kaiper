@@ -57,18 +57,30 @@ public class AJELexer {
         if (text.equals(prompt)) {
             pos = pos + prompt.length() - 1;
             advance();
-            skipWhitespace();
             return true;
         }
 
         return false;
     }
 
-    public boolean nextIs(String prompt) {
-        // Use less expensive method of consuming a character.
-        if (prompt.length() == 1) return nextIs(prompt.charAt(0));
+    public boolean skipTo(char prompt) {
+        while(current != prompt) {
+            if (pos >= str.length()) {
+                return false;
+            }
+            advance();
+        }
+        return true;
+    }
 
-        skipWhitespace();
+    public boolean peek(String prompt) {
+        return peek(prompt, false);
+    }
+
+    public boolean peek(String prompt, boolean strict) {
+        // Use less expensive method of consuming a character.
+        if (prompt.length() == 1) return peek(prompt.charAt(0), strict);
+        if (!strict) skipWhitespace();
 
         String text = str.substring(pos, Math.min(pos + prompt.length(), str.length()));
         return text.equals(prompt);
@@ -92,8 +104,12 @@ public class AJELexer {
     /**
      * consume(prompt) without consuming the character.
      */
-    public boolean nextIs(char prompt) {
-        skipWhitespace();
+    public boolean peek(char prompt) {
+        return current == prompt;
+    }
+
+    public boolean peek(char prompt, boolean strict) {
+        if (!strict) skipWhitespace();
         return current == prompt;
     }
 
