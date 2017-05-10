@@ -29,6 +29,34 @@ public class AJEParser extends RecursiveDescentParser<Any> {
         addProcedure((self, parser) -> {
             Any value = next(self);
             while (true) {
+                if (lexer.consume("==")) {
+                    value = process(value, next(self), Any::equals);
+                } else if (lexer.consume(">=")) {
+                    value = process(value, next(self), Any::greaterThanOrEqual);
+                } else if (lexer.consume("<=")) {
+                    value = process(value, next(self), Any::lessThanOrEqual);
+                } else if (lexer.consume('>')) {
+                    value = process(value, next(self), Any::greaterThan);
+                } else if (lexer.consume('<')) {
+                    value = process(value, next(self), Any::lessThan);
+                } else break;
+            }
+            return value;
+        });
+
+        addProcedure((self, parser) -> {
+            Any value = next(self);
+            while (true) {
+                if (lexer.consume("..")) {
+                    value = process(value, next(self), Any::rangeTo);
+                } else break;
+            }
+            return value;
+        });
+
+        addProcedure((self, parser) -> {
+            Any value = next(self);
+            while (true) {
                 if (lexer.consume('+')) {
                     value = process(value, next(self), Any::plus);
                 } else if (lexer.consume('-')) {

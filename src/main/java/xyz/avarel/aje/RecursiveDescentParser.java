@@ -3,22 +3,22 @@ package xyz.avarel.aje;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RecursiveDescentParser<T> {
-    List<Procedure<T>> procedures = new ArrayList<>();
+public class RecursiveDescentParser<T> {
+    private final List<Procedure<T>> procedures = new ArrayList<>();
 
     public T parse() {
         Procedure<T> p = procedures.get(0);
-        return p.go(p, this);
+        return p.parse(p, this);
     }
 
-    public T go(int i) {
-        Procedure<T> p = procedures.get(i);
-        return p.go(p, this);
+    public T go(int precedence) {
+        Procedure<T> p = procedures.get(precedence);
+        return p.parse(p, this);
     }
 
     public T next(Procedure<T> procedure) {
         Procedure<T> p = procedures.get(procedures.indexOf(procedure) + 1);
-        return p.go(p, this);
+        return p.parse(p, this);
     }
 
     public void addProcedure(Procedure<T> procedure) {
@@ -31,6 +31,6 @@ public abstract class RecursiveDescentParser<T> {
 
     @FunctionalInterface
     public interface Procedure<T> {
-        T go(Procedure<T> self, RecursiveDescentParser<T> parser);
+        T parse(Procedure<T> self, RecursiveDescentParser<T> parser);
     }
 }
