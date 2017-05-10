@@ -1,6 +1,5 @@
 package xyz.avarel.aje;
 
-import xyz.avarel.aje.pool.Pool;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.compiled.CompiledFunction;
 import xyz.avarel.aje.types.numbers.Complex;
@@ -12,6 +11,7 @@ import xyz.avarel.aje.types.others.Undefined;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BinaryOperator;
 
 /**
@@ -19,11 +19,11 @@ import java.util.function.BinaryOperator;
  */
 @SuppressWarnings("unchecked")
 public class AJEParser extends RecursiveDescentParser<Any> {
-    private final Pool pool;
+    private final Map<String, Any> objects;
     private final AJELexer lexer;
 
-    public AJEParser(Pool pool, String s) {
-        this.pool = pool;
+    public AJEParser(Map<String, Any> objects, String s) {
+        this.objects = objects;
         this.lexer = new AJELexer(s);
 
         addProcedure((self, parser) -> {
@@ -130,7 +130,7 @@ public class AJEParser extends RecursiveDescentParser<Any> {
             } else if (Character.isLetter(lexer.currentChar())) {
                 String name = lexer.nextString();
 
-                any = pool.get(name);
+                any = objects.get(name);
 
                 if (any == null) {
                     any = Undefined.VALUE;
@@ -158,10 +158,6 @@ public class AJEParser extends RecursiveDescentParser<Any> {
 
             return any;
         }));
-    }
-
-    public Pool getPool() {
-        return pool;
     }
 
     private static boolean isLiteral(char c) {
@@ -452,5 +448,9 @@ public class AJEParser extends RecursiveDescentParser<Any> {
 
     private AJEException error(String message) {
         return new AJEException(message + " " + lexer.currentInfo());
+    }
+
+    public Map<String, Any> getObjects() {
+        return objects;
     }
 }

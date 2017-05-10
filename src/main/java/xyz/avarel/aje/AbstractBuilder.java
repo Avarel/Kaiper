@@ -1,19 +1,18 @@
 package xyz.avarel.aje;
 
-import xyz.avarel.aje.operators.AJEBinaryOperator;
-import xyz.avarel.aje.operators.Precedence;
 import xyz.avarel.aje.pool.DefaultPool;
-import xyz.avarel.aje.pool.Pool;
+import xyz.avarel.aje.types.Any;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
     private final List<String> lines = new ArrayList<>();
 
-    private Pool pool;
+    private Map<String, Any> objects;
 
     public T addLine(String script) {
         lines.add(script);
@@ -68,21 +67,12 @@ public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
         return (T) this;
     }
 
-    public T addOperator(AJEBinaryOperator operator) {
-        return addOperator(Precedence.INFIX, operator);
+    public Map<String, Any> getObjects() {
+        return objects != null ? objects : (objects = DefaultPool.copy());
     }
 
-    public T addOperator(int precedence, AJEBinaryOperator operator) {
-        getPool().getOperators().registerBinary(precedence, operator);
-        return (T) this;
-    }
-
-    public Pool getPool() {
-        return pool != null ? pool : (pool = DefaultPool.INSTANCE.copy());
-    }
-
-    public T setPool(Pool pool) {
-        this.pool = pool;
+    public T setObjects(Map<String, Any> objects) {
+        this.objects = objects;
         return (T) this;
     }
 

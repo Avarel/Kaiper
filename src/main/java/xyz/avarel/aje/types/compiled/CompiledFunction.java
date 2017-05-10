@@ -39,10 +39,10 @@ public class CompiledFunction implements AJEFunction<CompiledFunction>, NativeOb
             return Undefined.VALUE;
         }
 
-        AJEParser parser = new AJEParser(DefaultPool.INSTANCE.copy(), script);
+        AJEParser parser = new AJEParser(DefaultPool.copy(), script);
 
         for (int i = 0; i < parameters.size(); i++) {
-            parser.getPool().put(parameters.get(i), args.get(i));
+            parser.getObjects().put(parameters.get(i), args.get(i));
         }
 
         return parser.compute();

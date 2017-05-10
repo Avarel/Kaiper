@@ -10,6 +10,6 @@ public class ExpressionBuilder extends AbstractBuilder<ExpressionBuilder> {
     }
 
     public MathExpression build() {
-        return new MathExpression(getScript(), getPool());
+        return new MathExpression(getScript(), getObjects());
     }
 }

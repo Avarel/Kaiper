@@ -1,41 +1,41 @@
 package xyz.avarel.aje;
 
-import xyz.avarel.aje.pool.Pool;
 import xyz.avarel.aje.types.Any;
 
 import java.util.List;
+import java.util.Map;
 
 public class MathExpression {
     private final String script;
     private Any expression;
 
-    private final Pool pool;
+    private final Map<String, Any> objects;
 
-    protected MathExpression(String scripts, Pool pool) {
+    protected MathExpression(String scripts, Map<String, Any> objects) {
         this.script = scripts;
-        this.pool = pool;
+        this.objects = objects;
     }
 
-    protected MathExpression(String scripts, List<String> variables, Pool pool) {
-        this(scripts, pool);
+    protected MathExpression(String scripts, List<String> variables, Map<String, Any> objects) {
+        this(scripts, objects);
 
         if (variables != null) {
             for (String name : variables) {
-//                getPool().allocVar(name);
+//                getMap<String, Any>().allocVar(name);
             }
         }
     }
 
     public MathExpression compile() {
         if (expression == null) {
-            expression = new AJEParser(pool, script).compute();
+            expression = new AJEParser(objects, script).compute();
         }
         return this;
     }
 
     @Deprecated()
     public MathExpression forceCompile() {
-        expression = new AJEParser(pool, script).compute();
+        expression = new AJEParser(objects, script).compute();
         return this;
     }
 //
@@ -69,7 +69,7 @@ public class MathExpression {
 //        return expression;
 //    }
 
-    public Pool getPool() {
-        return pool;
+    public Map<String, Any> getObjects() {
+        return objects;
     }
 }
