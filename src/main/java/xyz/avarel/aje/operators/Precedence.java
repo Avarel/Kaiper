@@ -1,6 +1,7 @@
 package xyz.avarel.aje.operators;
 
 public class Precedence {
+    public static final int ACCESS = 12;
     public static final int POSTFIX = 11;
     public static final int PREFIX = 10;
     public static final int EXPONENTIAL = 9;

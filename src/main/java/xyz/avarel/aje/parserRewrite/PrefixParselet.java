@@ -1,5 +1,7 @@
 package xyz.avarel.aje.parserRewrite;
 
+import xyz.avarel.aje.types.Any;
+
 public interface PrefixParselet {
-    Expression parse(Parser parser, Token token);
+    Any parse(AJEParser2 parser, Token token);
 }

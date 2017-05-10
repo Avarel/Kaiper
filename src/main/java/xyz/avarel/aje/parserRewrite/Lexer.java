@@ -43,8 +43,13 @@ public class Lexer implements Iterator<Token> {
 
                 while (i < str.length()) {
                     if (str.charAt(i) == '.') {
-                        if (!point) point = true;
-                        else break;
+                        if (!(i >= str.length() - 1) && !Character.isDigit(str.charAt(i + 1))) {
+                            break;
+                        } else if (!point) {
+                            point = true;
+                        } else {
+                            break;
+                        }
                     } else if (!Character.isDigit(str.charAt(i))) {
                         break;
                     }
@@ -67,7 +72,7 @@ public class Lexer implements Iterator<Token> {
                 String name = str.substring(start, i);
                 return new Token(TokenType.NAME, name);
             } else {
-                return new Token(TokenType.UNKNOWN, Character.toString(c) + "_?");
+                if (!Character.isSpaceChar(c)) return new Token(TokenType.UNKNOWN, Character.toString(c) + "_?");
             }
         }
         return new Token(TokenType.EOF);

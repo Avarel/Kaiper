@@ -2,75 +2,58 @@ package xyz.avarel.aje.parserRewrite;
 
 import java.util.*;
 
-public class Parser {
+public abstract class Parser {
     private final Iterator<Token> mTokens;
     private final List<Token> mRead = new ArrayList<Token>();
-    private final Map<TokenType, PrefixParselet> mPrefixParselets = new HashMap<>();
-    private final Map<TokenType, InfixParselet> mInfixParselets = new HashMap<>();
+    private final Map<TokenType, PrefixParselet> prefixParsers = new HashMap<>();
+    private final Map<TokenType, InfixParser> infixParsers = new HashMap<>();
 
     public Parser(Iterator<Token> tokens) {
         mTokens = tokens;
     }
 
     public void register(TokenType token, PrefixParselet parselet) {
-        mPrefixParselets.put(token, parselet);
+        prefixParsers.put(token, parselet);
     }
 
-    public void register(TokenType token, InfixParselet parselet) {
-        mInfixParselets.put(token, parselet);
+    public void register(TokenType token, InfixParser parselet) {
+        infixParsers.put(token, parselet);
     }
 
-    public Expression parseExpression(int precedence) {
-        Token token = consume();
-        PrefixParselet prefix = mPrefixParselets.get(token.getType());
-
-        if (prefix == null) throw new RuntimeException("Could not parse \"" +
-                token.getText() + "\".");
-
-        Expression left = prefix.parse(this, token);
-
-        while (precedence < getPrecedence()) {
-            token = consume();
-
-            InfixParselet infix = mInfixParselets.get(token.getType());
-            left = infix.parse(this, left, token);
-        }
-
-        return left;
+    public Map<TokenType, PrefixParselet> getPrefixParsers() {
+        return prefixParsers;
     }
 
-    public Expression parseExpression() {
-        return parseExpression(0);
+    public Map<TokenType, InfixParser> getInfixParsers() {
+        return infixParsers;
     }
 
     public boolean match(TokenType expected) {
-        Token token = lookAhead(0);
+        Token token = peek(0);
         if (token.getType() != expected) {
             return false;
         }
-
-        consume();
+        eat();
         return true;
     }
 
-    public Token consume(TokenType expected) {
-        Token token = lookAhead(0);
+    public Token eat(TokenType expected) {
+        Token token = peek(0);
         if (token.getType() != expected) {
             throw new RuntimeException("Expected token " + expected +
                     " and found " + token.getType());
         }
-
-        return consume();
+        return eat();
     }
 
-    public Token consume() {
+    public Token eat() {
         // Make sure we've read the token.
-        lookAhead(0);
+        peek(0);
 
         return mRead.remove(0);
     }
 
-    private Token lookAhead(int distance) {
+    public Token peek(int distance) {
         // Read in as many as needed.
         while (distance >= mRead.size()) {
             mRead.add(mTokens.next());
@@ -80,8 +63,8 @@ public class Parser {
         return mRead.get(distance);
     }
 
-    private int getPrecedence() {
-        InfixParselet parser = mInfixParselets.get(lookAhead(0).getType());
+    public int getPrecedence() {
+        InfixParser parser = infixParsers.get(peek(0).getType());
         if (parser != null) return parser.getPrecedence();
 
         return 0;

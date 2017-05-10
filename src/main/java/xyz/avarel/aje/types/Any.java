@@ -125,7 +125,12 @@ public interface Any<T extends Any> {
 
     // Functional
     default Any<?> invoke(List<Any> args) {
-        throw unsupported("invocation");
+        return Undefined.VALUE;
+    }
+
+    default Any<?> get(String name) {
+        System.out.println("getting " + name);
+        return Undefined.VALUE;
     }
 
     default Any<?> castUp(Type type) {
