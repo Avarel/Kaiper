@@ -1,26 +1,25 @@
 package xyz.avarel.aje.types.compiled;
 
 import xyz.avarel.aje.AJEParser;
+import xyz.avarel.aje.functional.AJEFunction;
 import xyz.avarel.aje.pool.DefaultPool;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
-import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.others.Undefined;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
  * Every operation results in the same
  * instance, NOTHING.
  */
-public class CompiledFunction implements Any<CompiledFunction>, NativeObject<Function<List<Any>, Any>> {
-    public static final Type<CompiledFunction> TYPE = new Type<>("function");
+public class CompiledFunction implements AJEFunction<CompiledFunction>, NativeObject<Function<List<Any>, Any>> {
 
     private final String script;
-    private Map<String, Type> parameters;
+    private List<String> parameters;
 
-    public CompiledFunction(Map<String, Type> parameters, String script) {
+    public CompiledFunction(List<String> parameters, String script) {
         this.script = script;
         this.parameters = parameters;
     }
@@ -30,31 +29,22 @@ public class CompiledFunction implements Any<CompiledFunction>, NativeObject<Fun
         return this::invoke;
     }
 
-    public Map<String, Type> getParameters() {
+    public List<String> getParameters() {
         return parameters;
     }
 
     @Override
-    public Type<CompiledFunction> getType() {
-        return TYPE;
-    }
-
-    @Override
     public Any invoke(List<Any> args) {
-//        if (args.size() != parameters.size()) {
-//            return Undefined.VALUE;
-//        }
-
-//        List<Any> _args = new ArrayList<>();
-//        for (int i = 0; i < parameters.size(); i++) {
-//            _args.add(args.get(i).castUp(parameters.get(i)));
-//        }
-//
-//        if (!parameters.equals(_args.stream().map(Any::getType).collect(Collectors.toList()))) { // Check types
-//            return Undefined.VALUE;
-//        }
+        if (args.size() < parameters.size()) {
+            return Undefined.VALUE;
+        }
 
         AJEParser parser = new AJEParser(DefaultPool.INSTANCE.copy(), script);
+
+        for (int i = 0; i < parameters.size(); i++) {
+            parser.getPool().put(parameters.get(i), args.get(i));
+        }
+
         return parser.compute();
     }
 }

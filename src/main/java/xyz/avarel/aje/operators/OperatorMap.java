@@ -38,7 +38,7 @@ public class OperatorMap {
         binaryOperators.get(precedence).add(operator);
     }
 
-    public Map<Integer, Set<AJEBinaryOperator>> getBinaries() {
+    public Map<Integer, Set<AJEBinaryOperator>> binary() {
         return binaryOperators;
     }
 
@@ -65,7 +65,7 @@ public class OperatorMap {
         return last;
     }
 
-    public Map<Integer, Set<AJEUnaryOperator>> getUnaries() {
+    public Map<Integer, Set<AJEUnaryOperator>> prefix() {
         return unaryOperators;
     }
 }

@@ -1,7 +1,9 @@
 package xyz.avarel.aje.defaults;
 
+import xyz.avarel.aje.functional.AJEFunction;
 import xyz.avarel.aje.functional.NativeFunction;
 import xyz.avarel.aje.types.Any;
+import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.numbers.Decimal;
 import xyz.avarel.aje.types.others.Slice;
@@ -24,7 +26,7 @@ public enum DefaultFunction implements NativeFunction {
     MAX(Decimal.TYPE, Decimal.TYPE, (a1, a2) -> Decimal.of(Math.max(a1.toNative(), a2.toNative()))),
     MIN(Decimal.TYPE, Decimal.TYPE, (a1, a2) -> Decimal.of(Math.min(a1.toNative(), a2.toNative()))),
 
-    MAP(Slice.TYPE, Any.TYPE, (a1, a2) -> {
+    MAP(Slice.TYPE, AJEFunction.TYPE, (a1, a2) -> {
         Slice slice = new Slice();
         for (Any obj : a1) {
             slice.add(a2.invoke(Collections.singletonList(obj)));
@@ -36,19 +38,22 @@ public enum DefaultFunction implements NativeFunction {
     private final NativeFunction function;
     private List<Type> parameters;
 
-    <AT extends Type<A>, A extends Any>
+    <AT extends Type<A>, AN extends NativeObject<A>, A extends Any>
     DefaultFunction(AT type1, NativeFunction._1<A> function) {
         parameters = Collections.singletonList(type1);
         this.function = function;
     }
 
-    <AT extends Type<A>, A extends Any, BT extends Type<B>, B extends Any>
+    <AT extends Type<A>, A extends Any,
+            BT extends Type<B>, B extends Any>
     DefaultFunction(AT type1, BT type2, NativeFunction._2<A, B> function) {
         parameters = Arrays.asList(type1, type2);
         this.function = function;
     }
 
-    <AT extends Type<A>, A extends Any, BT extends Type<B>, B extends Any, CT extends Type<C>, C extends Any>
+    <AT extends Type<A>, A extends Any,
+            BT extends Type<B>, B extends Any,
+            CT extends Type<C>, C extends Any>
     DefaultFunction(AT type1, BT type2, CT type3, NativeFunction._3<A, B, C> function) {
         parameters = Arrays.asList(type1, type2, type3);
         this.function = function;
@@ -60,7 +65,7 @@ public enum DefaultFunction implements NativeFunction {
 
     @Override
     public Any invoke(List<Any> args) {
-        if (args.size() != parameters.size()) {
+        if (args.size() < parameters.size()) {
             return Undefined.VALUE;
         }
 
@@ -75,10 +80,6 @@ public enum DefaultFunction implements NativeFunction {
                 return Undefined.VALUE;
             }
         }
-
-//        if (!parameters.equals(_args.stream().map(Any::getType).collect(Collectors.toList()))) { // Check types
-//            return Undefined.VALUE;
-//        }
 
         return function.invoke(_args);
     }

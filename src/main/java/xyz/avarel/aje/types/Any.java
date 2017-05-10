@@ -32,63 +32,63 @@ public interface Any<T extends Any> {
 
     // Basic arithmetic
     default Any plus(T other) {
-        throw unsupported("addition");
-    }
-
-    default Any minus(T other) {
         return Undefined.VALUE;
     }
 
-    default Any times(T other) {
+    default Any<?> minus(T other) {
         return Undefined.VALUE;
     }
 
-    default Any divide(T other) {
+    default Any<?> times(T other) {
         return Undefined.VALUE;
     }
 
-    default Any mod(T other) {
+    default Any<?> divide(T other) {
         return Undefined.VALUE;
     }
 
-    default Any pow(T other) {
+    default Any<?> mod(T other) {
         return Undefined.VALUE;
     }
 
-    default Any root(T other) {
+    default Any<?> pow(T other) {
         return Undefined.VALUE;
     }
 
-    default Any negative() {
+    default Any<?> root(T other) {
+        return Undefined.VALUE;
+    }
+
+    default Any<?> negative() {
         return Undefined.VALUE;
     }
 
 
-    default Any plus(double other) {
+    default Any<?> plus(double other) {
         return plus((T) Decimal.of(other));
     }
 
-    default Any minus(double other) {
+    default Any<?> minus(double other) {
         return minus((T) Decimal.of(other));
     }
 
-    default Any times(double other) {
+    default Any<?> times(double other) {
         return times((T) Decimal.of(other));
     }
 
-    default Any divide(double other) {
+    default Any<?> divide(double other) {
         return divide((T) Decimal.of(other));
     }
 
-    default Any mod(double other) {
+    default Any<?> mod(double other) {
         return mod((T) Decimal.of(other));
     }
 
-    default Any pow(double other) {
+    default Any<?> pow(double other) {
         return pow((T) Decimal.of(other));
     }
 
-    default Any root(double other) {
+    default Any<?> root(double other) {
         return root((T) Decimal.of(other));
     }
 
@@ -124,15 +124,15 @@ public interface Any<T extends Any> {
 
 
     // Functional
-    default Any invoke(List<Any> arguments) {
+    default Any<?> invoke(List<Any> args) {
         throw unsupported("invocation");
     }
 
-    default Any castUp(Type type) {
+    default Any<?> castUp(Type type) {
         return this;
     }
 
-    default Any castDown(Type type) {
+    default Any<?> castDown(Type type) {
         return this;
     }
 

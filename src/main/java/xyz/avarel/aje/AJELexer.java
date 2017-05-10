@@ -11,6 +11,7 @@ public class AJELexer {
 
     public AJELexer(String str) {
         this.str = str;
+        advance();
     }
 
     public String getStr() {
@@ -21,7 +22,8 @@ public class AJELexer {
      * Get the next character and increase the position variable.
      */
     public void advance() {
-        current = ++pos < str.length() ? str.charAt(pos) : (char) -1;
+        pos++;
+        current = pos < str.length() ? str.charAt(pos) : (char) -1;
     }
 
     /**

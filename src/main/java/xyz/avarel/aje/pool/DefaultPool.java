@@ -4,6 +4,8 @@ import xyz.avarel.aje.defaults.DefaultFunction;
 import xyz.avarel.aje.types.numbers.Complex;
 import xyz.avarel.aje.types.numbers.Decimal;
 import xyz.avarel.aje.types.numbers.Int;
+import xyz.avarel.aje.types.others.Slice;
+import xyz.avarel.aje.types.others.Truth;
 
 public class DefaultPool extends Pool {
     public static DefaultPool INSTANCE = new DefaultPool();
@@ -24,9 +26,12 @@ public class DefaultPool extends Pool {
         put("max", DefaultFunction.MAX);
         put("min", DefaultFunction.MIN);
 
+        // Types
         put("Int", Int.TYPE);
         put("Decimal", Decimal.TYPE);
         put("Complex", Complex.TYPE);
+        put("Boolean", Truth.TYPE);
+        put("Slice", Slice.TYPE);
 
     }
 }
