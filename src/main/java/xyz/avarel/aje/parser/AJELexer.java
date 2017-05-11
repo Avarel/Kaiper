@@ -1,10 +1,10 @@
-package xyz.avarel.aje.parserRewrite;
+package xyz.avarel.aje.parser;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class Lexer implements Iterator<Token> {
+public class AJELexer implements Iterator<Token> {
     private final Map<Character, TokenType> punctuators = new HashMap<>();
     private final String str;
     private int i = 0;
@@ -14,7 +14,7 @@ public class Lexer implements Iterator<Token> {
      *
      * @param str String to tokenize.
      */
-    public Lexer(String str) {
+    public AJELexer(String str) {
         i = 0;
         this.str = str;
 

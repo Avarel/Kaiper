@@ -1,8 +1,8 @@
 package xyz.avarel.aje.types.compiled;
 
-import xyz.avarel.aje.AJEParser;
 import xyz.avarel.aje.functional.AJEFunction;
-import xyz.avarel.aje.pool.DefaultPool;
+import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.AJELexer;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.others.Undefined;
@@ -39,12 +39,12 @@ public class CompiledFunction implements AJEFunction<CompiledFunction>, NativeOb
             return Undefined.VALUE;
         }
 
-        AJEParser parser = new AJEParser(DefaultPool.copy(), script);
+        AJEParser parser = new AJEParser(new AJELexer(script));
 
         for (int i = 0; i < parameters.size(); i++) {
             parser.getObjects().put(parameters.get(i), args.get(i));
         }
 
-        return parser.compute();
+        return parser.parse();
     }
 }

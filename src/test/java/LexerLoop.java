@@ -1,4 +1,4 @@
-import xyz.avarel.aje.parserRewrite.Lexer;
+import xyz.avarel.aje.parser.AJELexer;
 
 import java.util.Scanner;
 
@@ -23,7 +23,7 @@ public class LexerLoop {
                         continue;
                 }
 
-                Lexer lexer = new Lexer(input);
+                AJELexer lexer = new AJELexer(input);
 
                 System.out.println(lexer);
 

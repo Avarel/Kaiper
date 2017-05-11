@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parserRewrite;
+package xyz.avarel.aje.parser;
 
 public enum TokenType {
     LEFT_PAREN('('),

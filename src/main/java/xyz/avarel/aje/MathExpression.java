@@ -1,5 +1,7 @@
 package xyz.avarel.aje;
 
+import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.AJELexer;
 import xyz.avarel.aje.types.Any;
 
 import java.util.List;
@@ -28,14 +30,14 @@ public class MathExpression {
 
     public MathExpression compile() {
         if (expression == null) {
-            expression = new AJEParser(objects, script).compute();
+            expression = new AJEParser(new AJELexer(script)).parse();
         }
         return this;
     }
 
     @Deprecated()
     public MathExpression forceCompile() {
-        expression = new AJEParser(objects, script).compute();
+        expression = new AJEParser(new AJELexer(script)).parse();
         return this;
     }
 //

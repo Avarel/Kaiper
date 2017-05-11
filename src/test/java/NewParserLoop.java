@@ -1,5 +1,5 @@
-import xyz.avarel.aje.parserRewrite.AJEParser2;
-import xyz.avarel.aje.parserRewrite.Lexer;
+import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.AJELexer;
 
 import java.util.Scanner;
 
@@ -24,9 +24,9 @@ public class NewParserLoop {
                         continue;
                 }
 
-                Lexer lexer = new Lexer(input);
+                AJELexer lexer = new AJELexer(input);
 
-                AJEParser2 parser = new AJEParser2(lexer);
+                AJEParser parser = new AJEParser(lexer);
 
                 System.out.println(parser.parse());
 

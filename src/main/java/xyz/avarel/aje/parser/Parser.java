@@ -1,18 +1,18 @@
-package xyz.avarel.aje.parserRewrite;
+package xyz.avarel.aje.parser;
 
 import java.util.*;
 
 public abstract class Parser {
     private final Iterator<Token> mTokens;
     private final List<Token> mRead = new ArrayList<Token>();
-    private final Map<TokenType, PrefixParselet> prefixParsers = new HashMap<>();
+    private final Map<TokenType, PrefixParser> prefixParsers = new HashMap<>();
     private final Map<TokenType, InfixParser> infixParsers = new HashMap<>();
 
     public Parser(Iterator<Token> tokens) {
         mTokens = tokens;
     }
 
-    public void register(TokenType token, PrefixParselet parselet) {
+    public void register(TokenType token, PrefixParser parselet) {
         prefixParsers.put(token, parselet);
     }
 
@@ -20,7 +20,7 @@ public abstract class Parser {
         infixParsers.put(token, parselet);
     }
 
-    public Map<TokenType, PrefixParselet> getPrefixParsers() {
+    public Map<TokenType, PrefixParser> getPrefixParsers() {
         return prefixParsers;
     }
 

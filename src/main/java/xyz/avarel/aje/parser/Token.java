@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parserRewrite;
+package xyz.avarel.aje.parser;
 
 public final class Token {
     private final TokenType type;

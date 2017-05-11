@@ -1,15 +1,15 @@
-package xyz.avarel.aje;
+package xyz.avarel.aje.parser;
 
 /**
  * Provides useful methods to tokenize and to iterate
  * through a String.
  */
-public class AJELexer {
+public class AJELexer_OLD {
     private int pos = -1;
     private char current;
     private final String str;
 
-    public AJELexer(String str) {
+    public AJELexer_OLD(String str) {
         this.str = str;
         advance();
     }
