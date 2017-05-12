@@ -1,8 +1,7 @@
 package xyz.avarel.aje.parser.parsers;
 
-import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
-import xyz.avarel.aje.parser.Token;
+import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.types.Any;
 
 import java.util.function.BinaryOperator;

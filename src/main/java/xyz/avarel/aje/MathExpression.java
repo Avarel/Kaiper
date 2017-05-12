@@ -1,7 +1,7 @@
 package xyz.avarel.aje;
 
-import xyz.avarel.aje.parser.AJEParser;
-import xyz.avarel.aje.parser.AJELexer;
+import xyz.avarel.aje.parser.parsers.AJEParser;
+import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.types.Any;
 
 import java.util.List;

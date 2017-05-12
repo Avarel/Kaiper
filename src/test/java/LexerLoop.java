@@ -1,4 +1,4 @@
-import xyz.avarel.aje.parser.AJELexer;
+import xyz.avarel.aje.parser.lexer.AJELexer;
 
 import java.util.Scanner;
 

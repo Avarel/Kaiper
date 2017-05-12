@@ -1,15 +1,18 @@
 package xyz.avarel.aje.parser;
 
+import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.parser.lexer.TokenType;
+
 import java.util.*;
 
 public abstract class Parser {
-    private final Iterator<Token> mTokens;
-    private final List<Token> mRead = new ArrayList<Token>();
+    private final Iterator<Token> lexer;
+    private final List<Token> tokens = new ArrayList<>();
     private final Map<TokenType, PrefixParser> prefixParsers = new HashMap<>();
     private final Map<TokenType, InfixParser> infixParsers = new HashMap<>();
 
-    public Parser(Iterator<Token> tokens) {
-        mTokens = tokens;
+    public Parser(Iterator<Token> lexer) {
+        this.lexer = lexer;
     }
 
     public void register(TokenType token, PrefixParser parselet) {
@@ -37,6 +40,14 @@ public abstract class Parser {
         return true;
     }
 
+    public List<Token> getTokens() {
+        return tokens;
+    }
+
+    public Iterator<Token> getLexer() {
+        return lexer;
+    }
+
     public Token eat(TokenType expected) {
         Token token = peek(0);
         if (token.getType() != expected) {
@@ -50,17 +61,17 @@ public abstract class Parser {
         // Make sure we've read the token.
         peek(0);
 
-        return mRead.remove(0);
+        return tokens.remove(0);
     }
 
     public Token peek(int distance) {
         // Read in as many as needed.
-        while (distance >= mRead.size()) {
-            mRead.add(mTokens.next());
+        while (distance >= tokens.size()) {
+            tokens.add(lexer.next());
         }
 
         // Get the queued token.
-        return mRead.get(distance);
+        return tokens.get(distance);
     }
 
     public int getPrecedence() {

@@ -1,10 +1,9 @@
 package xyz.avarel.aje.parser.parsers;
 
 import xyz.avarel.aje.AJEException;
-import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
-import xyz.avarel.aje.parser.Token;
-import xyz.avarel.aje.parser.TokenType;
+import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.numbers.Int;
 import xyz.avarel.aje.types.others.Slice;

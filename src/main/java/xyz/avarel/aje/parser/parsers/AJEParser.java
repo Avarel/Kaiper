@@ -1,7 +1,11 @@
-package xyz.avarel.aje.parser;
+package xyz.avarel.aje.parser.parsers;
 
 import xyz.avarel.aje.operators.Precedence;
-import xyz.avarel.aje.parser.parsers.*;
+import xyz.avarel.aje.parser.InfixParser;
+import xyz.avarel.aje.parser.Parser;
+import xyz.avarel.aje.parser.PrefixParser;
+import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.pool.DefaultPool;
 import xyz.avarel.aje.types.Any;
 
@@ -23,7 +27,11 @@ public class AJEParser extends Parser {
         register(TokenType.LEFT_BRACKET, new SliceParser());
         register(TokenType.LEFT_PAREN, new GroupParser());
         register(TokenType.NAME, new NameParser());
-        register(TokenType.NUMERIC, new NumberParser());
+        register(TokenType.FUNCTION, new FunctionParser());
+
+        register(TokenType.INT, new NumberParser());
+        register(TokenType.DECIMAL, new NumberParser());
+        register(TokenType.IMAGINARY, new NumberParser());
 
         register(TokenType.LEFT_PAREN, new InvocationParser(Precedence.ACCESS));
         register(TokenType.LEFT_BRACKET, new GetIndexParser(Precedence.ACCESS));
@@ -33,7 +41,7 @@ public class AJEParser extends Parser {
         register(TokenType.MINUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, Any::minus));
         register(TokenType.ASTERISK, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Any::times));
         register(TokenType.SLASH, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Any::divide));
-
+        register(TokenType.PERCENT, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, false, Any::mod));
         register(TokenType.CARET, new BinaryOperatorParser(Precedence.EXPONENTIAL, false, Any::pow));
     }
 

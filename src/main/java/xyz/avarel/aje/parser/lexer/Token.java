@@ -1,11 +1,11 @@
-package xyz.avarel.aje.parser;
+package xyz.avarel.aje.parser.lexer;
 
 public final class Token {
     private final TokenType type;
     private final String str;
 
     public Token(TokenType type) {
-        this(type, "");
+        this(type, type.toString());
     }
 
     public Token(TokenType type, String str) {
