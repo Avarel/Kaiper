@@ -9,7 +9,7 @@ import xyz.avarel.aje.types.numbers.Int;
 
 import java.util.function.BinaryOperator;
 
-public class BinaryOperatorParser extends BinaryParser {
+public class BinaryOperatorParser extends BinaryParser<Any, Any> {
     private final BinaryOperator<Any> operator;
 
     public BinaryOperatorParser(int precedence, boolean leftAssoc, BinaryOperator<Any> operator) {

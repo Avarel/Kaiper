@@ -5,7 +5,7 @@ import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.types.Any;
 
-public class GroupParser implements PrefixParser {
+public class GroupParser implements PrefixParser<Any> {
     @Override
     public Any parse(AJEParser parser, Token token) {
 

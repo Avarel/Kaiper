@@ -6,9 +6,9 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.others.Slice;
 
-public class SliceParser implements PrefixParser {
+public class SliceParser implements PrefixParser<Slice> {
     @Override
-    public Any parse(AJEParser parser, Token token) {
+    public Slice parse(AJEParser parser, Token token) {
         Slice slice = new Slice();
 
         if (!parser.match(TokenType.RIGHT_BRACKET)) {

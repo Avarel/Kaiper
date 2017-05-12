@@ -14,6 +14,7 @@ import xyz.avarel.aje.types.Type;
 import java.util.Iterator;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class AJEParser extends Parser {
     private final Map<String, Any> objects;
 
@@ -44,7 +45,7 @@ public class AJEParser extends Parser {
         register(TokenType.MINUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, Any::minus));
         register(TokenType.ASTERISK, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Any::times));
         register(TokenType.SLASH, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Any::divide));
-        register(TokenType.PERCENT, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, false, Any::mod));
+        register(TokenType.PERCENT, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Any::mod));
         register(TokenType.CARET, new BinaryOperatorParser(Precedence.EXPONENTIAL, false, Any::pow));
     }
 
@@ -63,7 +64,7 @@ public class AJEParser extends Parser {
 
     public Any parse(int precedence) {
         Token token = eat();
-        PrefixParser prefix = getPrefixParsers().get(token.getType());
+        PrefixParser<Any> prefix = getPrefixParsers().get(token.getType());
 
         if (prefix == null) throw new RuntimeException("Could not parse \"" + token.getText() + "\".");
 
@@ -72,7 +73,7 @@ public class AJEParser extends Parser {
         while (precedence < getPrecedence()) {
             token = eat();
 
-            InfixParser infix = getInfixParsers().get(token.getType());
+            InfixParser<Any, Any> infix = getInfixParsers().get(token.getType());
             left = infix.parse(this, left, token);
         }
 

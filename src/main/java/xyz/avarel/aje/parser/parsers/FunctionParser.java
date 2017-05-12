@@ -9,7 +9,7 @@ import xyz.avarel.aje.types.compiled.CompiledFunction;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FunctionParser implements PrefixParser {
+public class FunctionParser implements PrefixParser<Any> {
     @Override
     public Any parse(AJEParser parser, Token token) {
         List<String> params = new ArrayList<>();

@@ -8,7 +8,7 @@ import xyz.avarel.aje.types.Any;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InvocationParser extends BinaryParser {
+public class InvocationParser extends BinaryParser<Any, Any> {
     public InvocationParser(int precedence) {
         super(precedence, true);
     }

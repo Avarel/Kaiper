@@ -9,7 +9,7 @@ import xyz.avarel.aje.types.numbers.Decimal;
 import xyz.avarel.aje.types.numbers.Int;
 import xyz.avarel.aje.types.others.Undefined;
 
-public class NumberParser implements PrefixParser {
+public class NumberParser implements PrefixParser<Any> {
     @Override
     public Any parse(AJEParser parser, Token token) {
         if (parser.match(TokenType.IMAGINARY)) {

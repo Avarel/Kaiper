@@ -4,15 +4,14 @@ import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.compiled.CompiledFunction;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LambdaParser implements PrefixParser {
+public class LambdaParser implements PrefixParser<CompiledFunction> {
     @Override
-    public Any parse(AJEParser parser, Token token) {
+    public CompiledFunction parse(AJEParser parser, Token token) {
         //parser.eat(TokenType.LEFT_BRACE);
         List<Token> parameterTokens = new ArrayList<>();
         List<Token> scriptTokens = new ArrayList<>();

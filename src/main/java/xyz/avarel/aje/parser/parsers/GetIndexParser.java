@@ -1,6 +1,5 @@
 package xyz.avarel.aje.parser.parsers;
 
-import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
@@ -11,15 +10,13 @@ import xyz.avarel.aje.types.others.Slice;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GetIndexParser extends BinaryParser {
+public class GetIndexParser extends BinaryParser<Slice, Any> {
     public GetIndexParser(int precedence) {
         super(precedence, true);
     }
 
     @Override
-    public Any parse(AJEParser parser, Any left, Token token) {
-        if (!(left instanceof Slice)) throw new AJEException("can only use on slice");
-
+    public Any parse(AJEParser parser, Slice left, Token token) {
         Int index = parser.parse(Int.TYPE);
 
         if (parser.match(TokenType.COMMA)) {
@@ -31,13 +28,13 @@ public class GetIndexParser extends BinaryParser {
 
             Slice slice = new Slice();
             for (Int i : indices) {
-                slice.add(((Slice) left).get(i.value()));
+                slice.add(left.get(i.value()));
             }
             return slice;
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
-        return ((Slice) left).get(index.value());
+        return left.get(index.value());
     }
 }
