@@ -1,5 +1,6 @@
 package xyz.avarel.aje.parser.parsers;
 
+import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.operators.Precedence;
 import xyz.avarel.aje.parser.InfixParser;
 import xyz.avarel.aje.parser.Parser;
@@ -8,6 +9,7 @@ import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.pool.DefaultPool;
 import xyz.avarel.aje.types.Any;
+import xyz.avarel.aje.types.Type;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -26,6 +28,7 @@ public class AJEParser extends Parser {
 
         register(TokenType.LEFT_BRACKET, new SliceParser());
         register(TokenType.LEFT_PAREN, new GroupParser());
+        register(TokenType.LEFT_BRACE, new LambdaParser());
         register(TokenType.NAME, new NameParser());
         register(TokenType.FUNCTION, new FunctionParser());
 
@@ -47,6 +50,15 @@ public class AJEParser extends Parser {
 
     public Any parse() {
         return parse(0);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T parse(Type<T> type) {
+        Any any = parse(0);
+        if (any.getType() != type) {
+            throw new AJEException("Expected type " + type + " but found " + any.getType());
+        }
+        return (T) any;
     }
 
     public Any parse(int precedence) {

@@ -3,7 +3,7 @@ import xyz.avarel.aje.parser.lexer.AJELexer;
 
 import java.util.Scanner;
 
-public class NewParserLoop {
+public class AJERepl {
     public static void main(String[] args) {
         System.out.println("LEXER EVALUATOR");
         System.out.println();

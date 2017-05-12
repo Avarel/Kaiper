@@ -13,7 +13,15 @@ public class SliceParser implements PrefixParser {
 
         if (!parser.match(TokenType.RIGHT_BRACKET)) {
             do {
-                slice.add(parser.parse());
+                Any<Any> item = parser.parse();
+
+                if (parser.match(TokenType.RANGE_TO)) {
+                    Any end = parser.parse(item.getType());
+                    slice.addAll(item.rangeTo(end));
+                    continue;
+                }
+
+                slice.add(item);
             } while (parser.match(TokenType.COMMA));
             parser.eat(TokenType.RIGHT_BRACKET);
         }

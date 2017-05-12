@@ -8,6 +8,9 @@ import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.numbers.Int;
 import xyz.avarel.aje.types.others.Slice;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GetIndexParser extends BinaryParser {
     public GetIndexParser(int precedence) {
         super(precedence, true);
@@ -17,12 +20,24 @@ public class GetIndexParser extends BinaryParser {
     public Any parse(AJEParser parser, Any left, Token token) {
         if (!(left instanceof Slice)) throw new AJEException("can only use on slice");
 
-        Any any = parser.parse();
+        Int index = parser.parse(Int.TYPE);
+
+        if (parser.match(TokenType.COMMA)) {
+            List<Int> indices = new ArrayList<>();
+            indices.add(index);
+            do {
+                indices.add(parser.parse(Int.TYPE));
+            } while (parser.match(TokenType.COMMA));
+
+            Slice slice = new Slice();
+            for (Int i : indices) {
+                slice.add(((Slice) left).get(i.value()));
+            }
+            return slice;
+        }
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
-        if (any.getType() != Int.TYPE) throw new AJEException("index must be int");
-
-        return ((Slice) left).get(((Int) any).value());
+        return ((Slice) left).get(index.value());
     }
 }

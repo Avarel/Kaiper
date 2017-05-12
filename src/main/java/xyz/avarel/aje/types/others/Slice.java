@@ -2,10 +2,9 @@ package xyz.avarel.aje.types.others;
 
 import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.operators.AJEBinaryOperator;
-import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
-import xyz.avarel.aje.types.numbers.Int;
+import xyz.avarel.aje.types.Type;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,32 +82,6 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
     @Override
     public Slice negative() {
         return listOperation(Any::negative);
-    }
-
-
-    @Override
-    public boolean add(Any Any) {
-        if (Any instanceof Slice) {
-            return super.addAll((Slice) Any);
-        }
-        return super.add(Any);
-    }
-
-    @Override
-    public void add(int index, Any element) {
-        if (element instanceof Slice) {
-            super.addAll(index, (Slice) element);
-            return;
-        }
-        super.add(index, element);
-    }
-
-    public Slice get(Slice indices) {
-        Slice slice = new Slice();
-        for (Any indice : indices) {
-            slice.add(get(((Int) indice).value()));
-        }
-        return slice;
     }
 
     @Override

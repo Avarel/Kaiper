@@ -1,5 +1,6 @@
 package xyz.avarel.aje.parser;
 
+import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 
@@ -51,8 +52,7 @@ public abstract class Parser {
     public Token eat(TokenType expected) {
         Token token = peek(0);
         if (token.getType() != expected) {
-            throw new RuntimeException("Expected token " + expected +
-                    " and found " + token.getType());
+            throw new AJEException("Expected token " + expected + " but found " + token.getType());
         }
         return eat();
     }
