@@ -128,8 +128,15 @@ public interface Any<T extends Any> {
         return Undefined.VALUE;
     }
 
+    default Any<?> identity() {
+        return this;
+    }
+
+    default Any<?> set(T other) {
+        throw unsupported("set");
+    }
+
     default Any<?> get(String name) {
-        System.out.println("getting " + name);
         return Undefined.VALUE;
     }
 

@@ -10,11 +10,7 @@ public enum TokenType {
     LEFT_BRACE,
     RIGHT_BRACE,
 
-    COMMA,
-    DOT,
-
     ASSIGN,
-
     EQUALS,
     GT,
     GTE,
@@ -41,6 +37,9 @@ public enum TokenType {
     BANG,
     QUESTION,
     COLON,
+    SEMICOLON,
+    COMMA,
+    DOT,
 
     INT,
     DECIMAL,

@@ -5,8 +5,8 @@ import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.types.Any;
 
-public class GetParser extends BinaryParser<Any, Any> {
-    public GetParser(int precedence) {
+public class AttributeParser extends BinaryParser<Any, Any> {
+    public AttributeParser(int precedence) {
         super(precedence, true);
     }
 

@@ -19,7 +19,7 @@ public class InvocationParser extends BinaryParser<Any, Any> {
 
         if (!parser.match(TokenType.RIGHT_PAREN)) {
             do {
-                list.add(parser.parse());
+                list.add(parser.parse(0).identity());
             } while (parser.match(TokenType.COMMA));
             parser.eat(TokenType.RIGHT_PAREN);
         }

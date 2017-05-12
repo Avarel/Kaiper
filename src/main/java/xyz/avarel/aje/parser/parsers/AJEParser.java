@@ -39,7 +39,9 @@ public class AJEParser extends Parser {
 
         register(TokenType.LEFT_PAREN, new InvocationParser(Precedence.ACCESS));
         register(TokenType.LEFT_BRACKET, new GetIndexParser(Precedence.ACCESS));
-        register(TokenType.DOT, new GetParser(Precedence.ACCESS));
+        register(TokenType.DOT, new AttributeParser(Precedence.ACCESS));
+
+        register(TokenType.ASSIGN, new AssignmentParser());
 
         register(TokenType.PLUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, Any::plus));
         register(TokenType.MINUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, Any::minus));
@@ -50,7 +52,17 @@ public class AJEParser extends Parser {
     }
 
     public Any parse() {
-        return parse(0);
+        Any any;
+
+        do {
+            any = parse(0);
+        } while (match(TokenType.LINE));
+
+        if (getLexer().hasNext()) {
+            throw new AJEException("Could not parse " + getLexer().next().getText());
+        }
+
+        return any;
     }
 
     @SuppressWarnings("unchecked")

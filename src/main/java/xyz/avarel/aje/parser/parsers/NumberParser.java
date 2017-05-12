@@ -15,7 +15,7 @@ public class NumberParser implements PrefixParser<Any> {
         if (parser.match(TokenType.IMAGINARY)) {
             String str = token.getText();
             return Complex.of(0, Double.parseDouble(str));
-        } if (token.getType() == TokenType.IMAGINARY) {
+        } else if (token.getType() == TokenType.IMAGINARY) {
             return Complex.of(0, 1);
         } else if (token.getType() == TokenType.INT) {
             String str = token.getText();

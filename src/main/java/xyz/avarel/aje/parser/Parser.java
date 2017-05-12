@@ -11,6 +11,7 @@ public abstract class Parser {
     private final List<Token> tokens = new ArrayList<>();
     private final Map<TokenType, PrefixParser> prefixParsers = new HashMap<>();
     private final Map<TokenType, InfixParser> infixParsers = new HashMap<>();
+    private Token last;
 
     public Parser(Iterator<Token> lexer) {
         this.lexer = lexer;
@@ -30,6 +31,10 @@ public abstract class Parser {
 
     public Map<TokenType, InfixParser> getInfixParsers() {
         return infixParsers;
+    }
+
+    public Token getLast() {
+        return last;
     }
 
     public boolean match(TokenType expected) {
@@ -61,7 +66,7 @@ public abstract class Parser {
         // Make sure we've read the token.
         peek(0);
 
-        return tokens.remove(0);
+        return last = tokens.remove(0);
     }
 
     public Token peek(int distance) {

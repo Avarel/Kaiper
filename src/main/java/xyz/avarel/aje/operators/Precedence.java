@@ -1,17 +1,16 @@
 package xyz.avarel.aje.operators;
 
 public class Precedence {
-    public static final int ACCESS = 12;
-    public static final int POSTFIX = 11;
-    public static final int PREFIX = 10;
-    public static final int EXPONENTIAL = 9;
-    public static final int MULTIPLICATIVE = 8;
-    public static final int ADDITIVE = 7;
-    public static final int RANGE_TO = 6; // 1
-    public static final int INFIX = 5;
-    public static final int COMPARISON = 4; // 4
-    public static final int EQUALITY = 3; // 3
-    public static final int CONJUNCTION = 2; // 2
-    public static final int DISJUNCTION = 1; // 1
-    public static final int ASSIGNMENT = 0;
+    public static final int ACCESS = 13;
+    public static final int POSTFIX = 12;
+    public static final int EXPONENTIAL = 10;
+    public static final int MULTIPLICATIVE = 9;
+    public static final int ADDITIVE = 8;
+    public static final int RANGE_TO = 7; // 1
+    public static final int INFIX = 6;
+    public static final int COMPARISON = 5; // 4
+    public static final int EQUALITY = 4; // 3
+    public static final int CONJUNCTION = 3; // 2
+    public static final int DISJUNCTION = 2; // 1
+    public static final int ASSIGNMENT = 1;
 }

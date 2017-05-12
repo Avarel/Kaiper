@@ -23,6 +23,9 @@ public enum DefaultFunction implements NativeFunction {
     ATAN(Decimal.TYPE, (arg) -> Decimal.of(Math.atan(arg.toNative()))),
     ATAN2(Decimal.TYPE, Decimal.TYPE, (a1, a2) -> Decimal.of(Math.atan2(a1.toNative(), a2.toNative()))),
 
+    SQRT(Decimal.TYPE, (arg) -> Decimal.of(Math.sin(arg.toNative()))),
+    CBRT(Decimal.TYPE, (arg) -> Decimal.of(Math.sin(arg.toNative()))),
+
     MAX(Decimal.TYPE, Decimal.TYPE, (a1, a2) -> Decimal.of(Math.max(a1.toNative(), a2.toNative()))),
     MIN(Decimal.TYPE, Decimal.TYPE, (a1, a2) -> Decimal.of(Math.min(a1.toNative(), a2.toNative()))),
 

@@ -15,6 +15,11 @@ public class FunctionParser implements PrefixParser<Any> {
         List<String> params = new ArrayList<>();
         List<Token> tokens = new ArrayList<>();
 
+        String name = null;
+        if (parser.match(TokenType.NAME)) {
+            name = parser.getLast().getText();
+        }
+
         parser.eat(TokenType.LEFT_PAREN);
         if (!parser.match(TokenType.RIGHT_PAREN)) {
             do {
@@ -29,6 +34,12 @@ public class FunctionParser implements PrefixParser<Any> {
             tokens.add(parser.eat());
         }
 
-        return new CompiledFunction(params, tokens);
+        CompiledFunction function = new CompiledFunction(params, tokens);
+
+        if (name != null) {
+            parser.getObjects().put(name, function);
+        }
+
+        return function;
     }
 }

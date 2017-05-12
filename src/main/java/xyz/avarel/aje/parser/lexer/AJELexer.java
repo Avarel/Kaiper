@@ -126,6 +126,10 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             advance();
         }
 
+        if (Character.isLetter(peek()) && peek() != 'i') {
+            throw new AJEException("Numbers can't be followed up by letters.");
+        }
+
         String value = str.substring(start, pos + 1);
 
         if (!point) return new Token(TokenType.INT, value);

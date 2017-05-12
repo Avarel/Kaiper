@@ -5,6 +5,7 @@ import xyz.avarel.aje.operators.AJEBinaryOperator;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.numbers.Int;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -121,5 +122,13 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
             slice.add(operator.apply(get(i % size())));
         }
         return slice;
+    }
+
+    @Override
+    public Any<?> get(String name) {
+        switch(name) {
+            case "size": return Int.of(size());
+            default: return Undefined.VALUE;
+        }
     }
 }
