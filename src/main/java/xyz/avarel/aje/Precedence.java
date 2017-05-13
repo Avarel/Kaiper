@@ -3,7 +3,8 @@ package xyz.avarel.aje;
 public class Precedence {
     public static final int ACCESS = 13;
     public static final int POSTFIX = 12;
-    public static final int EXPONENTIAL = 10;
+    public static final int EXPONENTIAL = 11;
+    public static final int PREFIX = 10;
     public static final int MULTIPLICATIVE = 9;
     public static final int ADDITIVE = 8;
     public static final int RANGE_TO = 7; // 1

@@ -3,6 +3,7 @@ package xyz.avarel.aje.types;
 import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.types.numbers.Decimal;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -114,6 +115,10 @@ public interface Any<T extends Any> {
     // Functional
     default Any<?> invoke(List<Any> args) {
         return Undefined.VALUE;
+    }
+
+    default Any invoke(Any... arguments) {
+        return invoke(Arrays.asList(arguments));
     }
 
     default Any<?> identity() {

@@ -36,9 +36,14 @@ public class AJEParser extends Parser {
         register(TokenType.IMAGINARY, new NumberParser());
         register(TokenType.BOOLEAN, new BooleanParser());
 
+
+        register(TokenType.MINUS, new UnaryNumericParser(Any::negative));
+        register(TokenType.PLUS, new UnaryNumericParser(Any::identity));
+
         register(TokenType.LEFT_PAREN, new InvocationParser(Precedence.ACCESS));
         register(TokenType.LEFT_BRACKET, new GetIndexParser(Precedence.ACCESS));
         register(TokenType.DOT, new AttributeParser(Precedence.ACCESS));
+
 
         register(TokenType.ASSIGN, new AssignmentParser());
 
@@ -95,6 +100,7 @@ public class AJEParser extends Parser {
             token = eat();
 
             InfixParser<Any, Any> infix = getInfixParsers().get(token.getType());
+            if (!infix.keepIdentity()) left = left.identity();
             left = infix.parse(this, left, token);
         }
 

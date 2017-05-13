@@ -5,15 +5,15 @@ import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.numbers.Int;
 import xyz.avarel.aje.types.Slice;
+import xyz.avarel.aje.types.numbers.Int;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GetIndexParser extends BinaryParser<Slice, Any> {
     public GetIndexParser(int precedence) {
-        super(precedence, true);
+        super(precedence, true, false);
     }
 
     @Override
@@ -27,11 +27,14 @@ public class GetIndexParser extends BinaryParser<Slice, Any> {
                 indices.add(parser.parse(Int.TYPE));
             } while (parser.match(TokenType.COMMA));
 
-            Slice slice = new Slice();
+            parser.eat(TokenType.RIGHT_BRACKET);
+
+            Slice subslice = new Slice();
             for (Int i : indices) {
-                slice.add(left.get(i.value()));
+                subslice.add(left.get(i.value()));
             }
-            return slice;
+
+            return subslice;
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);

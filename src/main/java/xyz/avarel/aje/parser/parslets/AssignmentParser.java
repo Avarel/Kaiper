@@ -9,7 +9,7 @@ import xyz.avarel.aje.types.Variable;
 
 public class AssignmentParser extends BinaryParser<Variable, Any> {
     public AssignmentParser() {
-        super(Precedence.ASSIGNMENT, true);
+        super(Precedence.ASSIGNMENT, true, true);
     }
 
     @Override

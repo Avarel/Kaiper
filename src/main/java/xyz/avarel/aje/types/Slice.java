@@ -136,6 +136,18 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
                     return slice;
                 }
             };
+            case "fold" : return new NativeFunction(Any.TYPE, AJEFunction.TYPE) {
+                @Override
+                public Any eval(List<Any> arguments) {
+                    Any accumulator = arguments.get(0);
+                    AJEFunction operation = (AJEFunction) arguments.get(1);
+
+                    for (Any obj : Slice.this) {
+                        accumulator = operation.invoke(accumulator, obj);
+                    }
+                    return accumulator;
+                }
+            };
             default: return Undefined.VALUE;
         }
     }
