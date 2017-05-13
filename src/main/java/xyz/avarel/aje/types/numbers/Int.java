@@ -8,7 +8,7 @@ import xyz.avarel.aje.types.others.Slice;
 import xyz.avarel.aje.types.others.Truth;
 
 public class Int implements Any<Int>, NativeObject<Integer> {
-    public static final Type<Int> TYPE = new Type<>(Int.of(0), "integer", Decimal.TYPE, Complex.TYPE);
+    public static final Type<Int> TYPE = new Type<>(Numeric.TYPE, "integer");
 
     private final int value;
 
@@ -48,18 +48,6 @@ public class Int implements Any<Int>, NativeObject<Integer> {
     }
 
     @Override
-    public Any castUp(Type type) {
-        if (type.getPrototype() instanceof Int) {
-            return this;
-        } else if (type.getPrototype() instanceof Complex) {
-            return Complex.of(value);
-        } else if (type.getPrototype() instanceof Decimal) {
-            return Decimal.of(value);
-        }
-        return this;
-    }
-
-    @Override
     public Int plus(Int other) {
         return Int.of(value + other.value);
     }
@@ -86,9 +74,7 @@ public class Int implements Any<Int>, NativeObject<Integer> {
 
     @Override
     public Int mod(Int other) {
-        Int n = Int.of((value % other.value + other.value) % other.value);
-        System.out.println(n);
-        return n;
+        return Int.of((value % other.value + other.value) % other.value);
     }
 
 

@@ -9,7 +9,7 @@ import xyz.avarel.aje.types.others.Truth;
 import java.math.BigDecimal;
 
 public class Complex implements Any<Complex>, NativeObject<Double> {
-    public static final Type<Complex> TYPE = new Type<>(Complex.of(0), "complex");
+    public static final Type<Complex> TYPE = new Type<>(Numeric.TYPE, "complex");
 
     private final double re;
     private final double im;
@@ -47,16 +47,6 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
     @Override
     public Type getType() {
         return TYPE;
-    }
-
-    @Override
-    public Any castDown(Type type) {
-        if (type.getPrototype() instanceof Int) {
-            return Int.of((int) re);
-        } else if (type.getPrototype() instanceof Decimal) {
-            return Decimal.of(re);
-        }
-        return this;
     }
 
     @Override
@@ -142,5 +132,13 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
     @Override
     public Truth equals(Complex b) {
         return re == b.re && im == b.im ? Truth.TRUE : Truth.FALSE;
+    }
+
+    public double real() {
+        return re;
+    }
+
+    public double imaginary() {
+        return im;
     }
 }

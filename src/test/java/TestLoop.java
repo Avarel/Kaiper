@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class TestLoop {
     public static void main(String[] args) {
-        System.out.println("MATH EXPRESSION EVALUATOR");
+        System.out.println("AJE REPL");
         System.out.println();
 
         Scanner sc = new Scanner(System.in);

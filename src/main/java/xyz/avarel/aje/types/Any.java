@@ -14,8 +14,7 @@ import java.util.List;
  */
 @SuppressWarnings("unchecked")
 public interface Any<T extends Any> {
-    Type<Any> TYPE = new Type<>("any");
-
+    Type<Any> TYPE = new Type("any");
 
     Type<T> getType();
 
@@ -139,15 +138,6 @@ public interface Any<T extends Any> {
     default Any<?> get(String name) {
         return Undefined.VALUE;
     }
-
-    default Any<?> castUp(Type type) {
-        return this;
-    }
-
-    default Any<?> castDown(Type type) {
-        return this;
-    }
-
 
     default RuntimeException unsupported(String desc) {
         return new AJEException(getType() + " does not support " + desc + ".");

@@ -43,9 +43,10 @@ public enum TokenType {
 
     INT,
     DECIMAL,
+    BOOLEAN,
+    IMAGINARY,
 
     FUNCTION,
-    IMAGINARY,
 
     NAME,
     EOF,

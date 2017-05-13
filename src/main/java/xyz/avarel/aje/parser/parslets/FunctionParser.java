@@ -1,17 +1,18 @@
-package xyz.avarel.aje.parser.parsers;
+package xyz.avarel.aje.parser.parslets;
 
+import xyz.avarel.aje.functional.AJEFunction;
+import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.compiled.CompiledFunction;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FunctionParser implements PrefixParser<Any> {
+public class FunctionParser implements PrefixParser<AJEFunction> {
     @Override
-    public Any parse(AJEParser parser, Token token) {
+    public AJEFunction parse(AJEParser parser, Token token) {
         List<String> params = new ArrayList<>();
         List<Token> tokens = new ArrayList<>();
 

@@ -3,7 +3,7 @@ package xyz.avarel.aje.types.compiled;
 import xyz.avarel.aje.functional.AJEFunction;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.parser.parsers.AJEParser;
+import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.others.Undefined;
@@ -16,7 +16,7 @@ import java.util.function.Function;
  * Every operation results in the same
  * instance, NOTHING.
  */
-public class CompiledFunction implements AJEFunction<CompiledFunction>, NativeObject<Function<List<Any>, Any>> {
+public class CompiledFunction extends AJEFunction implements NativeObject<Function<List<Any>, Any>> {
     private final List<String> parameters;
     private final List<Token> tokens;
 

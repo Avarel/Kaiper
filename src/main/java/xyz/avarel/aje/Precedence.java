@@ -1,4 +1,4 @@
-package xyz.avarel.aje.operators;
+package xyz.avarel.aje;
 
 public class Precedence {
     public static final int ACCESS = 13;

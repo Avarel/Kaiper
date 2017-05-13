@@ -9,7 +9,7 @@ import xyz.avarel.aje.types.others.Truth;
 import java.math.BigDecimal;
 
 public class Decimal implements Any<Decimal>, NativeObject<Double> {
-    public static final Type<Decimal> TYPE = new Type<>(Decimal.of(0), "decimal", Complex.TYPE);
+    public static final Type<Decimal> TYPE = new Type<>(Numeric.TYPE, "decimal");
 
     private final double value;
 
@@ -40,31 +40,13 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
     }
 
     @Override
-    public Type<Decimal> getType() {
+    public Type getType() {
         return TYPE;
     }
 
     @Override
     public String toString() {
         return String.valueOf(value);
-    }
-
-    @Override
-    public Any castUp(Type type) {
-        if (type.getPrototype() instanceof Decimal) {
-            return this;
-        } else if (type.getPrototype() instanceof Complex) {
-            return Complex.of(value);
-        }
-        return this;
-    }
-
-    @Override
-    public Any castDown(Type type) {
-        if (type.getPrototype() instanceof Int) {
-            return Int.of((int) value);
-        }
-        return this;
     }
 
     @Override

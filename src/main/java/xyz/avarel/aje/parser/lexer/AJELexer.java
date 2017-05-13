@@ -152,6 +152,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     private Token nameOrKeyword(String value) {
         switch(value) {
             case "fun": return new Token(TokenType.FUNCTION);
+            case "true": return new Token(TokenType.BOOLEAN, "true");
+            case "false": return new Token(TokenType.BOOLEAN, "false");
             case "i": return new Token(TokenType.IMAGINARY);
             case "and": return new Token(TokenType.AND);
             case "or": return new Token(TokenType.OR);

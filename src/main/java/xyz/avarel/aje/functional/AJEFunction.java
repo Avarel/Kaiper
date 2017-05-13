@@ -5,14 +5,14 @@ import xyz.avarel.aje.types.Type;
 
 import java.util.List;
 
-public interface AJEFunction<T extends Any> extends Any<T> {
-    Type<AJEFunction> TYPE = new Type<>("function");
+public abstract class AJEFunction implements Any<AJEFunction> {
+    public static final Type TYPE = new Type("function");
 
     @Override
-    default Type<T> getType() {
-        return (Type<T>) TYPE;
+    public Type getType() {
+        return TYPE;
     }
 
     @Override
-    Any invoke(List<Any> arguments);
+    public abstract Any invoke(List<Any> arguments);
 }

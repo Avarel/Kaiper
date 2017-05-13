@@ -11,7 +11,7 @@ import xyz.avarel.aje.types.NativeObject;
 public enum Undefined implements Any<Undefined>, NativeObject<Undefined> {
     VALUE;
 
-    public static final Type<Undefined> TYPE = new Type<>(VALUE, "undefined");
+    public static final Type<Void> TYPE = new Type<>( "undefined");
 
     @Override
     public String toString() {
@@ -24,7 +24,7 @@ public enum Undefined implements Any<Undefined>, NativeObject<Undefined> {
     }
 
     @Override
-    public Type<Undefined> getType() {
+    public Type getType() {
         return TYPE;
     }
 }

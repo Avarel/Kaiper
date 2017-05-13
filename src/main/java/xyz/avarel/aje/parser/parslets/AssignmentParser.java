@@ -1,6 +1,7 @@
-package xyz.avarel.aje.parser.parsers;
+package xyz.avarel.aje.parser.parslets;
 
-import xyz.avarel.aje.operators.Precedence;
+import xyz.avarel.aje.Precedence;
+import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.types.Any;

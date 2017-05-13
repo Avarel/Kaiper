@@ -1,5 +1,6 @@
-package xyz.avarel.aje.parser.parsers;
+package xyz.avarel.aje.parser.parslets;
 
+import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
@@ -19,7 +20,7 @@ public class InvocationParser extends BinaryParser<Any, Any> {
 
         if (!parser.match(TokenType.RIGHT_PAREN)) {
             do {
-                list.add(parser.parse(0).identity());
+                list.add(parser.parse().identity());
             } while (parser.match(TokenType.COMMA));
             parser.eat(TokenType.RIGHT_PAREN);
         }
