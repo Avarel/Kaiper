@@ -73,11 +73,6 @@ public class Variable implements Any<Any<? extends Any>> {
     }
 
     @Override
-    public Any<?> root(Any other) {
-        return identity().root(other);
-    }
-
-    @Override
     public Any<?> negative() {
         return identity().negative();
     }
@@ -110,11 +105,6 @@ public class Variable implements Any<Any<? extends Any>> {
     @Override
     public Any<?> pow(double other) {
         return identity().pow(other);
-    }
-
-    @Override
-    public Any<?> root(double other) {
-        return identity().root(other);
     }
 
     @Override

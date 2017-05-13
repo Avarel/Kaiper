@@ -1,12 +1,10 @@
 package xyz.avarel.aje.types.numbers;
 
 import xyz.avarel.aje.AJEException;
-import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
+import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.others.Truth;
-
-import java.math.BigDecimal;
 
 public class Decimal implements Any<Decimal>, NativeObject<Double> {
     public static final Type<Decimal> TYPE = new Type<>(Numeric.TYPE, "decimal");
@@ -72,21 +70,6 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
     @Override
     public Decimal pow(Decimal other) {
         return Decimal.of(Math.pow(value, other.value));
-    }
-
-    @Override
-    public Decimal root(Decimal other) {
-        if (other.value == 1) {
-            return other;
-        } else if (other.value == 2) {
-            return Decimal.of(Math.sqrt(this.value));
-        } else if (other.value == 3) {
-            return Decimal.of(Math.cbrt(this.value));
-        } else {
-            double result = Math.pow(other.value, 1.0 / value);
-            double val = BigDecimal.valueOf(result).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();
-            return Decimal.of(val);
-        }
     }
 
     @Override

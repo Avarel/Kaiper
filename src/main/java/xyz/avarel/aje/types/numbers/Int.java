@@ -77,8 +77,6 @@ public class Int implements Any<Int>, NativeObject<Integer> {
         return Int.of((value % other.value + other.value) % other.value);
     }
 
-
-
     @Override
     public Int negative() {
         return Int.of(-value);

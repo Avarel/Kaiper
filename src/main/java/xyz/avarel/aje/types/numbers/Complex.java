@@ -84,11 +84,6 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
     }
 
     @Override
-    public Complex root(Complex other) {
-        return this.pow(other.reciprocal());
-    }
-
-    @Override
     public Complex pow(Complex other) {
         Complex result = log().times(other).exp();
         double real = BigDecimal.valueOf(result.re).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();

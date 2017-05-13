@@ -79,11 +79,6 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
     }
 
     @Override
-    public Slice root(Slice other) {
-        return listOperation(Any::root, other);
-    }
-
-    @Override
     public Slice negative() {
         return listOperation(Any::negative);
     }

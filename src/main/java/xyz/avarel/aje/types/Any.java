@@ -54,10 +54,6 @@ public interface Any<T extends Any> {
         return Undefined.VALUE;
     }
 
-    default Any<?> root(T other) {
-        return Undefined.VALUE;
-    }
-
     default Any<?> negative() {
         return Undefined.VALUE;
     }
@@ -85,10 +81,6 @@ public interface Any<T extends Any> {
 
     default Any<?> pow(double other) {
         return pow((T) Decimal.of(other));
-    }
-
-    default Any<?> root(double other) {
-        return root((T) Decimal.of(other));
     }
 
 
