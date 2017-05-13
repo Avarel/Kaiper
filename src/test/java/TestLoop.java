@@ -15,7 +15,7 @@ public class TestLoop {
 
         while (running) {
             try {
-                System.out.print("Script | ");
+                System.out.print("  REPL | ");
 
                 String input = sc.nextLine();
 
@@ -49,7 +49,7 @@ public class TestLoop {
 
                 System.out.println();
             } catch (RuntimeException e) {
-                System.out.println("    Result | Caught an error: " + e.getMessage() + "\n");
+                System.out.println(" ERROR | " + e.getMessage() + "\n");
                 e.printStackTrace();
                 return;
             }

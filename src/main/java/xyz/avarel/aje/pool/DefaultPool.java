@@ -107,7 +107,13 @@ public class DefaultPool {
             public Any eval(List<Any> arguments) {
                 Any arg = arguments.get(0);
                 if (arg instanceof Int || arg instanceof Decimal) {
-                    return Decimal.of(Math.cos(Numeric.convert(arg, Decimal.TYPE).toNative()));
+                    double value = Numeric.convert(arg, Decimal.TYPE).toNative();
+
+                    if (value < 0) {
+                        return Complex.of(value).pow(new Complex(1.0/2.0, 0));
+                    }
+
+                    return Decimal.of(Math.sqrt(value));
                 } else if (arg instanceof Complex) {
                     return ((Complex) arg).pow(new Complex(1.0/2.0, 0));
                 }
