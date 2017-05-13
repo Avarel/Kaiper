@@ -2,9 +2,6 @@ package xyz.avarel.aje.types;
 
 import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.types.numbers.Decimal;
-import xyz.avarel.aje.types.others.Undefined;
-import xyz.avarel.aje.types.others.Slice;
-import xyz.avarel.aje.types.others.Truth;
 
 import java.util.List;
 

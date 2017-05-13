@@ -35,7 +35,7 @@ public class TestLoop {
                 //System.out.println(function);
 
                 long start = System.nanoTime();
-                Any result = exp.eval();
+                Any result = exp.compute();
                 long end = System.nanoTime();
 
                 Object obj = result.toNative();

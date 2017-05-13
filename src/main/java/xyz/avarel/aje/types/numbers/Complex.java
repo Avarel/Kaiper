@@ -1,10 +1,9 @@
 package xyz.avarel.aje.types.numbers;
 
-import xyz.avarel.aje.AJEException;
-import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
-import xyz.avarel.aje.types.others.Truth;
+import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.Truth;
 
 import java.math.BigDecimal;
 
@@ -21,14 +20,6 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
     public Complex(double re, double im) {
         this.re = re;
         this.im = im;
-    }
-
-    public static void assertIs(Object... objs) {
-        for (Object a : objs) {
-            if (!(a instanceof Complex)) {
-                throw new AJEException("Value needs to be a complex number.");
-            }
-        }
     }
 
     public static Complex of(double value) {

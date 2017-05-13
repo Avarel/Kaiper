@@ -5,7 +5,7 @@ import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.others.Slice;
+import xyz.avarel.aje.types.Slice;
 
 public class SliceParser implements PrefixParser<Slice> {
     @Override

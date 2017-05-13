@@ -7,9 +7,9 @@ import xyz.avarel.aje.types.numbers.Complex;
 import xyz.avarel.aje.types.numbers.Decimal;
 import xyz.avarel.aje.types.numbers.Int;
 import xyz.avarel.aje.types.numbers.Numeric;
-import xyz.avarel.aje.types.others.Slice;
-import xyz.avarel.aje.types.others.Truth;
-import xyz.avarel.aje.types.others.Undefined;
+import xyz.avarel.aje.types.Slice;
+import xyz.avarel.aje.types.Truth;
+import xyz.avarel.aje.types.Undefined;
 
 import java.util.Collections;
 import java.util.HashMap;

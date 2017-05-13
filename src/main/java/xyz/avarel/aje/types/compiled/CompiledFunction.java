@@ -6,7 +6,7 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
-import xyz.avarel.aje.types.others.Undefined;
+import xyz.avarel.aje.types.Undefined;
 
 import java.util.Iterator;
 import java.util.List;

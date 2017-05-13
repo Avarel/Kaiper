@@ -8,7 +8,7 @@ import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.numbers.Complex;
 import xyz.avarel.aje.types.numbers.Decimal;
 import xyz.avarel.aje.types.numbers.Int;
-import xyz.avarel.aje.types.others.Undefined;
+import xyz.avarel.aje.types.Undefined;
 
 public class NumberParser implements PrefixParser<Any> {
     @Override

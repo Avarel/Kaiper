@@ -1,10 +1,9 @@
 package xyz.avarel.aje.types.numbers;
 
-import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.Type;
-import xyz.avarel.aje.types.others.Truth;
+import xyz.avarel.aje.types.Truth;
 
 public class Decimal implements Any<Decimal>, NativeObject<Double> {
     public static final Type<Decimal> TYPE = new Type<>(Numeric.TYPE, "decimal");
@@ -13,15 +12,6 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
 
     public Decimal(double value) {
         this.value = value;
-    }
-
-    public static void assertIs(Object... objs) {
-        for (Object a : objs) {
-
-            if (!(a instanceof Decimal)) {
-                throw new AJEException("Value needs to be a number.");
-            }
-        }
     }
 
     public static Decimal of(double value) {

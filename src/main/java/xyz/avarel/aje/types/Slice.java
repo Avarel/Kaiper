@@ -1,11 +1,7 @@
-package xyz.avarel.aje.types.others;
+package xyz.avarel.aje.types;
 
-import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.functional.AJEFunction;
 import xyz.avarel.aje.functional.NativeFunction;
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.NativeObject;
-import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.numbers.Int;
 import xyz.avarel.aje.types.numbers.Numeric;
 
@@ -17,8 +13,6 @@ import java.util.function.UnaryOperator;
 
 @SuppressWarnings("unchecked")
 public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<List<Any>> {
-    public static final Slice EMPTY = new Slice();
-
     public static final Type<Slice> TYPE = new Type<>("slice");
 
     public Slice() {
@@ -26,16 +20,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
     }
 
     public Slice(Any value) {
-        this();
         add(value);
-    }
-
-    public static void assertIs(Object... objs) {
-        for (Object a : objs) {
-            if(!(a instanceof Slice)) {
-                throw new AJEException("Value needs to be a slice.");
-            }
-        }
     }
 
     @Override

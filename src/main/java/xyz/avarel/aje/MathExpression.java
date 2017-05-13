@@ -30,14 +30,14 @@ public class MathExpression {
 
     public MathExpression compile() {
         if (expression == null) {
-            expression = new AJEParser(new AJELexer(script)).parse();
+            expression = new AJEParser(new AJELexer(script)).compile();
         }
         return this;
     }
 
     @Deprecated()
     public MathExpression forceCompile() {
-        expression = new AJEParser(new AJELexer(script)).parse();
+        expression = new AJEParser(new AJELexer(script)).compile();
         return this;
     }
 //
@@ -51,7 +51,7 @@ public class MathExpression {
 //        return this;
 //    }
 
-    public Any eval() {
+    public Any compute() {
         compile();
         return expression;
     }

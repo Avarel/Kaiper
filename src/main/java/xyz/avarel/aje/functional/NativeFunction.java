@@ -2,7 +2,7 @@ package xyz.avarel.aje.functional;
 
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.Type;
-import xyz.avarel.aje.types.others.Undefined;
+import xyz.avarel.aje.types.Undefined;
 
 import java.util.Arrays;
 import java.util.List;

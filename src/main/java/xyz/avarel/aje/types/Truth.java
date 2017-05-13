@@ -1,9 +1,4 @@
-package xyz.avarel.aje.types.others;
-
-import xyz.avarel.aje.AJEException;
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.NativeObject;
-import xyz.avarel.aje.types.Type;
+package xyz.avarel.aje.types;
 
 public enum Truth implements Any<Truth>, NativeObject<Boolean> {
     TRUE(true),
@@ -15,22 +10,6 @@ public enum Truth implements Any<Truth>, NativeObject<Boolean> {
 
     Truth(boolean value) {
         this.value = value;
-    }
-
-    public static void assertNot(Object... objs) {
-        for (Object a : objs) {
-            if(a instanceof Truth) {
-                throw new AJEException("Value can not be a boolean.");
-            }
-        }
-    }
-
-    public static void assertIs(Object... objs) {
-        for (Object a : objs) {
-            if(!(a instanceof Truth)) {
-                throw new AJEException("Value needs to be a boolean.");
-            }
-        }
     }
 
     @Override

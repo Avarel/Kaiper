@@ -22,7 +22,7 @@ public class SpeedTest extends TestCase {
 
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
-            exp.eval();
+            exp.compute();
         }
         long end = System.nanoTime();
 
@@ -35,7 +35,7 @@ public class SpeedTest extends TestCase {
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
             //noinspection deprecation
-            exp.forceCompile().eval();
+            exp.forceCompile().compute();
         }
         long end = System.nanoTime();
 

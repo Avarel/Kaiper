@@ -1,8 +1,4 @@
-package xyz.avarel.aje.types.others;
-
-import xyz.avarel.aje.types.Type;
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.NativeObject;
+package xyz.avarel.aje.types;
 
 /**
  * Every operation results in the same

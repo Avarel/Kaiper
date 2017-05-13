@@ -37,7 +37,6 @@ public enum TokenType {
     BANG,
     QUESTION,
     COLON,
-    SEMICOLON,
     COMMA,
     DOT,
 

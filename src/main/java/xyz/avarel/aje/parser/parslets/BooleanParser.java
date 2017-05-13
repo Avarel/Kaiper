@@ -4,8 +4,8 @@ import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.others.Truth;
-import xyz.avarel.aje.types.others.Undefined;
+import xyz.avarel.aje.types.Truth;
+import xyz.avarel.aje.types.Undefined;
 
 public class BooleanParser implements PrefixParser<Any> {
     @Override

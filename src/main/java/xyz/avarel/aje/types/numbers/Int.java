@@ -1,11 +1,10 @@
 package xyz.avarel.aje.types.numbers;
 
-import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.NativeObject;
-import xyz.avarel.aje.types.others.Slice;
-import xyz.avarel.aje.types.others.Truth;
+import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.Slice;
+import xyz.avarel.aje.types.Truth;
 
 public class Int implements Any<Int>, NativeObject<Integer> {
     public static final Type<Int> TYPE = new Type<>(Numeric.TYPE, "integer");
@@ -14,14 +13,6 @@ public class Int implements Any<Int>, NativeObject<Integer> {
 
     public Int(int value) {
         this.value = value;
-    }
-
-    public static void assertIs(Object... objs) {
-        for (Object a : objs) {
-            if (!(a instanceof Int)) {
-                throw new AJEException("Value needs to be an int.");
-            }
-        }
     }
 
     public static Int of(int value) {

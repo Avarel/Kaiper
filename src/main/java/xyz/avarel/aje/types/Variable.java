@@ -1,8 +1,5 @@
 package xyz.avarel.aje.types;
 
-import xyz.avarel.aje.types.others.Slice;
-import xyz.avarel.aje.types.others.Truth;
-
 import java.util.List;
 
 public class Variable implements Any<Any<? extends Any>> {

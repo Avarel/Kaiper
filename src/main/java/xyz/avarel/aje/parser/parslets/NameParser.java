@@ -5,7 +5,7 @@ import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.Variable;
-import xyz.avarel.aje.types.others.Undefined;
+import xyz.avarel.aje.types.Undefined;
 
 public class NameParser implements PrefixParser {
     @Override

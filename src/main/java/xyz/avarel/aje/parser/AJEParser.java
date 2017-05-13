@@ -56,7 +56,7 @@ public class AJEParser extends Parser {
         register(TokenType.LTE, new BinaryNumericParser(Precedence.MULTIPLICATIVE, true, Any::lessThanOrEqual));
     }
 
-    public Any parseStatements() {
+    public Any compile() {
         Any any;
 
         do {
