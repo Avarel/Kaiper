@@ -1,10 +1,11 @@
 import xyz.avarel.aje.ExpressionBuilder;
 import xyz.avarel.aje.MathExpression;
+import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.types.Any;
 
 import java.util.Scanner;
 
-public class TestLoop {
+public class AJERepl {
     public static void main(String[] args) {
         System.out.println("AJE REPL");
         System.out.println();
@@ -27,8 +28,10 @@ public class TestLoop {
 
                 //Function exp = new Function(input);
 
+
+                System.out.println(" Lexer | " + new AJELexer(input));
+
                 MathExpression exp = new ExpressionBuilder(input)
-                        .addVariable("tau")
                         .build();
 //                        .setVariable("tau", Math.PI * 2);
 
@@ -42,6 +45,8 @@ public class TestLoop {
 
                 long ns =  (end - start);
                 double ms = ns / 1000000D;
+
+
 
                 System.out.println("  Time | " + ms + "ms " + ns + "ns" );
                 System.out.println("Result | " + result + " : " + result.getType());

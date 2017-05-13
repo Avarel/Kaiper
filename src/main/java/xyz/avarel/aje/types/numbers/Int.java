@@ -89,16 +89,6 @@ public class Int implements Any<Int>, NativeObject<Integer> {
     }
 
     @Override
-    public Truth greaterThanOrEqual(Int other) {
-        return value >= other.value ? Truth.TRUE : Truth.FALSE;
-    }
-
-    @Override
-    public Truth lessThanOrEqual(Int other) {
-        return value <= other.value ? Truth.TRUE : Truth.FALSE;
-    }
-
-    @Override
     public Slice rangeTo(Int other) {
         Slice slice = new Slice();
 

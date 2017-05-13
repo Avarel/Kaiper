@@ -95,15 +95,6 @@ public interface Any<T extends Any> {
         throw unsupported("less than comparison");
     }
 
-    default Truth greaterThanOrEqual(T other) {
-        throw unsupported("greater than or equal to comparison");
-    }
-
-    default Truth lessThanOrEqual(T other) {
-        throw unsupported("less than or equal to comparison");
-    }
-
-
 
     // Slices
     default Slice rangeTo(T other) {

@@ -5,7 +5,7 @@ import xyz.avarel.aje.types.Type;
 
 import java.util.function.BinaryOperator;
 
-public class Numeric implements Any<Numeric> {
+public abstract class Numeric extends Number implements Any<Numeric> {
     public static final Type<Numeric> TYPE = new Type<>("number");
 
     public Type<Numeric> getType() {

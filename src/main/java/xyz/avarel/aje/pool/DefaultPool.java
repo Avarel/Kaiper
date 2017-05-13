@@ -146,6 +146,35 @@ public class DefaultPool {
             }
         });
 
+        pool.put("filter", new NativeFunction(Slice.TYPE, AJEFunction.TYPE) {
+            @Override
+            public Any eval(List<Any> arguments) {
+                Slice arg = (Slice) arguments.get(0);
+                AJEFunction transform = (AJEFunction) arguments.get(1);
+
+                Slice slice = new Slice();
+                for (Any obj : arg) {
+                    Truth condition = (Truth) transform.invoke(Collections.singletonList(obj));
+                    if (condition == Truth.TRUE) slice.add(obj);
+                }
+                return slice;
+            }
+        });
+
+        pool.put("fold", new NativeFunction(Slice.TYPE, Any.TYPE, AJEFunction.TYPE) {
+            @Override
+            public Any eval(List<Any> arguments) {
+                Slice arg = (Slice) arguments.get(0);
+                Any accumulator = arguments.get(1);
+                AJEFunction operation = (AJEFunction) arguments.get(2);
+
+                for (Any obj : arg) {
+                    accumulator = operation.invoke(accumulator, obj);
+                }
+                return accumulator;
+            }
+        });
+
         // Types
         pool.put("Int", Int.TYPE);
         pool.put("Decimal", Decimal.TYPE);

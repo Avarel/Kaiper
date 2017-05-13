@@ -28,7 +28,7 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
     }
 
     @Override
-    public Type getType() {
+    public Type<Decimal> getType() {
         return TYPE;
     }
 
@@ -87,15 +87,5 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
     @Override
     public Truth lessThan(Decimal other) {
         return value < other.value ? Truth.TRUE : Truth.FALSE;
-    }
-
-    @Override
-    public Truth greaterThanOrEqual(Decimal other) {
-        return value >= other.value ? Truth.TRUE : Truth.FALSE;
-    }
-
-    @Override
-    public Truth lessThanOrEqual(Decimal other) {
-        return value <= other.value ? Truth.TRUE : Truth.FALSE;
     }
 }

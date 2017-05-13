@@ -58,8 +58,9 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     ? new Token(TokenType.RANGE_TO)
                     : new Token(TokenType.DOT);
             case ',': return new Token(TokenType.COMMA);
-
-            case '!': return new Token(TokenType.BANG);
+            case '!': return match('=')
+                    ? new Token(TokenType.NOT_EQUAL)
+                    : new Token(TokenType.BANG);
             case '?': return new Token(TokenType.QUESTION);
             case '~': return new Token(TokenType.TILDE);
 
@@ -68,10 +69,16 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     ? new Token(TokenType.ARROW)
                     : new Token(TokenType.MINUS);
             case '*': return new Token(TokenType.ASTERISK);
-            case '/': return new Token(TokenType.SLASH);
+            case '/': return match('\\')
+                    ? new Token(TokenType.AND)
+                    : new Token(TokenType.SLASH);
             case '%': return new Token(TokenType.PERCENT);
-            case '\\': return new Token(TokenType.BACKSLASH);
             case '^': return new Token(TokenType.CARET);
+
+            case '\\': return match('/')
+                    ? new Token(TokenType.OR)
+                    : new Token(TokenType.BACKSLASH);
+
             case ':': return new Token(TokenType.COLON);
 
             case '=': return match('=')
@@ -83,7 +90,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case '<': return match('=')
                     ? new Token(TokenType.LTE)
                     : new Token(TokenType.LT);
-
             case '|': return match('|')
                     ? new Token(TokenType.OR)
                     : new Token(TokenType.PIPE);
@@ -118,6 +124,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     pos--;
                     break;
                 } else if (!Character.isDigit(peek())) {
+                    pos--;
                     break;
                 } else if (!point) {
                     point = true;
@@ -166,7 +173,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         StringBuilder s = new StringBuilder();
 
         for (Token t : this) {
-            s.append(t).append("    ");
+            s.append(t).append("  ");
         }
 
         return s.toString();

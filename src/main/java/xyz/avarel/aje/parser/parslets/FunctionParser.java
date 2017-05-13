@@ -30,6 +30,8 @@ public class FunctionParser implements PrefixParser<AJEFunction> {
             parser.match(TokenType.RIGHT_PAREN);
         }
 
+        parser.match(TokenType.ASSIGN);
+
         parser.eat(TokenType.LEFT_BRACE);
         while (!parser.match(TokenType.RIGHT_BRACE)) {
             tokens.add(parser.eat());

@@ -6,10 +6,10 @@ public class SpeedTest extends TestCase {
     public void testSpeeds() {
         // Performance hoggers
         // [1,2,[3,4,[5,6,[7,8],90, [91, 92],100]],9,10,[11, [50,52],12],13]
-        // [0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]@[0..10]
         // (8+2i)*(5i+3)
         // [1..10] * 10
-        String script = "1+1";
+        // x = fun(x) { x + 2 }; fun y(x) = { x + 2 }; z = { x -> x + 2 }; x(2) == y(2) /\ y(2) == z(2)
+        String script = "x = fun(x) { x + 2 }; fun y(x) = { x + 2 }; z = { x -> x + 2 }; x(2) == y(2) /\\ y(2) == z(2)";
         int testsAmt = 10000;
 
         System.out.println(testsAmt + " Tests");

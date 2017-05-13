@@ -2,6 +2,7 @@ package xyz.avarel.aje.types;
 
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class Variable implements Any<Any<? extends Any>> {
     private Any value;
 
@@ -117,16 +118,6 @@ public class Variable implements Any<Any<? extends Any>> {
     @Override
     public Truth lessThan(Any other) {
         return identity().lessThan(other);
-    }
-
-    @Override
-    public Truth greaterThanOrEqual(Any other) {
-        return identity().greaterThanOrEqual(other);
-    }
-
-    @Override
-    public Truth lessThanOrEqual(Any other) {
-        return identity().lessThanOrEqual(other);
     }
 
     @Override

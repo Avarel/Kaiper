@@ -11,7 +11,9 @@ public enum TokenType {
     RIGHT_BRACE,
 
     ASSIGN,
+
     EQUALS,
+    NOT_EQUAL,
     GT,
     GTE,
     LT,

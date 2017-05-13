@@ -23,19 +23,17 @@ public enum Truth implements Any<Truth>, NativeObject<Boolean> {
     }
 
     @Override
-    public Type getType() {
+    public Type<Truth> getType() {
         return TYPE;
     }
 
-    @Override
-    public Truth plus(Truth other) {
+    public Truth or(Truth other) {
         if (value) return TRUE;
         if (other.value) return TRUE;
         return FALSE;
     }
 
-    @Override
-    public Truth times(Truth other) {
+    public Truth and(Truth other) {
         if (!value) return FALSE;
         if (!other.value) return FALSE;
         return TRUE;

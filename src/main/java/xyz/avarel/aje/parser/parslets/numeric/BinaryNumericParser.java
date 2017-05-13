@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.parslets;
+package xyz.avarel.aje.parser.parslets.numeric;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
@@ -18,7 +18,7 @@ public class BinaryNumericParser extends BinaryParser<Any, Any> {
 
     @Override
     public Any parse(AJEParser parser, Any left, Token token) {
-        Any right = parser.parse(getPrecedence() - (isLeftAssoc() ? 0 : 1));
+        Any right = parser.parse(Numeric.TYPE, getPrecedence() - (isLeftAssoc() ? 0 : 1));
         return Numeric.process(left, right, operator);
     }
 }
