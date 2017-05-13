@@ -7,6 +7,7 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.*;
 import xyz.avarel.aje.pool.DefaultPool;
 import xyz.avarel.aje.types.Any;
+import xyz.avarel.aje.types.Truth;
 import xyz.avarel.aje.types.Type;
 
 import java.util.Iterator;
@@ -44,7 +45,6 @@ public class AJEParser extends Parser {
         register(TokenType.LEFT_BRACKET, new GetIndexParser(Precedence.ACCESS));
         register(TokenType.DOT, new AttributeParser(Precedence.ACCESS));
 
-
         register(TokenType.ASSIGN, new AssignmentParser());
 
         register(TokenType.PLUS, new BinaryNumericParser(Precedence.ADDITIVE, true, Any::plus));
@@ -54,11 +54,14 @@ public class AJEParser extends Parser {
         register(TokenType.PERCENT, new BinaryNumericParser(Precedence.MULTIPLICATIVE, true, Any::mod));
         register(TokenType.CARET, new BinaryNumericParser(Precedence.EXPONENTIAL, false, Any::pow));
 
-        register(TokenType.EQUALS, new BinaryNumericParser(Precedence.ADDITIVE, true, Any::equals));
-        register(TokenType.GT, new BinaryNumericParser(Precedence.ADDITIVE, true, Any::greaterThan));
-        register(TokenType.LT, new BinaryNumericParser(Precedence.MULTIPLICATIVE, true, Any::lessThan));
-        register(TokenType.GTE, new BinaryNumericParser(Precedence.MULTIPLICATIVE, true, Any::greaterThanOrEqual));
-        register(TokenType.LTE, new BinaryNumericParser(Precedence.MULTIPLICATIVE, true, Any::lessThanOrEqual));
+        register(TokenType.EQUALS, new BinaryNumericParser(Precedence.EQUALITY, true, Any::equals));
+        register(TokenType.GT, new BinaryNumericParser(Precedence.COMPARISON, true, Any::greaterThan));
+        register(TokenType.LT, new BinaryNumericParser(Precedence.COMPARISON, true, Any::lessThan));
+        register(TokenType.GTE, new BinaryNumericParser(Precedence.COMPARISON, true, Any::greaterThanOrEqual));
+        register(TokenType.LTE, new BinaryNumericParser(Precedence.COMPARISON, true, Any::lessThanOrEqual));
+
+        register(TokenType.OR, new BinaryTruthParser(Precedence.DISJUNCTION, true, Truth::plus));
+        register(TokenType.AND, new BinaryTruthParser(Precedence.CONJUNCTION, true, Truth::times));
     }
 
     public Any compile() {
