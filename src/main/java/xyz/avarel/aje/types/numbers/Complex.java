@@ -36,7 +36,7 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
     }
 
     @Override
-    public Type getType() {
+    public Type<Complex> getType() {
         return TYPE;
     }
 
@@ -67,6 +67,30 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
     @Override
     public Complex divide(Complex b) {
         return times(b.reciprocal());
+    }
+
+    public Any<?> plus(double other) {
+        return plus(Complex.of(other));
+    }
+
+    public Any<?> minus(double other) {
+        return minus(Complex.of(other));
+    }
+
+    public Any<?> times(double other) {
+        return times(Complex.of(other));
+    }
+
+    public Any<?> divide(double other) {
+        return divide(Complex.of(other));
+    }
+
+    public Any<?> mod(double other) {
+        return mod(Complex.of(other));
+    }
+
+    public Any<?> pow(double other) {
+        return pow(Complex.of(other));
     }
 
     public Complex reciprocal() {

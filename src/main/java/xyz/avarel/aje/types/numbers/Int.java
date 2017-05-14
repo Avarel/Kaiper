@@ -15,8 +15,11 @@ public class Int implements Any<Int>, NativeObject<Integer> {
         this.value = value;
     }
 
-    public static Int of(int value) {
-        return new Int(value);
+    public static Int of(int i) {
+        if (i >= IntCache.low && i <= IntCache.high) {
+            return IntCache.cache[i + (-IntCache.low)];
+        }
+        return new Int(i);
     }
 
     public int value() {
@@ -103,5 +106,21 @@ public class Int implements Any<Int>, NativeObject<Integer> {
         }
 
         return slice;
+    }
+
+    private static class IntCache {
+        static final int low = -128;
+        static final int high = 127;
+        static final Int[] cache;
+
+        static {
+            System.out.println("loading cache");
+            cache = new Int[(high - low) + 1];
+            int j = low;
+            for(int k = 0; k < cache.length; k++)
+                cache[k] = new Int(j++);
+        }
+
+        private IntCache() {}
     }
 }

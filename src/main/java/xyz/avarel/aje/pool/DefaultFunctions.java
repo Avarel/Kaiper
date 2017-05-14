@@ -17,7 +17,7 @@ import java.util.List;
 public enum DefaultFunctions {
     SQUARE_ROOT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any arg = arguments.get(0);
             if (arg instanceof Int || arg instanceof Decimal) {
                 double value = Numeric.convert(arg, Decimal.TYPE).toNative();
@@ -35,7 +35,7 @@ public enum DefaultFunctions {
     }),
     CUBE_ROOT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any arg = arguments.get(0);
             if (arg instanceof Int || arg instanceof Decimal) {
                 return Decimal.of(Math.cbrt(Numeric.convert(arg, Decimal.TYPE).toNative()));
@@ -47,7 +47,7 @@ public enum DefaultFunctions {
     }),
     EXPONENTIAL(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any arg = arguments.get(0);
             if (arg instanceof Int || arg instanceof Decimal) {
                 return Decimal.of(Math.exp(Numeric.convert(arg, Decimal.TYPE).toNative()));
@@ -59,7 +59,7 @@ public enum DefaultFunctions {
     }),
     LOG10(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any arg = arguments.get(0);
             if (arg instanceof Int || arg instanceof Decimal) {
                 return Decimal.of(Math.log10(Numeric.convert(arg, Decimal.TYPE).toNative()));
@@ -71,7 +71,7 @@ public enum DefaultFunctions {
     }),
     LOG_NATURAL(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any arg = arguments.get(0);
             if (arg instanceof Int || arg instanceof Decimal) {
                 return Decimal.of(Math.log(Numeric.convert(arg, Decimal.TYPE).toNative()));
@@ -83,7 +83,7 @@ public enum DefaultFunctions {
     }),
     ROUND(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any arg = arguments.get(0);
             if (arg instanceof Int || arg instanceof Decimal) {
                 return Decimal.of(Math.round(Numeric.convert(arg, Decimal.TYPE).toNative()));
@@ -95,7 +95,7 @@ public enum DefaultFunctions {
     }),
     FLOOR(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any arg = arguments.get(0);
             if (arg instanceof Int || arg instanceof Decimal) {
                 return Decimal.of(Math.floor(Numeric.convert(arg, Decimal.TYPE).toNative()));
@@ -107,7 +107,7 @@ public enum DefaultFunctions {
     }),
     CEILING(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any arg = arguments.get(0);
             if (arg instanceof Int || arg instanceof Decimal) {
                 return Decimal.of(Math.ceil(Numeric.convert(arg, Decimal.TYPE).toNative()));
@@ -120,7 +120,7 @@ public enum DefaultFunctions {
 
     SINE(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.sin(Numeric.convert(a, Decimal.TYPE).toNative()));
@@ -134,7 +134,7 @@ public enum DefaultFunctions {
     }),
     COSINE(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.cos(Numeric.convert(a, Decimal.TYPE).toNative()));
@@ -148,7 +148,7 @@ public enum DefaultFunctions {
     }),
     TANGENT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.tan(Numeric.convert(a, Decimal.TYPE).toNative()));
@@ -163,7 +163,7 @@ public enum DefaultFunctions {
     }),
     HYPERBOLIC_SINE(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.sinh(Numeric.convert(a, Decimal.TYPE).toNative()));
@@ -175,7 +175,7 @@ public enum DefaultFunctions {
     }),
     HYPERBOLIC_COSINE(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.cosh(Numeric.convert(a, Decimal.TYPE).toNative()));
@@ -187,7 +187,7 @@ public enum DefaultFunctions {
     }),
     HYPERBOLIC_TANGENT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.tanh(Numeric.convert(a, Decimal.TYPE).toNative()));
@@ -199,7 +199,7 @@ public enum DefaultFunctions {
     }),
     SECANT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(1).divide((Decimal) COSINE.getFunction().invoke(Numeric.convert(a, Decimal.TYPE)));
@@ -211,7 +211,7 @@ public enum DefaultFunctions {
     }),
     COSECANT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(1).divide((Decimal) SINE.getFunction().invoke(Numeric.convert(a, Decimal.TYPE)));
@@ -223,7 +223,7 @@ public enum DefaultFunctions {
     }),
     COTANGENT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(1).divide((Decimal) TANGENT.getFunction().invoke(Numeric.convert(a, Decimal.TYPE)));
@@ -235,49 +235,49 @@ public enum DefaultFunctions {
     }),
     ARCSINE(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             return Decimal.of(Math.asin(Numeric.convert(a, Decimal.TYPE).toNative()));
         }
     }),
     ARCCOSINE(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             return Decimal.of(Math.acos(Numeric.convert(a, Decimal.TYPE).toNative()));
         }
     }),
     ARCTANGENT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             return Decimal.of(Math.atan(Numeric.convert(a, Decimal.TYPE).toNative()));
         }
     }),
     ARCSECANT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             return ARCCOSINE.getFunction().invoke(Decimal.of(1).divide(Numeric.convert(a, Decimal.TYPE)));
         }
     }),
     ARCCOSECANT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             return ARCSINE.getFunction().invoke(Decimal.of(1).divide(Numeric.convert(a, Decimal.TYPE)));
         }
     }),
     ARCCOTANGENT(new NativeFunction(Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             return ARCTANGENT.getFunction().invoke(Decimal.of(1).divide(Numeric.convert(a, Decimal.TYPE)));
         }
     }),
     ARCTANGENT2(new NativeFunction(Numeric.TYPE, Numeric.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             Any b = arguments.get(1);
             return Decimal.of(Math.atan2(
@@ -288,7 +288,7 @@ public enum DefaultFunctions {
 
     MAP(new NativeFunction(Slice.TYPE, AJEFunction.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Slice arg = (Slice) arguments.get(0);
             AJEFunction transform = (AJEFunction) arguments.get(1);
 
@@ -301,7 +301,7 @@ public enum DefaultFunctions {
     }),
     FILTER(new NativeFunction(Slice.TYPE, AJEFunction.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Slice arg = (Slice) arguments.get(0);
             AJEFunction predicate = (AJEFunction) arguments.get(1);
 
@@ -315,7 +315,7 @@ public enum DefaultFunctions {
     }),
     FOLD(new NativeFunction(Slice.TYPE, Any.TYPE, AJEFunction.TYPE) {
         @Override
-        public Any eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             Slice arg = (Slice) arguments.get(0);
             Any accumulator = arguments.get(1);
             AJEFunction operation = (AJEFunction) arguments.get(2);
