@@ -17,7 +17,7 @@ public class BinaryTruthParser extends BinaryParser<Truth, Truth> {
 
     @Override
     public Truth parse(AJEParser parser, Truth left, Token token) {
-        Truth right = parser.parse(Truth.TYPE, getPrecedence() - (isLeftAssoc() ? 0 : 1));
+        Truth right = parser.parse(Truth.TYPE, getPrecedence() - (isLeftAssoc() ? 0 : 1)).identity();
         return operator.apply(left, right);
     }
 }

@@ -3,17 +3,62 @@ AJE
 AJE is a math-centered scripting language/expression evaluator for the Java programming language.
 
 ## Features
-|Feature|AJE Type|Examples|
-|---|---|---:|
-|Simple arithmetic|`integer`|`1` `42` `1+2^3` `2*(3+4)`|
-|Decimals|`decimal`|`1.235` `-2/17` `3.0+2.5`|
-|Boolean logic|`boolean`|`3 >= 2` `true && false`|
-|Imaginary calculations|`complex`|`i^2` `3i` `(8+2i)*(5i+3)`|
-|Slices/lists operations|`slice`|`[1,2,3] == [1..3]`|
-|Functions|`function`|`sin(2)` `fun(x) = {x + 2}` `{x, y -> x^y}`|
+|Feature|AJE Type|Java Type|Examples|
+|---|---|---|---:|
+|Simple arithmetic|`integer`|`Integer`|`1` `42` `1+2^3` `2*(3+4)`|
+|Decimals|`decimal`|`Double`|`1.235` `-2/17` `3.0+2.5`|
+|Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
+|Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)*(5i+3)`|
+|Slices/lists operations|`slice`|`List<Any>`|`[1,2,3] == [1..3]`|
+|Functions|`function`|`Function*`|`sin(2)` `fun(x) = {x + 2}` `{x, y -> x^y}`|
+
+`*` Mapped to AJE object.
 
 ### Usage 
-API redesign in progress. Check out `AJERepl.java` for examples right now.
+```java
+class AJETest {
+    public static void go() {
+        // Base expression.
+        Expression exp = new Expression("sum(tau,2,i)");
+        
+        // Add a constant.
+        exp.add("tau", new Expression("2 * pi"));
+        
+        // Add a normal function.
+        exp.add("double", new NativeFunction(Numeric.TYPE) {
+            @Override
+            protected Any<?> eval(List<Any> arguments) {
+                return arguments.get(0).times(2); 
+                // Only works for decimals/complex.
+                // Check out DefaultFunction.java to handle integers.
+            }
+        });
+        
+        // Add a varargs function.
+        exp.add("sum", new NativeFunction(true, Numeric.TYPE) {
+            @Override
+            protected Any<?> eval(List<Any> arguments) {
+                if (arguments.isEmpty()) return Int.of(0);
+                Any accumulator = arguments.get(0);
+                for (int i = 1; i < arguments.size(); i++) {
+                    accumulator = Numeric.process(accumulator, arguments.get(i), Any::plus);
+                }
+                return accumulator;
+            }
+        });
+        
+        // Calculate into AJE object.
+        Any result = exp.compute();
+        
+        // Get the native representation of the object.
+        // Each AJE object is mapped to a native object.
+        Object obj = result.toNative();
+        
+        // Prints the result.
+        System.out.println(result);
+    }
+}
+```
 
 ### Operators
 ##### Numeric Operators `integer` `decimal` `complex` `slice`
@@ -25,7 +70,7 @@ API redesign in progress. Check out `AJERepl.java` for examples right now.
 |`-`|Subtraction|`a - b`|
 |`*`|Multiplication|`a * b`|
 |`/`|Division|`a / b`|
-|`/`|Exponentiation|`a ^ b`|
+|`^`|Exponentiation|`a ^ b`|
 |`%`|Modulus|`a % b`|
 |`-`|Negation|`-a`|
 

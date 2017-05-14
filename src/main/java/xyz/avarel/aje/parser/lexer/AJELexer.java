@@ -45,61 +45,61 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         while (c == ' ') c = advance();
 
         switch (c) {
-            case '(': return new Token(TokenType.LEFT_PAREN);
-            case ')': return new Token(TokenType.RIGHT_PAREN);
+            case '(': return make(TokenType.LEFT_PAREN);
+            case ')': return make(TokenType.RIGHT_PAREN);
 
-            case '[': return new Token(TokenType.LEFT_BRACKET);
-            case ']': return new Token(TokenType.RIGHT_BRACKET);
+            case '[': return make(TokenType.LEFT_BRACKET);
+            case ']': return make(TokenType.RIGHT_BRACKET);
 
-            case '{': return new Token(TokenType.LEFT_BRACE);
-            case '}': return new Token(TokenType.RIGHT_BRACE);
+            case '{': return make(TokenType.LEFT_BRACE);
+            case '}': return make(TokenType.RIGHT_BRACE);
 
             case '.': return match('.')
-                    ? new Token(TokenType.RANGE_TO)
-                    : new Token(TokenType.DOT);
-            case ',': return new Token(TokenType.COMMA);
+                    ? make(TokenType.RANGE_TO)
+                    : make(TokenType.DOT);
+            case ',': return make(TokenType.COMMA);
             case '!': return match('=')
-                    ? new Token(TokenType.NOT_EQUAL)
-                    : new Token(TokenType.BANG);
-            case '?': return new Token(TokenType.QUESTION);
-            case '~': return new Token(TokenType.TILDE);
+                    ? make(TokenType.NOT_EQUAL)
+                    : make(TokenType.BANG);
+            case '?': return make(TokenType.QUESTION);
+            case '~': return make(TokenType.TILDE);
 
-            case '+': return new Token(TokenType.PLUS);
+            case '+': return make(TokenType.PLUS);
             case '-': return match('>')
-                    ? new Token(TokenType.ARROW)
-                    : new Token(TokenType.MINUS);
-            case '*': return new Token(TokenType.ASTERISK);
+                    ? make(TokenType.ARROW)
+                    : make(TokenType.MINUS);
+            case '*': return make(TokenType.ASTERISK);
             case '/': return match('\\')
-                    ? new Token(TokenType.AND)
-                    : new Token(TokenType.SLASH);
-            case '%': return new Token(TokenType.PERCENT);
-            case '^': return new Token(TokenType.CARET);
+                    ? make(TokenType.AND)
+                    : make(TokenType.SLASH);
+            case '%': return make(TokenType.PERCENT);
+            case '^': return make(TokenType.CARET);
 
             case '\\': return match('/')
-                    ? new Token(TokenType.OR)
-                    : new Token(TokenType.BACKSLASH);
+                    ? make(TokenType.OR)
+                    : make(TokenType.BACKSLASH);
 
-            case ':': return new Token(TokenType.COLON);
+            case ':': return make(TokenType.COLON);
 
             case '=': return match('=')
-                    ? new Token(TokenType.EQUALS)
-                    : new Token(TokenType.ASSIGN);
+                    ? make(TokenType.EQUALS)
+                    : make(TokenType.ASSIGN);
             case '>': return match('=')
-                    ? new Token(TokenType.GTE)
-                    : new Token(TokenType.GT);
+                    ? make(TokenType.GTE)
+                    : make(TokenType.GT);
             case '<': return match('=')
-                    ? new Token(TokenType.LTE)
-                    : new Token(TokenType.LT);
+                    ? make(TokenType.LTE)
+                    : make(TokenType.LT);
             case '|': return match('|')
-                    ? new Token(TokenType.OR)
-                    : new Token(TokenType.PIPE);
+                    ? make(TokenType.OR)
+                    : make(TokenType.PIPE);
             case '&': return match('&')
-                    ? new Token(TokenType.AND)
-                    : new Token(TokenType.AMPERSAND);
+                    ? make(TokenType.AND)
+                    : make(TokenType.AMPERSAND);
 
-            case ';': case '\n': case '\r': return new Token(TokenType.LINE);
+            case ';': case '\n': case '\r': return make(TokenType.LINE);
 
-            case '\0': return new Token(TokenType.EOF);
+            case '\0': return make(TokenType.EOF);
 
             default:
                 if (Character.isDigit(c)) {
@@ -107,8 +107,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 } else if (Character.isLetter(c)) {
                     return nextName();
                 } else {
-                    if (pos == str.length()) return new Token(TokenType.EOF);
-                    throw new AJEException("Can not lex " + c);
+                    if (pos == str.length()) return make(TokenType.EOF);
+                    throw error("Could not lex `" + c + "`");
                 }
         }
 
@@ -134,14 +134,14 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         }
 
         if (Character.isLetter(peek()) && peek() != 'i') {
-            throw new AJEException("Numbers can't be followed up by letters.");
+            throw error("Numbers can not be followed up by letters");
         }
 
         String value = str.substring(start, pos + 1);
 
-        if (!point) return new Token(TokenType.INT, value);
+        if (!point) return make(TokenType.INT, value);
 
-        return new Token(TokenType.DECIMAL, value);
+        return make(TokenType.DECIMAL, value);
     }
 
     private Token nextName() {
@@ -153,19 +153,35 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
         String value = str.substring(start, pos + 1);
 
-        return nameOrKeyword(value);
+        return nameOrKeyword(start, value);
     }
 
-    private Token nameOrKeyword(String value) {
+    private Token nameOrKeyword(int pos, String value) {
         switch(value) {
-            case "fun": return new Token(TokenType.FUNCTION);
-            case "true": return new Token(TokenType.BOOLEAN, "true");
-            case "false": return new Token(TokenType.BOOLEAN, "false");
-            case "i": return new Token(TokenType.IMAGINARY);
-            case "and": return new Token(TokenType.AND);
-            case "or": return new Token(TokenType.OR);
-            default: return new Token(TokenType.NAME, value);
+            case "fun": return make(pos, TokenType.FUNCTION);
+            case "true": return make(pos, TokenType.BOOLEAN, "true");
+            case "false": return make(pos, TokenType.BOOLEAN, "false");
+            case "i": return make(pos, TokenType.IMAGINARY);
+            case "and": return make(pos, TokenType.AND);
+            case "or": return make(pos, TokenType.OR);
+            default: return make(pos, TokenType.NAME, value);
         }
+    }
+
+    private Token make(TokenType type) {
+        return make(pos, type);
+    }
+
+    private Token make(TokenType type, String value) {
+        return make(pos, type, value);
+    }
+
+    private Token make(int pos, TokenType type) {
+        return new Token(pos, type);
+    }
+
+    private Token make(int pos, TokenType type, String value) {
+        return new Token(pos, type, value);
     }
 
     @Override
@@ -179,8 +195,18 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         return s.toString();
     }
 
+
     @Override
     public Iterator<Token> iterator() {
         return this;
+    }
+
+
+    public AJEException error(String message) {
+        return error(message, pos);
+    }
+
+    public AJEException error(String message, int position) {
+        return new AJEException(message + ", position " + position + ".");
     }
 }

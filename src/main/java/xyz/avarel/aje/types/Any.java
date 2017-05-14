@@ -112,8 +112,8 @@ public interface Any<T extends Any> {
         return invoke(Arrays.asList(arguments));
     }
 
-    default Any identity() {
-        return this;
+    default T identity() {
+        return (T) this;
     }
 
     default Any set(T other) {

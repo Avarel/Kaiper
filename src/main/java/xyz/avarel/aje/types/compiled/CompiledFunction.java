@@ -1,33 +1,27 @@
 package xyz.avarel.aje.types.compiled;
 
 import xyz.avarel.aje.functional.AJEFunction;
-import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.pool.ObjectPool;
 import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.NativeObject;
 import xyz.avarel.aje.types.Undefined;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Every operation results in the same
  * instance, NOTHING.
  */
-public class CompiledFunction extends AJEFunction implements NativeObject<Function<List<Any>, Any>> {
+public class CompiledFunction extends AJEFunction {
     private final List<String> parameters;
     private final List<Token> tokens;
+    private final ObjectPool pool;
 
-    public CompiledFunction(List<String> parameters, List<Token> tokens) {
+    public CompiledFunction(List<String> parameters, List<Token> tokens, ObjectPool pool) {
         this.parameters = parameters;
         this.tokens = tokens;
-    }
-
-    @Override
-    public Function<List<Any>, Any> toNative() {
-        return this::invoke;
+        this.pool = pool;
     }
 
     public List<String> getParameters() {
@@ -40,33 +34,13 @@ public class CompiledFunction extends AJEFunction implements NativeObject<Functi
             return Undefined.VALUE;
         }
 
-        AJEParser parser = new AJEParser(new LexerProxy(tokens.iterator()));
+        AJEParser parser = new AJEParser(tokens, pool.copy());
 
         for (int i = 0; i < parameters.size(); i++) {
-            if (!parameters.get(i).equals("_")) { // unused parameters check
-                parser.getObjects().put(parameters.get(i), args.get(i));
-            }
+            parser.getObjects().put(parameters.get(i), args.get(i));
         }
 
-        return parser.parse();
+        return parser.compute();
     }
 
-    private static class LexerProxy implements Iterator<Token> {
-        private final Iterator<Token> proxy;
-
-        private LexerProxy(Iterator<Token> proxy) {
-            this.proxy = proxy;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return proxy.hasNext();
-        }
-
-        @Override
-        public Token next() {
-            if (!proxy.hasNext()) return new Token(TokenType.EOF);
-            return proxy.next();
-        }
-    }
 }

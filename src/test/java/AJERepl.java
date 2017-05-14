@@ -1,5 +1,4 @@
-import xyz.avarel.aje.ExpressionBuilder;
-import xyz.avarel.aje.MathExpression;
+import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.types.Any;
 
@@ -31,11 +30,7 @@ public class AJERepl {
 
                 System.out.println(" Lexer | " + new AJELexer(input));
 
-                MathExpression exp = new ExpressionBuilder(input)
-                        .build();
-//                        .setVariable("tau", Math.PI * 2);
-
-                //System.out.println(function);
+                Expression exp = new Expression(input);
 
                 long start = System.nanoTime();
                 Any result = exp.compute();

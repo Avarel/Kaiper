@@ -1,6 +1,5 @@
 package xyz.avarel.aje.parser;
 
-import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
@@ -10,28 +9,40 @@ import xyz.avarel.aje.parser.parslets.numeric.BinaryNumericParser;
 import xyz.avarel.aje.parser.parslets.numeric.UnaryNumericParser;
 import xyz.avarel.aje.parser.parslets.truth.BinaryTruthParser;
 import xyz.avarel.aje.parser.parslets.truth.UnaryTruthParser;
-import xyz.avarel.aje.pool.DefaultPool;
+import xyz.avarel.aje.pool.ObjectPool;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.Truth;
 import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.Undefined;
 
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class AJEParser extends Parser {
-    private final Map<String, Any> objects;
+    private final ObjectPool objects;
 
-    public AJEParser(Iterator<Token> tokens) {
-        this(tokens, DefaultPool.copy());
+    public AJEParser(List<Token> tokens) {
+        this(tokens, new ObjectPool());
     }
 
-    public AJEParser(Iterator<Token> tokens, Map<String, Any> objects) {
+    public AJEParser(List<Token> tokens, ObjectPool objects) {
         super(tokens);
-
         this.objects = objects;
+        registerGrammar();
+    }
 
+    public AJEParser(Iterator<Token> tokens) {
+        this(tokens, new ObjectPool());
+    }
+
+    public AJEParser(Iterator<Token> tokens, ObjectPool objects) {
+        super(tokens);
+        this.objects = objects;
+        registerGrammar();
+    }
+
+    private void registerGrammar() {
         // Basic
         register(TokenType.LEFT_BRACKET, new SliceParser());
         register(TokenType.LEFT_PAREN, new GroupParser());
@@ -75,12 +86,9 @@ public class AJEParser extends Parser {
         register(TokenType.DOT, new AttributeParser(Precedence.ACCESS));
 
         register(TokenType.ASSIGN, new AssignmentParser());
-
-
-
     }
 
-    public Any compile() {
+    public Any compute() {
         Any any = Undefined.VALUE;
 
         do {
@@ -90,8 +98,9 @@ public class AJEParser extends Parser {
             any = parse();
         } while (match(TokenType.LINE));
 
-        if (getLexer().hasNext()) {
-            throw new AJEException("Did not parse " + getLexer().next().getText());
+        if (getLexer().hasNext() && !getTokens().isEmpty()) {
+            Token t = getLexer().next();
+            throw error("Did not parse " + t.getText(), t.getPos());
         }
 
         return any;
@@ -108,9 +117,9 @@ public class AJEParser extends Parser {
 
     @SuppressWarnings("unchecked")
     public <T> T parse(Type<T> type, int precedence) {
-        Any any = parse(precedence);
+        Any any = parse(precedence).identity();
         if (!any.getType().is(type)) {
-            throw new AJEException("Expected type " + type + " but found " + any.getType());
+            throw error("Expected type " + type + " but found " + any.getType());
         }
         return (T) any;
     }
@@ -119,7 +128,7 @@ public class AJEParser extends Parser {
         Token token = eat();
         PrefixParser<Any> prefix = getPrefixParsers().get(token.getType());
 
-        if (prefix == null) throw new RuntimeException("Could not parse \"" + token.getText() + "\".");
+        if (prefix == null) throw error("Could not parse token `" + token.getText() + "`");
 
         Any left = prefix.parse(this, token);
 
@@ -134,7 +143,8 @@ public class AJEParser extends Parser {
         return left;
     }
 
-    public Map<String, Any> getObjects() {
+
+    public ObjectPool getObjects() {
         return objects;
     }
 }

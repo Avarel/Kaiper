@@ -30,14 +30,25 @@ public class FunctionParser implements PrefixParser<AJEFunction> {
             parser.match(TokenType.RIGHT_PAREN);
         }
 
-        parser.match(TokenType.ASSIGN);
-
-        parser.eat(TokenType.LEFT_BRACE);
-        while (!parser.match(TokenType.RIGHT_BRACE)) {
-            tokens.add(parser.eat());
+        if (parser.match(TokenType.ASSIGN)) {
+            if (parser.match(TokenType.LEFT_BRACE)) { // fun(x) = { x + 1 }
+                while (!parser.match(TokenType.RIGHT_BRACE)) {
+                    tokens.add(parser.eat());
+                }
+            } else { // fun(x) = x + 1
+                while (parser.peek(0).getType() != TokenType.LINE
+                        && parser.peek(0).getType() != TokenType.EOF) {
+                    tokens.add(parser.eat());
+                }
+            }
+        } else { // fun(x) { x + 1 }
+            parser.eat(TokenType.LEFT_BRACE);
+            while (!parser.match(TokenType.RIGHT_BRACE)) {
+                tokens.add(parser.eat());
+            }
         }
 
-        CompiledFunction function = new CompiledFunction(params, tokens);
+        CompiledFunction function = new CompiledFunction(params, tokens, parser.getObjects());
 
         if (name != null) {
             parser.getObjects().put(name, function);

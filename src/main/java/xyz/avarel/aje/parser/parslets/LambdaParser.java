@@ -1,7 +1,7 @@
 package xyz.avarel.aje.parser.parslets;
 
-import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.Parser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
@@ -13,7 +13,6 @@ import java.util.List;
 public class LambdaParser implements PrefixParser<CompiledFunction> {
     @Override
     public CompiledFunction parse(AJEParser parser, Token token) {
-        //parser.eat(TokenType.LEFT_BRACE);
         List<Token> parameterTokens = new ArrayList<>();
         List<Token> scriptTokens = new ArrayList<>();
 
@@ -23,7 +22,7 @@ public class LambdaParser implements PrefixParser<CompiledFunction> {
         while (!parser.match(TokenType.RIGHT_BRACE)) {
             if (parser.match(TokenType.ARROW)) {
                 if (arrow) {
-                    throw new AJEException("did not expect another arrow");
+                    throw parser.error("Unexpected token");
                 }
                 parameterTokens.addAll(scriptTokens);
                 scriptTokens.clear();
@@ -42,14 +41,20 @@ public class LambdaParser implements PrefixParser<CompiledFunction> {
             if (implicit) {
                 parameters.add("it");
             }
-        } else for (Token t : parameterTokens) {
-            switch (t.getType()) {
-                case COMMA: break;
-                case NAME: parameters.add(t.getText()); break;
-                default: throw new AJEException("parameters must be names only");
+        } else {
+            Parser parameterParser = new Parser(parameterTokens);
+
+            if (parameterParser.getLexer().hasNext()) {
+                do {
+                    parameters.add(parameterParser.eat(TokenType.NAME).getText());
+                } while (parameterParser.match(TokenType.COMMA));
+
+                if (!parameterParser.getTokens().isEmpty()) {
+                    throw parameterParser.error("Unexpected token", parameterParser.getTokens().get(0).getPos());
+                }
             }
         }
 
-        return new CompiledFunction(parameters, scriptTokens);
+        return new CompiledFunction(parameters, scriptTokens, parser.getObjects());
     }
 }

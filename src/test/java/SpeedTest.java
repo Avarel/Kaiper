@@ -1,6 +1,5 @@
 import junit.framework.TestCase;
-import xyz.avarel.aje.ExpressionBuilder;
-import xyz.avarel.aje.MathExpression;
+import xyz.avarel.aje.Expression;
 
 public class SpeedTest extends TestCase {
     public void testSpeeds() {
@@ -18,7 +17,7 @@ public class SpeedTest extends TestCase {
     }
 
     private long testPrecompiledSpeed(String script, long tests) {
-        MathExpression exp = new ExpressionBuilder().addLine(script).build().compile();
+        Expression exp = new Expression(script);
 
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
@@ -30,12 +29,11 @@ public class SpeedTest extends TestCase {
     }
 
     private long testRecompileSpeed(String script, long tests) {
-        MathExpression exp = new ExpressionBuilder().addLine(script).build();
+        Expression exp = new Expression(script);
 
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
-            //noinspection deprecation
-            exp.forceCompile().compute();
+            exp.compute();
         }
         long end = System.nanoTime();
 

@@ -6,12 +6,16 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 
 import java.util.*;
 
-public abstract class Parser {
+public class Parser {
     private final Iterator<Token> lexer;
     private final List<Token> tokens = new ArrayList<>();
     private final Map<TokenType, PrefixParser> prefixParsers = new HashMap<>();
     private final Map<TokenType, InfixParser> infixParsers = new HashMap<>();
     private Token last;
+
+    public Parser(List<Token> lexer) {
+        this(new LexerProxy(lexer.iterator()));
+    }
 
     public Parser(Iterator<Token> lexer) {
         this.lexer = lexer;
@@ -57,7 +61,7 @@ public abstract class Parser {
     public Token eat(TokenType expected) {
         Token token = peek(0);
         if (token.getType() != expected) {
-            throw new AJEException("Expected token " + expected + " but found " + token.getType());
+            throw error("Expected token " + expected + " but found " + token.getType());
         }
         return eat();
     }
@@ -84,5 +88,33 @@ public abstract class Parser {
         if (parser != null) return parser.getPrecedence();
 
         return 0;
+    }
+
+
+    public AJEException error(String message) {
+        return error(message, getLast().getPos());
+    }
+
+    public AJEException error(String message, int position) {
+        return new AJEException(message + ", position " + position + ".");
+    }
+
+    static class LexerProxy implements Iterator<Token> {
+        private final Iterator<Token> proxy;
+
+        LexerProxy(Iterator<Token> proxy) {
+            this.proxy = proxy;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return proxy.hasNext();
+        }
+
+        @Override
+        public Token next() {
+            if (!proxy.hasNext()) return new Token(0, TokenType.EOF);
+            return proxy.next();
+        }
     }
 }
