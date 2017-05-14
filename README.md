@@ -71,6 +71,9 @@ API redesign in progress. Check out `AJERepl.java` for examples right now.
 |`sinh`|Trigonomic hyperbolic sine function|(`numeric`)|`sinh(x)`|
 |`cosh`|Trigonomic hyperbolic cosine function|(`numeric`)|`cosh(x)`|
 |`tanh`|Trigonomic hyperbolic tangent function|(`numeric`)|`tanh(x)`|
+|`csch`|Trigonomic hyperbolic cosecant function|(`numeric`)|`csch(x)`|
+|`sech`|Trigonomic hyperbolic secant function|(`numeric`)|`sech(x)`|
+|`coth`|Trigonomic hyperbolic cotangent function|(`numeric`)|`coth(x)`|
 |`asin`|Inverse trigonomic sine function|(`decimal`)|`asin(x)`|
 |`acos`|Inverse trigonomic cosine function|(`decimal`)|`acos(x)`|
 |`atan`|Inverse trigonomic tangent function|(`decimal`)|`atan(x)`|

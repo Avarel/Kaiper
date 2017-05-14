@@ -35,7 +35,7 @@ public class CompiledFunction extends AJEFunction implements NativeObject<Functi
     }
 
     @Override
-    public Any invoke(List<Any> args) {
+    public Any<?> invoke(List<Any> args) {
         if (args.size() != parameters.size()) {
             return Undefined.VALUE;
         }

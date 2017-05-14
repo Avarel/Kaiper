@@ -105,6 +105,34 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
         double imag = BigDecimal.valueOf(result.im).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();
         return Complex.of(real, imag);
     }
+    
+    public Complex sin() {
+        double real = Math.sin(re) * Math.cosh(im);
+        double imag = Math.cos(re) * Math.sinh(im);
+        return Complex.of(real, imag);
+    }
+
+    public Complex cos() {
+        double real = Math.cos(re) * Math.cosh(im);
+        double imag = -Math.sin(re) * Math.sinh(im);
+        return Complex.of(real, imag);
+    }
+    
+    public Complex tan() {
+        return sin().divide(cos());
+    }
+
+    public Complex sinh() {
+        return new Complex(Math.sinh(re) * Math.cos(im), Math.cosh(re) * Math.sin(im));
+    }
+
+    public Complex cosh() {
+        return new Complex(Math.cosh(re) * Math.cos(im), Math.sinh(re) * Math.sin(im));
+    }
+
+    public Complex tanh() {
+        return sinh().divide(cosh());
+    }
 
     public double abs() {
         if (re != 0 || im != 0) {

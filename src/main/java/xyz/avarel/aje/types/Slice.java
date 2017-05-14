@@ -117,14 +117,14 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
                 @Override
                 public Any eval(List<Any> arguments) {
                     AJEFunction transform = (AJEFunction) arguments.get(0);
-                    return DefaultFunctions.MAP.getFunction().invoke(Slice.this, transform);
+                    return DefaultFunctions.MAP.get().invoke(Slice.this, transform);
                 }
             };
             case "filter" : return new NativeFunction(AJEFunction.TYPE) {
                 @Override
                 public Any eval(List<Any> arguments) {
                     AJEFunction predicate = (AJEFunction) arguments.get(0);
-                    return DefaultFunctions.FILTER.getFunction().invoke(Slice.this, predicate);
+                    return DefaultFunctions.FILTER.get().invoke(Slice.this, predicate);
                 }
             };
             case "fold" : return new NativeFunction(Any.TYPE, AJEFunction.TYPE) {
@@ -132,7 +132,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
                 public Any eval(List<Any> arguments) {
                     Any accumulator = arguments.get(0);
                     AJEFunction operation = (AJEFunction) arguments.get(1);
-                    return DefaultFunctions.FOLD.getFunction().invoke(Slice.this, accumulator, operation);
+                    return DefaultFunctions.FOLD.get().invoke(Slice.this, accumulator, operation);
                 }
             };
             default: return Undefined.VALUE;

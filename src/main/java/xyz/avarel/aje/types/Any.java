@@ -32,52 +32,52 @@ public interface Any<T extends Any> {
         return Undefined.VALUE;
     }
 
-    default Any<?> minus(T other) {
+    default Any minus(T other) {
         return Undefined.VALUE;
     }
 
-    default Any<?> times(T other) {
+    default Any times(T other) {
         return Undefined.VALUE;
     }
 
-    default Any<?> divide(T other) {
+    default Any divide(T other) {
         return Undefined.VALUE;
     }
 
-    default Any<?> mod(T other) {
+    default Any mod(T other) {
         return Undefined.VALUE;
     }
 
-    default Any<?> pow(T other) {
+    default Any pow(T other) {
         return Undefined.VALUE;
     }
 
-    default Any<?> negative() {
+    default Any negative() {
         return Undefined.VALUE;
     }
 
 
-    default Any<?> plus(double other) {
+    default Any plus(double other) {
         return plus((T) Decimal.of(other));
     }
 
-    default Any<?> minus(double other) {
+    default Any minus(double other) {
         return minus((T) Decimal.of(other));
     }
 
-    default Any<?> times(double other) {
+    default Any times(double other) {
         return times((T) Decimal.of(other));
     }
 
-    default Any<?> divide(double other) {
+    default Any divide(double other) {
         return divide((T) Decimal.of(other));
     }
 
-    default Any<?> mod(double other) {
+    default Any mod(double other) {
         return mod((T) Decimal.of(other));
     }
 
-    default Any<?> pow(double other) {
+    default Any pow(double other) {
         return pow((T) Decimal.of(other));
     }
 
@@ -104,7 +104,7 @@ public interface Any<T extends Any> {
 
 
     // Functional
-    default Any<?> invoke(List<Any> args) {
+    default Any invoke(List<Any> args) {
         return Undefined.VALUE;
     }
 
@@ -112,15 +112,15 @@ public interface Any<T extends Any> {
         return invoke(Arrays.asList(arguments));
     }
 
-    default Any<?> identity() {
+    default Any identity() {
         return this;
     }
 
-    default Any<?> set(T other) {
+    default Any set(T other) {
         throw unsupported("set");
     }
 
-    default Any<?> get(String name) {
+    default Any get(String name) {
         return Undefined.VALUE;
     }
 

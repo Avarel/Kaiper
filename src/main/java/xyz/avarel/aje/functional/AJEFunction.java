@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public abstract class AJEFunction implements Any<AJEFunction>, NativeObject<Function<List<Any>, Any>> {
-    public static final Type<AJEFunction> TYPE = new Type("function");
+    public static final Type<AJEFunction> TYPE = new Type<>("function");
 
     @Override
     public Type<AJEFunction> getType() {
