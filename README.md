@@ -49,31 +49,31 @@ API redesign in progress. Check out `AJERepl.java` for examples right now.
 |`function(...args)`|Invocation|`atan2(3.6, 2.5)`|
 
 ### Functions
-`numeric` arguments can be either `integer`, `decimal`, or `complex`.
+`complex` arguments can be either `integer`, `decimal`, or `complex`.
 
 `decimal` arguments can be either `integer`, or `decimal`.
 
 |Symbol|Description|Arguments|Example|
 |---|---|---|---:|
-|`sqrt`|Square root function|(`numeric`)|`sqrt(x)`|
-|`cbrt`|Cube root function|(`numeric`)|`cbrt(x)`|
-|`exp`|Exponential function|(`numeric`)|`exp(x)`|
-|`log`|Log (base 10) function|(`numeric`)|`log(x)`|
-|`ln`|Log (base e) function|(`numeric`)|`ln(x)`|
-|`floor`|Floor function|(`numeric`)|`floor(x)`|
-|`ceil`|Ceiling function|(`numeric`)|`ceil(x)`|
-|`sin`|Trigonomic sine function|(`numeric`)|`sin(x)`|
-|`cos`|Trigonomic cosine function|(`numeric`)|`cos(x)`|
-|`tan`|Trigonomic tangent function|(`numeric`)|`tan(x)`|
-|`csc`|Trigonomic cosecant function|(`numeric`)|`csc(x)`|
-|`sec`|Trigonomic secant function|(`numeric`)|`sec(x)`|
-|`cot`|Trigonomic cotangent function|(`numeric`)|`cot(x)`|
-|`sinh`|Trigonomic hyperbolic sine function|(`numeric`)|`sinh(x)`|
-|`cosh`|Trigonomic hyperbolic cosine function|(`numeric`)|`cosh(x)`|
-|`tanh`|Trigonomic hyperbolic tangent function|(`numeric`)|`tanh(x)`|
-|`csch`|Trigonomic hyperbolic cosecant function|(`numeric`)|`csch(x)`|
-|`sech`|Trigonomic hyperbolic secant function|(`numeric`)|`sech(x)`|
-|`coth`|Trigonomic hyperbolic cotangent function|(`numeric`)|`coth(x)`|
+|`sqrt`|Square root function|(`complex`)|`sqrt(x)`|
+|`cbrt`|Cube root function|(`complex`)|`cbrt(x)`|
+|`exp`|Exponential function|(`complex`)|`exp(x)`|
+|`log`|Log (base 10) function|(`complex`)|`log(x)`|
+|`ln`|Log (base e) function|(`complex`)|`ln(x)`|
+|`floor`|Floor function|(`complex`)|`floor(x)`|
+|`ceil`|Ceiling function|(`complex`)|`ceil(x)`|
+|`sin`|Trigonomic sine function|(`complex`)|`sin(x)`|
+|`cos`|Trigonomic cosine function|(`complex`)|`cos(x)`|
+|`tan`|Trigonomic tangent function|(`complex`)|`tan(x)`|
+|`csc`|Trigonomic cosecant function|(`complex`)|`csc(x)`|
+|`sec`|Trigonomic secant function|(`complex`)|`sec(x)`|
+|`cot`|Trigonomic cotangent function|(`complex`)|`cot(x)`|
+|`sinh`|Trigonomic hyperbolic sine function|(`complex`)|`sinh(x)`|
+|`cosh`|Trigonomic hyperbolic cosine function|(`complex`)|`cosh(x)`|
+|`tanh`|Trigonomic hyperbolic tangent function|(`complex`)|`tanh(x)`|
+|`csch`|Trigonomic hyperbolic cosecant function|(`complex`)|`csch(x)`|
+|`sech`|Trigonomic hyperbolic secant function|(`complex`)|`sech(x)`|
+|`coth`|Trigonomic hyperbolic cotangent function|(`complex`)|`coth(x)`|
 |`asin`|Inverse trigonomic sine function|(`decimal`)|`asin(x)`|
 |`acos`|Inverse trigonomic cosine function|(`decimal`)|`acos(x)`|
 |`atan`|Inverse trigonomic tangent function|(`decimal`)|`atan(x)`|
@@ -83,7 +83,7 @@ API redesign in progress. Check out `AJERepl.java` for examples right now.
 |`atan2`|Inverse trigonomic<br>four-quadrant tangent function|(`decimal`,`decimal`)|`atan2(x,y)`|
 |`map`|List transform function|(`slice`, `function`)|`map([1..10], {it ^ 2})`<br>`[1..10].map({it ^ 2})`|
 |`filter`|List filter function|(`slice`, `function`)|`filter([1..10], {it%2==0})`<br>`[1..10].filter({it%2==0})`|
-|`fold`|List accumulation function|(`slice`, `numeric`, `function`)|`fold([1..10], 0, {a, b -> a + b})`<br>`[1..10].fold(0, {a, b -> a + b})`|
+|`fold`|List accumulation function|(`slice`, `any`, `function`)|`fold([1..10], 0, {a, b -> a + b})`<br>`[1..10].fold(0, {a, b -> a + b})`|
 
 ### REPL Demonstrations
 ##### Complex Numbers
