@@ -11,7 +11,7 @@ public class Int implements Any<Int>, NativeObject<Integer> {
 
     private final int value;
 
-    public Int(int value) {
+    private Int(int value) {
         this.value = value;
     }
 
@@ -65,7 +65,7 @@ public class Int implements Any<Int>, NativeObject<Integer> {
 
     @Override
     public Int mod(Int other) {
-        return Int.of((value % other.value + other.value) % other.value);
+        return Int.of(Math.floorMod(value, other.value));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class Int implements Any<Int>, NativeObject<Integer> {
     }
 
     @Override
-    public Truth equals(Int other) {
+    public Truth isEqualTo(Int other) {
         return value == other.value ? Truth.TRUE : Truth.FALSE;
     }
 

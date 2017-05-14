@@ -1,19 +1,13 @@
 package xyz.avarel.aje.pool;
 
-import xyz.avarel.aje.functional.AJEFunction;
-import xyz.avarel.aje.functional.NativeFunction;
 import xyz.avarel.aje.types.Any;
+import xyz.avarel.aje.types.Slice;
+import xyz.avarel.aje.types.Truth;
 import xyz.avarel.aje.types.numbers.Complex;
 import xyz.avarel.aje.types.numbers.Decimal;
 import xyz.avarel.aje.types.numbers.Int;
-import xyz.avarel.aje.types.numbers.Numeric;
-import xyz.avarel.aje.types.Slice;
-import xyz.avarel.aje.types.Truth;
-import xyz.avarel.aje.types.Undefined;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DefaultPool {
@@ -23,157 +17,37 @@ public class DefaultPool {
         pool.put("pi", Decimal.of(Math.PI));
         pool.put("e", Decimal.of(Math.E));
 
-        pool.put("sin", new NativeFunction(Numeric.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Any a = arguments.get(0);
-                if (a instanceof Int || a instanceof Decimal) {
-                    return Decimal.of(Math.sin(Numeric.convert(a, Decimal.TYPE).toNative()));
-                } else if (a instanceof Complex) {
-                    double re = Math.sin(((Complex) a).real()) * Math.cosh(((Complex) a).imaginary());
-                    double im = Math.cos(((Complex) a).real()) * Math.sinh(((Complex) a).imaginary());
-                    return Complex.of(re, im);
-                }
-                return Undefined.VALUE;
-            }
-        });
-        pool.put("cos", new NativeFunction(Numeric.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Any a = arguments.get(0);
-                if (a instanceof Int || a instanceof Decimal) {
-                    return Decimal.of(Math.cos(Numeric.convert(a, Decimal.TYPE).toNative()));
-                } else if (a instanceof Complex) {
-                    double re = Math.cos(((Complex) a).real()) * Math.cosh(((Complex) a).imaginary());
-                    double im = -Math.sin(((Complex) a).real()) * Math.sinh(((Complex) a).imaginary());
-                    return Complex.of(re, im);
-                }
-                return Undefined.VALUE;
-            }
-        });
-        pool.put("tan", new NativeFunction(Numeric.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Any a = arguments.get(0);
-                if (a instanceof Int || a instanceof Decimal) {
-                    return Decimal.of(Math.tan(Numeric.convert(a, Decimal.TYPE).toNative()));
-                } else if (a instanceof Complex) {
-                    double re1 = Math.sin(((Complex) a).real()) * Math.cosh(((Complex) a).imaginary());
-                    double im1 = Math.cos(((Complex) a).real()) * Math.sinh(((Complex) a).imaginary());
-                    Complex sin = Complex.of(re1, im1);
+        pool.put("sqrt", DefaultFunctions.SQUARE_ROOT.getFunction());
+        pool.put("cbrt", DefaultFunctions.CUBE_ROOT.getFunction());
+        pool.put("exp", DefaultFunctions.EXPONENTIAL.getFunction());
+        pool.put("log", DefaultFunctions.LOG10.getFunction());
+        pool.put("ln", DefaultFunctions.LOG_NATURAL.getFunction());
+        pool.put("round", DefaultFunctions.ROUND.getFunction());
+        pool.put("floor", DefaultFunctions.FLOOR.getFunction());
+        pool.put("ceil", DefaultFunctions.CEILING.getFunction());
 
-                    double re2 = Math.cos(((Complex) a).real()) * Math.cosh(((Complex) a).imaginary());
-                    double im2 = -Math.sin(((Complex) a).real()) * Math.sinh(((Complex) a).imaginary());
-                    Complex cos = Complex.of(re2, im2);
+        pool.put("sin", DefaultFunctions.SINE.getFunction());
+        pool.put("cos", DefaultFunctions.COSINE.getFunction());
+        pool.put("tan", DefaultFunctions.TANGENT.getFunction());
+        pool.put("csc", DefaultFunctions.COSECANT.getFunction());
+        pool.put("sec", DefaultFunctions.SECANT.getFunction());
+        pool.put("cot", DefaultFunctions.COTANGENT.getFunction());
 
-                    return sin.divide(cos);
-                }
-                return Undefined.VALUE;
-            }
-        });
-        pool.put("asin", new NativeFunction(Numeric.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Any a = arguments.get(0);
-                return Decimal.of(Math.asin(Numeric.convert(a, Decimal.TYPE).toNative()));
-            }
-        });
-        pool.put("acos", new NativeFunction(Numeric.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Any a = arguments.get(0);
-                return Decimal.of(Math.acos(Numeric.convert(a, Decimal.TYPE).toNative()));
-            }
-        });
-        pool.put("atan", new NativeFunction(Numeric.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Any a = arguments.get(0);
-                return Decimal.of(Math.atan(Numeric.convert(a, Decimal.TYPE).toNative()));
-            }
-        });
-        pool.put("atan2", new NativeFunction(Numeric.TYPE, Numeric.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Any a = arguments.get(0);
-                Any b = arguments.get(1);
-                return Decimal.of(Math.atan2(
-                        Numeric.convert(a, Decimal.TYPE).toNative(),
-                        Numeric.convert(b, Decimal.TYPE).toNative()));
-            }
-        });
-        pool.put("sqrt", new NativeFunction(Numeric.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Any arg = arguments.get(0);
-                if (arg instanceof Int || arg instanceof Decimal) {
-                    double value = Numeric.convert(arg, Decimal.TYPE).toNative();
+        pool.put("sinh", DefaultFunctions.HYPERBOLIC_SINE.getFunction());
+        pool.put("cosh", DefaultFunctions.HYPERBOLIC_COSINE.getFunction());
+        pool.put("tanh", DefaultFunctions.HYPERBOLIC_TANGENT.getFunction());
 
-                    if (value < 0) {
-                        return Complex.of(value).pow(new Complex(1.0/2.0, 0));
-                    }
+        pool.put("asin", DefaultFunctions.ARCSINE.getFunction());
+        pool.put("acos", DefaultFunctions.ARCCOSINE.getFunction());
+        pool.put("atan", DefaultFunctions.ARCTANGENT.getFunction());
+        pool.put("acsc", DefaultFunctions.ARCCOSECANT.getFunction());
+        pool.put("asec", DefaultFunctions.ARCSECANT.getFunction());
+        pool.put("acot", DefaultFunctions.ARCCOTANGENT.getFunction());
+        pool.put("atan2", DefaultFunctions.ARCTANGENT2.getFunction());
 
-                    return Decimal.of(Math.sqrt(value));
-                } else if (arg instanceof Complex) {
-                    return ((Complex) arg).pow(new Complex(1.0/2.0, 0));
-                }
-                return Undefined.VALUE;
-            }
-        });
-        pool.put("cbrt", new NativeFunction(Numeric.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Any arg = arguments.get(0);
-                if (arg instanceof Int || arg instanceof Decimal) {
-                    return Decimal.of(Math.cbrt(Numeric.convert(arg, Decimal.TYPE).toNative()));
-                } else if (arg instanceof Complex) {
-                    return ((Complex) arg).pow(new Complex(1.0/3.0, 0));
-                }
-                return Undefined.VALUE;
-            }
-        });
-        pool.put("map", new NativeFunction(Slice.TYPE, AJEFunction.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Slice arg = (Slice) arguments.get(0);
-                AJEFunction transform = (AJEFunction) arguments.get(1);
-
-                Slice slice = new Slice();
-                for (Any obj : arg) {
-                    slice.add(transform.invoke(Collections.singletonList(obj)));
-                }
-                return slice;
-            }
-        });
-
-        pool.put("filter", new NativeFunction(Slice.TYPE, AJEFunction.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Slice arg = (Slice) arguments.get(0);
-                AJEFunction transform = (AJEFunction) arguments.get(1);
-
-                Slice slice = new Slice();
-                for (Any obj : arg) {
-                    Truth condition = (Truth) transform.invoke(Collections.singletonList(obj));
-                    if (condition == Truth.TRUE) slice.add(obj);
-                }
-                return slice;
-            }
-        });
-
-        pool.put("fold", new NativeFunction(Slice.TYPE, Any.TYPE, AJEFunction.TYPE) {
-            @Override
-            public Any eval(List<Any> arguments) {
-                Slice arg = (Slice) arguments.get(0);
-                Any accumulator = arguments.get(1);
-                AJEFunction operation = (AJEFunction) arguments.get(2);
-
-                for (Any obj : arg) {
-                    accumulator = operation.invoke(accumulator, obj);
-                }
-                return accumulator;
-            }
-        });
+        pool.put("map", DefaultFunctions.MAP.getFunction());
+        pool.put("filter", DefaultFunctions.FILTER.getFunction());
+        pool.put("fold", DefaultFunctions.FOLD.getFunction());
 
         // Types
         pool.put("Int", Int.TYPE);

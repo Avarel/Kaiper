@@ -36,14 +36,16 @@ public class CompiledFunction extends AJEFunction implements NativeObject<Functi
 
     @Override
     public Any invoke(List<Any> args) {
-        if (args.size() < parameters.size()) {
+        if (args.size() != parameters.size()) {
             return Undefined.VALUE;
         }
 
         AJEParser parser = new AJEParser(new LexerProxy(tokens.iterator()));
 
         for (int i = 0; i < parameters.size(); i++) {
-            parser.getObjects().put(parameters.get(i), args.get(i));
+            if (!parameters.get(i).equals("_")) { // unused parameters check
+                parser.getObjects().put(parameters.get(i), args.get(i));
+            }
         }
 
         return parser.parse();

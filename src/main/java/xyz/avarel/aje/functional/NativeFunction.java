@@ -29,5 +29,5 @@ public abstract class NativeFunction extends AJEFunction {
         return eval(arguments);
     }
 
-    public abstract Any eval(List<Any> arguments);
+    protected abstract Any eval(List<Any> arguments);
 }

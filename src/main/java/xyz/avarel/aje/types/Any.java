@@ -83,8 +83,8 @@ public interface Any<T extends Any> {
 
 
     // Boolean logic
-    default Truth equals(T other) {
-        return this == other ? Truth.TRUE : Truth.FALSE;
+    default Truth isEqualTo(T other) {
+        return this.equals(other) ? Truth.TRUE : Truth.FALSE;
     }
 
     default Truth greaterThan(T other) {

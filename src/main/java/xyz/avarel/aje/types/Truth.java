@@ -45,7 +45,7 @@ public enum Truth implements Any<Truth>, NativeObject<Boolean> {
     }
 
     @Override
-    public Truth equals(Truth other) {
+    public Truth isEqualTo(Truth other) {
         return value == other.value ? TRUE : FALSE;
     }
 }

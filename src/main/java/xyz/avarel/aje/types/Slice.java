@@ -2,6 +2,7 @@ package xyz.avarel.aje.types;
 
 import xyz.avarel.aje.functional.AJEFunction;
 import xyz.avarel.aje.functional.NativeFunction;
+import xyz.avarel.aje.pool.DefaultFunctions;
 import xyz.avarel.aje.types.numbers.Int;
 import xyz.avarel.aje.types.numbers.Numeric;
 
@@ -18,6 +19,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
     public Slice() {
         super();
     }
+
 
     public Slice(Any value) {
         add(value);
@@ -69,14 +71,14 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
     }
 
     @Override
-    public Truth equals(Slice other) {
+    public Truth isEqualTo(Slice other) {
         if (this == other) {
             return Truth.TRUE;
         } else if (size() != other.size()) {
             return Truth.FALSE;
         }
 
-        Slice slice = listOperation(Any::equals, other);
+        Slice slice = listOperation(Any::isEqualTo, other);
         for (Any o : slice) {
             if (!(o instanceof Truth)) {
                 if (o == Truth.FALSE) {
@@ -115,25 +117,14 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
                 @Override
                 public Any eval(List<Any> arguments) {
                     AJEFunction transform = (AJEFunction) arguments.get(0);
-
-                    Slice slice = new Slice();
-                    for (Any obj : Slice.this) {
-                        slice.add(transform.invoke(Collections.singletonList(obj)));
-                    }
-                    return slice;
+                    return DefaultFunctions.MAP.getFunction().invoke(Slice.this, transform);
                 }
             };
             case "filter" : return new NativeFunction(AJEFunction.TYPE) {
                 @Override
                 public Any eval(List<Any> arguments) {
-                    AJEFunction transform = (AJEFunction) arguments.get(0);
-
-                    Slice slice = new Slice();
-                    for (Any obj : Slice.this) {
-                        Truth condition = (Truth) transform.invoke(Collections.singletonList(obj));
-                        if (condition == Truth.TRUE) slice.add(obj);
-                    }
-                    return slice;
+                    AJEFunction predicate = (AJEFunction) arguments.get(0);
+                    return DefaultFunctions.FILTER.getFunction().invoke(Slice.this, predicate);
                 }
             };
             case "fold" : return new NativeFunction(Any.TYPE, AJEFunction.TYPE) {
@@ -141,11 +132,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
                 public Any eval(List<Any> arguments) {
                     Any accumulator = arguments.get(0);
                     AJEFunction operation = (AJEFunction) arguments.get(1);
-
-                    for (Any obj : Slice.this) {
-                        accumulator = operation.invoke(accumulator, obj);
-                    }
-                    return accumulator;
+                    return DefaultFunctions.FOLD.getFunction().invoke(Slice.this, accumulator, operation);
                 }
             };
             default: return Undefined.VALUE;

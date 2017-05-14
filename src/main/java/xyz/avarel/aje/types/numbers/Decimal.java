@@ -10,7 +10,7 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
 
     private final double value;
 
-    public Decimal(double value) {
+    private Decimal(double value) {
         this.value = value;
     }
 
@@ -64,9 +64,7 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
 
     @Override
     public Decimal mod(Decimal other) {
-        Decimal n = Decimal.of((value % other.value + other.value) % other.value);
-        System.out.println(n);
-        return n;
+        return Decimal.of((value % other.value + other.value) % other.value);
     }
 
     @Override
@@ -75,7 +73,7 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
     }
 
     @Override
-    public Truth equals(Decimal other) {
+    public Truth isEqualTo(Decimal other) {
         return value == other.value ? Truth.TRUE : Truth.FALSE;
     }
 

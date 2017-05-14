@@ -19,6 +19,7 @@ public class BinaryAnyParser extends BinaryParser<Any, Any> {
     @Override
     public Any parse(AJEParser parser, Any left, Token token) {
         Any right = parser.parse(getPrecedence() - (isLeftAssoc() ? 0 : 1));
-        return Numeric.process(left, right, operator);
+        if (left.getType().is(Numeric.TYPE)) return Numeric.process(left, right, operator);
+        else return operator.apply(left, right);
     }
 }

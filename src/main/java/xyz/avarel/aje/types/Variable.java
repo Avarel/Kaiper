@@ -106,8 +106,8 @@ public class Variable implements Any<Any<? extends Any>> {
     }
 
     @Override
-    public Truth equals(Any other) {
-        return identity().equals(other);
+    public Truth isEqualTo(Any other) {
+        return identity().isEqualTo(other);
     }
 
     @Override

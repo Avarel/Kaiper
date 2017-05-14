@@ -57,16 +57,30 @@ API redesign in progress. Check out `AJERepl.java` for examples right now.
 |---|---|---|---:|
 |`sqrt`|Square root function|(`numeric`)|`sqrt(x)`|
 |`cbrt`|Cube root function|(`numeric`)|`cbrt(x)`|
+|`exp`|Exponential function|(`numeric`)|`exp(x)`|
+|`log`|Log (base 10) function|(`numeric`)|`log(x)`|
+|`ln`|Log (base e) function|(`numeric`)|`ln(x)`|
+|`floor`|Floor function|(`numeric`)|`floor(x)`|
+|`ceil`|Ceiling function|(`numeric`)|`ceil(x)`|
 |`sin`|Trigonomic sine function|(`numeric`)|`sin(x)`|
 |`cos`|Trigonomic cosine function|(`numeric`)|`cos(x)`|
 |`tan`|Trigonomic tangent function|(`numeric`)|`tan(x)`|
+|`csc`|Trigonomic cosecant function|(`numeric`)|`csc(x)`|
+|`sec`|Trigonomic secant function|(`numeric`)|`sec(x)`|
+|`cot`|Trigonomic cotangent function|(`numeric`)|`cot(x)`|
+|`sinh`|Trigonomic hyperbolic sine function|(`numeric`)|`sinh(x)`|
+|`cosh`|Trigonomic hyperbolic cosine function|(`numeric`)|`cosh(x)`|
+|`tanh`|Trigonomic hyperbolic tangent function|(`numeric`)|`tanh(x)`|
 |`asin`|Inverse trigonomic sine function|(`decimal`)|`asin(x)`|
 |`acos`|Inverse trigonomic cosine function|(`decimal`)|`acos(x)`|
 |`atan`|Inverse trigonomic tangent function|(`decimal`)|`atan(x)`|
+|`acsc`|Inverse trigonomic cosecant function|(`decimal`)|`acsc(x)`|
+|`asec`|Inverse trigonomic secant function|(`decimal`)|`asec(x)`|
+|`acot`|Inverse trigonomic cotangent function|(`decimal`)|`acot(x)`|
 |`atan2`|Inverse trigonomic<br>four-quadrant tangent function|(`decimal`,`decimal`)|`atan2(x,y)`|
 |`map`|List transform function|(`slice`, `function`)|`map([1..10], {it ^ 2})`<br>`[1..10].map({it ^ 2})`|
 |`filter`|List filter function|(`slice`, `function`)|`filter([1..10], {it%2==0})`<br>`[1..10].filter({it%2==0})`|
-|`fold`|List accumulation function|(`slice`, `any`, `function`)|`fold([1..10], 0, {a, b -> a + b})`<br>`[1..10].fold(0, {a, b -> a + b})`|
+|`fold`|List accumulation function|(`slice`, `numeric`, `function`)|`fold([1..10], 0, {a, b -> a + b})`<br>`[1..10].fold(0, {a, b -> a + b})`|
 
 ### REPL Demonstrations
 ##### Complex Numbers

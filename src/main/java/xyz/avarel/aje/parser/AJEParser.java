@@ -5,6 +5,7 @@ import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.*;
+import xyz.avarel.aje.parser.parslets.any.BinaryAnyParser;
 import xyz.avarel.aje.parser.parslets.numeric.BinaryNumericParser;
 import xyz.avarel.aje.parser.parslets.numeric.UnaryNumericParser;
 import xyz.avarel.aje.parser.parslets.truth.BinaryTruthParser;
@@ -13,6 +14,7 @@ import xyz.avarel.aje.pool.DefaultPool;
 import xyz.avarel.aje.types.Any;
 import xyz.avarel.aje.types.Truth;
 import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.types.Undefined;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -53,12 +55,12 @@ public class AJEParser extends Parser {
         register(TokenType.PERCENT, new BinaryNumericParser(Precedence.MULTIPLICATIVE, true, Any::mod));
         register(TokenType.CARET, new BinaryNumericParser(Precedence.EXPONENTIAL, false, Any::pow));
 
-        register(TokenType.EQUALS, new BinaryNumericParser(Precedence.EQUALITY, true, Any::equals));
-        register(TokenType.NOT_EQUAL, new BinaryNumericParser(Precedence.EQUALITY, true, (a, b) -> a.equals(b).negative()));
+        register(TokenType.EQUALS, new BinaryAnyParser(Precedence.EQUALITY, true, Any::isEqualTo));
+        register(TokenType.NOT_EQUAL, new BinaryAnyParser(Precedence.EQUALITY, true, (a, b) -> a.isEqualTo(b).negative()));
         register(TokenType.GT, new BinaryNumericParser(Precedence.COMPARISON, true, Any::greaterThan));
         register(TokenType.LT, new BinaryNumericParser(Precedence.COMPARISON, true, Any::lessThan));
-        register(TokenType.GTE, new BinaryNumericParser(Precedence.COMPARISON, true, (a, b) -> a.equals(b).or(a.greaterThan(b))));
-        register(TokenType.LTE, new BinaryNumericParser(Precedence.COMPARISON, true, (a, b) -> a.equals(b).or(a.lessThan(b))));
+        register(TokenType.GTE, new BinaryNumericParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.greaterThan(b))));
+        register(TokenType.LTE, new BinaryNumericParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.lessThan(b))));
 
         // Truth
         register(TokenType.TILDE, new UnaryTruthParser(Truth::negative));
@@ -79,14 +81,17 @@ public class AJEParser extends Parser {
     }
 
     public Any compile() {
-        Any any;
+        Any any = Undefined.VALUE;
 
         do {
+            // Temporary solution?
+            if (match(TokenType.LINE)) continue;
+            if (match(TokenType.EOF)) break;
             any = parse();
         } while (match(TokenType.LINE));
 
         if (getLexer().hasNext()) {
-            throw new AJEException("Could not parse " + getLexer().next().getText());
+            throw new AJEException("Did not parse " + getLexer().next().getText());
         }
 
         return any;
