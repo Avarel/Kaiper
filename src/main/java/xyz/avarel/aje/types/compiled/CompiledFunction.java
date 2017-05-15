@@ -2,6 +2,7 @@ package xyz.avarel.aje.types.compiled;
 
 import xyz.avarel.aje.functional.AJEFunction;
 import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.lexer.LexerProxy;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.pool.ObjectPool;
 import xyz.avarel.aje.types.Any;
@@ -34,7 +35,7 @@ public class CompiledFunction extends AJEFunction {
             return Undefined.VALUE;
         }
 
-        AJEParser parser = new AJEParser(tokens, pool.copy());
+        AJEParser parser = new AJEParser(new LexerProxy(tokens), pool.copy());
 
         for (int i = 0; i < parameters.size(); i++) {
             parser.getObjects().put(parameters.get(i), args.get(i));

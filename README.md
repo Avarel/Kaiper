@@ -1,6 +1,6 @@
 AJE
 ===
-AJE is a math-centered scripting language/expression evaluator for the Java programming language.
+AJE is an expression evaluator for the Java programming language. It is a math-oriented, functional and dynamic language.
 
 ## Features
 |Feature|AJE Type|Java Type|Examples|
@@ -9,8 +9,8 @@ AJE is a math-centered scripting language/expression evaluator for the Java prog
 |Decimals|`decimal`|`Double`|`1.235` `-2/17` `3.0+2.5`|
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)*(5i+3)`|
-|Slices/lists operations|`slice`|`List<Any>`|`[1,2,3] == [1..3]`|
-|Functions|`function`|`Function*`|`sin(2)` `fun(x) = {x + 2}` `{x, y -> x^y}`|
+|Lists operations|`slice`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
+|First class functions|`function`|`Function*`|`sin(2)` `fun(x) = {x + 2}` `{x, y -> x^y}`|
 
 `*` Mapped to AJE object.
 
@@ -91,7 +91,7 @@ class AJETest {
 ##### Functional Operators `function`
 |Symbol|Description|Example|
 |---|---|---:|
-|`function(...args)`|Invocation|`atan2(3.6, 2.5)`|
+|`function(args...)`|Invocation|`atan2(3.6, 2.5)`|
 
 ### Functions
 `complex` arguments can be either `integer`, `decimal`, or `complex`.
@@ -107,6 +107,8 @@ class AJETest {
 |`ln`|Log (base e) function|(`complex`)|`ln(x)`|
 |`floor`|Floor function|(`complex`)|`floor(x)`|
 |`ceil`|Ceiling function|(`complex`)|`ceil(x)`|
+|`sum`|Summation function|(`complex...`)|`sum(x, y, z)`|
+|`product`|Product function|(`complex...`)|`product(x, y, z)`|
 |`sin`|Trigonomic sine function|(`complex`)|`sin(x)`|
 |`cos`|Trigonomic cosine function|(`complex`)|`cos(x)`|
 |`tan`|Trigonomic tangent function|(`complex`)|`tan(x)`|

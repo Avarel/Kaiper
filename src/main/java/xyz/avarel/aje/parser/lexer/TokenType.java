@@ -1,6 +1,7 @@
 package xyz.avarel.aje.parser.lexer;
 
 public enum TokenType {
+    // PAIRS
     LEFT_PAREN,
     RIGHT_PAREN,
 
@@ -10,8 +11,27 @@ public enum TokenType {
     LEFT_BRACE,
     RIGHT_BRACE,
 
+    // ASSIGNMENT
     ASSIGN,
 
+    // TYPES
+    NAME,
+    INT,
+    DECIMAL,
+    IMAGINARY,
+    BOOLEAN,
+    FUNCTION,
+
+    // ARITHMETIC
+    PLUS,
+    MINUS,
+    ASTERISK,
+    SLASH,
+    BACKSLASH,
+    CARET,
+    PERCENT,
+
+    // RELATIONAL
     EQUALS,
     NOT_EQUAL,
     GT,
@@ -21,20 +41,14 @@ public enum TokenType {
     OR,
     AND,
 
+    // BOOLEAN
     AMPERSAND,
-    PIPE,
+    VERTICAL_BAR,
 
-    PLUS,
-    MINUS,
-    ASTERISK,
-    SLASH,
-    BACKSLASH,
-    CARET,
-    PERCENT,
-
+    // MISC
     RANGE_TO,
     ARROW,
-
+    PIPE_FORWARD,
     TILDE,
     BANG,
     QUESTION,
@@ -42,15 +56,7 @@ public enum TokenType {
     COMMA,
     DOT,
 
-    INT,
-    DECIMAL,
-    BOOLEAN,
-    IMAGINARY,
-
-    FUNCTION,
-
-    NAME,
-    EOF,
+    // SCRIPT
     LINE,
-    UNKNOWN
+    EOF,
 }

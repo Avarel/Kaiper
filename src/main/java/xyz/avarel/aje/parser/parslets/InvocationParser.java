@@ -1,5 +1,6 @@
 package xyz.avarel.aje.parser.parslets;
 
+import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -10,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InvocationParser extends BinaryParser<Any, Any> {
-    public InvocationParser(int precedence) {
-        super(precedence, true);
+    public InvocationParser() {
+        super(Precedence.ACCESS, true);
     }
 
     @Override

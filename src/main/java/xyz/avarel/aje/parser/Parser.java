@@ -13,10 +13,6 @@ public class Parser {
     private final Map<TokenType, InfixParser> infixParsers = new HashMap<>();
     private Token last;
 
-    public Parser(List<Token> lexer) {
-        this(new LexerProxy(lexer.iterator()));
-    }
-
     public Parser(Iterator<Token> lexer) {
         this.lexer = lexer;
     }
@@ -99,22 +95,4 @@ public class Parser {
         return new AJEException(message + ", position " + position + ".");
     }
 
-    static class LexerProxy implements Iterator<Token> {
-        private final Iterator<Token> proxy;
-
-        LexerProxy(Iterator<Token> proxy) {
-            this.proxy = proxy;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return proxy.hasNext();
-        }
-
-        @Override
-        public Token next() {
-            if (!proxy.hasNext()) return new Token(0, TokenType.EOF);
-            return proxy.next();
-        }
-    }
 }

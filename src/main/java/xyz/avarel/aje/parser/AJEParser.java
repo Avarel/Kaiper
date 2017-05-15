@@ -16,21 +16,10 @@ import xyz.avarel.aje.types.Type;
 import xyz.avarel.aje.types.Undefined;
 
 import java.util.Iterator;
-import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class AJEParser extends Parser {
     private final ObjectPool objects;
-
-    public AJEParser(List<Token> tokens) {
-        this(tokens, new ObjectPool());
-    }
-
-    public AJEParser(List<Token> tokens, ObjectPool objects) {
-        super(tokens);
-        this.objects = objects;
-        registerGrammar();
-    }
 
     public AJEParser(Iterator<Token> tokens) {
         this(tokens, new ObjectPool());
@@ -39,22 +28,19 @@ public class AJEParser extends Parser {
     public AJEParser(Iterator<Token> tokens, ObjectPool objects) {
         super(tokens);
         this.objects = objects;
-        registerGrammar();
-    }
 
-    private void registerGrammar() {
-        // Basic
+        // BLOCKS
         register(TokenType.LEFT_BRACKET, new SliceParser());
         register(TokenType.LEFT_PAREN, new GroupParser());
         register(TokenType.LEFT_BRACE, new LambdaParser());
-        register(TokenType.FUNCTION, new FunctionParser());
 
+        // TYPES
         register(TokenType.NAME, new NameParser());
         register(TokenType.INT, new NumberParser());
         register(TokenType.DECIMAL, new NumberParser());
         register(TokenType.IMAGINARY, new NumberParser());
         register(TokenType.BOOLEAN, new BooleanParser());
-
+        register(TokenType.FUNCTION, new FunctionParser());
 
         // Numeric
         register(TokenType.MINUS, new UnaryNumericParser(Any::negative));
@@ -66,6 +52,7 @@ public class AJEParser extends Parser {
         register(TokenType.PERCENT, new BinaryNumericParser(Precedence.MULTIPLICATIVE, true, Any::mod));
         register(TokenType.CARET, new BinaryNumericParser(Precedence.EXPONENTIAL, false, Any::pow));
 
+        // RELATIONAL
         register(TokenType.EQUALS, new BinaryAnyParser(Precedence.EQUALITY, true, Any::isEqualTo));
         register(TokenType.NOT_EQUAL, new BinaryAnyParser(Precedence.EQUALITY, true, (a, b) -> a.isEqualTo(b).negative()));
         register(TokenType.GT, new BinaryNumericParser(Precedence.COMPARISON, true, Any::greaterThan));
@@ -76,15 +63,13 @@ public class AJEParser extends Parser {
         // Truth
         register(TokenType.TILDE, new UnaryTruthParser(Truth::negative));
         register(TokenType.BANG, new UnaryTruthParser(Truth::negative));
-
         register(TokenType.AND, new BinaryTruthParser(Precedence.CONJUNCTION, true, Truth::and));
         register(TokenType.OR, new BinaryTruthParser(Precedence.DISJUNCTION, true, Truth::or));
 
         // Functional
-        register(TokenType.LEFT_PAREN, new InvocationParser(Precedence.ACCESS));
-        register(TokenType.LEFT_BRACKET, new GetIndexParser(Precedence.ACCESS));
-        register(TokenType.DOT, new AttributeParser(Precedence.ACCESS));
-
+        register(TokenType.LEFT_PAREN, new InvocationParser());
+        register(TokenType.LEFT_BRACKET, new GetIndexParser());
+        register(TokenType.DOT, new AttributeParser());
         register(TokenType.ASSIGN, new AssignmentParser());
     }
 
@@ -98,10 +83,16 @@ public class AJEParser extends Parser {
             any = parse();
         } while (match(TokenType.LINE));
 
-        if (getLexer().hasNext() && !getTokens().isEmpty()) {
-            Token t = getLexer().next();
-            throw error("Did not parse " + t.getText(), t.getPos());
+        if (!getTokens().isEmpty()) {
+            Token t = getTokens().get(0);
+            if (t.getType() != TokenType.EOF) {
+                throw error("Did not parse " + t.getText(), t.getPos());
+            }
         }
+//        if (getLexer().hasNext()) {
+//            Token t = getLexer().next();
+//            throw error("Did not parse " + t.getText(), t.getPos());
+//        }
 
         return any;
     }
@@ -136,6 +127,9 @@ public class AJEParser extends Parser {
             token = eat();
 
             InfixParser<Any, Any> infix = getInfixParsers().get(token.getType());
+
+            if (infix == null) throw error("Could not parse token `" + token.getText() + "`");
+
             if (!infix.keepIdentity()) left = left.identity();
             left = infix.parse(this, left, token);
         }

@@ -1,8 +1,8 @@
 package xyz.avarel.aje.parser.parslets;
 
 import xyz.avarel.aje.parser.AJEParser;
-import xyz.avarel.aje.parser.Parser;
 import xyz.avarel.aje.parser.PrefixParser;
+import xyz.avarel.aje.parser.lexer.LexerProxy;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.types.compiled.CompiledFunction;
@@ -42,15 +42,25 @@ public class LambdaParser implements PrefixParser<CompiledFunction> {
                 parameters.add("it");
             }
         } else {
-            Parser parameterParser = new Parser(parameterTokens);
+            LexerProxy lexer = new LexerProxy(parameterTokens);
 
-            if (parameterParser.getLexer().hasNext()) {
-                do {
-                    parameters.add(parameterParser.eat(TokenType.NAME).getText());
-                } while (parameterParser.match(TokenType.COMMA));
+            if (lexer.hasNext()) {
+                while (true) {
+                    parameters.add(lexer.next(TokenType.NAME).getText());
+                    Token delimiter = lexer.next();
+                    if (delimiter.getType() != TokenType.COMMA) {
+                        if (delimiter.getType() == TokenType.EOF) {
+                            break;
+                        } else {
+                            throw lexer.error("Unexpected delimiter", delimiter.getPos());
+                        }
+                    }
+                }
 
-                if (!parameterParser.getTokens().isEmpty()) {
-                    throw parameterParser.error("Unexpected token", parameterParser.getTokens().get(0).getPos());
+                if (lexer.hasNext()) {
+                    throw lexer.error("Unexpected token", lexer.next().getPos());
+                } else {
+                    System.out.println(lexer.next());
                 }
             }
         }

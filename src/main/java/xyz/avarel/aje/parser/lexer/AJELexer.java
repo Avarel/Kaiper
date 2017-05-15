@@ -8,6 +8,10 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     private final String str;
     private int pos = -1;
 
+    public AJELexer() {
+        this("");
+    }
+
     /**
      * Creates a new Lexer to tokenize the given string.
      *
@@ -36,6 +40,14 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             return true;
         }
         return false;
+    }
+
+    public Token next(TokenType type) {
+        Token token = next();
+        if (token.getType() != type) {
+            throw error("Expected token " + type + " but got " + token.getType(), token.getPos());
+        }
+        return token;
     }
 
     @Override
@@ -92,7 +104,9 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     : make(TokenType.LT);
             case '|': return match('|')
                     ? make(TokenType.OR)
-                    : make(TokenType.PIPE);
+                    : match('>')
+                    ? make(TokenType.PIPE_FORWARD)
+                    : make(TokenType.VERTICAL_BAR);
             case '&': return match('&')
                     ? make(TokenType.AND)
                     : make(TokenType.AMPERSAND);
