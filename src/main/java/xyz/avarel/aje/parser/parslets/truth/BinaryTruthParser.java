@@ -3,7 +3,7 @@ package xyz.avarel.aje.parser.parslets.truth;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.types.Truth;
+import xyz.avarel.aje.runtime.types.Truth;
 
 import java.util.function.BinaryOperator;
 

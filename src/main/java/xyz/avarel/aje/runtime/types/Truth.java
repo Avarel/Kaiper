@@ -1,4 +1,4 @@
-package xyz.avarel.aje.types;
+package xyz.avarel.aje.runtime.types;
 
 public enum Truth implements Any<Truth>, NativeObject<Boolean> {
     TRUE(true),
@@ -45,7 +45,10 @@ public enum Truth implements Any<Truth>, NativeObject<Boolean> {
     }
 
     @Override
-    public Truth isEqualTo(Truth other) {
-        return value == other.value ? TRUE : FALSE;
+    public Truth isEqualTo(Any other) {
+        if (other instanceof Truth) {
+            return value == ((Truth) other).value ? TRUE : FALSE;
+        }
+        return FALSE;
     }
 }

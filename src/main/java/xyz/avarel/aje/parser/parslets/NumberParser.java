@@ -4,11 +4,11 @@ import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.numbers.Complex;
-import xyz.avarel.aje.types.numbers.Decimal;
-import xyz.avarel.aje.types.numbers.Int;
-import xyz.avarel.aje.types.Undefined;
+import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.types.numbers.Complex;
+import xyz.avarel.aje.runtime.types.numbers.Decimal;
+import xyz.avarel.aje.runtime.types.numbers.Int;
+import xyz.avarel.aje.runtime.types.Undefined;
 
 public class NumberParser implements PrefixParser<Any> {
     @Override

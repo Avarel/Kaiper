@@ -1,12 +1,12 @@
-package xyz.avarel.aje.types.compiled;
+package xyz.avarel.aje.runtime.types.compiled;
 
-import xyz.avarel.aje.functional.AJEFunction;
+import xyz.avarel.aje.runtime.functional.AJEFunction;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.lexer.LexerProxy;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.pool.ObjectPool;
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.Undefined;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
+import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.types.Undefined;
 
 import java.util.List;
 

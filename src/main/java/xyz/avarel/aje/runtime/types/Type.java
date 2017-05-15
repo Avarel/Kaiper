@@ -1,4 +1,4 @@
-package xyz.avarel.aje.types;
+package xyz.avarel.aje.runtime.types;
 
 public class Type<T> implements Any<Type>, NativeObject<Type> {
     private static final Type TYPE = new Type("type");

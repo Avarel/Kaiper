@@ -1,10 +1,10 @@
-package xyz.avarel.aje.types;
+package xyz.avarel.aje.runtime.types;
 
-import xyz.avarel.aje.functional.AJEFunction;
-import xyz.avarel.aje.functional.NativeFunction;
-import xyz.avarel.aje.pool.DefaultFunctions;
-import xyz.avarel.aje.types.numbers.Int;
-import xyz.avarel.aje.types.numbers.Numeric;
+import xyz.avarel.aje.runtime.functional.AJEFunction;
+import xyz.avarel.aje.runtime.functional.NativeFunction;
+import xyz.avarel.aje.runtime.pool.DefaultFunctions;
+import xyz.avarel.aje.runtime.types.numbers.Int;
+import xyz.avarel.aje.runtime.types.numbers.Numeric;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,28 +41,63 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
     }
 
     @Override
-    public Slice plus(Slice other) {
-        return listOperation(Any::plus, other);
+    public Any plus(Any other) {
+        if (other instanceof Slice) {
+            return plus((Slice) other);
+        }
+        return plus(new Slice(other));
+    }
+
+    private Slice plus(Slice other) {
+        return listOperation(other, Any::plus);
     }
 
     @Override
-    public Slice minus(Slice other) {
-        return listOperation(Any::minus, other);
+    public Any minus(Any other) {
+        if (other instanceof Slice) {
+            return minus((Slice) other);
+        }
+        return minus(new Slice(other));
+    }
+
+    private Slice minus(Slice other) {
+        return listOperation(other, Any::minus);
     }
 
     @Override
-    public Slice times(Slice other) {
-        return listOperation(Any::times, other);
+    public Any times(Any other) {
+        if (other instanceof Slice) {
+            return times((Slice) other);
+        }
+        return times(new Slice(other));
+    }
+
+    private Slice times(Slice other) {
+        return listOperation(other, Any::times);
     }
 
     @Override
-    public Slice divide(Slice other) {
-        return listOperation(Any::divide, other);
+    public Any divide(Any other) {
+        if (other instanceof Slice) {
+            return divide((Slice) other);
+        }
+        return divide(new Slice(other));
+    }
+
+    private Slice divide(Slice other) {
+        return listOperation(other, Any::divide);
     }
 
     @Override
-    public Slice pow(Slice other) {
-        return listOperation(Any::pow, other);
+    public Any pow(Any other) {
+        if (other instanceof Slice) {
+            return pow((Slice) other);
+        }
+        return pow(new Slice(other));
+    }
+
+    private Slice pow(Slice other) {
+        return listOperation(other, Any::pow);
     }
 
     @Override
@@ -71,6 +106,13 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
     }
 
     @Override
+    public Truth isEqualTo(Any other) {
+        if (other instanceof Slice) {
+            return isEqualTo((Slice) other);
+        }
+        return Truth.FALSE;
+    }
+
     public Truth isEqualTo(Slice other) {
         if (this == other) {
             return Truth.TRUE;
@@ -78,7 +120,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
             return Truth.FALSE;
         }
 
-        Slice slice = listOperation(Any::isEqualTo, other);
+        Slice slice = listOperation(other, Any::isEqualTo);
         for (Any o : slice) {
             if (!(o instanceof Truth)) {
                 if (o == Truth.FALSE) {
@@ -90,7 +132,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
         return Truth.TRUE;
     }
 
-    private Slice listOperation(BinaryOperator<Any> operator, Slice other) {
+    private Slice listOperation(Slice other, BinaryOperator<Any> operator) {
         int len = size() == 1 ? other.size()
                 : other.size() == 1 ? size()
                 : Math.min(size(), other.size());

@@ -5,15 +5,14 @@ import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.*;
 import xyz.avarel.aje.parser.parslets.any.BinaryAnyParser;
-import xyz.avarel.aje.parser.parslets.numeric.BinaryNumericParser;
-import xyz.avarel.aje.parser.parslets.numeric.UnaryNumericParser;
+import xyz.avarel.aje.parser.parslets.any.UnaryAnyParser;
 import xyz.avarel.aje.parser.parslets.truth.BinaryTruthParser;
 import xyz.avarel.aje.parser.parslets.truth.UnaryTruthParser;
-import xyz.avarel.aje.pool.ObjectPool;
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.Truth;
-import xyz.avarel.aje.types.Type;
-import xyz.avarel.aje.types.Undefined;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
+import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.types.Truth;
+import xyz.avarel.aje.runtime.types.Type;
+import xyz.avarel.aje.runtime.types.Undefined;
 
 import java.util.Iterator;
 
@@ -43,22 +42,22 @@ public class AJEParser extends Parser {
         register(TokenType.FUNCTION, new FunctionParser());
 
         // Numeric
-        register(TokenType.MINUS, new UnaryNumericParser(Any::negative));
-        register(TokenType.PLUS, new UnaryNumericParser(Any::identity));
-        register(TokenType.PLUS, new BinaryNumericParser(Precedence.ADDITIVE, true, Any::plus));
-        register(TokenType.MINUS, new BinaryNumericParser(Precedence.ADDITIVE, true, Any::minus));
-        register(TokenType.ASTERISK, new BinaryNumericParser(Precedence.MULTIPLICATIVE, true, Any::times));
-        register(TokenType.SLASH, new BinaryNumericParser(Precedence.MULTIPLICATIVE, true, Any::divide));
-        register(TokenType.PERCENT, new BinaryNumericParser(Precedence.MULTIPLICATIVE, true, Any::mod));
-        register(TokenType.CARET, new BinaryNumericParser(Precedence.EXPONENTIAL, false, Any::pow));
+        register(TokenType.MINUS, new UnaryAnyParser(Any::negative));
+        register(TokenType.PLUS, new UnaryAnyParser(Any::identity));
+        register(TokenType.PLUS, new BinaryAnyParser(Precedence.ADDITIVE, true, Any::plus));
+        register(TokenType.MINUS, new BinaryAnyParser(Precedence.ADDITIVE, true, Any::minus));
+        register(TokenType.ASTERISK, new BinaryAnyParser(Precedence.MULTIPLICATIVE, true, Any::times));
+        register(TokenType.SLASH, new BinaryAnyParser(Precedence.MULTIPLICATIVE, true, Any::divide));
+        register(TokenType.PERCENT, new BinaryAnyParser(Precedence.MULTIPLICATIVE, true, Any::mod));
+        register(TokenType.CARET, new BinaryAnyParser(Precedence.EXPONENTIAL, false, Any::pow));
 
         // RELATIONAL
         register(TokenType.EQUALS, new BinaryAnyParser(Precedence.EQUALITY, true, Any::isEqualTo));
         register(TokenType.NOT_EQUAL, new BinaryAnyParser(Precedence.EQUALITY, true, (a, b) -> a.isEqualTo(b).negative()));
-        register(TokenType.GT, new BinaryNumericParser(Precedence.COMPARISON, true, Any::greaterThan));
-        register(TokenType.LT, new BinaryNumericParser(Precedence.COMPARISON, true, Any::lessThan));
-        register(TokenType.GTE, new BinaryNumericParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.greaterThan(b))));
-        register(TokenType.LTE, new BinaryNumericParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.lessThan(b))));
+        register(TokenType.GT, new BinaryAnyParser(Precedence.COMPARISON, true, Any::greaterThan));
+        register(TokenType.LT, new BinaryAnyParser(Precedence.COMPARISON, true, Any::lessThan));
+        register(TokenType.GTE, new BinaryAnyParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.greaterThan(b))));
+        register(TokenType.LTE, new BinaryAnyParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.lessThan(b))));
 
         // Truth
         register(TokenType.TILDE, new UnaryTruthParser(Truth::negative));

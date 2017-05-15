@@ -2,9 +2,9 @@ package xyz.avarel.aje;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.lexer.AJELexer;
-import xyz.avarel.aje.pool.DefaultPool;
-import xyz.avarel.aje.pool.ObjectPool;
-import xyz.avarel.aje.types.Any;
+import xyz.avarel.aje.runtime.pool.DefaultPool;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
+import xyz.avarel.aje.runtime.types.Any;
 
 public class Expression {
     private final String expression;

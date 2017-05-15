@@ -1,4 +1,4 @@
-package xyz.avarel.aje.types;
+package xyz.avarel.aje.runtime.types;
 
 /**
  * Every operation results in the same

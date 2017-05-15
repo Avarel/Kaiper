@@ -3,7 +3,7 @@ package xyz.avarel.aje.parser.parslets;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.types.Any;
+import xyz.avarel.aje.runtime.types.Any;
 
 public class NameParser implements PrefixParser {
     @Override

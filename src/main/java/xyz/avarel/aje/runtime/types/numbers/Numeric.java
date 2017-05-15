@@ -1,7 +1,7 @@
-package xyz.avarel.aje.types.numbers;
+package xyz.avarel.aje.runtime.types.numbers;
 
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.function.BinaryOperator;
 

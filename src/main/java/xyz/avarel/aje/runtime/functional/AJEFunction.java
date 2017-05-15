@@ -1,8 +1,8 @@
-package xyz.avarel.aje.functional;
+package xyz.avarel.aje.runtime.functional;
 
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.NativeObject;
-import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.types.NativeObject;
+import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
 import java.util.function.Function;

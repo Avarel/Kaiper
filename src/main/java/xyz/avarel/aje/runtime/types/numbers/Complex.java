@@ -1,9 +1,6 @@
-package xyz.avarel.aje.types.numbers;
+package xyz.avarel.aje.runtime.types.numbers;
 
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.NativeObject;
-import xyz.avarel.aje.types.Type;
-import xyz.avarel.aje.types.Truth;
+import xyz.avarel.aje.runtime.types.*;
 
 import java.math.BigDecimal;
 
@@ -50,60 +47,91 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
     }
 
     @Override
+    public Any plus(Any other) {
+        if (other instanceof Complex) {
+            return this.plus((Complex) other);
+        } else if (other instanceof Int) {
+            return this.plus(Complex.of(((Int) other).value()));
+        } else if (other instanceof Decimal) {
+            return this.plus(Complex.of(((Decimal) other).value()));
+        }
+        return Undefined.VALUE;
+    }
+
     public Complex plus(Complex b) {
         return Complex.of(re + b.re, im + b.im);
     }
 
     @Override
+    public Any minus(Any other) {
+        if (other instanceof Complex) {
+            return this.minus((Complex) other);
+        } else if (other instanceof Int) {
+            return this.minus(Complex.of(((Int) other).value()));
+        } else if (other instanceof Decimal) {
+            return this.minus(Complex.of(((Decimal) other).value()));
+        }
+        return Undefined.VALUE;
+    }
+
     public Complex minus(Complex b) {
         return Complex.of(re - b.re, im - b.im);
     }
 
     @Override
+    public Any times(Any other) {
+        if (other instanceof Complex) {
+            return this.times((Complex) other);
+        } else if (other instanceof Int) {
+            return this.times(Complex.of(((Int) other).value()));
+        } else if (other instanceof Decimal) {
+            return this.times(Complex.of(((Decimal) other).value()));
+        }
+        return Undefined.VALUE;
+    }
+
     public Complex times(Complex b) {
         return Complex.of(re * b.re - im * b.im, re * b.im + im * b.re);
     }
 
     @Override
-    public Complex divide(Complex b) {
-        return times(b.reciprocal());
-    }
-
-    public Any<?> plus(double other) {
-        return plus(Complex.of(other));
-    }
-
-    public Any<?> minus(double other) {
-        return minus(Complex.of(other));
-    }
-
-    public Any<?> times(double other) {
-        return times(Complex.of(other));
-    }
-
-    public Any<?> divide(double other) {
-        return divide(Complex.of(other));
-    }
-
-    public Any<?> mod(double other) {
-        return mod(Complex.of(other));
-    }
-
-    public Any<?> pow(double other) {
-        return pow(Complex.of(other));
-    }
-
-    public Complex reciprocal() {
-        double scale = re * re + im * im;
-        return Complex.of(re / scale, -im / scale);
+    public Any divide(Any other) {
+        if (other instanceof Complex) {
+            return this.divide((Complex) other);
+        } else if (other instanceof Int) {
+            return this.divide(Complex.of(((Int) other).value()));
+        } else if (other instanceof Decimal) {
+            return this.divide(Complex.of(((Decimal) other).value()));
+        }
+        return Undefined.VALUE;
     }
 
     @Override
+    public Any pow(Any other) {
+        if (other instanceof Complex) {
+            return this.pow((Complex) other);
+        } else if (other instanceof Int) {
+            return this.pow(Complex.of(((Int) other).value()));
+        } else if (other instanceof Decimal) {
+            return this.pow(Complex.of(((Decimal) other).value()));
+        }
+        return Undefined.VALUE;
+    }
+
     public Complex pow(Complex other) {
         Complex result = ln().times(other).exp();
         double real = BigDecimal.valueOf(result.re).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();
         double imag = BigDecimal.valueOf(result.im).setScale(7, BigDecimal.ROUND_HALF_EVEN).doubleValue();
         return Complex.of(real, imag);
+    }
+
+    public Complex divide(Complex b) {
+        return times(b.reciprocal());
+    }
+
+    private Complex reciprocal() {
+        double scale = re * re + im * im;
+        return Complex.of(re / scale, -im / scale);
     }
     
     public Complex sin() {
@@ -134,7 +162,7 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
         return sinh().divide(cosh());
     }
 
-    public double abs() {
+    private double abs() {
         if (re != 0 || im != 0) {
             return Math.sqrt(re * re + im * im);
         } else {
@@ -153,7 +181,7 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
         return Complex.of(exp * Math.cos(im), exp * Math.sin(im));
     }
 
-    public double arg() {
+    private double arg() {
         return Math.atan2(im, re);
     }
 
@@ -179,7 +207,18 @@ public class Complex implements Any<Complex>, NativeObject<Double> {
     }
 
     @Override
-    public Truth isEqualTo(Complex b) {
+    public Truth isEqualTo(Any other) {
+        if (other instanceof Complex) {
+            return this.isEqualTo((Complex) other);
+        } else if (other instanceof Int) {
+            return this.isEqualTo(Complex.of(((Int) other).value()));
+        } else if (other instanceof Decimal) {
+            return this.isEqualTo(Complex.of(((Decimal) other).value()));
+        }
+        return Truth.FALSE;
+    }
+
+    private Truth isEqualTo(Complex b) {
         return re == b.re && im == b.im ? Truth.TRUE : Truth.FALSE;
     }
 

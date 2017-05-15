@@ -1,10 +1,10 @@
-package xyz.avarel.aje.pool;
+package xyz.avarel.aje.runtime.pool;
 
-import xyz.avarel.aje.types.Slice;
-import xyz.avarel.aje.types.Truth;
-import xyz.avarel.aje.types.numbers.Complex;
-import xyz.avarel.aje.types.numbers.Decimal;
-import xyz.avarel.aje.types.numbers.Int;
+import xyz.avarel.aje.runtime.types.Slice;
+import xyz.avarel.aje.runtime.types.Truth;
+import xyz.avarel.aje.runtime.types.numbers.Complex;
+import xyz.avarel.aje.runtime.types.numbers.Decimal;
+import xyz.avarel.aje.runtime.types.numbers.Int;
 
 public class DefaultPool extends ObjectPool {
     public static final DefaultPool INSTANCE = new DefaultPool();

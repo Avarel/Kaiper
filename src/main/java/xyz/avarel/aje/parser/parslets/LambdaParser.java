@@ -5,7 +5,7 @@ import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.LexerProxy;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.types.compiled.CompiledFunction;
+import xyz.avarel.aje.runtime.types.compiled.CompiledFunction;
 
 import java.util.ArrayList;
 import java.util.List;

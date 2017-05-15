@@ -1,6 +1,6 @@
 import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.parser.lexer.AJELexer;
-import xyz.avarel.aje.types.Any;
+import xyz.avarel.aje.runtime.types.Any;
 
 import java.util.Scanner;
 

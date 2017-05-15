@@ -1,8 +1,8 @@
-package xyz.avarel.aje.pool;
+package xyz.avarel.aje.runtime.pool;
 
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.Undefined;
-import xyz.avarel.aje.types.Variable;
+import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.types.Undefined;
+import xyz.avarel.aje.runtime.types.Variable;
 
 import java.util.HashMap;
 import java.util.Map;

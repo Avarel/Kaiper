@@ -1,7 +1,7 @@
-package xyz.avarel.aje.types;
+package xyz.avarel.aje.runtime.types;
 
 import xyz.avarel.aje.AJEException;
-import xyz.avarel.aje.types.numbers.Decimal;
+import xyz.avarel.aje.runtime.types.numbers.Decimal;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,27 +28,27 @@ public interface Any<T extends Any> {
 
 
     // Basic arithmetic
-    default Any plus(T other) {
+    default Any plus(Any other) {
         return Undefined.VALUE;
     }
 
-    default Any minus(T other) {
+    default Any minus(Any other) {
         return Undefined.VALUE;
     }
 
-    default Any times(T other) {
+    default Any times(Any other) {
         return Undefined.VALUE;
     }
 
-    default Any divide(T other) {
+    default Any divide(Any other) {
         return Undefined.VALUE;
     }
 
-    default Any mod(T other) {
+    default Any mod(Any other) {
         return Undefined.VALUE;
     }
 
-    default Any pow(T other) {
+    default Any pow(Any other) {
         return Undefined.VALUE;
     }
 
@@ -58,46 +58,46 @@ public interface Any<T extends Any> {
 
 
     default Any plus(double other) {
-        return plus((T) Decimal.of(other));
+        return plus(Decimal.of(other));
     }
 
     default Any minus(double other) {
-        return minus((T) Decimal.of(other));
+        return minus(Decimal.of(other));
     }
 
     default Any times(double other) {
-        return times((T) Decimal.of(other));
+        return times(Decimal.of(other));
     }
 
     default Any divide(double other) {
-        return divide((T) Decimal.of(other));
+        return divide(Decimal.of(other));
     }
 
     default Any mod(double other) {
-        return mod((T) Decimal.of(other));
+        return mod(Decimal.of(other));
     }
 
     default Any pow(double other) {
-        return pow((T) Decimal.of(other));
+        return pow(Decimal.of(other));
     }
 
 
     // Boolean logic
-    default Truth isEqualTo(T other) {
+    default Truth isEqualTo(Any other) {
         return this.equals(other) ? Truth.TRUE : Truth.FALSE;
     }
 
-    default Truth greaterThan(T other) {
+    default Truth greaterThan(Any other) {
         throw unsupported("greater than comparison");
     }
 
-    default Truth lessThan(T other) {
+    default Truth lessThan(Any other) {
         throw unsupported("less than comparison");
     }
 
 
     // Slices
-    default Slice rangeTo(T other) {
+    default Slice rangeTo(Any other) {
         throw unsupported("range to");
     }
 
@@ -116,7 +116,7 @@ public interface Any<T extends Any> {
         return (T) this;
     }
 
-    default Any set(T other) {
+    default Any set(Any other) {
         throw unsupported("set");
     }
 

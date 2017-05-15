@@ -1,7 +1,7 @@
-package xyz.avarel.aje.types.compiled;
+package xyz.avarel.aje.runtime.types.compiled;
 
-import xyz.avarel.aje.types.Any;
-import xyz.avarel.aje.types.Type;
+import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.types.Type;
 
 public class CompiledObject implements Any<CompiledObject> {
     private final Type type;
