@@ -27,10 +27,26 @@ public enum Truth implements Any<Truth>, NativeObject<Boolean> {
         return TYPE;
     }
 
+    @Override
+    public Any plus(Any other) {
+        if (other instanceof Truth) {
+            return or((Truth) other);
+        }
+        return Undefined.VALUE;
+    }
+
     public Truth or(Truth other) {
         if (value) return TRUE;
         if (other.value) return TRUE;
         return FALSE;
+    }
+
+    @Override
+    public Any times(Any other) {
+        if (other instanceof Truth) {
+            return and((Truth) other);
+        }
+        return Undefined.VALUE;
     }
 
     public Truth and(Truth other) {

@@ -1,9 +1,10 @@
 package xyz.avarel.aje.runtime.types.compiled;
 
-import xyz.avarel.aje.runtime.functional.AJEFunction;
 import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.lexer.LexerProxy;
 import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.runtime.functional.AJEFunction;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
 import xyz.avarel.aje.runtime.types.Any;
 import xyz.avarel.aje.runtime.types.Undefined;
@@ -18,6 +19,7 @@ public class CompiledFunction extends AJEFunction {
     private final List<String> parameters;
     private final List<Token> tokens;
     private final ObjectPool pool;
+    private Expr expr;
 
     public CompiledFunction(List<String> parameters, List<Token> tokens, ObjectPool pool) {
         this.parameters = parameters;
@@ -35,13 +37,15 @@ public class CompiledFunction extends AJEFunction {
             return Undefined.VALUE;
         }
 
+        // todo cache compilation
         AJEParser parser = new AJEParser(new LexerProxy(tokens), pool.copy());
 
+        // fixme probably by passing in objects along with exprs
         for (int i = 0; i < parameters.size(); i++) {
             parser.getObjects().put(parameters.get(i), args.get(i));
         }
 
-        return parser.compute();
+        return parser.compile().compute();
     }
 
 }

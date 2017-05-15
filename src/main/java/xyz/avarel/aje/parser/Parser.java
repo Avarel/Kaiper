@@ -8,29 +8,19 @@ import java.util.*;
 
 public class Parser {
     private final Iterator<Token> lexer;
-    private final List<Token> tokens = new ArrayList<>();
-    private final Map<TokenType, PrefixParser> prefixParsers = new HashMap<>();
-    private final Map<TokenType, InfixParser> infixParsers = new HashMap<>();
+    private final List<Token> tokens;
+    private final Grammar grammar;
+
     private Token last;
 
     public Parser(Iterator<Token> lexer) {
+        this(lexer, new Grammar());
+    }
+
+    public Parser(Iterator<Token> lexer, Grammar grammar) {
         this.lexer = lexer;
-    }
-
-    public void register(TokenType token, PrefixParser parselet) {
-        prefixParsers.put(token, parselet);
-    }
-
-    public void register(TokenType token, InfixParser parselet) {
-        infixParsers.put(token, parselet);
-    }
-
-    public Map<TokenType, PrefixParser> getPrefixParsers() {
-        return prefixParsers;
-    }
-
-    public Map<TokenType, InfixParser> getInfixParsers() {
-        return infixParsers;
+        this.tokens = new ArrayList<>();
+        this.grammar = grammar;
     }
 
     public Token getLast() {
@@ -44,6 +34,14 @@ public class Parser {
         }
         eat();
         return true;
+    }
+
+    public Map<TokenType, PrefixParser> getPrefixParsers() {
+        return grammar.getPrefixParsers();
+    }
+
+    public Map<TokenType, InfixParser> getInfixParsers() {
+        return grammar.getInfixParsers();
     }
 
     public List<Token> getTokens() {
@@ -80,7 +78,7 @@ public class Parser {
     }
 
     public int getPrecedence() {
-        InfixParser parser = infixParsers.get(peek(0).getType());
+        InfixParser parser = grammar.getInfixParsers().get(peek(0).getType());
         if (parser != null) return parser.getPrecedence();
 
         return 0;

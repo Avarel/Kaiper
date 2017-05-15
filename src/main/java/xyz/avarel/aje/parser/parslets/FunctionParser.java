@@ -1,8 +1,9 @@
 package xyz.avarel.aje.parser.parslets;
 
-import xyz.avarel.aje.runtime.functional.AJEFunction;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
+import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.expr.ValueExpr;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.types.compiled.CompiledFunction;
@@ -10,9 +11,9 @@ import xyz.avarel.aje.runtime.types.compiled.CompiledFunction;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FunctionParser implements PrefixParser<AJEFunction> {
+public class FunctionParser implements PrefixParser<Expr> {
     @Override
-    public AJEFunction parse(AJEParser parser, Token token) {
+    public Expr parse(AJEParser parser, Token token) {
         List<String> params = new ArrayList<>();
         List<Token> tokens = new ArrayList<>();
 
@@ -54,6 +55,6 @@ public class FunctionParser implements PrefixParser<AJEFunction> {
             parser.getObjects().put(name, function);
         }
 
-        return function;
+        return new ValueExpr(function);
     }
 }

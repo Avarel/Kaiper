@@ -10,7 +10,7 @@ AJE is an expression evaluator for the Java programming language. It is a math-o
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)*(5i+3)`|
 |Lists operations|`slice`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
-|First class functions|`function`|`Function*`|`sin(2)` `fun(x) = {x + 2}` `{x, y -> x^y}`|
+|First class functions|`function`|`Function*`|`fun(x) = {x + 2}` `{ (x,y) -> x^y }`|
 
 `*` Mapped to AJE object.
 
@@ -166,12 +166,12 @@ Result | [125, 150, 175]
   REPL | [1..10].map({ it ^ 2 })
 Result | [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
-  REPL | add = { x, y -> x + y }; [1..10].fold(0, add)
+  REPL | add = { (x, y) -> x + y }; [1..10].fold(0, add)
 Result | 55
 
   REPL | fun isEven(x) { x % 2 == 0 }; [1..20].filter(isEven)
 Result | [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
 
-  REPL | [1..10].fold(1, { x, y -> x * y })
+  REPL | [1..10].fold(1, { (x, y) -> x * y })
 Result | 3628800
 ```

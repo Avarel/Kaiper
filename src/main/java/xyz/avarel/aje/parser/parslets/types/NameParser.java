@@ -1,16 +1,14 @@
-package xyz.avarel.aje.parser.parslets;
+package xyz.avarel.aje.parser.parslets.types;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.expr.NameExpr;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.parser.lexer.TokenType;
 
-public class GroupParser implements PrefixParser<Expr> {
+public class NameParser implements PrefixParser<Expr> {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        Expr expr = parser.parse();
-        parser.eat(TokenType.RIGHT_PAREN);
-        return expr;
+        return new NameExpr(parser.getObjects(), token.getText());
     }
 }
