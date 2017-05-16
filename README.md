@@ -111,6 +111,10 @@ class AJETest {
 
 |Symbol|Description|Arguments|Example|
 |---|---|---|---:|
+|`compose`|Create a composition of two functions|(`function`,`function`)|`compose(asin, sin)`|
+|`map`|List transform function|(`list`, `function`)|`map([1..10], {it ^ 2})`|
+|`filter`|List filter function|(`list`, `function`)|`filter([1..10], {it%2==0})`|
+|`fold`|List accumulation function|(`list`, `value`, `function`)|`fold([1..10], 0, {a, b -> a + b})`|
 |`sqrt`|Square root function|(`complex`)|`sqrt(x)`|
 |`cbrt`|Cube root function|(`complex`)|`cbrt(x)`|
 |`exp`|Exponential function|(`complex`)|`exp(x)`|
@@ -119,13 +123,10 @@ class AJETest {
 |`round` `floor` `ceil`|Rounding functions|(`complex`)|`floor(x)`|
 |`sum`|Summation function|(`complex...`)|`sum(x, y, z)`|
 |`product`|Product function|(`complex...`)|`product(x, y, z)`|
-|`atan2`|Inverse trigonomic<br>four-quadrant tangent function|(`decimal`,`decimal`)|`atan2(x,y)`|
-|`map`|List transform function|(`list`, `function`)|`map([1..10], {it ^ 2})`|
-|`filter`|List filter function|(`list`, `function`)|`filter([1..10], {it%2==0})`|
-|`fold`|List accumulation function|(`list`, `value`, `function`)|`fold([1..10], 0, {a, b -> a + b})`|
 |`sin` `cos` `tan`<br>`csc` `sec` `cot`|Trigonomic functions|(`complex`)|`sin(x)`|
 |`sinh` `cosh` `tanh`<br>`csch` `sech` `coth`|Trigonomic hyperbolic functions|(`complex`)|`sinh(x)`|
 |`asin` `acos` `atan`<br>`acsc` `asec` `acot`|Inverse trigonomic functions|(`decimal`)|`asin(x)`|
+|`atan2`|Inverse trigonomic<br>four-quadrant tangent function|(`decimal`,`decimal`)|`atan2(x,y)`|
 
 ### REPL Demonstrations
 ##### Complex Numbers
