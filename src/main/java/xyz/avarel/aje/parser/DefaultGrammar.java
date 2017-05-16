@@ -23,7 +23,7 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.INT, new NumberParser());
         register(TokenType.DECIMAL, new NumberParser());
         register(TokenType.IMAGINARY, new NumberParser());
-        register(TokenType.BOOLEAN, new BooleanParser());
+        register(TokenType.BOOLEAN, new TruthParser());
         register(TokenType.FUNCTION, new FunctionParser());
 
 

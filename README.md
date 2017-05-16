@@ -30,7 +30,7 @@ class AJETest {
         // Add a normal function.
         exp.add("double", new NativeFunction(Numeric.TYPE) {
             @Override
-            protected Any<?> eval(List<Any> arguments) {
+            protected Any eval(List<Any> arguments) {
                 return arguments.get(0).times(2); 
                 // Only works for decimals/complex.
                 // Check out DefaultFunction.java to handle integers.
@@ -40,7 +40,7 @@ class AJETest {
         // Add a varargs function.
         exp.add("sum", new NativeFunction(true, Numeric.TYPE) {
             @Override
-            protected Any<?> eval(List<Any> arguments) {
+            protected Any eval(List<Any> arguments) {
                 if (arguments.isEmpty()) return Int.of(0);
                 Any accumulator = arguments.get(0);
                 for (int i = 1; i < arguments.size(); i++) {

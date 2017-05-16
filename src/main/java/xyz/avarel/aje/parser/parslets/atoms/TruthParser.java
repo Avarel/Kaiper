@@ -7,7 +7,7 @@ import xyz.avarel.aje.parser.expr.atoms.TruthExpr;
 import xyz.avarel.aje.parser.expr.atoms.UndefExpr;
 import xyz.avarel.aje.parser.lexer.Token;
 
-public class BooleanParser implements PrefixParser<Expr> {
+public class TruthParser implements PrefixParser<Expr> {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         switch(token.getText()) {
