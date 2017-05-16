@@ -3,7 +3,7 @@ package xyz.avarel.aje.parser.parslets.types;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.ValueExpr;
+import xyz.avarel.aje.parser.expr.atom.ValueExpr;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.types.compiled.CompiledFunction;

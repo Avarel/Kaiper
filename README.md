@@ -1,6 +1,9 @@
 AJE
 ===
-AJE is an expression evaluator for the Java programming language. It is a math-oriented, functional and dynamic language.
+**What is AJE?** AJE is an expression evaluator for the Java programming language.
+It is a dynamic and functional math-based language.
+
+**How does it work?** AJE compiles the script into AST trees and then evaluates it.
 
 ## Features
 |Feature|AJE Type|Java Type|Examples|
@@ -62,8 +65,6 @@ class AJETest {
 
 ### Operators
 ##### Numeric Operators `integer` `decimal` `complex` `slice`
-
-
 |Symbol|Description|Example|
 |---|---|---:|
 |`+`|Addition|`a + b`|
@@ -75,7 +76,6 @@ class AJETest {
 |`-`|Negation|`-a`|
 
 ##### Boolean and Relational Operators `boolean`
-
 |Symbol|Description|Example|
 |---|---|---:|
 |`~` `!`|Negation|`~a` `~true` `!false`|
@@ -92,6 +92,7 @@ class AJETest {
 |Symbol|Description|Example|
 |---|---|---:|
 |`function(args...)`|Invocation|`atan2(3.6, 2.5)`|
+|<code>&#124;></code>|Composition -  pipe forward|<code>5 &#124;> sin() &#124;> cos()</code>|
 
 ### Functions
 `complex` arguments can be either `integer`, `decimal`, or `complex`.
@@ -128,9 +129,9 @@ class AJETest {
 |`asec`|Inverse trigonomic secant function|(`decimal`)|`asec(x)`|
 |`acot`|Inverse trigonomic cotangent function|(`decimal`)|`acot(x)`|
 |`atan2`|Inverse trigonomic<br>four-quadrant tangent function|(`decimal`,`decimal`)|`atan2(x,y)`|
-|`map`|List transform function|(`slice`, `function`)|`map([1..10], {it ^ 2})`<br>`[1..10].map({it ^ 2})`|
-|`filter`|List filter function|(`slice`, `function`)|`filter([1..10], {it%2==0})`<br>`[1..10].filter({it%2==0})`|
-|`fold`|List accumulation function|(`slice`, `any`, `function`)|`fold([1..10], 0, {a, b -> a + b})`<br>`[1..10].fold(0, {a, b -> a + b})`|
+|`map`|List transform function|(`slice`, `function`)|`map([1..10], {it ^ 2})`|
+|`filter`|List filter function|(`slice`, `function`)|`filter([1..10], {it%2==0})`|
+|`fold`|List accumulation function|(`slice`, `any`, `function`)|`fold([1..10], 0, {a, b -> a + b})`|
 
 ### REPL Demonstrations
 ##### Complex Numbers
@@ -163,15 +164,15 @@ Result | [125, 150, 175]
 ```
 ##### First Class Functions
 ```
-  REPL | [1..10].map({ it ^ 2 })
+  REPL | [1..10] |> map({ it ^ 2 })
 Result | [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
-  REPL | add = { (x, y) -> x + y }; [1..10].fold(0, add)
+  REPL | add = { (x, y) -> x + y }; [1..10] |> fold(0, add)
 Result | 55
 
-  REPL | fun isEven(x) { x % 2 == 0 }; [1..20].filter(isEven)
+  REPL | fun isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
 Result | [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
 
-  REPL | [1..10].fold(1, { (x, y) -> x * y })
+  REPL | [1..10] |> fold(1, { (x, y) -> x * y })
 Result | 3628800
 ```

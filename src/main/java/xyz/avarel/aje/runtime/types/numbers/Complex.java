@@ -4,7 +4,7 @@ import xyz.avarel.aje.runtime.types.*;
 
 import java.math.BigDecimal;
 
-public class Complex implements Any<Complex>, NativeObject<Double> {
+public class Complex implements Any, NativeObject<Double> {
     public static final Type<Complex> TYPE = new Type<>(Numeric.TYPE, "complex");
 
     private final double re;

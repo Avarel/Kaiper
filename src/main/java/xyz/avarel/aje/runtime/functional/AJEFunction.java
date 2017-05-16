@@ -7,7 +7,7 @@ import xyz.avarel.aje.runtime.types.Type;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class AJEFunction implements Any<AJEFunction>, NativeObject<Function<List<Any>, Any>> {
+public abstract class AJEFunction implements Any, NativeObject<Function<List<Any>, Any>> {
     public static final Type<AJEFunction> TYPE = new Type<>("function");
 
     @Override

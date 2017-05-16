@@ -1,13 +1,13 @@
-package xyz.avarel.aje.parser.expr;
+package xyz.avarel.aje.parser.expr.atom;
 
-import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.runtime.types.Undefined;
 
 public enum UndefExpr implements Expr {
     VALUE;
 
     @Override
-    public Any compute() {
+    public Undefined compute() {
         return Undefined.VALUE;
     }
 }

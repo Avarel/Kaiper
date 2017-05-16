@@ -19,12 +19,14 @@ public class CompiledFunction extends AJEFunction {
     private final List<String> parameters;
     private final List<Token> tokens;
     private final ObjectPool pool;
+    private final AJEParser parser;
     private Expr expr;
 
     public CompiledFunction(List<String> parameters, List<Token> tokens, ObjectPool pool) {
         this.parameters = parameters;
         this.tokens = tokens;
         this.pool = pool;
+        this.parser = new AJEParser(new LexerProxy(tokens), pool.copy());
     }
 
     public List<String> getParameters() {
@@ -32,20 +34,20 @@ public class CompiledFunction extends AJEFunction {
     }
 
     @Override
-    public Any<?> invoke(List<Any> args) {
+    public Any invoke(List<Any> args) {
         if (args.size() != parameters.size()) {
             return Undefined.VALUE;
         }
 
-        // todo cache compilation
-        AJEParser parser = new AJEParser(new LexerProxy(tokens), pool.copy());
+        if (expr == null) {
+            expr = parser.compile();
+        }
 
-        // fixme probably by passing in objects along with exprs
         for (int i = 0; i < parameters.size(); i++) {
             parser.getObjects().put(parameters.get(i), args.get(i));
         }
 
-        return parser.compile().compute();
+        return expr.compute();
     }
 
 }

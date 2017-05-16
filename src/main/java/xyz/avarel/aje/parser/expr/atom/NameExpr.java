@@ -1,5 +1,6 @@
-package xyz.avarel.aje.parser.expr;
+package xyz.avarel.aje.parser.expr.atom;
 
+import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
 import xyz.avarel.aje.runtime.types.Any;
 

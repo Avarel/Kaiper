@@ -1,5 +1,6 @@
-package xyz.avarel.aje.parser.expr;
+package xyz.avarel.aje.parser.expr.operations;
 
+import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.runtime.types.Any;
 
 import java.util.function.BinaryOperator;

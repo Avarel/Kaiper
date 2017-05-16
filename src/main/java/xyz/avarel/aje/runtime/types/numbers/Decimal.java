@@ -2,7 +2,7 @@ package xyz.avarel.aje.runtime.types.numbers;
 
 import xyz.avarel.aje.runtime.types.*;
 
-public class Decimal implements Any<Decimal>, NativeObject<Double> {
+public class Decimal implements Any, NativeObject<Double> {
     public static final Type<Decimal> TYPE = new Type<>(Numeric.TYPE, "decimal");
 
     private final double value;
@@ -135,7 +135,7 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
     }
 
     @Override
-    public Truth isEqualTo(Any other) {
+    public Any isEqualTo(Any other) {
         if (other instanceof Decimal) {
             return this.isEqualTo((Decimal) other);
         } else if (other instanceof Int) {
@@ -146,12 +146,12 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
         return Truth.FALSE;
     }
 
-    private Truth isEqualTo(Decimal other) {
+    private Any isEqualTo(Decimal other) {
         return value == other.value ? Truth.TRUE : Truth.FALSE;
     }
 
     @Override
-    public Truth greaterThan(Any other) {
+    public Any greaterThan(Any other) {
         if (other instanceof Decimal) {
             return this.greaterThan((Decimal) other);
         } else if (other instanceof Int) {
@@ -162,12 +162,12 @@ public class Decimal implements Any<Decimal>, NativeObject<Double> {
         return Truth.FALSE;
     }
 
-    private Truth greaterThan(Decimal other) {
+    private Any greaterThan(Decimal other) {
         return value > other.value ? Truth.TRUE : Truth.FALSE;
     }
 
     @Override
-    public Truth lessThan(Any other) {
+    public Any lessThan(Any other) {
         if (other instanceof Decimal) {
             return this.lessThan((Decimal) other);
         } else if (other instanceof Int) {

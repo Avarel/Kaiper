@@ -4,7 +4,7 @@ import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.UnaryOperation;
+import xyz.avarel.aje.parser.expr.operations.UnaryOperation;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.runtime.types.Any;
 

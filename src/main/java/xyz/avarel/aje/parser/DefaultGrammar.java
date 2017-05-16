@@ -2,24 +2,19 @@ package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.parser.parslets.AttributeParser;
-import xyz.avarel.aje.parser.parslets.FunctionParser;
-import xyz.avarel.aje.parser.parslets.GroupParser;
-import xyz.avarel.aje.parser.parslets.InvocationParser;
+import xyz.avarel.aje.parser.parslets.*;
 import xyz.avarel.aje.parser.parslets.operator.BinaryOperatorParser;
+import xyz.avarel.aje.parser.parslets.operator.RangeToOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.UnaryOperatorParser;
-import xyz.avarel.aje.parser.parslets.types.BooleanParser;
-import xyz.avarel.aje.parser.parslets.types.LambdaParser;
-import xyz.avarel.aje.parser.parslets.types.NameParser;
-import xyz.avarel.aje.parser.parslets.types.NumberParser;
+import xyz.avarel.aje.parser.parslets.types.*;
 import xyz.avarel.aje.runtime.types.Any;
 
 public class DefaultGrammar extends Grammar {
     public static final Grammar INSTANCE = new DefaultGrammar();
 
     private DefaultGrammar() {
-//        // BLOCKS
-//        register(TokenType.LEFT_BRACKET, new SliceParser());
+        // BLOCKS
+        register(TokenType.LEFT_BRACKET, new SliceParser());
         register(TokenType.LEFT_PAREN, new GroupParser());
         register(TokenType.LEFT_BRACE, new LambdaParser());
 
@@ -30,6 +25,7 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.IMAGINARY, new NumberParser());
         register(TokenType.BOOLEAN, new BooleanParser());
         register(TokenType.FUNCTION, new FunctionParser());
+
 
         // Numeric
         register(TokenType.MINUS, new UnaryOperatorParser(Any::negative));
@@ -48,18 +44,19 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.LT, new BinaryOperatorParser(Precedence.COMPARISON, true, Any::lessThan));
         register(TokenType.GTE, new BinaryOperatorParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.greaterThan(b))));
         register(TokenType.LTE, new BinaryOperatorParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.lessThan(b))));
-//
-//        // Truth
-//        register(TokenType.TILDE, new UnaryTruthParser(Truth::negative));
-//        register(TokenType.BANG, new UnaryTruthParser(Truth::negative));
-        // todo own operators or implement type checks, probably own operators
-//        register(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, Any::times));
-//        register(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, Any::plus));
-//
-//        // Functional
+
+        // Truth
+        register(TokenType.BANG, new UnaryOperatorParser(Any::negate));
+        register(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, Any::and));
+        register(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, Any::or));
+
+        register(TokenType.RANGE_TO, new RangeToOperatorParser());
+
+        // Functional
         register(TokenType.LEFT_PAREN, new InvocationParser());
-//        register(TokenType.LEFT_BRACKET, new GetIndexParser());
+        register(TokenType.LEFT_BRACKET, new GetIndexParser());
         register(TokenType.DOT, new AttributeParser());
-//        register(TokenType.ASSIGN, new AssignmentParser());
+        register(TokenType.ASSIGN, new AssignmentParser());
+        register(TokenType.PIPE_FORWARD, new PipeForwardParser());
     }
 }

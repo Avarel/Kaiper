@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime.types;
 
-public class Type<T> implements Any<Type>, NativeObject<Type> {
+public class Type<T> implements Any, NativeObject<Type> {
     private static final Type TYPE = new Type("type");
 
     private final Type parent;

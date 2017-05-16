@@ -24,7 +24,7 @@ public abstract class NativeFunction extends AJEFunction {
     }
 
     @Override
-    public Any<?> invoke(List<Any> arguments) {
+    public Any invoke(List<Any> arguments) {
         if (!varargs && arguments.size() != parameters.size()) {
             return Undefined.VALUE;
         }
@@ -46,5 +46,5 @@ public abstract class NativeFunction extends AJEFunction {
         return eval(arguments);
     }
 
-    protected abstract Any<?> eval(List<Any> arguments);
+    protected abstract Any eval(List<Any> arguments);
 }

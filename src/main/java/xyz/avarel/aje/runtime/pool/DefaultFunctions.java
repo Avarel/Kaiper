@@ -120,7 +120,7 @@ public enum DefaultFunctions {
 
     SUM(new NativeFunction(true, Numeric.TYPE) {
         @Override
-        protected Any<?> eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             if (arguments.isEmpty()) return Int.of(0);
             Any accumulator = arguments.get(0);
             for (int i = 1; i < arguments.size(); i++) {
@@ -132,7 +132,7 @@ public enum DefaultFunctions {
 
     PRODUCT(new NativeFunction(true, Numeric.TYPE) {
         @Override
-        protected Any<?> eval(List<Any> arguments) {
+        protected Any eval(List<Any> arguments) {
             if (arguments.isEmpty()) return Int.of(0);
             Any accumulator = arguments.get(0);
             for (int i = 1; i < arguments.size(); i++) {

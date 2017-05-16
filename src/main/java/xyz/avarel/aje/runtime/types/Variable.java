@@ -3,7 +3,7 @@ package xyz.avarel.aje.runtime.types;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-public class Variable implements Any<Any<? extends Any>> {
+public class Variable implements Any {
     private Any value;
 
     public Variable(Any value) {
@@ -16,12 +16,12 @@ public class Variable implements Any<Any<? extends Any>> {
     }
 
     @Override
-    public Any<?> set(Any other) {
+    public Any set(Any other) {
         return value = other;
     }
 
     @Override
-    public Any<?> get(String name) {
+    public Any get(String name) {
         return identity();
     }
 
@@ -46,87 +46,87 @@ public class Variable implements Any<Any<? extends Any>> {
     }
 
     @Override
-    public Any<?> minus(Any other) {
+    public Any minus(Any other) {
         return identity().minus(other);
     }
 
     @Override
-    public Any<?> times(Any other) {
+    public Any times(Any other) {
         return identity().times(other);
     }
 
     @Override
-    public Any<?> divide(Any other) {
+    public Any divide(Any other) {
         return identity().divide(other);
     }
 
     @Override
-    public Any<?> mod(Any other) {
+    public Any mod(Any other) {
         return identity().mod(other);
     }
 
     @Override
-    public Any<?> pow(Any other) {
+    public Any pow(Any other) {
         return identity().pow(other);
     }
 
     @Override
-    public Any<?> negative() {
+    public Any negative() {
         return identity().negative();
     }
 
     @Override
-    public Any<?> plus(double other) {
+    public Any plus(double other) {
         return identity().plus(other);
     }
 
     @Override
-    public Any<?> minus(double other) {
+    public Any minus(double other) {
         return identity().minus(other);
     }
 
     @Override
-    public Any<?> times(double other) {
+    public Any times(double other) {
         return identity().times(other);
     }
 
     @Override
-    public Any<?> divide(double other) {
+    public Any divide(double other) {
         return identity().divide(other);
     }
 
     @Override
-    public Any<?> mod(double other) {
+    public Any mod(double other) {
         return identity().mod(other);
     }
 
     @Override
-    public Any<?> pow(double other) {
+    public Any pow(double other) {
         return identity().pow(other);
     }
 
     @Override
-    public Truth isEqualTo(Any other) {
+    public Any isEqualTo(Any other) {
         return identity().isEqualTo(other);
     }
 
     @Override
-    public Truth greaterThan(Any other) {
+    public Any greaterThan(Any other) {
         return identity().greaterThan(other);
     }
 
     @Override
-    public Truth lessThan(Any other) {
+    public Any lessThan(Any other) {
         return identity().lessThan(other);
     }
 
     @Override
-    public Slice rangeTo(Any other) {
+    public Any rangeTo(Any other) {
         return identity().rangeTo(other);
     }
 
     @Override
-    public Any<?> invoke(List<Any> args) {
+    public Any invoke(List<Any> args) {
         return identity().invoke(args);
     }
 

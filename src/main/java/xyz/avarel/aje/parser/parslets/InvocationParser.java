@@ -4,7 +4,7 @@ import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.InvocationExpr;
+import xyz.avarel.aje.parser.expr.invocation.InvocationExpr;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class InvocationParser extends BinaryParser<Expr, Expr> {
     public InvocationParser() {
-        super(Precedence.ACCESS, true);
+        super(Precedence.ACCESS);
     }
 
     @Override

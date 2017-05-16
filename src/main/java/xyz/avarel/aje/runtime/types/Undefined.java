@@ -4,7 +4,7 @@ package xyz.avarel.aje.runtime.types;
  * Every operation results in the same
  * instance, NOTHING.
  */
-public enum Undefined implements Any<Undefined>, NativeObject<Undefined> {
+public enum Undefined implements Any, NativeObject<Undefined> {
     VALUE;
 
     public static final Type<Void> TYPE = new Type<>( "undefined");

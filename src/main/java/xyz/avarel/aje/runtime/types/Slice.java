@@ -1,28 +1,27 @@
 package xyz.avarel.aje.runtime.types;
 
-import xyz.avarel.aje.runtime.functional.AJEFunction;
-import xyz.avarel.aje.runtime.functional.NativeFunction;
-import xyz.avarel.aje.runtime.pool.DefaultFunctions;
 import xyz.avarel.aje.runtime.types.numbers.Int;
 import xyz.avarel.aje.runtime.types.numbers.Numeric;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
 @SuppressWarnings("unchecked")
-public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<List<Any>> {
+public class Slice extends ArrayList<Any> implements Any, NativeObject<List<Any>> {
     public static final Type<Slice> TYPE = new Type<>("slice");
 
     public Slice() {
         super();
     }
 
-
-    public Slice(Any value) {
-        add(value);
+    public static Slice of(Any... items) {
+        Slice slice = new Slice();
+        slice.addAll(Arrays.asList(items));
+        return slice;
     }
 
     @Override
@@ -45,7 +44,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
         if (other instanceof Slice) {
             return plus((Slice) other);
         }
-        return plus(new Slice(other));
+        return plus(Slice.of(other));
     }
 
     private Slice plus(Slice other) {
@@ -57,7 +56,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
         if (other instanceof Slice) {
             return minus((Slice) other);
         }
-        return minus(new Slice(other));
+        return minus(Slice.of(other));
     }
 
     private Slice minus(Slice other) {
@@ -69,7 +68,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
         if (other instanceof Slice) {
             return times((Slice) other);
         }
-        return times(new Slice(other));
+        return times(Slice.of(other));
     }
 
     private Slice times(Slice other) {
@@ -81,7 +80,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
         if (other instanceof Slice) {
             return divide((Slice) other);
         }
-        return divide(new Slice(other));
+        return divide(Slice.of(other));
     }
 
     private Slice divide(Slice other) {
@@ -93,7 +92,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
         if (other instanceof Slice) {
             return pow((Slice) other);
         }
-        return pow(new Slice(other));
+        return pow(Slice.of(other));
     }
 
     private Slice pow(Slice other) {
@@ -136,7 +135,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
         int len = size() == 1 ? other.size()
                 : other.size() == 1 ? size()
                 : Math.min(size(), other.size());
-        Slice slice = new Slice();
+        Slice slice = Slice.of();
         for (int i = 0; i < len; i++) {
             slice.add(Numeric.process(get(i % size()), other.get(i % other.size()), operator));
         }
@@ -144,7 +143,7 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
     }
 
     private Slice listOperation(UnaryOperator<Any> operator) {
-        Slice slice = new Slice();
+        Slice slice = Slice.of();
         for (int i = 0; i < size(); i++) {
             slice.add(operator.apply(get(i % size())));
         }
@@ -152,31 +151,9 @@ public class Slice extends ArrayList<Any> implements Any<Slice>, NativeObject<Li
     }
 
     @Override
-    public Any<?> get(String name) {
+    public Any get(String name) {
         switch(name) {
             case "size": return Int.of(size());
-            case "map" : return new NativeFunction(AJEFunction.TYPE) {
-                @Override
-                public Any eval(List<Any> arguments) {
-                    AJEFunction transform = (AJEFunction) arguments.get(0);
-                    return DefaultFunctions.MAP.get().invoke(Slice.this, transform);
-                }
-            };
-            case "filter" : return new NativeFunction(AJEFunction.TYPE) {
-                @Override
-                public Any eval(List<Any> arguments) {
-                    AJEFunction predicate = (AJEFunction) arguments.get(0);
-                    return DefaultFunctions.FILTER.get().invoke(Slice.this, predicate);
-                }
-            };
-            case "fold" : return new NativeFunction(Any.TYPE, AJEFunction.TYPE) {
-                @Override
-                public Any eval(List<Any> arguments) {
-                    Any accumulator = arguments.get(0);
-                    AJEFunction operation = (AJEFunction) arguments.get(1);
-                    return DefaultFunctions.FOLD.get().invoke(Slice.this, accumulator, operation);
-                }
-            };
             default: return Undefined.VALUE;
         }
     }

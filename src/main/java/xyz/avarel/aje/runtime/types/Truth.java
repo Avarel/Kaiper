@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime.types;
 
-public enum Truth implements Any<Truth>, NativeObject<Boolean> {
+public enum Truth implements Any, NativeObject<Boolean> {
     TRUE(true),
     FALSE(false);
 
@@ -28,7 +28,7 @@ public enum Truth implements Any<Truth>, NativeObject<Boolean> {
     }
 
     @Override
-    public Any plus(Any other) {
+    public Any or(Any other) {
         if (other instanceof Truth) {
             return or((Truth) other);
         }
@@ -42,7 +42,7 @@ public enum Truth implements Any<Truth>, NativeObject<Boolean> {
     }
 
     @Override
-    public Any times(Any other) {
+    public Any and(Any other) {
         if (other instanceof Truth) {
             return and((Truth) other);
         }
@@ -56,7 +56,7 @@ public enum Truth implements Any<Truth>, NativeObject<Boolean> {
     }
 
     @Override
-    public Truth negative() {
+    public Truth negate() {
         return value ? FALSE : TRUE;
     }
 

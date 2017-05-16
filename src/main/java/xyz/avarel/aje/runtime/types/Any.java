@@ -8,13 +8,12 @@ import java.util.List;
 
 /**
  * An interface containing all natively implemented operations.
- * @param <T> AJE representation.
  */
 @SuppressWarnings("unchecked")
-public interface Any<T extends Any> {
+public interface Any {
     Type<Any> TYPE = new Type("any");
 
-    Type<T> getType();
+    Type getType();
 
     default boolean isNativeObject() {
         return this instanceof NativeObject;
@@ -22,10 +21,10 @@ public interface Any<T extends Any> {
 
     @SuppressWarnings("unchecked")
     default Object toNative() {
-        return ((NativeObject<T>) this).toNative();
+        return ((NativeObject) this).toNative();
     }
 
-
+    // OPERATORS
 
     // Basic arithmetic
     default Any plus(Any other) {
@@ -56,6 +55,9 @@ public interface Any<T extends Any> {
         return Undefined.VALUE;
     }
 
+    default Any negate() {
+        return Undefined.VALUE;
+    }
 
     default Any plus(double other) {
         return plus(Decimal.of(other));
@@ -83,24 +85,32 @@ public interface Any<T extends Any> {
 
 
     // Boolean logic
-    default Truth isEqualTo(Any other) {
+    default Any isEqualTo(Any other) {
         return this.equals(other) ? Truth.TRUE : Truth.FALSE;
     }
 
-    default Truth greaterThan(Any other) {
-        throw unsupported("greater than comparison");
+    default Any greaterThan(Any other) {
+        return Undefined.VALUE;
     }
 
-    default Truth lessThan(Any other) {
-        throw unsupported("less than comparison");
+    default Any lessThan(Any other) {
+        return Undefined.VALUE;
+    }
+
+    default Any or(Any any) {
+        return Undefined.VALUE;
+    }
+
+    default Any and(Any any) {
+        return Undefined.VALUE;
     }
 
 
     // Slices
-    default Slice rangeTo(Any other) {
-        throw unsupported("range to");
+    default Any rangeTo(Any other) {
+        return Undefined.VALUE;
     }
-
+//
 
 
     // Functional
@@ -112,12 +122,12 @@ public interface Any<T extends Any> {
         return invoke(Arrays.asList(arguments));
     }
 
-    default T identity() {
-        return (T) this;
+    default Any identity() {
+        return this;
     }
 
     default Any set(Any other) {
-        throw unsupported("set");
+        return Undefined.VALUE;
     }
 
     default Any get(String name) {
