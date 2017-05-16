@@ -6,9 +6,18 @@ public interface Expr {
     Any compute();
 
     default Expr andThen(Expr other) {
-        return () -> {
-            compute();
-            return other.compute();
+        final Expr me = this;
+        return new Expr() {
+            @Override
+            public Any compute() {
+                me.compute();
+                return other.compute();
+            }
+
+            @Override
+            public String toString() {
+                return me + " then " + other;
+            }
         };
     }
 }

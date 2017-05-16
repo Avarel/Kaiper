@@ -12,7 +12,7 @@ It is a dynamic and functional math-based language.
 |Decimals|`decimal`|`Double`|`1.235` `-2/17` `3.0+2.5`|
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)*(5i+3)`|
-|Lists operations|`slice`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
+|Lists operations|`list`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
 |First class functions|`function`|`Function*`|`fun(x) = {x + 2}` `{ (x,y) -> x^y }`|
 
 `*` Mapped to AJE object.
@@ -64,7 +64,7 @@ class AJETest {
 ```
 
 ### Operators
-##### Numeric Operators `integer` `decimal` `complex` `slice`
+##### Numeric Operators `integer` `decimal` `complex` `list`
 |Symbol|Description|Example|
 |---|---|---:|
 |`+`|Addition|`a + b`|
@@ -88,11 +88,17 @@ class AJETest {
 |`>=`|Greater than or equal to|`a >= b`|
 |`<=`|Less than or equal to|`a <= b`|
 
+##### List Operators `list`
+|Symbol|Description|Example|
+|---|---|---:|
+|`[integer]`|Get item at index.|`list[i]`|
+|`[integer:integer]`|Sublist from start inclusive to end exclusive.|`list[start:end]`|
+
 ##### Functional Operators `function`
 |Symbol|Description|Example|
 |---|---|---:|
 |`function(args...)`|Invocation|`atan2(3.6, 2.5)`|
-|<code>&#124;></code>|Pipe forward as first argument|<code>5 &#124;> sin() &#124;> cos()</code>|
+|<code>&#124;></code>|Pipe forward as first argument, note that this is not a composition.|<code>5 &#124;> sin() &#124;> cos()</code>|
 |`+`|Sum of functions|`(f+g)(x) == f(x) + g(x)`|
 |`-`|Difference of functions|`(f-g)(x) == f(x) - g(x)`|
 |`*`|Product of functions|`(f*g)(x) == f(x) * g(x)`|
@@ -110,32 +116,16 @@ class AJETest {
 |`exp`|Exponential function|(`complex`)|`exp(x)`|
 |`log`|Log (base 10) function|(`complex`)|`log(x)`|
 |`ln`|Log (base e) function|(`complex`)|`ln(x)`|
-|`floor`|Floor function|(`complex`)|`floor(x)`|
-|`ceil`|Ceiling function|(`complex`)|`ceil(x)`|
+|`round` `floor` `ceil`|Rounding functions|(`complex`)|`floor(x)`|
 |`sum`|Summation function|(`complex...`)|`sum(x, y, z)`|
 |`product`|Product function|(`complex...`)|`product(x, y, z)`|
-|`sin`|Trigonomic sine function|(`complex`)|`sin(x)`|
-|`cos`|Trigonomic cosine function|(`complex`)|`cos(x)`|
-|`tan`|Trigonomic tangent function|(`complex`)|`tan(x)`|
-|`csc`|Trigonomic cosecant function|(`complex`)|`csc(x)`|
-|`sec`|Trigonomic secant function|(`complex`)|`sec(x)`|
-|`cot`|Trigonomic cotangent function|(`complex`)|`cot(x)`|
-|`sinh`|Trigonomic hyperbolic sine function|(`complex`)|`sinh(x)`|
-|`cosh`|Trigonomic hyperbolic cosine function|(`complex`)|`cosh(x)`|
-|`tanh`|Trigonomic hyperbolic tangent function|(`complex`)|`tanh(x)`|
-|`csch`|Trigonomic hyperbolic cosecant function|(`complex`)|`csch(x)`|
-|`sech`|Trigonomic hyperbolic secant function|(`complex`)|`sech(x)`|
-|`coth`|Trigonomic hyperbolic cotangent function|(`complex`)|`coth(x)`|
-|`asin`|Inverse trigonomic sine function|(`decimal`)|`asin(x)`|
-|`acos`|Inverse trigonomic cosine function|(`decimal`)|`acos(x)`|
-|`atan`|Inverse trigonomic tangent function|(`decimal`)|`atan(x)`|
-|`acsc`|Inverse trigonomic cosecant function|(`decimal`)|`acsc(x)`|
-|`asec`|Inverse trigonomic secant function|(`decimal`)|`asec(x)`|
-|`acot`|Inverse trigonomic cotangent function|(`decimal`)|`acot(x)`|
 |`atan2`|Inverse trigonomic<br>four-quadrant tangent function|(`decimal`,`decimal`)|`atan2(x,y)`|
-|`map`|List transform function|(`slice`, `function`)|`map([1..10], {it ^ 2})`|
-|`filter`|List filter function|(`slice`, `function`)|`filter([1..10], {it%2==0})`|
-|`fold`|List accumulation function|(`slice`, `value`, `function`)|`fold([1..10], 0, {a, b -> a + b})`|
+|`map`|List transform function|(`list`, `function`)|`map([1..10], {it ^ 2})`|
+|`filter`|List filter function|(`list`, `function`)|`filter([1..10], {it%2==0})`|
+|`fold`|List accumulation function|(`list`, `value`, `function`)|`fold([1..10], 0, {a, b -> a + b})`|
+|`sin` `cos` `tan`<br>`csc` `sec` `cot`|Trigonomic functions|(`complex`)|`sin(x)`|
+|`sinh` `cosh` `tanh`<br>`csch` `sech` `coth`|Trigonomic hyperbolic functions|(`complex`)|`sinh(x)`|
+|`asin` `acos` `atan`<br>`acsc` `asec` `acot`|Inverse trigonomic functions|(`decimal`)|`asin(x)`|
 
 ### REPL Demonstrations
 ##### Complex Numbers

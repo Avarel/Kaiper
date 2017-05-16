@@ -9,17 +9,11 @@ public class BinaryOperation implements Expr {
     private final Expr left;
     private final Expr right;
     private final BinaryOperator<Any> operator;
-    private final String node;
 
     public BinaryOperation(Expr left, Expr right, BinaryOperator<Any> operator) {
-        this(left, right, operator, "binary");
-    }
-
-    public BinaryOperation(Expr left, Expr right, BinaryOperator<Any> operator, String node) {
         this.left = left;
         this.right = right;
         this.operator = operator;
-        this.node = node;
     }
 
     @Override
@@ -29,6 +23,6 @@ public class BinaryOperation implements Expr {
 
     @Override
     public String toString() {
-        return "(" + node + " " + left + ", " + right + ")";
+        return "(binary " + left + ", " + right + ")";
     }
 }

@@ -4,7 +4,7 @@ public enum Truth implements Any, NativeObject<Boolean> {
     TRUE(true),
     FALSE(false);
 
-    public static final Type<Truth> TYPE = new Type<>("truth");
+    public static final Type<Truth> TYPE = new Type<>("boolean");
 
     private final boolean value;
 

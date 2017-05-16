@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.parslets;
+package xyz.avarel.aje.parser.parslets.atoms;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
@@ -6,7 +6,7 @@ import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.expr.atoms.ValueAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.functional.CompiledFunction;
+import xyz.avarel.aje.runtime.functions.CompiledFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +33,7 @@ public class FunctionParser implements PrefixParser<Expr> {
 
         if (parser.match(TokenType.ASSIGN)) {
             if (parser.match(TokenType.LEFT_BRACE)) { // fun(x) = { x + 1 }
-                while (!parser.match(TokenType.RIGHT_BRACE)) {
-                    tokens.add(parser.eat());
-                }
+                parseBlock(parser, tokens);
             } else { // fun(x) = x + 1
                 while (parser.peek(0).getType() != TokenType.LINE
                         && parser.peek(0).getType() != TokenType.EOF) {
@@ -44,9 +42,7 @@ public class FunctionParser implements PrefixParser<Expr> {
             }
         } else { // fun(x) { x + 1 }
             parser.eat(TokenType.LEFT_BRACE);
-            while (!parser.match(TokenType.RIGHT_BRACE)) {
-                tokens.add(parser.eat());
-            }
+            parseBlock(parser, tokens);
         }
 
         CompiledFunction function = new CompiledFunction(params, tokens, parser.getObjects());
@@ -56,5 +52,24 @@ public class FunctionParser implements PrefixParser<Expr> {
         }
 
         return new ValueAtom(function);
+    }
+
+    private void parseBlock(AJEParser parser, List<Token> target) {
+        int level = 0;
+        while (true) {
+            Token t = parser.eat();
+
+            if (t.getType() == TokenType.LEFT_BRACE) {
+                level++;
+            } else if (t.getType() == TokenType.RIGHT_BRACE) {
+                if (level > 0) {
+                    level--;
+                } else {
+                    break;
+                }
+            }
+
+            target.add(t);
+        }
     }
 }

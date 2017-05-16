@@ -9,7 +9,7 @@ public class SpeedTest extends TestCase {
         // (8+2i)*(5i+3)
         // [1..10] * 10
         // x = fun(x) { x + 2 }; fun y(x) = { x + 2 }; z = { (x) -> x + 2 }; x(2) == y(2) /\ y(2) == z(2)
-        String script = "(8+2i)*(5i+3)";
+        String script = "1+2";
         int testsAmt = 10000;
 
         testPrecompiledSpeed(script, 100);

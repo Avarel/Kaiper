@@ -1,15 +1,16 @@
 package xyz.avarel.aje.runtime.pool;
 
-import xyz.avarel.aje.runtime.functional.AJEFunction;
-import xyz.avarel.aje.runtime.functional.NativeFunction;
 import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.Slice;
 import xyz.avarel.aje.runtime.Truth;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.types.numbers.Complex;
-import xyz.avarel.aje.runtime.types.numbers.Decimal;
-import xyz.avarel.aje.runtime.types.numbers.Int;
-import xyz.avarel.aje.runtime.types.numbers.Numeric;
+import xyz.avarel.aje.runtime.functions.AJEFunction;
+import xyz.avarel.aje.runtime.functions.ComposedFunction;
+import xyz.avarel.aje.runtime.functions.NativeFunction;
+import xyz.avarel.aje.runtime.numbers.Complex;
+import xyz.avarel.aje.runtime.numbers.Decimal;
+import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.numbers.Numeric;
 
 import java.util.Collections;
 import java.util.List;
@@ -139,6 +140,13 @@ public enum DefaultFunctions {
                 accumulator = Numeric.process(accumulator, arguments.get(i), Any::times);
             }
             return accumulator;
+        }
+    }),
+
+    COMPOSE(new NativeFunction(AJEFunction.TYPE, AJEFunction.TYPE) {
+        @Override
+        protected Any eval(List<Any> arguments) {
+            return new ComposedFunction((AJEFunction) arguments.get(0), (AJEFunction) arguments.get(1));
         }
     }),
 

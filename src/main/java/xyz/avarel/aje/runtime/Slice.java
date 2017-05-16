@@ -1,17 +1,14 @@
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.runtime.types.numbers.Int;
-import xyz.avarel.aje.runtime.types.numbers.Numeric;
+import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.numbers.Numeric;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
 public class Slice extends ArrayList<Any> implements Any, NativeObject<List<Any>> {
-    public static final Type<Slice> TYPE = new Type<>("slice");
+    public static final Type<Slice> TYPE = new Type<>("list");
 
     public Slice() {
         super();
@@ -20,6 +17,12 @@ public class Slice extends ArrayList<Any> implements Any, NativeObject<List<Any>
     public static Slice of(Any... items) {
         Slice slice = new Slice();
         slice.addAll(Arrays.asList(items));
+        return slice;
+    }
+
+    public static Slice ofList(Collection<Any> items) {
+        Slice slice = new Slice();
+        slice.addAll(items);
         return slice;
     }
 

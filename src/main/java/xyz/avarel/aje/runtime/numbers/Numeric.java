@@ -1,4 +1,4 @@
-package xyz.avarel.aje.runtime.types.numbers;
+package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.Type;

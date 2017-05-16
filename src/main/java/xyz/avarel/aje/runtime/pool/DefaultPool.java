@@ -2,9 +2,9 @@ package xyz.avarel.aje.runtime.pool;
 
 import xyz.avarel.aje.runtime.Slice;
 import xyz.avarel.aje.runtime.Truth;
-import xyz.avarel.aje.runtime.types.numbers.Complex;
-import xyz.avarel.aje.runtime.types.numbers.Decimal;
-import xyz.avarel.aje.runtime.types.numbers.Int;
+import xyz.avarel.aje.runtime.numbers.Complex;
+import xyz.avarel.aje.runtime.numbers.Decimal;
+import xyz.avarel.aje.runtime.numbers.Int;
 
 public class DefaultPool extends ObjectPool {
     public static final DefaultPool INSTANCE = new DefaultPool();
@@ -12,6 +12,8 @@ public class DefaultPool extends ObjectPool {
     private DefaultPool() {
         put("pi", Decimal.of(Math.PI));
         put("e", Decimal.of(Math.E));
+
+        put("compose", DefaultFunctions.COMPOSE.get());
 
         put("sqrt", DefaultFunctions.SQUARE_ROOT.get());
         put("cbrt", DefaultFunctions.CUBE_ROOT.get());

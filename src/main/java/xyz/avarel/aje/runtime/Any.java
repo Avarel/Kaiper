@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.runtime.types.numbers.Decimal;
+import xyz.avarel.aje.runtime.numbers.Decimal;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +18,7 @@ public interface Any {
     }
 
     default Object toNative() {
-        return ((NativeObject) this).toNative();
+        return ((NativeObject<?>) this).toNative();
     }
 
     // OPERATORS

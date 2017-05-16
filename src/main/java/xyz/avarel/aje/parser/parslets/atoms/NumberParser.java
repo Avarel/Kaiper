@@ -7,9 +7,9 @@ import xyz.avarel.aje.parser.expr.atoms.UndefAtom;
 import xyz.avarel.aje.parser.expr.atoms.ValueAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.types.numbers.Complex;
-import xyz.avarel.aje.runtime.types.numbers.Decimal;
-import xyz.avarel.aje.runtime.types.numbers.Int;
+import xyz.avarel.aje.runtime.numbers.Complex;
+import xyz.avarel.aje.runtime.numbers.Decimal;
+import xyz.avarel.aje.runtime.numbers.Int;
 
 public class NumberParser implements PrefixParser<Expr> {
     @Override

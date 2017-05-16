@@ -1,4 +1,4 @@
-package xyz.avarel.aje.runtime.functional;
+package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.expr.Expr;
@@ -9,6 +9,7 @@ import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Every operation results in the same
@@ -31,6 +32,11 @@ public class CompiledFunction extends AJEFunction {
     @Override
     public int getArity() {
         return parameters.size();
+    }
+
+    @Override
+    public String toString() {
+        return "function(" + parameters.stream().collect(Collectors.joining(",")) + ")";
     }
 
     @Override

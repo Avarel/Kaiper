@@ -1,4 +1,4 @@
-package xyz.avarel.aje.runtime.functional;
+package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.Type;
@@ -23,31 +23,36 @@ public abstract class NativeFunction extends AJEFunction {
     }
 
     @Override
+    public String toString() {
+        return "native function";
+    }
+
+    @Override
     public int getArity() {
         return parameters.size();
     }
 
     @Override
-    public Any invoke(List<Any> arguments) {
-        if (!varargs && arguments.size() != getArity()) {
+    public Any invoke(List<Any> args) {
+        if (!varargs && args.size() != getArity()) {
             return Undefined.VALUE;
         }
 
         if (!varargs) {
             for (int i = 0; i < parameters.size(); i++) {
-                if (!arguments.get(i).getType().is(parameters.get(i))) {
+                if (!args.get(i).getType().is(parameters.get(i))) {
                     return Undefined.VALUE;
                 }
             }
         } else {
-            for (Any argument : arguments) { // all varargs should be the same size
+            for (Any argument : args) { // all varargs should be the same size
                 if (!argument.getType().is(parameters.get(0))) {
                     return Undefined.VALUE;
                 }
             }
         }
 
-        return eval(arguments);
+        return eval(args);
     }
 
     protected abstract Any eval(List<Any> arguments);

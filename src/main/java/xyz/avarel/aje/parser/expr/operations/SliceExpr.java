@@ -29,6 +29,6 @@ public class SliceExpr implements Expr {
 
     @Override
     public String toString() {
-        return "(makeSlice " + exprs + ")";
+        return "(list of " + exprs + ")";
     }
 }

@@ -6,7 +6,7 @@ import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.expr.atoms.ValueAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.functional.CompiledFunction;
+import xyz.avarel.aje.runtime.functions.CompiledFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +30,19 @@ public class LambdaParser implements PrefixParser<Expr> {
             parser.eat(TokenType.ARROW);
         }
 
-        while (!parser.match(TokenType.RIGHT_BRACE)) {
+        int level = 0;
+        while (true) {
             Token t = parser.eat();
+
+            if (t.getType() == TokenType.LEFT_BRACE) {
+                level++;
+            } else if (t.getType() == TokenType.RIGHT_BRACE) {
+                if (level > 0) {
+                    level--;
+                } else {
+                    break;
+                }
+            }
 
             if (t.getText().equals("it")) implicit = true;
 
