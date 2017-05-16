@@ -1,6 +1,7 @@
 package xyz.avarel.aje.parser.expr.invocation;
 
 import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.expr.atoms.NameExpr;
 import xyz.avarel.aje.runtime.types.Any;
 import xyz.avarel.aje.runtime.types.Undefined;
 
@@ -20,6 +21,9 @@ public class PipeForwardExpr implements Expr {
             InvocationExpr invocation = (InvocationExpr) right;
             invocation.getExprs().add(0, left);
             return invocation.compute();
+        } else if (right instanceof NameExpr) {
+            NameExpr name = (NameExpr) right;
+            return name.compute().invoke(left.compute());
         }
 
         return Undefined.VALUE;

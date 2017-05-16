@@ -1,6 +1,5 @@
 package xyz.avarel.aje.runtime.types;
 
-import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.runtime.types.numbers.Decimal;
 
 import java.util.Arrays;
@@ -9,9 +8,8 @@ import java.util.List;
 /**
  * An interface containing all natively implemented operations.
  */
-@SuppressWarnings("unchecked")
 public interface Any {
-    Type<Any> TYPE = new Type("any");
+    Type<Any> TYPE = new Type<>("any");
 
     Type getType();
 
@@ -19,7 +17,6 @@ public interface Any {
         return this instanceof NativeObject;
     }
 
-    @SuppressWarnings("unchecked")
     default Object toNative() {
         return ((NativeObject) this).toNative();
     }
@@ -132,9 +129,5 @@ public interface Any {
 
     default Any get(String name) {
         return Undefined.VALUE;
-    }
-
-    default RuntimeException unsupported(String desc) {
-        return new AJEException(getType() + " does not support " + desc + ".");
     }
 }

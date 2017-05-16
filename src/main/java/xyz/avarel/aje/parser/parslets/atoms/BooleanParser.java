@@ -1,10 +1,10 @@
-package xyz.avarel.aje.parser.parslets.types;
+package xyz.avarel.aje.parser.parslets.atoms;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.atom.TruthExpr;
-import xyz.avarel.aje.parser.expr.atom.UndefExpr;
+import xyz.avarel.aje.parser.expr.atoms.TruthExpr;
+import xyz.avarel.aje.parser.expr.atoms.UndefExpr;
 import xyz.avarel.aje.parser.lexer.Token;
 
 public class BooleanParser implements PrefixParser<Expr> {

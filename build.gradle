@@ -8,7 +8,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '2.0.0'
 }
 
-def versionObj = new Version(major: 2, minor: 2, revision: 2)
+def versionObj = new Version(major: 3, minor: 0, revision: 0)
 
 group = 'xyz.avarel'
 archivesBaseName = 'AJE'

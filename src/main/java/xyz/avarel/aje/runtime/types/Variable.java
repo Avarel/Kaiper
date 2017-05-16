@@ -2,7 +2,6 @@ package xyz.avarel.aje.runtime.types;
 
 import java.util.List;
 
-@SuppressWarnings("unchecked")
 public class Variable implements Any {
     private Any value;
 

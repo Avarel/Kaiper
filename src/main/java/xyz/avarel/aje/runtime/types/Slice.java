@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
-@SuppressWarnings("unchecked")
 public class Slice extends ArrayList<Any> implements Any, NativeObject<List<Any>> {
     public static final Type<Slice> TYPE = new Type<>("slice");
 

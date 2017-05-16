@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.parslets.types;
+package xyz.avarel.aje.parser.parslets.atoms;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;

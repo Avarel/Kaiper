@@ -6,7 +6,7 @@ import xyz.avarel.aje.parser.parslets.*;
 import xyz.avarel.aje.parser.parslets.operator.BinaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.RangeToOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.UnaryOperatorParser;
-import xyz.avarel.aje.parser.parslets.types.*;
+import xyz.avarel.aje.parser.parslets.atoms.*;
 import xyz.avarel.aje.runtime.types.Any;
 
 public class DefaultGrammar extends Grammar {

@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.expr.atom;
+package xyz.avarel.aje.parser.expr.atoms;
 
 import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.runtime.types.Undefined;
