@@ -1,13 +1,12 @@
-package xyz.avarel.aje.runtime.types.compiled;
+package xyz.avarel.aje.runtime.functional;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.lexer.LexerProxy;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.runtime.functional.AJEFunction;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
-import xyz.avarel.aje.runtime.types.Any;
-import xyz.avarel.aje.runtime.types.Undefined;
+import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
 
@@ -29,13 +28,14 @@ public class CompiledFunction extends AJEFunction {
         this.parser = new AJEParser(new LexerProxy(tokens), pool.copy());
     }
 
-    public List<String> getParameters() {
-        return parameters;
+    @Override
+    public int getArity() {
+        return parameters.size();
     }
 
     @Override
     public Any invoke(List<Any> args) {
-        if (args.size() != parameters.size()) {
+        if (args.size() != getArity()) {
             return Undefined.VALUE;
         }
 

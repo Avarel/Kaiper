@@ -2,10 +2,10 @@ package xyz.avarel.aje.runtime.pool;
 
 import xyz.avarel.aje.runtime.functional.AJEFunction;
 import xyz.avarel.aje.runtime.functional.NativeFunction;
-import xyz.avarel.aje.runtime.types.Any;
-import xyz.avarel.aje.runtime.types.Slice;
-import xyz.avarel.aje.runtime.types.Truth;
-import xyz.avarel.aje.runtime.types.Undefined;
+import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Slice;
+import xyz.avarel.aje.runtime.Truth;
+import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.types.numbers.Complex;
 import xyz.avarel.aje.runtime.types.numbers.Decimal;
 import xyz.avarel.aje.runtime.types.numbers.Int;

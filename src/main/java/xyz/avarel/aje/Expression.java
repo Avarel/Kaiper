@@ -5,7 +5,7 @@ import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.runtime.pool.DefaultPool;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
-import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.Any;
 
 public class Expression {
     private final String expression;
@@ -28,19 +28,19 @@ public class Expression {
     }
 
     public Expression add(String name, Expression object) {
-        pool.put(name, object.compute());
+        pool.put(name, object.compile().compute());
         return this;
     }
 
-    public Any compute() {
-        return compute(false);
+    public Expr compile() {
+        return compile(false);
     }
 
-    public Any compute(boolean recompile) {
+    public Expr compile(boolean recompile) {
         if (recompile || expr == null) {
             AJEParser parser = new AJEParser(new AJELexer(expression), pool);
             expr = parser.compile();
         }
-        return expr.compute();
+        return expr;
     }
 }

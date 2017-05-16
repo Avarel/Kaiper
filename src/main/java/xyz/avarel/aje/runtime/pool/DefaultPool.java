@@ -1,7 +1,7 @@
 package xyz.avarel.aje.runtime.pool;
 
-import xyz.avarel.aje.runtime.types.Slice;
-import xyz.avarel.aje.runtime.types.Truth;
+import xyz.avarel.aje.runtime.Slice;
+import xyz.avarel.aje.runtime.Truth;
 import xyz.avarel.aje.runtime.types.numbers.Complex;
 import xyz.avarel.aje.runtime.types.numbers.Decimal;
 import xyz.avarel.aje.runtime.types.numbers.Int;

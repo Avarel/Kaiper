@@ -1,8 +1,8 @@
 package xyz.avarel.aje.runtime.functional;
 
-import xyz.avarel.aje.runtime.types.Any;
-import xyz.avarel.aje.runtime.types.Type;
-import xyz.avarel.aje.runtime.types.Undefined;
+import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,7 +11,6 @@ import java.util.List;
 public abstract class NativeFunction extends AJEFunction {
     private final List<Type> parameters;
     private final boolean varargs;
-
 
     public NativeFunction(Type... parameters) {
         this.parameters = Arrays.asList(parameters);
@@ -24,8 +23,13 @@ public abstract class NativeFunction extends AJEFunction {
     }
 
     @Override
+    public int getArity() {
+        return parameters.size();
+    }
+
+    @Override
     public Any invoke(List<Any> arguments) {
-        if (!varargs && arguments.size() != parameters.size()) {
+        if (!varargs && arguments.size() != getArity()) {
             return Undefined.VALUE;
         }
 

@@ -5,7 +5,7 @@ import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.expr.operations.BinaryOperation;
 import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.Any;
 
 import java.util.function.BinaryOperator;
 

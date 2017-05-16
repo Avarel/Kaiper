@@ -1,7 +1,7 @@
 package xyz.avarel.aje.parser.expr.invocation;
 
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.Any;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,5 +29,10 @@ public class InvocationExpr implements Expr {
 
     List<Expr> getExprs() {
         return exprs;
+    }
+
+    @Override
+    public String toString() {
+        return "(invoke " + left + "," + exprs + ")";
     }
 }

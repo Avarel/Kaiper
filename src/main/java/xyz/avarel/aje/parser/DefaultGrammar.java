@@ -7,7 +7,7 @@ import xyz.avarel.aje.parser.parslets.operator.BinaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.RangeToOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.UnaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.atoms.*;
-import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.Any;
 
 public class DefaultGrammar extends Grammar {
     public static final Grammar INSTANCE = new DefaultGrammar();
@@ -18,7 +18,7 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.LEFT_PAREN, new GroupParser());
         register(TokenType.LEFT_BRACE, new LambdaParser());
 
-        // TYPES
+        // ATOMS
         register(TokenType.NAME, new NameParser());
         register(TokenType.INT, new NumberParser());
         register(TokenType.DECIMAL, new NumberParser());

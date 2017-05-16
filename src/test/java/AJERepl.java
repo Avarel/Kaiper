@@ -1,6 +1,6 @@
 import xyz.avarel.aje.Expression;
-import xyz.avarel.aje.parser.lexer.AJELexer;
-import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.runtime.Any;
 
 import java.util.Scanner;
 
@@ -28,20 +28,22 @@ public class AJERepl {
                 //Function exp = new Function(input);
 
 
-                System.out.println(" Lexer | " + new AJELexer(input));
+                //System.out.println(" Lexer | " + new AJELexer(input));
 
                 Expression exp = new Expression(input);
 
                 long start = System.nanoTime();
-                Any result = exp.compute();
+                Expr expr = exp.compile();
+                Any result = expr.compute();
                 long end = System.nanoTime();
+
+
+                System.out.println("   AST | " + expr);
 
                 Object obj = result.toNative();
 
                 long ns =  (end - start);
                 double ms = ns / 1000000D;
-
-
 
                 System.out.println("  Time | " + ms + "ms " + ns + "ns" );
                 System.out.println("Result | " + result + " : " + result.getType());

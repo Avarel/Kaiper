@@ -1,4 +1,4 @@
-package xyz.avarel.aje.runtime.types;
+package xyz.avarel.aje.runtime;
 
 import java.util.List;
 

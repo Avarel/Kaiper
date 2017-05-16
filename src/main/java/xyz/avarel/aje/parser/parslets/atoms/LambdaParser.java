@@ -3,10 +3,10 @@ package xyz.avarel.aje.parser.parslets.atoms;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.atoms.ValueExpr;
+import xyz.avarel.aje.parser.expr.atoms.ValueAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.types.compiled.CompiledFunction;
+import xyz.avarel.aje.runtime.functional.CompiledFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +40,6 @@ public class LambdaParser implements PrefixParser<Expr> {
 
         if (!parameters.contains("it") && implicit) parameters.add("it");
 
-        return new ValueExpr(new CompiledFunction(parameters, scriptTokens, parser.getObjects()));
+        return new ValueAtom(new CompiledFunction(parameters, scriptTokens, parser.getObjects()));
     }
 }

@@ -1,7 +1,7 @@
 package xyz.avarel.aje.parser.expr.operations;
 
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.Any;
 
 public class RangeExpr implements Expr {
     private final Expr left;
@@ -15,5 +15,10 @@ public class RangeExpr implements Expr {
     @Override
     public Any compute() {
         return left.compute().rangeTo(right.compute());
+    }
+
+    @Override
+    public String toString() {
+        return "(range " + left + ", " + right + ")";
     }
 }

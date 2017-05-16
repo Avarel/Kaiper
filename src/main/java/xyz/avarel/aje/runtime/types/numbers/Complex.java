@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime.types.numbers;
 
-import xyz.avarel.aje.runtime.types.*;
+import xyz.avarel.aje.runtime.*;
 
 import java.math.BigDecimal;
 

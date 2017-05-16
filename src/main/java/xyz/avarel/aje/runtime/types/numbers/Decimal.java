@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime.types.numbers;
 
-import xyz.avarel.aje.runtime.types.*;
+import xyz.avarel.aje.runtime.*;
 
 public class Decimal implements Any, NativeObject<Double> {
     public static final Type<Decimal> TYPE = new Type<>(Numeric.TYPE, "decimal");

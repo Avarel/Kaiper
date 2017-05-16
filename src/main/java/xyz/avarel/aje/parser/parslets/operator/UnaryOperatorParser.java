@@ -6,7 +6,7 @@ import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.expr.operations.UnaryOperation;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.runtime.types.Any;
+import xyz.avarel.aje.runtime.Any;
 
 import java.util.function.UnaryOperator;
 

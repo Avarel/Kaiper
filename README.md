@@ -92,7 +92,11 @@ class AJETest {
 |Symbol|Description|Example|
 |---|---|---:|
 |`function(args...)`|Invocation|`atan2(3.6, 2.5)`|
-|<code>&#124;></code>|Composition -  pipe forward|<code>5 &#124;> sin() &#124;> cos()</code>|
+|<code>&#124;></code>|Pipe forward as first argument|<code>5 &#124;> sin() &#124;> cos()</code>|
+|`+`|Sum of functions|`(f+g)(x) == f(x) + g(x)`|
+|`-`|Difference of functions|`(f-g)(x) == f(x) - g(x)`|
+|`*`|Product of functions|`(f*g)(x) == f(x) * g(x)`|
+|`/`|Quotient of functions|`(f/g)(x) == f(x) / g(x)`|
 
 ### Functions
 `complex` arguments can be either `integer`, `decimal`, or `complex`.
@@ -131,7 +135,7 @@ class AJETest {
 |`atan2`|Inverse trigonomic<br>four-quadrant tangent function|(`decimal`,`decimal`)|`atan2(x,y)`|
 |`map`|List transform function|(`slice`, `function`)|`map([1..10], {it ^ 2})`|
 |`filter`|List filter function|(`slice`, `function`)|`filter([1..10], {it%2==0})`|
-|`fold`|List accumulation function|(`slice`, `any`, `function`)|`fold([1..10], 0, {a, b -> a + b})`|
+|`fold`|List accumulation function|(`slice`, `value`, `function`)|`fold([1..10], 0, {a, b -> a + b})`|
 
 ### REPL Demonstrations
 ##### Complex Numbers

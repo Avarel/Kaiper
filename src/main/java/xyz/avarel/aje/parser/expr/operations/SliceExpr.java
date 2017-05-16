@@ -1,7 +1,7 @@
 package xyz.avarel.aje.parser.expr.operations;
 
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.runtime.types.Slice;
+import xyz.avarel.aje.runtime.Slice;
 
 import java.util.List;
 
@@ -25,5 +25,10 @@ public class SliceExpr implements Expr {
         }
 
         return slice;
+    }
+
+    @Override
+    public String toString() {
+        return "(makeSlice " + exprs + ")";
     }
 }

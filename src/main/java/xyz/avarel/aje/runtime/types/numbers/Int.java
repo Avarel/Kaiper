@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime.types.numbers;
 
-import xyz.avarel.aje.runtime.types.*;
+import xyz.avarel.aje.runtime.*;
 
 public class Int implements Any, NativeObject<Integer> {
     public static final Type<Int> TYPE = new Type<>(Numeric.TYPE, "integer");

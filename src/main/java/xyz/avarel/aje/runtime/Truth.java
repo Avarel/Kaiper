@@ -1,4 +1,4 @@
-package xyz.avarel.aje.runtime.types;
+package xyz.avarel.aje.runtime;
 
 public enum Truth implements Any, NativeObject<Boolean> {
     TRUE(true),

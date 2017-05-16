@@ -1,8 +1,8 @@
 package xyz.avarel.aje.parser.expr;
 
-import xyz.avarel.aje.runtime.types.Any;
-import xyz.avarel.aje.runtime.types.Slice;
-import xyz.avarel.aje.runtime.types.Undefined;
+import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Slice;
+import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.types.numbers.Int;
 
 public class ListIndexExpr implements Expr {
@@ -24,5 +24,10 @@ public class ListIndexExpr implements Expr {
         }
 
         return Undefined.VALUE;
+    }
+
+    @Override
+    public String toString() {
+        return "(get index " + index + " of " + left + ")";
     }
 }

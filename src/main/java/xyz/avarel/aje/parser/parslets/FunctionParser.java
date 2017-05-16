@@ -3,10 +3,10 @@ package xyz.avarel.aje.parser.parslets;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.atoms.ValueExpr;
+import xyz.avarel.aje.parser.expr.atoms.ValueAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.types.compiled.CompiledFunction;
+import xyz.avarel.aje.runtime.functional.CompiledFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +55,6 @@ public class FunctionParser implements PrefixParser<Expr> {
             parser.getObjects().put(name, function);
         }
 
-        return new ValueExpr(function);
+        return new ValueAtom(function);
     }
 }

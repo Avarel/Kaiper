@@ -1,11 +1,9 @@
 package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.atoms.ValueExpr;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
-import xyz.avarel.aje.runtime.types.Undefined;
 
 import java.util.Iterator;
 
@@ -23,14 +21,15 @@ public class AJEParser extends Parser {
     }
 
     public Expr compile() {
-        Expr any = new ValueExpr(Undefined.VALUE);
+        Expr any = parse();
 
-        do {
+        while (match(TokenType.LINE)) {
             // Temporary solution?
             if (match(TokenType.LINE)) continue;
             if (match(TokenType.EOF)) break;
+
             any = any.andThen(parse());
-        } while (match(TokenType.LINE));
+        }
 
         if (!getTokens().isEmpty()) {
             Token t = getTokens().get(0);
