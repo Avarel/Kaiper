@@ -6,15 +6,16 @@ import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.expr.AssignmentExpr;
 import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
 
-public class AssignmentParser extends BinaryParser<Expr, Expr> {
+public class AssignmentParser extends BinaryParser {
     public AssignmentParser() {
         super(Precedence.ASSIGNMENT);
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        Expr right = parser.parse(getPrecedence());
+    public Expr parse(AJEParser parser, ObjectPool pool, Expr left, Token token) {
+        Expr right = parser.parse(getPrecedence(), pool);
         return new AssignmentExpr(left, right);
     }
 }

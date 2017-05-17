@@ -20,6 +20,6 @@ public class NameAtom implements Expr {
 
     @Override
     public String toString() {
-        return "(obj " + name + ")";
+        return "(name " + name + ")";
     }
 }

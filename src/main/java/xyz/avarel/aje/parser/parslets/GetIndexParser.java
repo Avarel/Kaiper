@@ -8,18 +8,19 @@ import xyz.avarel.aje.parser.expr.ListIndexExpr;
 import xyz.avarel.aje.parser.expr.SublistExpr;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
 
-public class GetIndexParser extends BinaryParser<Expr, Expr> {
+public class GetIndexParser extends BinaryParser {
     public GetIndexParser() {
         super(Precedence.ACCESS);
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        Expr index = parser.parse();
+    public Expr parse(AJEParser parser, ObjectPool pool, Expr left, Token token) {
+        Expr index = parser.parse(pool);
 
         if (parser.match(TokenType.COLON)) {
-            Expr end = parser.parse();
+            Expr end = parser.parse(pool);
             parser.eat(TokenType.RIGHT_BRACKET);
             return new SublistExpr(left, index, end);
         }

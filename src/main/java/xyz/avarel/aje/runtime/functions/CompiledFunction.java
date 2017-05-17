@@ -1,12 +1,9 @@
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.lexer.LexerProxy;
-import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.runtime.pool.ObjectPool;
 import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,16 +14,13 @@ import java.util.stream.Collectors;
  */
 public class CompiledFunction extends AJEFunction {
     private final List<String> parameters;
-    private final List<Token> tokens;
     private final ObjectPool pool;
-    private final AJEParser parser;
     private Expr expr;
 
-    public CompiledFunction(List<String> parameters, List<Token> tokens, ObjectPool pool) {
+    public CompiledFunction(List<String> parameters, Expr expr, ObjectPool pool) {
         this.parameters = parameters;
-        this.tokens = tokens;
+        this.expr = expr;
         this.pool = pool;
-        this.parser = new AJEParser(new LexerProxy(tokens), pool.copy());
     }
 
     @Override
@@ -45,15 +39,10 @@ public class CompiledFunction extends AJEFunction {
             return Undefined.VALUE;
         }
 
-        if (expr == null) {
-            expr = parser.compile();
-        }
-
         for (int i = 0; i < parameters.size(); i++) {
-            parser.getObjects().put(parameters.get(i), args.get(i));
+            pool.put(parameters.get(i), args.get(i));
         }
 
         return expr.compute();
     }
-
 }

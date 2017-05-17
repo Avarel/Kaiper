@@ -1,11 +1,10 @@
 package xyz.avarel.aje.parser;
 
+import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
 
-public interface InfixParser<IN, OUT> {
-    OUT parse(AJEParser parser, IN left, Token token);
+public interface InfixParser {
+    Expr parse(AJEParser parser, ObjectPool pool, Expr left, Token token);
     int getPrecedence();
-    default boolean keepIdentity() {
-        return false;
-    }
 }

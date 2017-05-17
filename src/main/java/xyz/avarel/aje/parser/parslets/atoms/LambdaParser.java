@@ -7,17 +7,15 @@ import xyz.avarel.aje.parser.expr.atoms.ValueAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.functions.CompiledFunction;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LambdaParser implements PrefixParser<Expr> {
+public class LambdaParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Token token) {
+    public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
         List<String> parameters = new ArrayList<>();
-        List<Token> scriptTokens = new ArrayList<>();
-
-        boolean implicit = false;
 
         if (parser.match(TokenType.LEFT_PAREN)) {
             if (!parser.match(TokenType.RIGHT_PAREN)) {
@@ -30,27 +28,14 @@ public class LambdaParser implements PrefixParser<Expr> {
             parser.eat(TokenType.ARROW);
         }
 
-        int level = 0;
-        while (true) {
-            Token t = parser.eat();
+        ObjectPool f_pool =  parser.getObjectPool().subpool();
 
-            if (t.getType() == TokenType.LEFT_BRACE) {
-                level++;
-            } else if (t.getType() == TokenType.RIGHT_BRACE) {
-                if (level > 0) {
-                    level--;
-                } else {
-                    break;
-                }
-            }
+        Expr expr = parser.compile(f_pool, false);
 
-            if (t.getText().equals("it")) implicit = true;
+        parser.eat(TokenType.RIGHT_BRACE);
 
-            scriptTokens.add(t);
-        }
+        System.out.println(f_pool);
 
-        if (!parameters.contains("it") && implicit) parameters.add("it");
-
-        return new ValueAtom(new CompiledFunction(parameters, scriptTokens, parser.getObjects()));
+        return new ValueAtom(new CompiledFunction(parameters, expr, f_pool));
     }
 }

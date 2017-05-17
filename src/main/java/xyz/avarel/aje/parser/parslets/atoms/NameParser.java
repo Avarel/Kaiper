@@ -5,10 +5,11 @@ import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.expr.atoms.NameAtom;
 import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
 
-public class NameParser implements PrefixParser<Expr> {
+public class NameParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Token token) {
-        return new NameAtom(parser.getObjects(), token.getText());
+    public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
+        return new NameAtom(pool, token.getText());
     }
 }

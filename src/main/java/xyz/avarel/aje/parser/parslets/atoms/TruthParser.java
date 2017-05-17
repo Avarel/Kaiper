@@ -6,10 +6,11 @@ import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.expr.atoms.BooleanAtom;
 import xyz.avarel.aje.parser.expr.atoms.UndefAtom;
 import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
 
-public class TruthParser implements PrefixParser<Expr> {
+public class TruthParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Token token) {
+    public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
         switch(token.getText()) {
             case "true": return BooleanAtom.TRUE;
             case "false": return BooleanAtom.FALSE;

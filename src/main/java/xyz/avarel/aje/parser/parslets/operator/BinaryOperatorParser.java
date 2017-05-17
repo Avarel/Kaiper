@@ -6,10 +6,11 @@ import xyz.avarel.aje.parser.expr.operations.BinaryOperation;
 import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
 
 import java.util.function.BinaryOperator;
 
-public class BinaryOperatorParser extends BinaryParser<Expr, Expr> {
+public class BinaryOperatorParser extends BinaryParser {
     private final BinaryOperator<Any> operator;
 
     public BinaryOperatorParser(int precedence, boolean leftAssoc, BinaryOperator<Any> operator) {
@@ -18,8 +19,8 @@ public class BinaryOperatorParser extends BinaryParser<Expr, Expr> {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        Expr right = parser.parse(getPrecedence() - (isLeftAssoc() ? 0 : 1));
+    public Expr parse(AJEParser parser, ObjectPool pool, Expr left, Token token) {
+        Expr right = parser.parse(getPrecedence() - (isLeftAssoc() ? 0 : 1), pool);
         return new BinaryOperation(left, right, operator);
     }
 }

@@ -1,6 +1,6 @@
 package xyz.avarel.aje.parser;
 
-public abstract class BinaryParser<IN, OUT> implements InfixParser<IN, OUT> {
+public abstract class BinaryParser implements InfixParser {
     private final int precedence;
     private final boolean leftAssoc;
 

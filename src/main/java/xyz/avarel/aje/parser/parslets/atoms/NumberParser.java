@@ -10,10 +10,11 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
 
-public class NumberParser implements PrefixParser<Expr> {
+public class NumberParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Token token) {
+    public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
         if (parser.match(TokenType.IMAGINARY)) {
             String str = token.getText();
             return new ValueAtom(Complex.of(0, Double.parseDouble(str)));
