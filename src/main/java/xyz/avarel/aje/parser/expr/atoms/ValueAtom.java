@@ -16,7 +16,7 @@ public class ValueAtom implements Expr {
     }
 
     @Override
-    public String toString() {
-        return value.toString();
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append(value);
     }
 }

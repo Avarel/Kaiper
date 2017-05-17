@@ -18,7 +18,10 @@ public class RangeExpr implements Expr {
     }
 
     @Override
-    public String toString() {
-        return "(range " + left + ", " + right + ")";
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append("range\n");
+        left.ast(builder, indent + "│ ");
+        builder.append('\n');
+        right.ast(builder, indent + "│ ");
     }
 }

@@ -32,7 +32,12 @@ public class InvocationExpr implements Expr {
     }
 
     @Override
-    public String toString() {
-        return "(invoke " + left + "," + exprs + ")";
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append("invoke\n");
+        left.ast(builder, indent + "│ ");
+        builder.append('\n');
+        for (Expr expr : exprs) {
+            expr.ast(builder, indent + "│ ");
+        }
     }
 }

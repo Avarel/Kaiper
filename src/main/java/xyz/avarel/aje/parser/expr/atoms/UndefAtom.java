@@ -12,7 +12,7 @@ public enum UndefAtom implements Expr {
     }
 
     @Override
-    public String toString() {
-        return Undefined.VALUE.toString();
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append(Undefined.VALUE);
     }
 }

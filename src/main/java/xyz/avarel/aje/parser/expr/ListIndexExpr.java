@@ -27,7 +27,10 @@ public class ListIndexExpr implements Expr {
     }
 
     @Override
-    public String toString() {
-        return "(get index " + indexExpr + " of " + left + ")";
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append("binary operation\n");
+        left.ast(builder, indent + "│ ");
+        builder.append('\n');
+        indexExpr.ast(builder, indent + "│ ");
     }
 }

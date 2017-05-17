@@ -17,10 +17,10 @@ public class GetIndexParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, ObjectPool pool, Expr left, Token token) {
-        Expr index = parser.parse(pool);
+        Expr index = parser.parseExpr(pool);
 
         if (parser.match(TokenType.COLON)) {
-            Expr end = parser.parse(pool);
+            Expr end = parser.parseExpr(pool);
             parser.eat(TokenType.RIGHT_BRACKET);
             return new SublistExpr(left, index, end);
         }

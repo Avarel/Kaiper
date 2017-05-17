@@ -25,7 +25,7 @@ public class ComposedFunction extends AJEFunction {
 
     @Override
     public String toString() {
-        return left + " combined with " + right;
+        return "compose(" + left + ", " + right + ")";
     }
 
     @Override

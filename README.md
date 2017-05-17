@@ -112,34 +112,41 @@ class AJETest {
 
 ##### Declaring a Function
 ###### Traditional
-Traditional functions can be declared under the syntax of 
+Traditional functions can be declared with the syntax shown below.
+    If the optional name field is present, then the function will be 
+    available to used as an invocable variable with that name. If the 
+    name field is not present, the function be an anonymous function expression.
 ```
 fun [name]([param,...]) [=] { [statements] }
-```
-If the optional name field is present, then the function will be available to used
-    as an invocable variable with that name. If the name field is not present, the 
-    function be an anonymous function expression.
-    
-The function can be used as so: `fun f(x) { x + 2 }; f(2) == 4`, which evaluates 
-    to `true`.
 
-###### Alternative
+fun f(x) { x + 2 }; f(2) == 4
+fun isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
+```
+
+###### Lambda
 Alternatively, functions can also be declared using the following syntax.
+    These functions can be passed into arguments and used as variables.
+    They are anonymous but variables can be set to this function, of which 
+    they can be then invoked by the user.
 ```
 { [param,...] -> [statements] }
-```
-They are anonymous but variables can be set to this function. Shown by this 
-    example: `add = { x, y -> x + y }; [1..10] |> fold(0, add)` which evaluates 
-    to `55`.
 
-###### Simple
-These functions are basically anonymous alternatives shown above but with an even
-    shorter and more natural syntax. However, they can only be used if there is 
-    only one parameter and one expression.
+add = { x, y -> x + y }; [1..10] |> fold(0, add) == 55
+[1..10] |> fold(1, { x, y -> x * y })
 ```
-param -> expression
+    
+
+###### Quick
+These functions are basically anonymous alternatives that only takes in one argument.
+    Beware that in this quick expression, you can only reference the implied parameter
+    once. However you may use as many operators as you want until the end of the expression.
+    This allows functions to be used in higher-order functions in a concise manner.
 ```
-This allows functions to be used in higher-order functions in a concise manner: `[1..10] |> map(it -> it ^ 2)`
+_ ...expression
+
+[[1, 2, 3], [1, 5, 8, 9, 10], [1..50]] |> map(_.size)
+map([1..10], _ ^ 2) == [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+```
 
 ##### Default Functions
 |Symbol|Description|Arguments|Example|
@@ -192,7 +199,7 @@ Result | [125, 150, 175]
 ```
 ##### First Class Functions
 ```
-  REPL | [1..10] |> map(it -> it ^ 2)
+  REPL | [1..10] |> map(_ ^ 2)
 Result | [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
   REPL | add = { x, y -> x + y }; [1..10] |> fold(0, add)

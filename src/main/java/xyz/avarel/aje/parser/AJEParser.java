@@ -20,73 +20,65 @@ public class AJEParser extends Parser {
         this.pool = objectPool;
     }
 
-
-
-
-
-
-
-
     public Expr compile() {
-        return compile(true);
-    }
+        Expr expr = statements(pool);
 
-    public Expr compile(boolean complete) {
-        return compile(pool, complete);
-    }
-
-    public Expr compile(ObjectPool pool, boolean complete) {
-        return compile(pool, complete, true);
-    }
-
-    public Expr compile(ObjectPool pool, boolean complete, boolean statements) {
-        Expr any = parse(pool);
-
-        if (statements) {
-            while (match(TokenType.LINE)) {
-                // Temporary solution?
-                if (match(TokenType.LINE)) continue;
-                if (match(TokenType.EOF)) break;
-
-                any = any.andThen(parse(pool));
-            }
-        }
-
-        if (complete && !getTokens().isEmpty()) {
+        if (!getTokens().isEmpty()) {
             Token t = getTokens().get(0);
             if (t.getType() != TokenType.EOF) {
                 throw error("Did not parse " + t.getText(), t.getPos());
             }
         }
 
+        return expr;
+    }
+
+    public Expr statements(ObjectPool pool) {
+        Expr any = parseExpr(pool);
+
+        while (match(TokenType.LINE)) {
+            // Temporary solution?
+            if (match(TokenType.LINE)) continue;
+            if (match(TokenType.EOF)) break;
+
+            any = any.andThen(parseExpr(pool));
+        }
+
         return any;
     }
 
-    public Expr parse(ObjectPool objectPool) {
-        return parse(0, objectPool);
+    public Expr parseExpr(ObjectPool objectPool) {
+        return parseExpr(0, objectPool);
     }
 
-    public Expr parse(int precedence, ObjectPool pool) {
+    public Expr parseExpr(int precedence, ObjectPool pool) {
         Token token = eat();
+
+        Expr expr = parsePrefix(token, pool);
+
+        return parseInfix(precedence, expr, pool);
+    }
+
+    public Expr parsePrefix(Token token, ObjectPool pool) {
         PrefixParser prefix = getPrefixParsers().get(token.getType());
 
-        if (prefix == null) throw error("Could not parse token `" + token.getText() + "`");
+        if (prefix == null) throw error("Could not parse token `" + token.getText() + "`", token.getPos());
 
-        Expr left = prefix.parse(this, pool, token);
+        return prefix.parse(this, pool, token);
+    }
 
-        while (precedence < getPrecedence()) {
-            token = eat();
+    public Expr parseInfix(int precedence, Expr left, ObjectPool pool) {
+        while (precedence < getPrecedence()) { // ex plus is 6, next is mult which is 7, parse it
+            Token token = eat();
 
             InfixParser infix = getInfixParsers().get(token.getType());
 
-            if (infix == null) throw error("Could not parse token `" + token.getText() + "`");
+            if (infix == null) throw error("Could not parse token `" + token.getText() + "`", token.getPos());
 
             left = infix.parse(this, pool, left, token);
         }
-
         return left;
     }
-
 
     public ObjectPool getObjectPool() {
         return pool;

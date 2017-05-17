@@ -20,7 +20,8 @@ public class UnaryOperation implements Expr {
     }
 
     @Override
-    public String toString() {
-        return "(unary " + left + ")";
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append("unary operation\n");
+        left.ast(builder, indent + "│ ");
     }
 }

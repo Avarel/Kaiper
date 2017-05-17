@@ -21,7 +21,7 @@ public class Variable implements Any {
 
     @Override
     public Any get(String name) {
-        return identity();
+        return identity().get(name);
     }
 
     @Override

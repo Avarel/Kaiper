@@ -58,7 +58,7 @@ public class Parser {
     public Token eat(TokenType expected) {
         Token token = peek(0);
         if (token.getType() != expected) {
-            throw error("Expected token " + expected + " but found " + token.getType());
+            throw error("Expected token " + expected + " but found " + token.getType(), token.getPos());
         }
         return eat();
     }
@@ -87,13 +87,7 @@ public class Parser {
         return 0;
     }
 
-
-    public AJEException error(String message) {
-        return error(message, getLast().getPos());
-    }
-
     public AJEException error(String message, int position) {
         return new AJEException(message + ", position " + position + ".");
     }
-
 }

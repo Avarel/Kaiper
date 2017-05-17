@@ -15,9 +15,14 @@ public interface Expr {
             }
 
             @Override
-            public String toString() {
-                return me + " then " + other;
+            public void ast(StringBuilder builder, String indent) {
+                me.ast(builder, indent);
+                builder.append('\n');
+                other.ast(builder, indent);
             }
         };
+    }
+
+    default void ast(StringBuilder builder, String indent) {
     }
 }

@@ -28,7 +28,12 @@ public class SliceExpr implements Expr {
     }
 
     @Override
-    public String toString() {
-        return "(list of " + exprs + ")";
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append("list\n");
+        for (int i = 0; i < exprs.size(); i++) {
+            Expr expr = exprs.get(i);
+            expr.ast(builder, indent + "│ ");
+            if (i < exprs.size() - 1) builder.append('\n');
+        }
     }
 }

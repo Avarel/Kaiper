@@ -18,11 +18,21 @@ public class BinaryOperation implements Expr {
 
     @Override
     public Any compute() {
-        return operator.apply(left.compute(), right.compute());
+        return operator.apply(left.compute().identity(), right.compute().identity());
     }
 
     @Override
     public String toString() {
-        return "(binary " + left + ", " + right + ")";
+        StringBuilder builder = new StringBuilder();
+        ast(builder, "");
+        return builder.toString();
+    }
+
+    @Override
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append("binary operation\n");
+        left.ast(builder, indent + "│ ");
+        builder.append('\n');
+        right.ast(builder, indent + "│ ");
     }
 }

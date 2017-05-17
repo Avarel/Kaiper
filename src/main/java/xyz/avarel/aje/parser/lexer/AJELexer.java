@@ -66,6 +66,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case '{': return make(TokenType.LEFT_BRACE);
             case '}': return make(TokenType.RIGHT_BRACE);
 
+            case '_': return make(TokenType.UNDERSCORE);
+
             case '.': return match('.')
                     ? make(TokenType.RANGE_TO)
                     : make(TokenType.DOT);

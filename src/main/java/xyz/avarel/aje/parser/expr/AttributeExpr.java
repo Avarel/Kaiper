@@ -17,7 +17,10 @@ public class AttributeExpr implements Expr {
     }
 
     @Override
-    public String toString() {
-        return "(get " + name + " from " + target + ")";
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append("get\n");
+        target.ast(builder, indent + "│ ");
+        builder.append('\n');
+        builder.append(indent).append("│ ").append(name);
     }
 }

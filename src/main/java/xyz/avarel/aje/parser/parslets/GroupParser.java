@@ -10,7 +10,7 @@ import xyz.avarel.aje.runtime.pool.ObjectPool;
 public class GroupParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
-        Expr expr = parser.parse(pool);
+        Expr expr = parser.parseExpr(pool);
         parser.eat(TokenType.RIGHT_PAREN);
         return expr;
     }

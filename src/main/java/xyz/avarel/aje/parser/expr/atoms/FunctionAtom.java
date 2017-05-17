@@ -1,20 +1,17 @@
 package xyz.avarel.aje.parser.expr.atoms;
 
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.runtime.Truth;
+import xyz.avarel.aje.runtime.functions.AJEFunction;
 
-public enum BooleanAtom implements Expr {
-    TRUE(Truth.TRUE),
-    FALSE(Truth.FALSE);
+public class FunctionAtom implements Expr {
+    private final AJEFunction value;
 
-    private final Truth value;
-
-    BooleanAtom(Truth value) {
+    public FunctionAtom(AJEFunction value) {
         this.value = value;
     }
 
     @Override
-    public Truth compute() {
+    public AJEFunction compute() {
         return value;
     }
 

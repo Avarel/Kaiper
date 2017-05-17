@@ -19,7 +19,7 @@ public class NameAtom implements Expr {
     }
 
     @Override
-    public String toString() {
-        return "(name " + name + ")";
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append("name ").append(name);
     }
 }

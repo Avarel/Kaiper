@@ -37,17 +37,19 @@ public class AJERepl {
                 Any result = expr.compute();
                 long end = System.nanoTime();
 
-
-                System.out.println("   AST | " + expr);
-
                 Object obj = result.toNative();
 
                 long ns =  (end - start);
                 double ms = ns / 1000000D;
 
-                System.out.println("  Time | " + ms + "ms " + ns + "ns" );
                 System.out.println("Result | " + result + " : " + result.getType());
-                System.out.println("Native | " + obj + " : " + obj.getClass().getSimpleName());
+                System.out.println("  Time | " + ms + "ms " + ns + "ns" );
+
+                StringBuilder builder = new StringBuilder();
+
+                expr.ast(builder, "\t\t ");
+
+                System.out.println("   AST >\n" + builder);
 
                 System.out.println();
             } catch (RuntimeException e) {

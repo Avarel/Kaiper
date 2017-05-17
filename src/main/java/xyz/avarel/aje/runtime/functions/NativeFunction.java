@@ -24,7 +24,7 @@ public abstract class NativeFunction extends AJEFunction {
 
     @Override
     public String toString() {
-        return "native function";
+        return "native-function";
     }
 
     @Override

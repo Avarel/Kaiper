@@ -20,7 +20,7 @@ public class BinaryOperatorParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, ObjectPool pool, Expr left, Token token) {
-        Expr right = parser.parse(getPrecedence() - (isLeftAssoc() ? 0 : 1), pool);
+        Expr right = parser.parseExpr(getPrecedence() - (isLeftAssoc() ? 0 : 1), pool);
         return new BinaryOperation(left, right, operator);
     }
 }

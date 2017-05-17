@@ -8,7 +8,7 @@ public class SpeedTest extends TestCase {
         // [1,2,[3,4,[5,6,[7,8],90, [91, 92],100]],9,10,[11, [50,52],12],13]
         // (8+2i)*(5i+3)
         // [1..10] * 10
-        // x = fun(x) { x + 2 }; fun y(x) = { x + 2 }; z = { (x) -> x + 2 }; x(2) == y(2) /\ y(2) == z(2)
+        // ccccc
         String script = "1+2";
         int testsAmt = 10000;
 

@@ -30,7 +30,7 @@ public class CompiledFunction extends AJEFunction {
 
     @Override
     public String toString() {
-        return "function(" + parameters.stream().collect(Collectors.joining(",")) + ")";
+        return "fun(" + parameters.stream().collect(Collectors.joining(",")) + ")";
     }
 
     @Override

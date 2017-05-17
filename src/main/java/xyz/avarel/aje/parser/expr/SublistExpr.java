@@ -46,7 +46,12 @@ public class SublistExpr implements Expr {
     }
 
     @Override
-    public String toString() {
-        return "(slice " + left + " " + startExpr + ":" + endExpr + ")";
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append("binary operation\n");
+        left.ast(builder, indent + "│ ");
+        builder.append('\n');
+        startExpr.ast(builder, indent + "│ ");
+        builder.append('\n');
+        endExpr.ast(builder, indent + "│ ");
     }
 }

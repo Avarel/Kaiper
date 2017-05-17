@@ -3,7 +3,7 @@ package xyz.avarel.aje.parser.parslets.atoms;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.atoms.ValueAtom;
+import xyz.avarel.aje.parser.expr.atoms.FunctionAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.functions.CompiledFunction;
@@ -32,24 +32,24 @@ public class FunctionParser implements PrefixParser {
             parser.match(TokenType.RIGHT_PAREN);
         }
 
-        ObjectPool f_pool = parser.getObjectPool().subpool();
+        ObjectPool subPool = parser.getObjectPool().subPool();
 
         Expr expr;
 
         parser.match(TokenType.ASSIGN);
         if (parser.match(TokenType.LEFT_BRACE)) {
-            expr = parser.compile(f_pool, false);
+            expr = parser.statements(subPool);
             parser.eat(TokenType.RIGHT_BRACE);
         } else {
-            expr = parser.compile(f_pool, false);
+            expr = parser.statements(subPool);
         }
 
-        CompiledFunction function = new CompiledFunction(params, expr, f_pool);
+        CompiledFunction function = new CompiledFunction(params, expr, subPool);
 
         if (name != null) {
             pool.put(name, function);
         }
 
-        return new ValueAtom(function);
+        return new FunctionAtom(function);
     }
 }

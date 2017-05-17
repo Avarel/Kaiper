@@ -216,7 +216,6 @@ public class Int implements Any, NativeObject<Integer> {
         static final Int[] cache;
 
         static {
-            System.out.println("loading cache");
             cache = new Int[(high - low) + 1];
             int j = low;
             for (int k = 0; k < cache.length; k++) {

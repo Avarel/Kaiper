@@ -26,6 +26,7 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.BOOLEAN, new TruthParser());
         register(TokenType.FUNCTION, new FunctionParser());
 
+        register(TokenType.UNDERSCORE, new ImplicitParser());
 
         // Numeric
         register(TokenType.MINUS, new UnaryOperatorParser(Any::negative));

@@ -46,7 +46,7 @@ public class ObjectPool {
         return new ObjectPool(this);
     }
 
-    public ObjectPool subpool() {
+    public ObjectPool subPool() {
         ObjectPool subpool = new ObjectPool(this);
         subpools.add(subpool);
         return subpool;

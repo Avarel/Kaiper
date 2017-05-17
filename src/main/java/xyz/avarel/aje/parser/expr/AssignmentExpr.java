@@ -17,7 +17,10 @@ public class AssignmentExpr implements Expr {
     }
 
     @Override
-    public String toString() {
-        return "(set " + left.toString() + " to " + right.toString() + ")";
+    public void ast(StringBuilder builder, String indent) {
+        builder.append(indent).append("set\n");
+        left.ast(builder, indent + "│ ");
+        builder.append('\n');
+        right.ast(builder, indent + "│ ");
     }
 }

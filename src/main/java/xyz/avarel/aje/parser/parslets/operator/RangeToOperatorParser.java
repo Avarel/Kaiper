@@ -15,7 +15,7 @@ public class RangeToOperatorParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, ObjectPool pool, Expr left, Token token) {
-        Expr right = parser.parse(getPrecedence(), pool);
+        Expr right = parser.parseExpr(getPrecedence(), pool);
         return new RangeExpr(left, right);
     }
 }

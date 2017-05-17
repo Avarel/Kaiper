@@ -56,6 +56,8 @@ public enum TokenType {
     COMMA,
     DOT,
 
+    UNDERSCORE,
+
     // SCRIPT
     LINE,
     EOF,

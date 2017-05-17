@@ -28,7 +28,7 @@ public class CombinedFunction extends AJEFunction {
 
     @Override
     public String toString() {
-        return left + " combined with " + right;
+        return "combine(" + left + ", " + right + ")";
     }
 
     @Override
