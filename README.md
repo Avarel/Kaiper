@@ -1,9 +1,10 @@
 AJE
 ===
-**What is AJE?** AJE is an expression evaluator for the Java programming language.
-It is a dynamic and functional math-based language.
-
-**How does it work?** AJE compiles the script into AST trees and then evaluates it.
+**What is AJE?** AJE is powerful and expressive mathematical evaluator for
+    the Java programming language. It features **flexible syntax, complex numbers, 
+    booleans, first-class functions, user-defined variables**, along with mimicking 
+    useful functional programming language features in order to provide a rich end-user experience.
+    AJE is a dynamic-typed and math-based language.
 
 ## Features
 |Feature|AJE Type|Java Type|Examples|
@@ -13,7 +14,7 @@ It is a dynamic and functional math-based language.
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)*(5i+3)`|
 |Lists operations|`list`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
-|First class functions|`function`|`Function*`|`fun(x) = {x + 2}` `{ (x,y) -> x^y }`|
+|First class functions|`function`|`Function*`|`fun(x) = { x + 2 }` `{ x, y -> x ^ y }`|
 
 `*` Mapped to AJE object.
 
@@ -109,12 +110,44 @@ class AJETest {
 
 `decimal` arguments can be either `integer`, or `decimal`.
 
+##### Declaring a Function
+###### Traditional
+Traditional functions can be declared under the syntax of 
+```
+fun [name]([param,...]) [=] { [statements] }
+```
+If the optional name field is present, then the function will be available to used
+    as an invocable variable with that name. If the name field is not present, the 
+    function be an anonymous function expression.
+    
+The function can be used as so: `fun f(x) { x + 2 }; f(2) == 4`, which evaluates 
+    to `true`.
+
+###### Alternative
+Alternatively, functions can also be declared using the following syntax.
+```
+{ [param,...] -> [statements] }
+```
+They are anonymous but variables can be set to this function. Shown by this 
+    example: `add = { x, y -> x + y }; [1..10] |> fold(0, add)` which evaluates 
+    to `55`.
+
+###### Simple
+These functions are basically anonymous alternatives shown above but with an even
+    shorter and more natural syntax. However, they can only be used if there is 
+    only one parameter and one expression.
+```
+param -> expression
+```
+This allows functions to be used in higher-order functions in a concise manner: `[1..10] |> map(it -> it ^ 2)`
+
+##### Default Functions
 |Symbol|Description|Arguments|Example|
 |---|---|---|---:|
-|`compose`|Create a composition of two functions|(`function`,`function`)|`compose(asin, sin)`|
-|`map`|List transform function|(`list`, `function`)|`map([1..10], {it ^ 2})`|
-|`filter`|List filter function|(`list`, `function`)|`filter([1..10], {it%2==0})`|
-|`fold`|List accumulation function|(`list`, `value`, `function`)|`fold([1..10], 0, {a, b -> a + b})`|
+|`compose`|Create a composition of two functions|(`function(x)`,`function(x)`)|`compose(asin, sin)`|
+|`map`|List transform function|(`list`, `function(x)`)|`map([1..10], {it ^ 2})`|
+|`filter`|List filter function|(`list`, `function(x)`)|`filter([1..10], {it%2==0})`|
+|`fold`|List accumulation function|(`list`, `value`, `function(x, y)`)|`fold([1..10], 0, {a, b -> a + b})`|
 |`sqrt`|Square root function|(`complex`)|`sqrt(x)`|
 |`cbrt`|Cube root function|(`complex`)|`cbrt(x)`|
 |`exp`|Exponential function|(`complex`)|`exp(x)`|
@@ -159,15 +192,15 @@ Result | [125, 150, 175]
 ```
 ##### First Class Functions
 ```
-  REPL | [1..10] |> map({ it ^ 2 })
+  REPL | [1..10] |> map(it -> it ^ 2)
 Result | [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
-  REPL | add = { (x, y) -> x + y }; [1..10] |> fold(0, add)
+  REPL | add = { x, y -> x + y }; [1..10] |> fold(0, add)
 Result | 55
 
   REPL | fun isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
 Result | [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
 
-  REPL | [1..10] |> fold(1, { (x, y) -> x * y })
+  REPL | [1..10] |> fold(1, { x, y -> x * y })
 Result | 3628800
 ```

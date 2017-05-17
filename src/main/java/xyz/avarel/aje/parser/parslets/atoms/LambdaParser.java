@@ -17,14 +17,12 @@ public class LambdaParser implements PrefixParser {
     public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
         List<String> parameters = new ArrayList<>();
 
-        if (parser.match(TokenType.LEFT_PAREN)) {
-            if (!parser.match(TokenType.RIGHT_PAREN)) {
-                do {
-                    Token t = parser.eat(TokenType.NAME);
-                    parameters.add(t.getText());
-                } while (parser.match(TokenType.COMMA));
-                parser.eat(TokenType.RIGHT_PAREN);
-            }
+        if (!parser.match(TokenType.ARROW)) {
+            do {
+                Token t = parser.eat(TokenType.NAME);
+                parameters.add(t.getText());
+            } while (parser.match(TokenType.COMMA));
+
             parser.eat(TokenType.ARROW);
         }
 
@@ -33,8 +31,6 @@ public class LambdaParser implements PrefixParser {
         Expr expr = parser.compile(f_pool, false);
 
         parser.eat(TokenType.RIGHT_BRACE);
-
-        System.out.println(f_pool);
 
         return new ValueAtom(new CompiledFunction(parameters, expr, f_pool));
     }

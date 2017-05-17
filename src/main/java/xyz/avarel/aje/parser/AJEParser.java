@@ -20,19 +20,36 @@ public class AJEParser extends Parser {
         this.pool = objectPool;
     }
 
+
+
+
+
+
+
+
     public Expr compile() {
-        return compile(pool, true);
+        return compile(true);
+    }
+
+    public Expr compile(boolean complete) {
+        return compile(pool, complete);
     }
 
     public Expr compile(ObjectPool pool, boolean complete) {
+        return compile(pool, complete, true);
+    }
+
+    public Expr compile(ObjectPool pool, boolean complete, boolean statements) {
         Expr any = parse(pool);
 
-        while (match(TokenType.LINE)) {
-            // Temporary solution?
-            if (match(TokenType.LINE)) continue;
-            if (match(TokenType.EOF)) break;
+        if (statements) {
+            while (match(TokenType.LINE)) {
+                // Temporary solution?
+                if (match(TokenType.LINE)) continue;
+                if (match(TokenType.EOF)) break;
 
-            any = any.andThen(parse(pool));
+                any = any.andThen(parse(pool));
+            }
         }
 
         if (complete && !getTokens().isEmpty()) {
