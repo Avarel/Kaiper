@@ -3,10 +3,10 @@ package xyz.avarel.aje.parser;
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.*;
+import xyz.avarel.aje.parser.parslets.atoms.*;
 import xyz.avarel.aje.parser.parslets.operator.BinaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.RangeToOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.UnaryOperatorParser;
-import xyz.avarel.aje.parser.parslets.atoms.*;
 import xyz.avarel.aje.runtime.Any;
 
 public class DefaultGrammar extends Grammar {

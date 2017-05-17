@@ -4,7 +4,10 @@ import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class Parser {
     private final Iterator<Token> lexer;

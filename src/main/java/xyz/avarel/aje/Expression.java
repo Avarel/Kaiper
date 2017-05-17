@@ -3,9 +3,9 @@ package xyz.avarel.aje;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.expr.Expr;
 import xyz.avarel.aje.parser.lexer.AJELexer;
+import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.pool.DefaultPool;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
-import xyz.avarel.aje.runtime.Any;
 
 public class Expression {
     private final String expression;

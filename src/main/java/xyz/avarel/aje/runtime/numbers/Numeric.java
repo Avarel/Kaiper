@@ -8,10 +8,6 @@ import java.util.function.BinaryOperator;
 public abstract class Numeric extends Number implements Any {
     public static final Type<Numeric> TYPE = new Type<>("number");
 
-    public Type<Numeric> getType() {
-        return TYPE;
-    }
-
     public static Any process(Any a, Any b, BinaryOperator<Any> function) {
         if (a.getType() == b.getType()) {
             return function.apply(a, b);
@@ -38,36 +34,40 @@ public abstract class Numeric extends Number implements Any {
         }
 
         return function.apply(a, b);
-   }
+    }
 
-   @SuppressWarnings("unchecked")
-   public static <T> T convert(Any a, Type<T> type) {
-       if (a instanceof Int) {
-           if (type == Int.TYPE) {
-               return (T) a;
-           } else if (type == Decimal.TYPE) {
-               return (T) Decimal.of(((Int) a).value());
-           } else if (type == Complex.TYPE) {
-               return (T) Complex.of(((Int) a).value());
-           }
-       } else if (a instanceof Decimal) {
-           if (type == Int.TYPE) {
-               return (T) Int.of((int) ((Decimal) a).value());
-           } else if (type == Decimal.TYPE) {
-               return (T) a;
-           } else if (type == Complex.TYPE) {
-               return (T) Complex.of(((Decimal) a).value());
-           }
-       } else if (a instanceof Complex) {
-           if (type == Int.TYPE) {
-               return (T) Int.of((int) ((Complex) a).real());
-           } else if (type == Decimal.TYPE) {
-               return (T) Decimal.of(((Complex) a).real());
-           } else if (type == Complex.TYPE) {
-               return (T) a;
-           }
-       }
+    @SuppressWarnings("unchecked")
+    public static <T> T convert(Any a, Type<T> type) {
+        if (a instanceof Int) {
+            if (type == Int.TYPE) {
+                return (T) a;
+            } else if (type == Decimal.TYPE) {
+                return (T) Decimal.of(((Int) a).value());
+            } else if (type == Complex.TYPE) {
+                return (T) Complex.of(((Int) a).value());
+            }
+        } else if (a instanceof Decimal) {
+            if (type == Int.TYPE) {
+                return (T) Int.of((int) ((Decimal) a).value());
+            } else if (type == Decimal.TYPE) {
+                return (T) a;
+            } else if (type == Complex.TYPE) {
+                return (T) Complex.of(((Decimal) a).value());
+            }
+        } else if (a instanceof Complex) {
+            if (type == Int.TYPE) {
+                return (T) Int.of((int) ((Complex) a).real());
+            } else if (type == Decimal.TYPE) {
+                return (T) Decimal.of(((Complex) a).real());
+            } else if (type == Complex.TYPE) {
+                return (T) a;
+            }
+        }
 
-       return (T) a; // hope for the best.
-   }
+        return (T) a; // hope for the best.
+    }
+
+    public Type<Numeric> getType() {
+        return TYPE;
+    }
 }

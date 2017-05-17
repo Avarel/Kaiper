@@ -37,11 +37,6 @@ public class Slice extends ArrayList<Any> implements Any, NativeObject<List<Any>
     }
 
     @Override
-    public String toString() {
-        return super.toString();
-    }
-
-    @Override
     public Any plus(Any other) {
         if (other instanceof Slice) {
             return plus((Slice) other);
@@ -154,9 +149,11 @@ public class Slice extends ArrayList<Any> implements Any, NativeObject<List<Any>
 
     @Override
     public Any get(String name) {
-        switch(name) {
-            case "size": return Int.of(size());
-            default: return Undefined.VALUE;
+        switch (name) {
+            case "size":
+                return Int.of(size());
+            default:
+                return Undefined.VALUE;
         }
     }
 }

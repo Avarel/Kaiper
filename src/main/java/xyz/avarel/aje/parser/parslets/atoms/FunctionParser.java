@@ -32,12 +32,12 @@ public class FunctionParser implements PrefixParser {
             parser.match(TokenType.RIGHT_PAREN);
         }
 
-        ObjectPool f_pool =  parser.getObjectPool().subpool();
+        ObjectPool f_pool = parser.getObjectPool().subpool();
 
         Expr expr;
 
         parser.match(TokenType.ASSIGN);
-        if(parser.match(TokenType.LEFT_BRACE)) {
+        if (parser.match(TokenType.LEFT_BRACE)) {
             expr = parser.compile(f_pool, false);
             parser.eat(TokenType.RIGHT_BRACE);
         } else {

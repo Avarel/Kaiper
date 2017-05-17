@@ -6,5 +6,6 @@ import xyz.avarel.aje.runtime.pool.ObjectPool;
 
 public interface InfixParser {
     Expr parse(AJEParser parser, ObjectPool pool, Expr left, Token token);
+
     int getPrecedence();
 }

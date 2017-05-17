@@ -28,7 +28,7 @@ public class LambdaParser implements PrefixParser {
             parser.eat(TokenType.ARROW);
         }
 
-        ObjectPool f_pool =  parser.getObjectPool().subpool();
+        ObjectPool f_pool = parser.getObjectPool().subpool();
 
         Expr expr = parser.compile(f_pool, false);
 

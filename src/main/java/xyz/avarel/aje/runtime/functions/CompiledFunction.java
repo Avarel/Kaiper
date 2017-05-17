@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class CompiledFunction extends AJEFunction {
     private final List<String> parameters;
     private final ObjectPool pool;
-    private Expr expr;
+    private final Expr expr;
 
     public CompiledFunction(List<String> parameters, Expr expr, ObjectPool pool) {
         this.parameters = parameters;

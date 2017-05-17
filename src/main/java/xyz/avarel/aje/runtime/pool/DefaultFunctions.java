@@ -287,7 +287,8 @@ public enum DefaultFunctions {
         protected Any eval(List<Any> arguments) {
             Any a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
-                return Decimal.of(1).divide((Decimal) HYPERBOLIC_TANGENT.get().invoke(Numeric.convert(a, Decimal.TYPE)));
+                return Decimal.of(1)
+                        .divide((Decimal) HYPERBOLIC_TANGENT.get().invoke(Numeric.convert(a, Decimal.TYPE)));
             } else if (a instanceof Complex) {
                 return HYPERBOLIC_COSINE.get().invoke(a).divide(HYPERBOLIC_SINE.get().invoke(a));
             }

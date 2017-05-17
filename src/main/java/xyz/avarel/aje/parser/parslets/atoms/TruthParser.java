@@ -11,10 +11,13 @@ import xyz.avarel.aje.runtime.pool.ObjectPool;
 public class TruthParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
-        switch(token.getText()) {
-            case "true": return BooleanAtom.TRUE;
-            case "false": return BooleanAtom.FALSE;
-            default: return UndefAtom.VALUE;
+        switch (token.getText()) {
+            case "true":
+                return BooleanAtom.TRUE;
+            case "false":
+                return BooleanAtom.FALSE;
+            default:
+                return UndefAtom.VALUE;
         }
     }
 }

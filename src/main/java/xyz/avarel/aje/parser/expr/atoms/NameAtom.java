@@ -1,8 +1,8 @@
 package xyz.avarel.aje.parser.expr.atoms;
 
 import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.runtime.pool.ObjectPool;
 import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.pool.ObjectPool;
 
 public class NameAtom implements Expr {
     private final ObjectPool pool;

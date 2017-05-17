@@ -7,7 +7,7 @@ package xyz.avarel.aje.runtime;
 public enum Undefined implements Any, NativeObject<Undefined> {
     VALUE;
 
-    public static final Type<Void> TYPE = new Type<>( "undefined");
+    public static final Type<Void> TYPE = new Type<>("undefined");
 
     @Override
     public String toString() {

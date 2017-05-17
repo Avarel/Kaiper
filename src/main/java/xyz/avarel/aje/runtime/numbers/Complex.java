@@ -133,7 +133,7 @@ public class Complex implements Any, NativeObject<Double> {
         double scale = re * re + im * im;
         return Complex.of(re / scale, -im / scale);
     }
-    
+
     public Complex sin() {
         double real = Math.sin(re) * Math.cosh(im);
         double imag = Math.cos(re) * Math.sinh(im);
@@ -145,7 +145,7 @@ public class Complex implements Any, NativeObject<Double> {
         double imag = -Math.sin(re) * Math.sinh(im);
         return Complex.of(real, imag);
     }
-    
+
     public Complex tan() {
         return sin().divide(cos());
     }
