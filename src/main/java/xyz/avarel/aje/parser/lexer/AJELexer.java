@@ -42,19 +42,11 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         return false;
     }
 
-    public Token next(TokenType type) {
-        Token token = next();
-        if (token.getType() != type) {
-            throw error("Expected token " + type + " but got " + token.getType(), token.getPos());
-        }
-        return token;
-    }
-
     @Override
     public Token next() {
         char c = advance();
 
-        while (c == ' ') c = advance();
+        while (Character.isSpaceChar(c)) c = advance();
 
         switch (c) {
             case '(': return make(TokenType.LEFT_PAREN);
@@ -113,9 +105,21 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     ? make(TokenType.AND)
                     : make(TokenType.AMPERSAND);
 
-            case ';': case '\n': case '\r': return make(TokenType.LINE);
+            case ';': {
+                match('\r');
+                match('\n');
+
+                return make(TokenType.SEMICOLON);
+            }
+            case '\r': {
+                match('\n');
+                return make(TokenType.LINE);
+            }
+            case '\n': return make(TokenType.LINE);
 
             case '\0': return make(TokenType.EOF);
+
+            case (char) -1: return make(TokenType.EOF);
 
             default:
                 if (Character.isDigit(c)) {

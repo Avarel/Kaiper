@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.expr;
+package xyz.avarel.aje.parser.ast;
 
 import xyz.avarel.aje.runtime.Any;
 
@@ -17,10 +17,10 @@ public class AssignmentExpr implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String indent) {
-        builder.append(indent).append("set\n");
-        left.ast(builder, indent + "│ ");
+    public void ast(StringBuilder builder, String prefix, boolean isTail) {
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("set\n");
+        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        right.ast(builder, indent + "│ ");
+        right.ast(builder, prefix + (isTail ? "    " : "│   "), true);
     }
 }

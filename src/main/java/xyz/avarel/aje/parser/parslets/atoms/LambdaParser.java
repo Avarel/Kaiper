@@ -2,8 +2,8 @@ package xyz.avarel.aje.parser.parslets.atoms;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
-import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.atoms.FunctionAtom;
+import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.parser.ast.atoms.FunctionAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.functions.CompiledFunction;
@@ -18,6 +18,7 @@ public class LambdaParser implements PrefixParser {
         List<String> parameters = new ArrayList<>();
 
         if (!parser.match(TokenType.ARROW)) {
+            parser.match(TokenType.LINE);
             do {
                 Token t = parser.eat(TokenType.NAME);
                 parameters.add(t.getText());
@@ -28,7 +29,7 @@ public class LambdaParser implements PrefixParser {
 
         ObjectPool subPool = parser.getObjectPool().subPool();
 
-        Expr expr = parser.statements(subPool);
+        Expr expr = parser.block(subPool);
 
         parser.eat(TokenType.RIGHT_BRACE);
 

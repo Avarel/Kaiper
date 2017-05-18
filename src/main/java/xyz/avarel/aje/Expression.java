@@ -1,7 +1,7 @@
 package xyz.avarel.aje;
 
 import xyz.avarel.aje.parser.AJEParser;
-import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.ast.Expr;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.pool.DefaultPool;

@@ -2,8 +2,8 @@ package xyz.avarel.aje.parser.parslets.atoms;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
-import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.atoms.FunctionAtom;
+import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.parser.ast.atoms.FunctionAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.functions.CompiledFunction;
@@ -36,9 +36,11 @@ public class FunctionParser implements PrefixParser {
 
         Expr expr;
 
-        parser.match(TokenType.ASSIGN);
+        if (!parser.match(TokenType.LINE)) {
+            parser.match(TokenType.ASSIGN);
+        }
         if (parser.match(TokenType.LEFT_BRACE)) {
-            expr = parser.statements(subPool);
+            expr = parser.block(subPool);
             parser.eat(TokenType.RIGHT_BRACE);
         } else {
             expr = parser.statements(subPool);

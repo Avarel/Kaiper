@@ -1,6 +1,6 @@
-package xyz.avarel.aje.parser.expr.atoms;
+package xyz.avarel.aje.parser.ast.atoms;
 
-import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.ast.Expr;
 import xyz.avarel.aje.runtime.Any;
 
 public class ValueAtom implements Expr {
@@ -16,7 +16,7 @@ public class ValueAtom implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String indent) {
-        builder.append(indent).append(value);
+    public void ast(StringBuilder builder, String prefix, boolean isTail) {
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append(value);
     }
 }

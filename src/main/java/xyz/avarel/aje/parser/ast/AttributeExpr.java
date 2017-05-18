@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.expr;
+package xyz.avarel.aje.parser.ast;
 
 import xyz.avarel.aje.runtime.Any;
 
@@ -17,10 +17,10 @@ public class AttributeExpr implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String indent) {
-        builder.append(indent).append("get\n");
-        target.ast(builder, indent + "│ ");
+    public void ast(StringBuilder builder, String prefix, boolean isTail) {
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("get\n");
+        target.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        builder.append(indent).append("│ ").append(name);
+        builder.append(prefix).append(isTail ? "    " : "│   ").append(name);
     }
 }

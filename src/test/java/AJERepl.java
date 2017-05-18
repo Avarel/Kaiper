@@ -1,5 +1,5 @@
 import xyz.avarel.aje.Expression;
-import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.ast.Expr;
 import xyz.avarel.aje.runtime.Any;
 
 import java.util.Scanner;
@@ -9,7 +9,7 @@ public class AJERepl {
         System.out.println("AJE REPL");
         System.out.println();
 
-        Scanner sc = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in).useDelimiter("(?<!-)[\\r\\n]+");
 
         boolean running = true;
 
@@ -47,7 +47,7 @@ public class AJERepl {
 
                 StringBuilder builder = new StringBuilder();
 
-                expr.ast(builder, "\t\t ");
+                expr.ast(builder, "\t\t ", true);
 
                 System.out.println("   AST >\n" + builder);
 

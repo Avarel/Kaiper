@@ -2,9 +2,9 @@ package xyz.avarel.aje.parser.parslets.atoms;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
-import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.atoms.UndefAtom;
-import xyz.avarel.aje.parser.expr.atoms.ValueAtom;
+import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.parser.ast.atoms.UndefAtom;
+import xyz.avarel.aje.parser.ast.atoms.ValueAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.numbers.Complex;

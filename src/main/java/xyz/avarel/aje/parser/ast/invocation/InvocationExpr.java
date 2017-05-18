@@ -1,6 +1,6 @@
-package xyz.avarel.aje.parser.expr.invocation;
+package xyz.avarel.aje.parser.ast.invocation;
 
-import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.ast.Expr;
 import xyz.avarel.aje.runtime.Any;
 
 import java.util.ArrayList;
@@ -32,12 +32,16 @@ public class InvocationExpr implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String indent) {
-        builder.append(indent).append("invoke\n");
-        left.ast(builder, indent + "│ ");
+    public void ast(StringBuilder builder, String prefix, boolean isTail) {
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("invoke\n");
+        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        for (Expr expr : exprs) {
-            expr.ast(builder, indent + "│ ");
+        for (int i = 0; i < exprs.size() - 1; i++) {
+            exprs.get(i).ast(builder, prefix + (isTail ? "    " : "│   "), false);
+            builder.append('\n');
+        }
+        if (exprs.size() > 0) {
+            exprs.get(exprs.size() - 1).ast(builder, prefix + (isTail ? "    " : "│   "), true);
         }
     }
 }

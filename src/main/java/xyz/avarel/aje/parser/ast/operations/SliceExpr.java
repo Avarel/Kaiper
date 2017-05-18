@@ -1,6 +1,6 @@
-package xyz.avarel.aje.parser.expr.operations;
+package xyz.avarel.aje.parser.ast.operations;
 
-import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.ast.Expr;
 import xyz.avarel.aje.runtime.Slice;
 
 import java.util.List;
@@ -28,12 +28,14 @@ public class SliceExpr implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String indent) {
-        builder.append(indent).append("list\n");
-        for (int i = 0; i < exprs.size(); i++) {
-            Expr expr = exprs.get(i);
-            expr.ast(builder, indent + "│ ");
-            if (i < exprs.size() - 1) builder.append('\n');
+    public void ast(StringBuilder builder, String prefix, boolean isTail) {
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("list\n");
+        for (int i = 0; i < exprs.size() - 1; i++) {
+            exprs.get(i).ast(builder, prefix + (isTail ? "    " : "│   "), false);
+            builder.append('\n');
+        }
+        if (exprs.size() > 0) {
+            exprs.get(exprs.size() - 1).ast(builder, prefix + (isTail ? "    " : "│   "), true);
         }
     }
 }

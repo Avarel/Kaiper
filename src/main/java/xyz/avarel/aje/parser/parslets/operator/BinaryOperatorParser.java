@@ -2,8 +2,8 @@ package xyz.avarel.aje.parser.parslets.operator;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
-import xyz.avarel.aje.parser.expr.Expr;
-import xyz.avarel.aje.parser.expr.operations.BinaryOperation;
+import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.parser.ast.operations.BinaryOperation;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.pool.ObjectPool;

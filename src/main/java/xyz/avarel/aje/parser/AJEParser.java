@@ -1,6 +1,7 @@
 package xyz.avarel.aje.parser;
 
-import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.parser.ast.atoms.UndefAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
@@ -34,11 +35,32 @@ public class AJEParser extends Parser {
     }
 
     public Expr statements(ObjectPool pool) {
+        while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+        if (match(TokenType.EOF)) return UndefAtom.VALUE;
+
         Expr any = parseExpr(pool);
 
-        while (match(TokenType.LINE)) {
+        while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
             // Temporary solution?
-            if (match(TokenType.LINE)) continue;
+            while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+            if (match(TokenType.EOF)) break;
+
+            any = any.andThen(parseExpr(pool));
+        }
+
+        return any;
+    }
+
+    public Expr block(ObjectPool pool) {
+        while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+        if (match(TokenType.EOF)) return UndefAtom.VALUE;
+
+        Expr any = parseExpr(pool);
+
+        while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
+            // Temporary solution?
+            while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+            if (nextIs(TokenType.RIGHT_BRACE)) break;
             if (match(TokenType.EOF)) break;
 
             any = any.andThen(parseExpr(pool));

@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.expr;
+package xyz.avarel.aje.parser.ast;
 
 import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.Slice;
@@ -46,12 +46,12 @@ public class SublistExpr implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String indent) {
-        builder.append(indent).append("binary operation\n");
-        left.ast(builder, indent + "│ ");
+    public void ast(StringBuilder builder, String prefix, boolean isTail) {
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("sublist\n");
+        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        startExpr.ast(builder, indent + "│ ");
+        startExpr.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        endExpr.ast(builder, indent + "│ ");
+        endExpr.ast(builder, prefix + (isTail ? "    " : "│   "), true);
     }
 }

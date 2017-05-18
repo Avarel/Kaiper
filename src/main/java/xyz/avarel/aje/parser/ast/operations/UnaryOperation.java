@@ -1,6 +1,6 @@
-package xyz.avarel.aje.parser.expr.operations;
+package xyz.avarel.aje.parser.ast.operations;
 
-import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.ast.Expr;
 import xyz.avarel.aje.runtime.Any;
 
 import java.util.function.UnaryOperator;
@@ -20,8 +20,8 @@ public class UnaryOperation implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String indent) {
-        builder.append(indent).append("unary operation\n");
-        left.ast(builder, indent + "│ ");
+    public void ast(StringBuilder builder, String prefix, boolean isTail) {
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("unary\n");
+        left.ast(builder, prefix + (isTail ? "    " : "│   "), true);
     }
 }

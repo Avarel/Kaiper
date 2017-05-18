@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.parser.expr.Expr;
+import xyz.avarel.aje.parser.ast.Expr;
 import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.pool.ObjectPool;

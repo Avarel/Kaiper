@@ -30,15 +30,6 @@ public class Parser {
         return last;
     }
 
-    public boolean match(TokenType expected) {
-        Token token = peek(0);
-        if (token.getType() != expected) {
-            return false;
-        }
-        eat();
-        return true;
-    }
-
     public Map<TokenType, PrefixParser> getPrefixParsers() {
         return grammar.getPrefixParsers();
     }
@@ -63,12 +54,22 @@ public class Parser {
         return eat();
     }
 
+    public boolean match(TokenType expected) {
+        Token token = peek(0);
+        if (token.getType() != expected) {
+            return false;
+        }
+        eat();
+        return true;
+    }
+
     public Token eat() {
         // Make sure we've read the token.
         peek(0);
 
         return last = tokens.remove(0);
     }
+
 
     public Token peek(int distance) {
         // Read in as many as needed.
@@ -78,6 +79,10 @@ public class Parser {
 
         // Get the queued token.
         return tokens.get(distance);
+    }
+
+    public boolean nextIs(TokenType type) {
+        return peek(0).getType() == type;
     }
 
     public int getPrecedence() {

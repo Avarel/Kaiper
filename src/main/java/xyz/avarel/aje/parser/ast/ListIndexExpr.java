@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.expr;
+package xyz.avarel.aje.parser.ast;
 
 import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.Slice;
@@ -27,10 +27,10 @@ public class ListIndexExpr implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String indent) {
-        builder.append(indent).append("binary operation\n");
-        left.ast(builder, indent + "│ ");
+    public void ast(StringBuilder builder, String prefix, boolean isTail) {
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("list index\n");
+        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        indexExpr.ast(builder, indent + "│ ");
+        indexExpr.ast(builder, prefix + (isTail ? "    " : "│   "), true);
     }
 }
