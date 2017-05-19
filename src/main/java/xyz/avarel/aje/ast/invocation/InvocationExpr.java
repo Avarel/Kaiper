@@ -1,6 +1,6 @@
-package xyz.avarel.aje.parser.ast.invocation;
+package xyz.avarel.aje.ast.invocation;
 
-import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.runtime.Any;
 
 import java.util.ArrayList;

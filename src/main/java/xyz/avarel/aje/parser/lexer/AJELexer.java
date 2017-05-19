@@ -2,51 +2,60 @@ package xyz.avarel.aje.parser.lexer;
 
 import xyz.avarel.aje.AJEException;
 
-import java.util.Iterator;
+import java.io.IOException;
+import java.io.Reader;
 
-public class AJELexer implements Iterator<Token>, Iterable<Token> {
-    private final String str;
+public class AJELexer {
+    private final String string;
     private int pos = -1;
-
-    public AJELexer() {
-        this("");
-    }
 
     /**
      * Creates a new Lexer to tokenize the given string.
      *
-     * @param str String to tokenize.
+     * @param string String to tokenize.
      */
-    public AJELexer(String str) {
-        this.str = str;
+    public AJELexer(String string) {
+        this.string = string;
     }
 
-    @Override
-    public boolean hasNext() {
-        return pos < str.length();
+    /**
+     * @param reader Turn the reader into a String.
+     */
+    public AJELexer(Reader reader) {
+        int value;
+        StringBuilder builder = new StringBuilder();
+        try {
+            while ((value = reader.read()) != -1) {
+                builder.append((char) value);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.string = builder.toString();
     }
 
-    private char advance() {
-        return ++pos < str.length() ? str.charAt(pos) : (char) -1;
+    private char next() {
+        return ++pos < string.length() ? string.charAt(pos) : (char) -1;
     }
 
     private char peek() {
-        return pos < str.length() - 1 ? str.charAt(pos + 1) : (char) -1;
+        return pos < string.length() - 1 ? string.charAt(pos + 1) : (char) -1;
     }
 
     private boolean match(char prompt) {
         if (peek() == prompt) {
-            advance();
+            next();
             return true;
         }
         return false;
     }
 
-    @Override
-    public Token next() {
-        char c = advance();
+    public Token readToken() {
+        char c = next();
 
-        while (Character.isSpaceChar(c)) c = advance();
+        while (Character.isSpaceChar(c)) c = next();
 
         switch (c) {
             case '(': return make(TokenType.LEFT_PAREN);
@@ -113,9 +122,13 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             }
             case '\r': {
                 match('\n');
+
                 return make(TokenType.LINE);
             }
-            case '\n': return make(TokenType.LINE);
+            case '\n': {
+
+                return make(TokenType.LINE);
+            }
 
             case '\0': return make(TokenType.EOF);
 
@@ -127,7 +140,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 } else if (Character.isLetter(c)) {
                     return nextName();
                 } else {
-                    if (pos == str.length()) return make(TokenType.EOF);
+                    if (pos == string.length()) return make(TokenType.EOF);
                     throw error("Could not lex `" + c + "`");
                 }
         }
@@ -150,14 +163,14 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     point = true;
                 }
             }
-            advance();
+            next();
         }
 
         if (Character.isLetter(peek()) && peek() != 'i') {
             throw error("Numbers can not be followed up by letters");
         }
 
-        String value = str.substring(start, pos + 1);
+        String value = string.substring(start, pos + 1);
 
         if (!point) return make(TokenType.INT, value);
 
@@ -168,10 +181,10 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         int start = pos;
 
         while (Character.isLetterOrDigit(peek())) {
-            advance();
+            next();
         }
 
-        String value = str.substring(start, pos + 1);
+        String value = string.substring(start, pos + 1);
 
         return nameOrKeyword(start, value);
     }
@@ -208,17 +221,12 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     public String toString() {
         StringBuilder s = new StringBuilder();
 
-        for (Token t : this) {
+        Token t;
+        while ((t = readToken()).getType() != TokenType.EOF) {
             s.append(t).append("  ");
         }
 
         return s.toString();
-    }
-
-
-    @Override
-    public Iterator<Token> iterator() {
-        return this;
     }
 
 

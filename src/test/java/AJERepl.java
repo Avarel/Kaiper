@@ -1,5 +1,5 @@
 import xyz.avarel.aje.Expression;
-import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.runtime.Any;
 
 import java.util.Scanner;
@@ -49,7 +49,7 @@ public class AJERepl {
 
                 expr.ast(builder, "\t\t ", true);
 
-                System.out.println("   AST >\n" + builder);
+                System.out.println("   AST > ⚫\n" + builder);
 
                 System.out.println();
             } catch (RuntimeException e) {

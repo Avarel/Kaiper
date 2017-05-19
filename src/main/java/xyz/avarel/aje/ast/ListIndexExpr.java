@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.ast;
+package xyz.avarel.aje.ast;
 
 import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.Slice;

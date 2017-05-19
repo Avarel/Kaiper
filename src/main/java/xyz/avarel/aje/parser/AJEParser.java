@@ -1,23 +1,22 @@
 package xyz.avarel.aje.parser;
 
-import xyz.avarel.aje.parser.ast.Expr;
-import xyz.avarel.aje.parser.ast.atoms.UndefAtom;
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.atoms.UndefAtom;
+import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
-
-import java.util.Iterator;
 
 @SuppressWarnings("unchecked")
 public class AJEParser extends Parser {
     private final ObjectPool pool;
 
-    public AJEParser(Iterator<Token> tokens) {
-        this(tokens, new ObjectPool());
+    public AJEParser(AJELexer lexer) {
+        this(lexer, new ObjectPool());
     }
 
-    public AJEParser(Iterator<Token> tokens, ObjectPool objectPool) {
-        super(tokens, DefaultGrammar.INSTANCE);
+    public AJEParser(AJELexer lexer, ObjectPool objectPool) {
+        super(lexer, DefaultGrammar.INSTANCE);
         this.pool = objectPool;
     }
 
@@ -35,14 +34,14 @@ public class AJEParser extends Parser {
     }
 
     public Expr statements(ObjectPool pool) {
-        while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+        skipEndStatements();
         if (match(TokenType.EOF)) return UndefAtom.VALUE;
 
         Expr any = parseExpr(pool);
 
         while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
             // Temporary solution?
-            while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+            skipEndStatements();
             if (match(TokenType.EOF)) break;
 
             any = any.andThen(parseExpr(pool));
@@ -52,14 +51,14 @@ public class AJEParser extends Parser {
     }
 
     public Expr block(ObjectPool pool) {
-        while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+        skipEndStatements();
         if (match(TokenType.EOF)) return UndefAtom.VALUE;
 
         Expr any = parseExpr(pool);
 
         while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
             // Temporary solution?
-            while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+            skipEndStatements();
             if (nextIs(TokenType.RIGHT_BRACE)) break;
             if (match(TokenType.EOF)) break;
 

@@ -1,6 +1,6 @@
 import junit.framework.TestCase;
 import xyz.avarel.aje.Expression;
-import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.ast.Expr;
 
 public class SpeedTest extends TestCase {
     public void testSpeeds() {
