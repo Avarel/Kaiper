@@ -116,6 +116,8 @@ build {
     dependsOn sourcesJar
     dependsOn shadowJar
 
+    dependsOn test
+
     jar.mustRunAfter clean
     javadocJar.mustRunAfter jar
     sourcesJar.mustRunAfter javadocJar
