@@ -95,4 +95,12 @@ public abstract class Parser {
     public AJEException error(String message, int position) {
         return new AJEException(message + ", position " + position + ".");
     }
+
+    public void skipTokens(TokenType expected) {
+        while (nextIs(expected)) eat();
+    }
+
+    public void skipEndStatements() {
+        while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+    }
 }

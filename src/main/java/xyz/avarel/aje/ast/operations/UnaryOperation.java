@@ -16,7 +16,7 @@ public class UnaryOperation implements Expr {
 
     @Override
     public Any compute() {
-        return operator.apply(left.compute());
+        return operator.apply(left.compute().identity());
     }
 
     @Override

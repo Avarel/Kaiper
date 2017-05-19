@@ -18,10 +18,10 @@ public class SliceParser implements PrefixParser {
 
         if (!parser.match(TokenType.RIGHT_BRACKET)) {
             do {
-                parser.match(TokenType.LINE);
+                parser.skipTokens(TokenType.LINE);
                 exprs.add(parser.parseExpr(pool));
             } while (parser.match(TokenType.COMMA));
-            parser.match(TokenType.LINE);
+            parser.skipTokens(TokenType.LINE);
             parser.eat(TokenType.RIGHT_BRACKET);
         }
 

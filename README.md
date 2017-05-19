@@ -118,8 +118,9 @@ Traditional functions can be declared with the syntax shown below.
     name field is not present, the function be an anonymous function expression.
 ```
 fun [name]([param,...]) [=] { [statements] }
+fun [name]([param,...]) = expression
 
-fun f(x) { x + 2 }; f(2) == 4
+fun f(x) = x + 2; f(2) == 4
 fun isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
 ```
 
@@ -194,8 +195,8 @@ Result | [3, 4, 5]
   REPL | x = [50..60]; x[5]
 Result | 55
 
-  REPL | x = [100..200]; x[25,50,75]
-Result | [125, 150, 175]
+  REPL | x = [100..200]; x[25:30]
+Result | [125, 126, 127, 128, 129]
 ```
 ##### First Class Functions
 ```

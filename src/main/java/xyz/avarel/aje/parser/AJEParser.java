@@ -33,14 +33,14 @@ public class AJEParser extends Parser {
     }
 
     public Expr statements(ObjectPool pool) {
-        while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+        skipEndStatements();
         if (match(TokenType.EOF)) return UndefAtom.VALUE;
 
         Expr any = parseExpr(pool);
 
         while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
             // Temporary solution?
-            while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+            skipEndStatements();
             if (match(TokenType.EOF)) break;
 
             any = any.andThen(parseExpr(pool));
@@ -50,14 +50,14 @@ public class AJEParser extends Parser {
     }
 
     public Expr block(ObjectPool pool) {
-        while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+        skipEndStatements();
         if (match(TokenType.EOF)) return UndefAtom.VALUE;
 
         Expr any = parseExpr(pool);
 
         while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
             // Temporary solution?
-            while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
+            skipEndStatements();
             if (nextIs(TokenType.RIGHT_BRACE)) break;
             if (match(TokenType.EOF)) break;
 
@@ -88,7 +88,7 @@ public class AJEParser extends Parser {
     }
 
     public Expr parseInfix(int precedence, Expr left, ObjectPool pool) {
-        while (precedence < getPrecedence()) { // ex plus is 6, readToken is mult which is 7, parse it
+        while (precedence < getPrecedence()) { // ex plus is 6, next is mult which is 7, parse it
             Token token = eat();
 
             InfixParser infix = getInfixParsers().get(token.getType());

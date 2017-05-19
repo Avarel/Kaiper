@@ -49,7 +49,7 @@ public class AJERepl {
 
                 expr.ast(builder, "\t\t ", true);
 
-                System.out.println("   AST >\n" + builder);
+                System.out.println("   AST > ⚫\n" + builder);
 
                 System.out.println();
             } catch (RuntimeException e) {

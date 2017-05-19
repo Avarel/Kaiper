@@ -18,7 +18,7 @@ public class LambdaParser implements PrefixParser {
         List<String> parameters = new ArrayList<>();
 
         if (!parser.match(TokenType.ARROW)) {
-            parser.match(TokenType.LINE);
+            parser.skipTokens(TokenType.LINE);
             do {
                 Token t = parser.eat(TokenType.NAME);
                 parameters.add(t.getText());
