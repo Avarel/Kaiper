@@ -35,10 +35,15 @@ public class FunctionParser implements PrefixParser {
 
         Expr expr;
 
-        if (!parser.match(TokenType.LINE)) {
-            parser.match(TokenType.ASSIGN);
-        }
-        if (parser.match(TokenType.LEFT_BRACE)) {
+        parser.skipTokens(TokenType.LINE);
+        if (parser.match(TokenType.ASSIGN)) {
+            if (parser.match(TokenType.LEFT_BRACE)) {
+                expr = parser.block(subPool);
+                parser.eat(TokenType.RIGHT_BRACE);
+            } else {
+                expr = parser.parseExpr(subPool);
+            }
+        } else if (parser.match(TokenType.LEFT_BRACE)) {
             expr = parser.block(subPool);
             parser.eat(TokenType.RIGHT_BRACE);
         } else {

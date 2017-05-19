@@ -23,7 +23,7 @@ public class InvocationExpr implements Expr {
             arguments.add(expr.compute().identity());
         }
 
-        return left.compute().invoke(arguments);
+        return left.compute().identity().invoke(arguments);
     }
 
 

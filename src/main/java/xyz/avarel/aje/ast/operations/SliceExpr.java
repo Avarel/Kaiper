@@ -18,10 +18,10 @@ public class SliceExpr implements Expr {
 
         for (Expr expr : exprs) {
             if (expr instanceof RangeExpr) {
-                slice.addAll((Slice) expr.compute());
+                slice.addAll((Slice) expr.compute().identity());
                 continue;
             }
-            slice.add(expr.compute());
+            slice.add(expr.compute().identity());
         }
 
         return slice;

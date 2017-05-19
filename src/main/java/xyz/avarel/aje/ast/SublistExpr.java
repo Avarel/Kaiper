@@ -20,9 +20,9 @@ public class SublistExpr implements Expr {
 
     @Override
     public Any compute() {
-        Any obj = left.compute();
-        Any start = startExpr.compute();
-        Any end = endExpr.compute();
+        Any obj = left.compute().identity();
+        Any start = startExpr.compute().identity();
+        Any end = endExpr.compute().identity();
 
         if (obj instanceof Slice && start instanceof Int && end instanceof Int) {
             Slice obj1 = (Slice) obj;

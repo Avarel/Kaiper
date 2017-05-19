@@ -14,7 +14,7 @@ public class RangeExpr implements Expr {
 
     @Override
     public Any compute() {
-        return left.compute().rangeTo(right.compute());
+        return left.compute().identity().rangeTo(right.compute().identity());
     }
 
     @Override

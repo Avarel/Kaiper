@@ -16,8 +16,8 @@ public class ListIndexExpr implements Expr {
 
     @Override
     public Any compute() {
-        Any list = left.compute();
-        Any index = indexExpr.compute();
+        Any list = left.compute().identity();
+        Any index = indexExpr.compute().identity();
 
         if (list instanceof Slice && index instanceof Int) {
             return ((Slice) list).get(((Int) index).value());
