@@ -25,7 +25,7 @@ public class AJEParser extends Parser {
         if (!getTokens().isEmpty()) {
             Token t = getTokens().get(0);
             if (t.getType() != TokenType.EOF) {
-                throw error("Did not parse " + t.getText(), t.getPos());
+                throw error("Did not parse " + t.getText() + t.getPosition());
             }
         }
 
@@ -82,7 +82,7 @@ public class AJEParser extends Parser {
     public Expr parsePrefix(Token token, ObjectPool pool) {
         PrefixParser prefix = getPrefixParsers().get(token.getType());
 
-        if (prefix == null) throw error("Could not parse token `" + token.getText() + "`", token.getPos());
+        if (prefix == null) throw error("Could not parse token `" + token.getText() + "`" + token.getPosition());
 
         return prefix.parse(this, pool, token);
     }
@@ -93,7 +93,7 @@ public class AJEParser extends Parser {
 
             InfixParser infix = getInfixParsers().get(token.getType());
 
-            if (infix == null) throw error("Could not parse token `" + token.getText() + "`", token.getPos());
+            if (infix == null) throw error("Could not parse token `" + token.getText() + "`" + token.getPosition());
 
             left = infix.parse(this, pool, left, token);
         }

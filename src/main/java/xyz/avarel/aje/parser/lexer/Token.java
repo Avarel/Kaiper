@@ -1,22 +1,22 @@
 package xyz.avarel.aje.parser.lexer;
 
 public final class Token {
-    private final int pos;
+    private final Position position;
     private final TokenType type;
     private final String str;
 
-    public Token(int pos, TokenType type) {
-        this(pos, type, type.toString());
+    public Token(Position position, TokenType type) {
+        this(position, type, type.toString());
     }
 
-    public Token(int pos, TokenType type, String str) {
-        this.pos = pos;
+    public Token(Position position, TokenType type, String str) {
+        this.position = position;
         this.type = type;
         this.str = str;
     }
 
-    public int getPos() {
-        return pos;
+    public Position getPosition() {
+        return position;
     }
 
     public TokenType getType() {

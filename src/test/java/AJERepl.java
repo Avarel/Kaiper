@@ -9,7 +9,7 @@ public class AJERepl {
         System.out.println("AJE REPL");
         System.out.println();
 
-        Scanner sc = new Scanner(System.in).useDelimiter("(?<!-)[\\r\\n]+");
+        Scanner sc = new Scanner(System.in);
 
         boolean running = true;
 
