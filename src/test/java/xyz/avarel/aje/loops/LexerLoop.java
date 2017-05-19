@@ -1,3 +1,5 @@
+package xyz.avarel.aje.loops;
+
 import xyz.avarel.aje.parser.lexer.AJELexer;
 
 import java.util.Scanner;

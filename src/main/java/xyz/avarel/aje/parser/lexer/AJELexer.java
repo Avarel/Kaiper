@@ -155,6 +155,9 @@ public class AJELexer {
             if (Character.isDigit(c)) {
                 sb.append(c);
             } else switch (c) {
+                case 'i':
+                    back();
+                    return make(TokenType.DECIMAL, sb.toString());
                 case '.':
                     if (point) {
                         back();

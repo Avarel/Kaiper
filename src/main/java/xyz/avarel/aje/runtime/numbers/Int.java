@@ -97,7 +97,10 @@ public class Int implements Any, NativeObject<Integer> {
         return Undefined.VALUE;
     }
 
-    private Int divide(Int other) {
+    private Any divide(Int other) {
+        if (other.value == 0) {
+            return Decimal.of(value).divide(other);
+        }
         return Int.of(value / other.value);
     }
 

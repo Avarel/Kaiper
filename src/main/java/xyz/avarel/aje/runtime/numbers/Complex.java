@@ -207,6 +207,15 @@ public class Complex implements Any, NativeObject<Double> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Complex) {
+            Complex b = (Complex) obj;
+            return re == b.re && im == b.im;
+        }
+        return false;
+    }
+
+    @Override
     public Truth isEqualTo(Any other) {
         if (other instanceof Complex) {
             return this.isEqualTo((Complex) other);
@@ -219,7 +228,7 @@ public class Complex implements Any, NativeObject<Double> {
     }
 
     private Truth isEqualTo(Complex b) {
-        return re == b.re && im == b.im ? Truth.TRUE : Truth.FALSE;
+        return equals(b) ? Truth.TRUE : Truth.FALSE;
     }
 
     public double real() {

@@ -1,9 +1,10 @@
-import junit.framework.TestCase;
+package xyz.avarel.aje.others;
+
 import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.ast.Expr;
 
-public class SpeedTest extends TestCase {
-    public void testSpeeds() {
+public class SpeedTester {
+    public static void main(String[] args) {
         // Performance hoggers
         // [1,2,[3,4,[5,6,[7,8],90, [91, 92],100]],9,10,[11, [50,52],12],13]
         // (8+2i)*(5i+3)
@@ -19,7 +20,7 @@ public class SpeedTest extends TestCase {
         System.out.println("  Recompile: " + testRecompileSpeed(script, testsAmt) + "ns avg");
     }
 
-    private long testPrecompiledSpeed(String script, long tests) {
+    private static long testPrecompiledSpeed(String script, long tests) {
         Expression exp = new Expression(script);
 
         Expr expr = exp.compile();
@@ -33,7 +34,7 @@ public class SpeedTest extends TestCase {
         return (end - start) / tests;
     }
 
-    private long testRecompileSpeed(String script, long tests) {
+    private static long testRecompileSpeed(String script, long tests) {
         Expression exp = new Expression(script);
 
         long start = System.nanoTime();
