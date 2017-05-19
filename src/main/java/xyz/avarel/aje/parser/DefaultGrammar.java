@@ -55,6 +55,7 @@ public class DefaultGrammar extends Grammar {
 
         // Functional
         register(TokenType.LEFT_PAREN, new InvocationParser());
+
         register(TokenType.LEFT_BRACKET, new GetIndexParser());
         register(TokenType.DOT, new AttributeParser());
         register(TokenType.ASSIGN, new AssignmentParser());

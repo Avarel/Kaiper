@@ -2,9 +2,9 @@ package xyz.avarel.aje.parser.parslets.atoms;
 
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
-import xyz.avarel.aje.parser.ast.Expr;
-import xyz.avarel.aje.parser.ast.atoms.BooleanAtom;
-import xyz.avarel.aje.parser.ast.atoms.UndefAtom;
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.atoms.BooleanAtom;
+import xyz.avarel.aje.ast.atoms.UndefAtom;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
 

@@ -2,12 +2,7 @@ package xyz.avarel.aje.parser.lexer;
 
 import xyz.avarel.aje.AJEException;
 
-import java.util.Iterator;
-
-public class AJELexer implements Iterator<Token>, Iterable<Token> {
-    private final String str;
-    private int pos = -1;
-
+public class AJELexer extends NewLexer {
     public AJELexer() {
         this("");
     }
@@ -18,35 +13,27 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
      * @param str String to tokenize.
      */
     public AJELexer(String str) {
-        this.str = str;
-    }
-
-    @Override
-    public boolean hasNext() {
-        return pos < str.length();
-    }
-
-    private char advance() {
-        return ++pos < str.length() ? str.charAt(pos) : (char) -1;
+        super(str);
     }
 
     private char peek() {
-        return pos < str.length() - 1 ? str.charAt(pos + 1) : (char) -1;
+        char c = next();
+        back();
+        return c;
     }
 
     private boolean match(char prompt) {
-        if (peek() == prompt) {
-            advance();
+        if (next() == prompt) {
             return true;
         }
+        back();
         return false;
     }
 
-    @Override
-    public Token next() {
-        char c = advance();
+    public Token readToken() {
+        char c = isQueued() ? popQueue() : next();
 
-        while (Character.isSpaceChar(c)) c = advance();
+        while (Character.isSpaceChar(c)) c = next();
 
         switch (c) {
             case '(': return make(TokenType.LEFT_PAREN);
@@ -123,77 +110,100 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
             default:
                 if (Character.isDigit(c)) {
-                    return nextNumber();
-                } else if (Character.isLetter(c)) {
-                    return nextName();
+                    return nextNumber(c);
+                }
+                else if (Character.isLetter(c)) {
+                    return nextName(c);
                 } else {
-                    if (pos == str.length()) return make(TokenType.EOF);
+                    if (end()) return make(TokenType.EOF);
                     throw error("Could not lex `" + c + "`");
                 }
         }
 
     }
 
-    private Token nextNumber() {
-        int start = pos;
+    private Token nextNumber(char init) {
         boolean point = false;
 
-        while (Character.isDigit(peek()) || peek() == '.') {
-            if (match('.')) {
-                if (peek() == '.') {
-                    pos--;
-                    break;
-                } else if (!Character.isDigit(peek())) {
-                    pos--;
-                    break;
-                } else if (!point) {
+        char c;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(init);
+
+        while (true) {
+            c = next();
+
+            if (Character.isDigit(c)) {
+                sb.append(c);
+            } else switch (c) {
+                case '.':
+                    if (point) {
+                        back();
+                        return make(TokenType.DECIMAL, sb.toString());
+                    }
+
+                    if (!Character.isDigit(peek())) {
+                        queue(c);
+                        return make(TokenType.INT, sb.toString());
+                    }
+
+                    sb.append(c);
                     point = true;
-                }
+                    break;
+                case '_':
+                    break;
+                default:
+                    back();
+                    if (Character.isAlphabetic(peek()) || peek() == '(') {
+                        queue('*');
+                    }
+                    if (point) {
+                        return make(TokenType.DECIMAL, sb.toString());
+                    } else {
+                        return make(TokenType.INT, sb.toString());
+                    }
             }
-            advance();
         }
-
-        if (Character.isLetter(peek()) && peek() != 'i') {
-            throw error("Numbers can not be followed up by letters");
-        }
-
-        String value = str.substring(start, pos + 1);
-
-        if (!point) return make(TokenType.INT, value);
-
-        return make(TokenType.DECIMAL, value);
     }
 
-    private Token nextName() {
-        int start = pos;
+    private Token nextName(char init) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(init);
 
-        while (Character.isLetterOrDigit(peek())) {
-            advance();
+        char c;
+        while (true) {
+            c = next();
+
+            if (Character.isLetterOrDigit(c)) {
+                sb.append(c);
+            } else {
+                break;
+            }
         }
 
-        String value = str.substring(start, pos + 1);
+        back();
 
-        return nameOrKeyword(start, value);
+        return nameOrKeyword(sb.toString());
     }
 
-    private Token nameOrKeyword(int pos, String value) {
+    private Token nameOrKeyword(String value) {
         switch(value) {
-            case "fun": return make(pos, TokenType.FUNCTION);
-            case "true": return make(pos, TokenType.BOOLEAN, "true");
-            case "false": return make(pos, TokenType.BOOLEAN, "false");
-            case "i": return make(pos, TokenType.IMAGINARY);
-            case "and": return make(pos, TokenType.AND);
-            case "or": return make(pos, TokenType.OR);
-            default: return make(pos, TokenType.NAME, value);
+            case "fun": return make(TokenType.FUNCTION);
+            case "true": return make(TokenType.BOOLEAN, "true");
+            case "false": return make(TokenType.BOOLEAN, "false");
+            case "i": return make(TokenType.IMAGINARY);
+            case "and": return make(TokenType.AND);
+            case "or": return make(TokenType.OR);
+            default: return make(TokenType.NAME, value);
         }
     }
 
     private Token make(TokenType type) {
-        return make(pos, type);
+        return make(0, type);
     }
 
     private Token make(TokenType type, String value) {
-        return make(pos, type, value);
+        return make(0, type, value);
     }
 
     private Token make(int pos, TokenType type) {
@@ -208,7 +218,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     public String toString() {
         StringBuilder s = new StringBuilder();
 
-        for (Token t : this) {
+        Token t;
+        while ((t = readToken()).getType() != TokenType.EOF) {
             s.append(t).append("  ");
         }
 
@@ -216,14 +227,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
 
-    @Override
-    public Iterator<Token> iterator() {
-        return this;
-    }
-
-
     public AJEException error(String message) {
-        return error(message, pos);
+        return error(message, 0);
     }
 
     public AJEException error(String message, int position) {

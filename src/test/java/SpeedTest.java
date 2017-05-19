@@ -1,14 +1,13 @@
 import junit.framework.TestCase;
 import xyz.avarel.aje.Expression;
-import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.ast.Expr;
 
 public class SpeedTest extends TestCase {
     public void testSpeeds() {
         // Performance hoggers
         // [1,2,[3,4,[5,6,[7,8],90, [91, 92],100]],9,10,[11, [50,52],12],13]
         // (8+2i)*(5i+3)
-        // [1..10] * 10
-        // ccccc
+        // [1..10] * [10]
         String script = "1+2";
         int testsAmt = 10000;
 

@@ -1,5 +1,5 @@
 import xyz.avarel.aje.Expression;
-import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.runtime.Any;
 
 import java.util.Scanner;

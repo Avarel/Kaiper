@@ -1,6 +1,6 @@
-package xyz.avarel.aje.parser.ast.atoms;
+package xyz.avarel.aje.ast.atoms;
 
-import xyz.avarel.aje.parser.ast.Expr;
+import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
 
 public class FunctionAtom implements Expr {

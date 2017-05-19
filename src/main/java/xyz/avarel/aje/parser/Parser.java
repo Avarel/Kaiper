@@ -1,26 +1,26 @@
 package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.AJEException;
+import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class Parser {
-    private final Iterator<Token> lexer;
+public abstract class Parser {
+    private final AJELexer lexer;
     private final List<Token> tokens;
     private final Grammar grammar;
 
     private Token last;
 
-    public Parser(Iterator<Token> lexer) {
+    public Parser(AJELexer lexer) {
         this(lexer, new Grammar());
     }
 
-    public Parser(Iterator<Token> lexer, Grammar grammar) {
+    public Parser(AJELexer lexer, Grammar grammar) {
         this.lexer = lexer;
         this.tokens = new ArrayList<>();
         this.grammar = grammar;
@@ -42,7 +42,7 @@ public class Parser {
         return tokens;
     }
 
-    public Iterator<Token> getLexer() {
+    public AJELexer getLexer() {
         return lexer;
     }
 
@@ -74,7 +74,7 @@ public class Parser {
     public Token peek(int distance) {
         // Read in as many as needed.
         while (distance >= tokens.size()) {
-            tokens.add(lexer.next());
+            tokens.add(lexer.readToken());
         }
 
         // Get the queued token.

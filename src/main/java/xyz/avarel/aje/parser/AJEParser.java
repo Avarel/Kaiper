@@ -1,22 +1,20 @@
 package xyz.avarel.aje.parser;
 
-import xyz.avarel.aje.parser.ast.Expr;
-import xyz.avarel.aje.parser.ast.atoms.UndefAtom;
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.atoms.UndefAtom;
+import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
 
-import java.util.Iterator;
-
-@SuppressWarnings("unchecked")
 public class AJEParser extends Parser {
     private final ObjectPool pool;
 
-    public AJEParser(Iterator<Token> tokens) {
+    public AJEParser(AJELexer tokens) {
         this(tokens, new ObjectPool());
     }
 
-    public AJEParser(Iterator<Token> tokens, ObjectPool objectPool) {
+    public AJEParser(AJELexer tokens, ObjectPool objectPool) {
         super(tokens, DefaultGrammar.INSTANCE);
         this.pool = objectPool;
     }
@@ -90,7 +88,7 @@ public class AJEParser extends Parser {
     }
 
     public Expr parseInfix(int precedence, Expr left, ObjectPool pool) {
-        while (precedence < getPrecedence()) { // ex plus is 6, next is mult which is 7, parse it
+        while (precedence < getPrecedence()) { // ex plus is 6, readToken is mult which is 7, parse it
             Token token = eat();
 
             InfixParser infix = getInfixParsers().get(token.getType());
