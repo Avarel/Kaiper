@@ -36,8 +36,6 @@ repositories {
 }
 ```
 
-The builds are distributed using JCenter through Bintray JDA JCenter Bintray
-
 ## Features
 |Feature|AJE Type|Java Type|Examples|
 |---|---|---|---:|
