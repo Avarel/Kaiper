@@ -83,6 +83,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 case LEFT_BRACE:
                 case LEFT_BRACKET:
                 case LEFT_PAREN:
+                case ARROW:
                 case COMMA:
                     switch (tokens.get(i + 1).getType()) {
                         case LINE: // Remove following LINE token
