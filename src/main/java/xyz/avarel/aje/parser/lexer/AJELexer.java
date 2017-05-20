@@ -95,11 +95,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     break;
                 case LINE: // Remove current LINE token if followed by:
                     switch (tokens.get(i + 1).getType()) {
-                        case LEFT_BRACE:
                         case RIGHT_BRACE:
-                        case LEFT_BRACKET:
                         case RIGHT_BRACKET:
-                        case LEFT_PAREN:
                         case RIGHT_PAREN:
                         case COMMA:
                         case SEMICOLON:
