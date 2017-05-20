@@ -74,7 +74,7 @@ public abstract class Parser {
     public Token peek(int distance) {
         // Read in as many as needed.
         while (distance >= tokens.size()) {
-            tokens.add(lexer.readToken());
+            tokens.add(lexer.next());
         }
 
         // Get the queued token.
@@ -94,13 +94,5 @@ public abstract class Parser {
 
     public AJEException error(String message) {
         return new AJEException(message);
-    }
-
-    public void skipTokens(TokenType expected) {
-        while (nextIs(expected)) eat();
-    }
-
-    public void skipEndStatements() {
-        while (nextIs(TokenType.LINE) || nextIs(TokenType.SEMICOLON)) eat();
     }
 }

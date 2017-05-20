@@ -33,14 +33,11 @@ public class AJEParser extends Parser {
     }
 
     public Expr statements(ObjectPool pool) {
-        skipEndStatements();
         if (match(TokenType.EOF)) return UndefAtom.VALUE;
 
         Expr any = parseExpr(pool);
 
         while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
-            // Temporary solution?
-            skipEndStatements();
             if (match(TokenType.EOF)) break;
 
             any = any.andThen(parseExpr(pool));
@@ -50,14 +47,11 @@ public class AJEParser extends Parser {
     }
 
     public Expr block(ObjectPool pool) {
-        skipEndStatements();
         if (match(TokenType.EOF)) return UndefAtom.VALUE;
 
         Expr any = parseExpr(pool);
 
         while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
-            // Temporary solution?
-            skipEndStatements();
             if (nextIs(TokenType.RIGHT_BRACE)) break;
             if (match(TokenType.EOF)) break;
 

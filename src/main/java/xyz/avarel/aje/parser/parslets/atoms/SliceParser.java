@@ -1,9 +1,9 @@
 package xyz.avarel.aje.parser.parslets.atoms;
 
-import xyz.avarel.aje.parser.AJEParser;
-import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.operations.SliceExpr;
+import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.pool.ObjectPool;
@@ -18,10 +18,8 @@ public class SliceParser implements PrefixParser {
 
         if (!parser.match(TokenType.RIGHT_BRACKET)) {
             do {
-                parser.skipTokens(TokenType.LINE);
                 exprs.add(parser.parseExpr(pool));
             } while (parser.match(TokenType.COMMA));
-            parser.skipTokens(TokenType.LINE);
             parser.eat(TokenType.RIGHT_BRACKET);
         }
 

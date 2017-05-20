@@ -10,7 +10,7 @@ AJE
 |Feature|AJE Type|Java Type|Examples|
 |---|---|---|---:|
 |Simple arithmetic|`integer`|`Integer`|`1` `42` `1+2^3` `2*(3+4)`|
-|Decimals|`decimal`|`Double`|`1.235` `-2/17` `3.0+2.5`|
+|Decimals|`decimal`|`Double`|`1.235` `-2.0/17` `3.0+2.5`|
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)*(5i+3)`|
 |Lists operations|`list`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|

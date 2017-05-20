@@ -9,9 +9,11 @@ import java.util.List;
  * An interface containing all natively implemented operations.
  */
 public interface Any {
-    Type<Any> TYPE = new Type<>("any");
+    Type TYPE = new Type("any");
 
-    Type getType();
+    default Type getType() {
+        return Any.TYPE;
+    }
 
     default boolean isNativeObject() {
         return this instanceof NativeObject;

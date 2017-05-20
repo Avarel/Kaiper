@@ -39,7 +39,7 @@ public class Complex implements Any, NativeObject<Double> {
 
     @Override
     public String toString() {
-        if (im == 0) return re + "";
+        if (im == 0) return String.valueOf(re);
         if (re == 0 && im == 1) return "i";
         if (re == 0) return im + "i";
         if (im < 0) return re + " - " + (-im) + "i";
@@ -211,6 +211,8 @@ public class Complex implements Any, NativeObject<Double> {
         if (obj instanceof Complex) {
             Complex b = (Complex) obj;
             return re == b.re && im == b.im;
+        } else if (obj instanceof Any) {
+            return isEqualTo((Any) obj) == Truth.TRUE;
         }
         return false;
     }

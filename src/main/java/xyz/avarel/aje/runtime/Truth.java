@@ -4,7 +4,7 @@ public enum Truth implements Any, NativeObject<Boolean> {
     TRUE(true),
     FALSE(false);
 
-    public static final Type<Truth> TYPE = new Type<>("boolean");
+    public static final Type TYPE = new Type("boolean");
 
     private final boolean value;
 
@@ -23,7 +23,7 @@ public enum Truth implements Any, NativeObject<Boolean> {
     }
 
     @Override
-    public Type<Truth> getType() {
+    public Type getType() {
         return TYPE;
     }
 

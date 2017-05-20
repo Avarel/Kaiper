@@ -142,6 +142,15 @@ public class Int implements Any, NativeObject<Integer> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Any) {
+            return isEqualTo((Any) obj) == Truth.TRUE;
+        } else {
+            return Double.valueOf(value) == obj;
+        }
+    }
+
+    @Override
     public Any isEqualTo(Any other) {
         if (other instanceof Int) {
             return this.isEqualTo((Int) other);

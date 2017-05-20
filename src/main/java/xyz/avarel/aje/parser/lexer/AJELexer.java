@@ -3,8 +3,11 @@ package xyz.avarel.aje.parser.lexer;
 import xyz.avarel.aje.AJEException;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-public class AJELexer {
+public class AJELexer implements Iterator<Token>, Iterable<Token> {
     private char queuedChar;
     private long character;
     private boolean eof;
@@ -13,6 +16,8 @@ public class AJELexer {
     private char previous;
     private Reader reader;
     private boolean usePrevious;
+
+    private List<Token> tokens;
 
     public AJELexer(InputStream inputStream) {
         this(new InputStreamReader(inputStream));
@@ -33,26 +38,91 @@ public class AJELexer {
         this.character = 0;
         this.line = 1;
         this.queuedChar = (char) -1;
+        this.tokens = new ArrayList<>();
+
+        lexTokens();
     }
 
-    private char peek() {
-        char c = next();
-        back();
-        return c;
+    /**
+     * @return The next token.
+     */
+    @Override
+    public Token next() {
+        if (tokens.isEmpty()) return readToken();
+        return tokens.remove(0);
     }
 
-    private boolean match(char prompt) {
-        if (next() == prompt) {
-            return true;
+    @Override
+    public boolean hasNext() {
+        return this.eof && !this.usePrevious;
+    }
+
+    @Override
+    public Iterator<Token> iterator() {
+        return this;
+    }
+
+    /**
+     * Lex and remove useless tokens based on context.
+     */
+    private void lexTokens() {
+        while (!hasNext()) {
+            tokens.add(readToken());
         }
-        back();
-        return false;
+        for (int i = 0; i < tokens.size() - 1; i++) {
+            if (i == 0) {
+                switch (tokens.get(0).getType()) {
+                    case SEMICOLON:
+                    case LINE:
+                        tokens.remove(i);
+                        i--;
+                        continue;
+                }
+            }
+            switch (tokens.get(i).getType()) {
+                case LEFT_BRACE:
+                case RIGHT_BRACE:
+                case LEFT_BRACKET:
+                case RIGHT_BRACKET:
+                case LEFT_PAREN:
+                case RIGHT_PAREN:
+                case COMMA:
+                    switch (tokens.get(i + 1).getType()) {
+                        case LINE: // Remove following LINE token
+                            tokens.remove(i + 1);
+                            break;
+                    }
+                    break;
+                case LINE: // Remove current LINE token if followed by:
+                    switch (tokens.get(i + 1).getType()) {
+                        case LEFT_BRACE:
+                        case RIGHT_BRACE:
+                        case LEFT_BRACKET:
+                        case RIGHT_BRACKET:
+                        case LEFT_PAREN:
+                        case RIGHT_PAREN:
+                        case COMMA:
+                        case SEMICOLON:
+                        case LINE:
+                            tokens.remove(i);
+                            i--;
+                            break;
+                    }
+                case SEMICOLON:
+                    switch (tokens.get(i + 1).getType()) {
+                        case SEMICOLON:
+                            tokens.remove(i);
+                            i--;
+                            break;
+                    }
+            }
+        }
     }
 
-    public Token readToken() {
-        char c = isQueued() ? popQueue() : next();
+    private Token readToken() {
+        char c = isQueued() ? popQueue() : advance();
 
-        while (Character.isSpaceChar(c)) c = next();
+        while (Character.isSpaceChar(c)) c = advance();
 
         switch (c) {
             case '(': return make(TokenType.LEFT_PAREN);
@@ -111,16 +181,12 @@ public class AJELexer {
                     ? make(TokenType.AND)
                     : make(TokenType.AMPERSAND);
 
-            case ';': {
+            case ';':
                 match('\r');
                 match('\n');
-
                 return make(TokenType.SEMICOLON);
-            }
-            case '\r': {
-                match('\n');
-                return make(TokenType.LINE);
-            }
+
+            case '\r': match('\n');
             case '\n': return make(TokenType.LINE);
 
             case '\0': return make(TokenType.EOF);
@@ -130,15 +196,13 @@ public class AJELexer {
             default:
                 if (Character.isDigit(c)) {
                     return nextNumber(c);
-                }
-                else if (Character.isLetter(c)) {
+                } else if (Character.isLetter(c)) {
                     return nextName(c);
                 } else {
-                    if (end()) return make(TokenType.EOF);
+                    if (hasNext()) return make(TokenType.EOF);
                     throw syntaxError("Unrecognized `" + c + "`");
                 }
         }
-
     }
 
     private Token nextNumber(char init) {
@@ -150,7 +214,7 @@ public class AJELexer {
         sb.append(init);
 
         while (true) {
-            c = next();
+            c = advance();
 
             if (Character.isDigit(c)) {
                 sb.append(c);
@@ -194,7 +258,7 @@ public class AJELexer {
 
         char c;
         while (true) {
-            c = next();
+            c = advance();
 
             if (Character.isLetterOrDigit(c)) {
                 sb.append(c);
@@ -209,14 +273,21 @@ public class AJELexer {
     }
 
     private Token nameOrKeyword(String value) {
-        switch(value) {
-            case "fun": return make(TokenType.FUNCTION);
-            case "true": return make(TokenType.BOOLEAN, "true");
-            case "false": return make(TokenType.BOOLEAN, "false");
-            case "i": return make(TokenType.IMAGINARY);
-            case "and": return make(TokenType.AND);
-            case "or": return make(TokenType.OR);
-            default: return make(TokenType.NAME, value);
+        switch (value) {
+            case "fun":
+                return make(TokenType.FUNCTION);
+            case "true":
+                return make(TokenType.BOOLEAN, "true");
+            case "false":
+                return make(TokenType.BOOLEAN, "false");
+            case "i":
+                return make(TokenType.IMAGINARY);
+            case "and":
+                return make(TokenType.AND);
+            case "or":
+                return make(TokenType.OR);
+            default:
+                return make(TokenType.NAME, value);
         }
     }
 
@@ -236,80 +307,27 @@ public class AJELexer {
         return new Token(position, type, value);
     }
 
-    public String tokensToString() {
-        StringBuilder s = new StringBuilder();
-
-        Token t;
-        while ((t = readToken()).getType() != TokenType.EOF) {
-            s.append(t).append("  ");
-        }
-
-        return s.toString();
-    }
-
-
-
-    public boolean isQueued() {
+    private boolean isQueued() {
         return queuedChar != (char) -1;
     }
 
     // useful for lexer-phase desugaring
-    public void queue(char c) {
+    private void queue(char c) {
         queuedChar = c;
     }
 
-    public char popQueue() {
+    private char popQueue() {
         char c = queuedChar;
         queuedChar = (char) -1;
         return c;
     }
-
-
-    /**
-     * Back up one character. This provides a sort of lookahead capability,
-     * so that you can test for a digit or letter before attempting to parse
-     * the readToken number or identifier.
-     */
-    public void back() {
-        if (this.usePrevious || this.index <= 0) {
-            throw syntaxError("Stepping back two steps is not supported");
-        }
-
-        this.index -= 1;
-        this.character -= 1;
-        this.usePrevious = true;
-        this.eof = false;
-    }
-
-    /**
-     * @return true if at the end of the file and we didn't step back
-     */
-    public boolean end() {
-        return this.eof && !this.usePrevious;
-    }
-
-
-    /**
-     * Determine if the source string still contains characters that readToken()
-     * can consume.
-     * @return true if not yet at the end of the source.
-     */
-    public boolean more() {
-        this.next();
-        if (this.end()) {
-            return false;
-        }
-        this.back();
-        return true;
-    }
-
 
     /**
      * Get the readToken character in the source string.
      *
      * @return The readToken character, or 0 if past the end of the source string.
      */
-    public char next() {
+    private char advance() {
         int c;
         if (this.usePrevious) {
             this.usePrevious = false;
@@ -320,7 +338,7 @@ public class AJELexer {
             try {
                 c = this.reader.read();
             } catch (IOException exception) {
-                throw new AJEException(exception);
+                throw syntaxError("Exception occurred while lexing", exception);
             }
 
             if (c <= 0) { // End of stream
@@ -350,8 +368,8 @@ public class AJELexer {
      * @param c The character to match.
      * @return The character.
      */
-    public char next(char c) {
-        char n = this.next();
+    private char advance(char c) {
+        char n = this.advance();
         if (n != c) {
             throw this.syntaxError("Expected '" + c + "' and instead saw '" + n + "'");
         }
@@ -364,11 +382,10 @@ public class AJELexer {
      *
      * @param n The number of characters to take.
      * @return A string of n characters.
-     * @throws AJEException
-     * Substring bounds error if there are not
-     * n characters remaining in the source string.
+     * @throws AJEException Substring bounds error if there are not
+     *                      n characters remaining in the source string.
      */
-    public String next(int n) {
+    private String advance(int n) {
         if (n == 0) {
             return "";
         }
@@ -377,8 +394,8 @@ public class AJELexer {
         int pos = 0;
 
         while (pos < n) {
-            chars[pos] = this.next();
-            if (this.end()) {
+            chars[pos] = this.advance();
+            if (this.hasNext()) {
                 throw this.syntaxError("Substring bounds error");
             }
             pos += 1;
@@ -389,11 +406,12 @@ public class AJELexer {
 
     /**
      * Get the next char in the string, skipping whitespace.
+     *
      * @return A character, or 0 if there are no more characters.
      */
-    public char nextClean() {
+    private char advanceClean() {
         while (true) {
-            char c = this.next();
+            char c = this.advance();
             if (c == 0 || c > ' ') {
                 return c;
             }
@@ -401,15 +419,55 @@ public class AJELexer {
     }
 
     /**
+     * @return The next character.
+     */
+    private char peek() {
+        char c = advance();
+        back();
+        return c;
+    }
+
+    /**
+     * Peek and advance if the prompt is the same as the peeked character.
+     *
+     * @param prompt The character to match.
+     * @return if the prompt is the same as the peeked character.
+     */
+    private boolean match(char prompt) {
+        if (advance() == prompt) {
+            return true;
+        }
+        back();
+        return false;
+    }
+
+    /**
+     * Back up one character. This provides a sort of lookahead capability,
+     * so that you can test for a digit or letter before attempting to parse
+     * the readToken number or identifier.
+     */
+    private void back() {
+        if (this.usePrevious || this.index <= 0) {
+            throw syntaxError("Stepping back two steps is not supported");
+        }
+
+        this.index -= 1;
+        this.character -= 1;
+        this.usePrevious = true;
+        this.eof = false;
+    }
+
+    /**
      * Get the text up but not including the specified character or the
      * end of line, whichever comes first.
-     * @param  delimiter A delimiter character.
+     *
+     * @param delimiter A delimiter character.
      * @return A string.
      */
-    public String nextTo(char delimiter) {
+    private String advanceTo(char delimiter) {
         StringBuilder sb = new StringBuilder();
         while (true) {
-            char c = this.next();
+            char c = this.advance();
             if (c == delimiter || c == 0 || c == '\n' || c == '\r') {
                 if (c != 0) {
                     this.back();
@@ -424,14 +482,15 @@ public class AJELexer {
     /**
      * Get the text up but not including one of the specified delimiter
      * characters or the end of line, whichever comes first.
+     *
      * @param delimiters A set of delimiter characters.
      * @return A string, trimmed.
      */
-    public String nextTo(String delimiters) {
+    private String advanceTo(String delimiters) {
         char c;
         StringBuilder sb = new StringBuilder();
         while (true) {
-            c = this.next();
+            c = this.advance();
             if (delimiters.indexOf(c) >= 0 || c == 0 ||
                     c == '\n' || c == '\r') {
                 if (c != 0) {
@@ -447,11 +506,12 @@ public class AJELexer {
     /**
      * Skip characters until the readToken character is the requested character.
      * If the requested character is not found, no characters are skipped.
+     *
      * @param to A character to skip to.
      * @return The requested character, or zero if the requested character
      * is not found.
      */
-    public char skipTo(char to) {
+    private char skipTo(char to) {
         char c;
         try {
             long startIndex = this.index;
@@ -459,7 +519,7 @@ public class AJELexer {
             long startLine = this.line;
             this.reader.mark(1000000);
             do {
-                c = this.next();
+                c = this.advance();
                 if (c == 0) {
                     this.reader.reset();
                     this.index = startIndex;
@@ -469,7 +529,7 @@ public class AJELexer {
                 }
             } while (c != to);
         } catch (IOException exception) {
-            throw new AJEException(exception);
+            throw syntaxError("Exception occurred while lexing", exception);
         }
         this.back();
         return c;
@@ -480,25 +540,36 @@ public class AJELexer {
      * Make an AJEException to signal a syntax error.
      *
      * @param message The error message.
-     * @return  A AJEException object, suitable for throwing
+     * @return A AJEException object, suitable for throwing
      */
-    public AJEException syntaxError(String message) {
+    private AJEException syntaxError(String message) {
         return new AJEException(message + this.toString());
     }
 
     /**
      * Make an AJEException to signal a syntax error.
      *
-     * @param message The error message.
+     * @param message  The error message.
      * @param causedBy The throwable that caused the error.
-     * @return  A AJEException object, suitable for throwing
+     * @return A AJEException object, suitable for throwing
      */
-    public AJEException syntaxError(String message, Throwable causedBy) {
+    private AJEException syntaxError(String message, Throwable causedBy) {
         return new AJEException(message + this.toString(), causedBy);
     }
 
+    public String tokensToString() {
+        StringBuilder s = new StringBuilder();
+
+        Token t;
+        while ((t = next()).getType() != TokenType.EOF) {
+            s.append(t).append("  ");
+        }
+
+        return s.toString();
+    }
+
     /**
-     * Make a printable string of this JSONTokener.
+     * Make a printable string of this AJELexer.
      *
      * @return " at {index} [character {character} line {line}]"
      */

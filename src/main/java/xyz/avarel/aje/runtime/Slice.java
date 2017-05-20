@@ -8,7 +8,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
 public class Slice extends ArrayList<Any> implements Any, NativeObject<List<Any>> {
-    public static final Type<Slice> TYPE = new Type<>("list");
+    public static final Type TYPE = new Type("list");
 
     public Slice() {
         super();
