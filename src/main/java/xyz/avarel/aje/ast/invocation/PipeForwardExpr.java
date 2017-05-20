@@ -19,7 +19,7 @@ public class PipeForwardExpr implements Expr {
     public Any compute() {
         // DESUGARING
         if (right instanceof InvocationExpr) {
-            InvocationExpr invocation = (InvocationExpr) right;
+            InvocationExpr invocation = ((InvocationExpr) right).copy();
             invocation.getExprs().add(0, left);
             return invocation.compute();
         } else if (right instanceof FunctionAtom) {
@@ -36,6 +36,8 @@ public class PipeForwardExpr implements Expr {
     @Override
     public void ast(StringBuilder builder, String prefix, boolean isTail) {
         builder.append(prefix).append(isTail ? "└── " : "├── ").append("pipe forward\n");
+        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
+        builder.append('\n');
         right.ast(builder, prefix + (isTail ? "    " : "│   "), true);
     }
 }

@@ -40,7 +40,7 @@ public class DefaultGrammar extends Grammar {
 
         // RELATIONAL
         register(TokenType.EQUALS, new BinaryOperatorParser(Precedence.EQUALITY, true, Any::isEqualTo));
-        register(TokenType.NOT_EQUAL, new BinaryOperatorParser(Precedence.EQUALITY, true, (a, b) -> a.isEqualTo(b).negative()));
+        register(TokenType.NOT_EQUAL, new BinaryOperatorParser(Precedence.EQUALITY, true, (a, b) -> a.isEqualTo(b).negate()));
         register(TokenType.GT, new BinaryOperatorParser(Precedence.COMPARISON, true, Any::greaterThan));
         register(TokenType.LT, new BinaryOperatorParser(Precedence.COMPARISON, true, Any::lessThan));
         register(TokenType.GTE, new BinaryOperatorParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.greaterThan(b))));

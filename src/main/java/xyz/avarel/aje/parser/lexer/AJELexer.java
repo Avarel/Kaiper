@@ -16,8 +16,9 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     private char previous;
     private Reader reader;
     private boolean usePrevious;
-
     private List<Token> tokens;
+
+    private boolean init;
 
     public AJELexer(InputStream inputStream) {
         this(new InputStreamReader(inputStream));
@@ -39,8 +40,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         this.line = 1;
         this.queuedChar = (char) -1;
         this.tokens = new ArrayList<>();
-
-        lexTokens();
     }
 
     /**
@@ -48,6 +47,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
      */
     @Override
     public Token next() {
+        if (!init) lexTokens();
         if (tokens.isEmpty()) return readToken();
         return tokens.remove(0);
     }
@@ -81,11 +81,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             }
             switch (tokens.get(i).getType()) {
                 case LEFT_BRACE:
-                case RIGHT_BRACE:
                 case LEFT_BRACKET:
-                case RIGHT_BRACKET:
                 case LEFT_PAREN:
-                case RIGHT_PAREN:
                 case COMMA:
                     switch (tokens.get(i + 1).getType()) {
                         case LINE: // Remove following LINE token
@@ -114,6 +111,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     }
             }
         }
+        init = true;
     }
 
     private Token readToken() {

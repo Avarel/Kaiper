@@ -26,9 +26,16 @@ public class InvocationExpr implements Expr {
         return left.compute().identity().invoke(arguments);
     }
 
+    public Expr getLeft() {
+        return left;
+    }
 
-    List<Expr> getExprs() {
+    public List<Expr> getExprs() {
         return exprs;
+    }
+
+    public InvocationExpr copy() {
+        return new InvocationExpr(left, new ArrayList<>(exprs));
     }
 
     @Override

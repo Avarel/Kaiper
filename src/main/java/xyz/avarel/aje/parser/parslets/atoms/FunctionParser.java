@@ -31,7 +31,7 @@ public class FunctionParser implements PrefixParser {
             parser.match(TokenType.RIGHT_PAREN);
         }
 
-        ObjectPool subPool = parser.getObjectPool().subPool();
+        ObjectPool subPool = pool.subPool();
 
         Expr expr;
 

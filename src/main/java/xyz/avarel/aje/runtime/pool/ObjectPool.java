@@ -42,6 +42,10 @@ public class ObjectPool {
         pool.put(key, value);
     }
 
+    public boolean contains(String key) {
+        return pool.containsKey(key);
+    }
+
     public ObjectPool copy() {
         return new ObjectPool(this);
     }

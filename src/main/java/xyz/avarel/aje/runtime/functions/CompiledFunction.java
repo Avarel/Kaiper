@@ -33,6 +33,10 @@ public class CompiledFunction extends AJEFunction {
         return "fun(" + parameters.stream().collect(Collectors.joining(",")) + ")";
     }
 
+    public Expr getExpr() {
+        return expr;
+    }
+
     @Override
     public Any invoke(List<Any> args) {
         if (args.size() != getArity()) {
