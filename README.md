@@ -1,10 +1,42 @@
-AJE
+AJE [ ![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg) ](https://bintray.com/avarel/maven/AJE/_latestVersion)
 ===
 **What is AJE?** AJE is powerful and expressive mathematical evaluator for
     the Java programming language. It features **flexible syntax, complex numbers, 
     booleans, first-class functions, user-defined variables**, along with mimicking 
     useful functional programming language features in order to provide a rich end-user experience.
     AJE is a dynamic-typed and math-based language.
+
+## Download
+Be sure to replace the VERSION key below with the latest version shown above!
+
+##### Maven
+```xml
+<dependency>
+    <groupId>xyz.avarel</groupId>
+    <artifactId>AJE</artifactId>
+    <version>VERSION</version>
+</dependency>
+```
+```xml
+<repository>
+    <id>jcenter</id>
+    <name>jcenter-bintray</name>
+    <url>http://jcenter.bintray.com</url>
+</repository>
+```
+
+##### Gradle
+```gradle
+dependencies {
+    compile 'xyz.avarel:AJE:VERSION'
+}
+
+repositories {
+    jcenter()
+}
+```
+
+The builds are distributed using JCenter through Bintray JDA JCenter Bintray
 
 ## Features
 |Feature|AJE Type|Java Type|Examples|
