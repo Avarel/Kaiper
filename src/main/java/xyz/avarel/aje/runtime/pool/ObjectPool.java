@@ -4,28 +4,31 @@ import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.Variable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ObjectPool {
+    private final ObjectPool parent;
     private final Map<String, Any> pool;
-    private final List<ObjectPool> subpools;
 
     public ObjectPool() {
-        pool = new HashMap<>();
-        subpools = new ArrayList<>();
+        this(null);
     }
 
-    public ObjectPool(ObjectPool copy) {
-        pool = new HashMap<>(copy.pool);
-        subpools = new ArrayList<>();
+    public ObjectPool(ObjectPool parent) {
+        this(parent, new HashMap<>());
+    }
+
+    public ObjectPool(ObjectPool parent, Map<String, Any> pool) {
+        this.parent = parent;
+        this.pool = pool;
     }
 
     public Any get(String key) {
         if (pool.containsKey(key)) {
             return pool.get(key);
+        } else if (parent != null && parent.contains(key)) {
+            return parent.get(key);
         } else {
             Variable var = new Variable(Undefined.VALUE);
             put(key, var);
@@ -34,16 +37,11 @@ public class ObjectPool {
     }
 
     public void put(String key, Any value) {
-        for (ObjectPool subpool : subpools) {
-            if (!subpool.pool.containsKey(key)) {
-                subpool.put(key, value);
-            }
-        }
         pool.put(key, value);
     }
 
     public boolean contains(String key) {
-        return pool.containsKey(key);
+        return pool.containsKey(key) || parent != null && parent.contains(key);
     }
 
     public ObjectPool copy() {
@@ -51,9 +49,7 @@ public class ObjectPool {
     }
 
     public ObjectPool subPool() {
-        ObjectPool subpool = new ObjectPool(this);
-        subpools.add(subpool);
-        return subpool;
+        return new ObjectPool(this);
     }
 
     @Override

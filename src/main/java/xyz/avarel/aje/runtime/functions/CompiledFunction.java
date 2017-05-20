@@ -44,9 +44,10 @@ public class CompiledFunction extends AJEFunction {
         }
 
         for (int i = 0; i < parameters.size(); i++) {
+            //pool.resetState();
             pool.put(parameters.get(i), args.get(i));
         }
 
-        return expr.compute();
+        return expr.compute().identity();
     }
 }
