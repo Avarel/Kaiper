@@ -1,4 +1,4 @@
-AJE [ ![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg) ](https://bintray.com/avarel/maven/AJE/_latestVersion)
+AJE [ ![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg) ](https://bintray.com/avarel/maven/AJE/_latestVersion) [![Build Status](https://travis-ci.org/Avarel/AJE.svg?branch=master)](https://travis-ci.org/Avarel/AJE)
 ===
 **What is AJE?** AJE is powerful and expressive mathematical evaluator for
     the Java programming language. It features **flexible syntax, complex numbers, 
