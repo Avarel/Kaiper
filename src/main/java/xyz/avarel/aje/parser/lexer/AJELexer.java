@@ -4,7 +4,6 @@ import xyz.avarel.aje.AJEException;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -77,6 +76,11 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         while (!hasNext()) {
             tokens.add(readToken());
         }
+        try {
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         for (int i = 0; i < tokens.size() - 1; i++) {
             if (i == 0) {
                 switch (tokens.get(0).getType()) {
@@ -120,7 +124,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     }
             }
         }
-        System.out.println(tokens);
         init = true;
     }
 
@@ -247,7 +250,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     back();
                     if (Character.isAlphabetic(peek()) || peek() == '(') {
                         queue('*');
-                        System.out.println(Arrays.toString(history));
                     }
                     if (point) {
                         return make(TokenType.DECIMAL, sb.toString());
@@ -560,14 +562,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
     public String tokensToString() {
-        StringBuilder s = new StringBuilder();
-
-        Token t;
-        while ((t = next()).getType() != TokenType.EOF) {
-            s.append(t).append("  ");
-        }
-
-        return s.toString();
+        if (!init) lexTokens();
+        return tokens.toString();
     }
 
     /**

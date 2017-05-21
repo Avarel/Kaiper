@@ -93,8 +93,4 @@ public class AJEParser extends Parser {
         }
         return left;
     }
-
-    public ObjectPool getObjectPool() {
-        return pool;
-    }
 }
