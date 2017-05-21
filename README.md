@@ -1,4 +1,4 @@
-AJE [ ![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg) ](https://bintray.com/avarel/maven/AJE/_latestVersion) [![Build Status](https://travis-ci.org/Avarel/AJE.svg?branch=master)](https://travis-ci.org/Avarel/AJE)
+AJE [![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg)](https://bintray.com/avarel/maven/AJE/_latestVersion) [![Build Status](https://travis-ci.org/Avarel/AJE.svg?branch=master)](https://travis-ci.org/Avarel/AJE)
 ===
 **What is AJE?** AJE is powerful and expressive mathematical evaluator for
     the Java programming language. It features **flexible syntax, complex numbers, 
@@ -6,7 +6,7 @@ AJE [ ![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/downl
     useful functional programming language features in order to provide a rich end-user experience.
     AJE is a dynamic-typed and math-based language.
 
-## Download
+### Download [![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg)](https://bintray.com/avarel/maven/AJE/_latestVersion)
 Be sure to replace the VERSION key below with the latest version shown above!
 
 ##### Maven
@@ -36,7 +36,7 @@ repositories {
 }
 ```
 
-## Features
+### Features
 |Feature|AJE Type|Java Type|Examples|
 |---|---|---|---:|
 |Simple arithmetic|`integer`|`Integer`|`1` `42` `1+2^3` `2*(3+4)`|
@@ -95,7 +95,7 @@ class AJETest {
 ```
 
 ### Operators
-##### Numeric Operators `integer` `decimal` `complex` `list`
+###### Numeric Operators `integer` `decimal` `complex` `list`
 |Symbol|Description|Example|
 |---|---|---:|
 |`+`|Addition|`a + b`|
@@ -106,7 +106,7 @@ class AJETest {
 |`%`|Modulus|`a % b`|
 |`-`|Negation|`-a`|
 
-##### Boolean and Relational Operators `boolean`
+###### Boolean and Relational Operators `boolean`
 |Symbol|Description|Example|
 |---|---|---:|
 |`~` `!`|Negation|`~a` `~true` `!false`|
@@ -119,13 +119,13 @@ class AJETest {
 |`>=`|Greater than or equal to|`a >= b`|
 |`<=`|Less than or equal to|`a <= b`|
 
-##### List Operators `list`
+###### List Operators `list`
 |Symbol|Description|Example|
 |---|---|---:|
 |`[integer]`|Get item at index.|`list[i]`|
 |`[integer:integer]`|Sublist from start inclusive to end exclusive.|`list[start:end]`|
 
-##### Functional Operators `function`
+###### Functional Operators `function`
 |Symbol|Description|Example|
 |---|---|---:|
 |`function(args...)`|Invocation|`atan2(3.6, 2.5)`|
@@ -141,7 +141,7 @@ class AJETest {
 `decimal` arguments can be either `integer`, or `decimal`.
 
 ##### Declaring a Function
-###### Traditional
+###### Traditional `fun f(it) { it + 1 }`
 Traditional functions can be declared with the syntax shown below.
     If the optional name field is present, then the function will be 
     available to used as an invocable variable with that name. If the 
@@ -154,7 +154,7 @@ fun f(x) = x + 2; f(2) == 4
 fun isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
 ```
 
-###### Lambda
+###### Lambda `{ it -> it + 1 }`
 Alternatively, functions can also be declared using the following syntax.
     These functions can be passed into arguments and used as variables.
     They are anonymous but variables can be set to this function, of which 
@@ -166,8 +166,7 @@ add = { x, y -> x + y }; [1..10] |> fold(0, add) == 55
 [1..10] |> fold(1, { x, y -> x * y })
 ```
     
-
-###### Quick
+###### Quick `_ + 1`
 These functions are basically anonymous alternatives that only takes in one argument.
     Beware that in this quick expression, you can only reference the implied parameter
     once. However you may use as many operators as you want until the end of the expression.
@@ -179,7 +178,9 @@ _ ...expression
 map([1..10], _ ^ 2) == [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 ```
 
-##### Default Functions
+##### Native Functions
+These are functions that are built into AJE. 
+
 |Symbol|Description|Arguments|Example|
 |---|---|---|---:|
 |`compose`|Create a composition of two functions|(`function(x)`,`function(x)`)|`compose(asin, sin)`|
