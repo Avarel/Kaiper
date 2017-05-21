@@ -4,21 +4,24 @@ import xyz.avarel.aje.AJEException;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 public class AJELexer implements Iterator<Token>, Iterable<Token> {
-    private char queuedChar;
-    private long character;
-    private boolean eof;
-    private long index;
-    private long line;
-    private char previous;
     private Reader reader;
-    private boolean usePrevious;
     private List<Token> tokens;
 
+    private Entry[] history;
+    private int previous;
+    
     private boolean init;
+    private boolean eof;
+
+    private long lineIndex;
+    private long index;
+    private long line;
+    private char current;
 
     public AJELexer(InputStream inputStream) {
         this(new InputStreamReader(inputStream));
@@ -29,17 +32,22 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
     public AJELexer(Reader reader) {
+        this(reader, 3);
+    }
+
+    public AJELexer(Reader reader, int historyBuffer) {
         this.reader = reader.markSupported()
                 ? reader
                 : new BufferedReader(reader);
         this.eof = false;
-        this.usePrevious = false;
-        this.previous = 0;
-        this.index = 0;
-        this.character = 0;
-        this.line = 1;
-        this.queuedChar = (char) -1;
         this.tokens = new ArrayList<>();
+
+        history = new Entry[historyBuffer];
+
+        this.current = 0;
+        this.index = 0;
+        this.lineIndex = 0;
+        this.line = 1;
     }
 
     /**
@@ -54,7 +62,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
     @Override
     public boolean hasNext() {
-        return this.eof && !this.usePrevious;
+        return previous == 0 && this.eof;
     }
 
     @Override
@@ -112,11 +120,12 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     }
             }
         }
+        System.out.println(tokens);
         init = true;
     }
 
     private Token readToken() {
-        char c = isQueued() ? popQueue() : advance();
+        char c = advance();
 
         while (Character.isSpaceChar(c)) c = advance();
 
@@ -225,7 +234,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     }
 
                     if (!Character.isDigit(peek())) {
-                        queue(c);
+                        back();
                         return make(TokenType.INT, sb.toString());
                     }
 
@@ -238,6 +247,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     back();
                     if (Character.isAlphabetic(peek()) || peek() == '(') {
                         queue('*');
+                        System.out.println(Arrays.toString(history));
                     }
                     if (point) {
                         return make(TokenType.DECIMAL, sb.toString());
@@ -288,11 +298,11 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
     private Token make(TokenType type) {
-        return make(new Position(index, line, character), type);
+        return make(new Position(index, line, lineIndex), type);
     }
 
     private Token make(TokenType type, String value) {
-        return make(new Position(index, line, character), type, value);
+        return make(new Position(index, line, lineIndex), type, value);
     }
 
     private Token make(Position position, TokenType type) {
@@ -303,19 +313,11 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         return new Token(position, type, value);
     }
 
-    private boolean isQueued() {
-        return queuedChar != (char) -1;
-    }
-
     // useful for lexer-phase desugaring
-    private void queue(char c) {
-        queuedChar = c;
-    }
-
-    private char popQueue() {
-        char c = queuedChar;
-        queuedChar = (char) -1;
-        return c;
+    private void queue(char character) {
+        System.arraycopy(history, previous + 1, history, 3, history.length - 3);
+        history[previous] = new Entry(index, line, lineIndex, character);
+        back();
     }
 
     /**
@@ -325,11 +327,17 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
      */
     private char advance() {
         int c;
-        if (this.usePrevious) {
-            this.usePrevious = false;
-            this.index += 1;
-            this.character += 1;
-            return this.previous;
+        if (this.previous != 0) {
+            this.previous--;
+
+            Entry entry = history[previous];
+
+            current = entry.character;
+            index = entry.index;
+            line = entry.line;
+            lineIndex = entry.lineIndex;
+
+            return this.current;
         } else {
             try {
                 c = this.reader.read();
@@ -343,17 +351,22 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             }
         }
         this.index += 1;
-        if (this.previous == '\r') {
+        if (this.current == '\r') {
             this.line += 1;
-            this.character = c == '\n' ? 0 : 1;
+            this.lineIndex = c == '\n' ? 0 : 1;
         } else if (c == '\n') {
             this.line += 1;
-            this.character = 0;
+            this.lineIndex = 0;
         } else {
-            this.character += 1;
+            this.lineIndex += 1;
         }
-        this.previous = (char) c;
-        return this.previous;
+        this.current = (char) c;
+
+        System.arraycopy(history, 0, history, 1, history.length - 1);
+
+        history[0] = new Entry(index, line, lineIndex, current);
+
+        return this.current;
     }
 
 
@@ -443,14 +456,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
      * the readToken number or identifier.
      */
     private void back() {
-        if (this.usePrevious || this.index <= 0) {
-            throw syntaxError("Stepping back two steps is not supported");
-        }
-
-        this.index -= 1;
-        this.character -= 1;
-        this.usePrevious = true;
-        this.eof = false;
+        previous++;
     }
 
     /**
@@ -511,7 +517,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         char c;
         try {
             long startIndex = this.index;
-            long startCharacter = this.character;
+            long startCharacter = this.lineIndex;
             long startLine = this.line;
             this.reader.mark(1000000);
             do {
@@ -519,7 +525,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 if (c == 0) {
                     this.reader.reset();
                     this.index = startIndex;
-                    this.character = startCharacter;
+                    this.lineIndex = startCharacter;
                     this.line = startLine;
                     return c;
                 }
@@ -571,6 +577,25 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
      */
     @Override
     public String toString() {
-        return " at " + this.index + " [line " + this.line + " : char " + this.character + "]";
+        return " at " + this.index + " [line " + this.line + " : char " + this.lineIndex + "]";
+    }
+
+    private static final class Entry {
+        private final long index;
+        private final long line;
+        private final long lineIndex;
+        private final char character;
+
+        private Entry(long index, long line, long lineIndex, char character) {
+            this.index = index;
+            this.line = line;
+            this.lineIndex = lineIndex;
+            this.character = character;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(character);
+        }
     }
 }

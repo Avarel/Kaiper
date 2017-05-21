@@ -21,7 +21,7 @@ public class UnaryOperation implements Expr {
 
     @Override
     public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("unary\n");
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("unary op\n");
         left.ast(builder, prefix + (isTail ? "    " : "│   "), true);
     }
 }

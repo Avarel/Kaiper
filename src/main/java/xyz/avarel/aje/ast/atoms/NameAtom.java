@@ -20,6 +20,6 @@ public class NameAtom implements Expr {
 
     @Override
     public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append(pool.contains(name) ? pool.get(name) : "var " + name);
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append(pool.contains(name) ? "obj " + name : "var " + name);
     }
 }

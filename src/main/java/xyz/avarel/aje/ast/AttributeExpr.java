@@ -21,6 +21,6 @@ public class AttributeExpr implements Expr {
         builder.append(prefix).append(isTail ? "└── " : "├── ").append("get\n");
         target.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        builder.append(prefix).append(isTail ? "    " : "│   ").append(name);
+        builder.append(prefix).append("    ").append("└── ").append(name);
     }
 }

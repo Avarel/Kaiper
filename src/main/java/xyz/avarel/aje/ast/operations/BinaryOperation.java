@@ -30,16 +30,9 @@ public class BinaryOperation implements Expr {
 
     @Override
     public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("binary\n");
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("binary op\n");
         left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
         right.ast(builder, prefix + (isTail ? "    " : "│   "), true);
-
-//        for (int i = 0; i < children.size() - 1; i++) {
-//            children.get(i).ast(builder, prefix + (isTail ? "    " : "│   "), false);
-//        }
-//        if (children.size() > 0) {
-//            children.get(children.size() - 1).ast(builder, prefix + (isTail ? "    " : "│   "), true);
-//        }
     }
 }
