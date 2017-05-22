@@ -4,7 +4,8 @@ AJE [![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/downlo
     the Java programming language. It features **flexible syntax, complex numbers, 
     booleans, first-class functions, user-defined variables**, along with mimicking 
     useful functional programming language features in order to provide a rich end-user experience.
-    AJE is a dynamic-typed and math-based language.
+
+**TL;DR:** AJE is a math evaluator with a programming twist.
 
 ### Download [![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg)](https://bintray.com/avarel/maven/AJE/_latestVersion)
 Be sure to replace the VERSION key below with the latest version shown above!
@@ -42,7 +43,7 @@ repositories {
 |Simple arithmetic|`integer`|`Integer`|`1` `42` `1+2^3` `2*(3+4)`|
 |Decimals|`decimal`|`Double`|`1.235` `-2.0/17` `3.0+2.5`|
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
-|Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)*(5i+3)`|
+|Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)(5i+3)`|
 |Lists operations|`list`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
 |First class functions|`function`|`Function*`|`fun(x) = { x + 2 }` `{ x, y -> x ^ y }`|
 
@@ -101,6 +102,7 @@ class AJETest {
 |`+`|Addition|`a + b`|
 |`-`|Subtraction|`a - b`|
 |`*`|Multiplication|`a * b`|
+| |Implicit Multiplication|`a(b)`|
 |`/`|Division|`a / b`|
 |`^`|Exponentiation|`a ^ b`|
 |`%`|Modulus|`a % b`|

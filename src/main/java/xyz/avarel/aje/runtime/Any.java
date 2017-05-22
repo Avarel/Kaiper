@@ -1,5 +1,6 @@
 package xyz.avarel.aje.runtime;
 
+import xyz.avarel.aje.AJEException;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 
 import java.util.Arrays;
@@ -109,8 +110,6 @@ public interface Any {
     default Any rangeTo(Any other) {
         return Undefined.VALUE;
     }
-//
-
 
     // Functional
     default Any invoke(List<Any> args) {
@@ -126,7 +125,7 @@ public interface Any {
     }
 
     default Any set(Any other) {
-        return Undefined.VALUE;
+        throw new AJEException(getType() + " do not support set operator.");
     }
 
     default Any get(String name) {

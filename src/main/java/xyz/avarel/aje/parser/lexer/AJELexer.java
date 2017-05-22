@@ -61,7 +61,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
     @Override
     public boolean hasNext() {
-        return previous == 0 && this.eof;
+        return !(previous == 0 && this.eof);
     }
 
     @Override
@@ -73,61 +73,69 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
      * Lex and remove useless tokens based on context.
      */
     private void lexTokens() {
-        while (!hasNext()) {
-            tokens.add(readToken());
-        }
+        Token prev = null;
+
+        do {
+            Token next = readToken();
+
+            if (prev != null) {
+                if (tokens.size() == 0) {
+                    switch (next.getType()) {
+                        case SEMICOLON:
+                        case LINE:
+                            continue;
+                    }
+                }
+                switch (prev.getType()) {
+                    case LEFT_BRACE:
+                    case LEFT_BRACKET:
+                    case LEFT_PAREN:
+                    case ARROW:
+                    case COMMA:
+                        switch (next.getType()) {
+                            case LINE: // Remove next LINE token
+                                continue;
+                        }
+                        break;
+                    case LINE: // Remove previous LINE token if followed by:
+                        switch (next.getType()) {
+                            case RIGHT_BRACE:
+                            case RIGHT_BRACKET:
+                            case RIGHT_PAREN:
+                            case COMMA:
+                            case SEMICOLON:
+                            case PIPE_FORWARD:
+                            case LINE:
+                                tokens.remove(prev);
+                        }
+                    case SEMICOLON:
+                        switch (next.getType()) {
+                            case SEMICOLON:
+                                continue;
+                        }
+                }
+            }
+
+            switch (next.getType()) {
+                case SKIP:
+                    continue;
+            }
+
+            tokens.add(next);
+
+            prev = next;
+        } while (hasNext());
+
         try {
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for (int i = 0; i < tokens.size() - 1; i++) {
-            if (i == 0) {
-                switch (tokens.get(0).getType()) {
-                    case SEMICOLON:
-                    case LINE:
-                        tokens.remove(i);
-                        i--;
-                        continue;
-                }
-            }
-            switch (tokens.get(i).getType()) {
-                case LEFT_BRACE:
-                case LEFT_BRACKET:
-                case LEFT_PAREN:
-                case ARROW:
-                case COMMA:
-                    switch (tokens.get(i + 1).getType()) {
-                        case LINE: // Remove following LINE token
-                            tokens.remove(i + 1);
-                            break;
-                    }
-                    break;
-                case LINE: // Remove current LINE token if followed by:
-                    switch (tokens.get(i + 1).getType()) {
-                        case RIGHT_BRACE:
-                        case RIGHT_BRACKET:
-                        case RIGHT_PAREN:
-                        case COMMA:
-                        case SEMICOLON:
-                        case LINE:
-                            tokens.remove(i);
-                            i--;
-                            break;
-                    }
-                case SEMICOLON:
-                    switch (tokens.get(i + 1).getType()) {
-                        case SEMICOLON:
-                            tokens.remove(i);
-                            i--;
-                            break;
-                    }
-            }
-        }
         init = true;
     }
 
     private Token readToken() {
+
         char c = advance();
 
         while (Character.isSpaceChar(c)) c = advance();
@@ -161,6 +169,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case '*': return make(TokenType.ASTERISK);
             case '/': return match('\\')
                     ? make(TokenType.AND)
+                    : match('/')
+                    ? nextComment()
                     : make(TokenType.SLASH);
             case '%': return make(TokenType.PERCENT);
             case '^': return make(TokenType.CARET);
@@ -213,6 +223,13 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         }
     }
 
+    private Token nextComment() {
+        while (peek() != '\n') {
+            advance();
+        }
+        return make(TokenType.SKIP);
+    }
+
     private Token nextNumber(char init) {
         boolean point = false;
 
@@ -248,7 +265,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     break;
                 default:
                     back();
-                    if (Character.isAlphabetic(peek()) || peek() == '(') {
+                    if (Character.isAlphabetic(peek())) {
                         queue('*');
                     }
                     if (point) {
@@ -282,20 +299,13 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
     private Token nameOrKeyword(String value) {
         switch (value) {
-            case "fun":
-                return make(TokenType.FUNCTION);
-            case "true":
-                return make(TokenType.BOOLEAN, "true");
-            case "false":
-                return make(TokenType.BOOLEAN, "false");
-            case "i":
-                return make(TokenType.IMAGINARY);
-            case "and":
-                return make(TokenType.AND);
-            case "or":
-                return make(TokenType.OR);
-            default:
-                return make(TokenType.NAME, value);
+            case "fun": return make(TokenType.FUNCTION);
+            case "true": return make(TokenType.BOOLEAN, "true");
+            case "false": return make(TokenType.BOOLEAN, "false");
+            case "i": return make(TokenType.IMAGINARY);
+            case "and": return make(TokenType.AND);
+            case "or": return make(TokenType.OR);
+            default: return make(TokenType.NAME, value);
         }
     }
 
@@ -303,8 +313,10 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         return make(new Position(index, line, lineIndex), type);
     }
 
+
+
     private Token make(TokenType type, String value) {
-        return make(new Position(index, line, lineIndex), type, value);
+        return make(new Position(index, line, lineIndex - value.length()), type, value);
     }
 
     private Token make(Position position, TokenType type) {

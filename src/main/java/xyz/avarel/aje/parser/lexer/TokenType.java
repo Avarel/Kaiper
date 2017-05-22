@@ -59,6 +59,7 @@ public enum TokenType {
     UNDERSCORE,
 
     // SCRIPT
+    SKIP,
     SEMICOLON,
     LINE,
     EOF,

@@ -2,6 +2,8 @@ package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.*;
 
+import java.util.List;
+
 public class Decimal implements Any, NativeObject<Double> {
     public static final Type<Decimal> TYPE = new Type<>(Numeric.TYPE, "decimal");
 
@@ -189,5 +191,13 @@ public class Decimal implements Any, NativeObject<Double> {
 
     private Truth lessThan(Decimal other) {
         return value < other.value ? Truth.TRUE : Truth.FALSE;
+    }
+
+    @Override
+    public Any invoke(List<Any> args) {
+        if (args.size() == 1) {
+            return times(args.get(0));
+        }
+        return Undefined.VALUE;
     }
 }

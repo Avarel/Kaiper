@@ -27,7 +27,7 @@ public class LexerLoop {
 
                 AJELexer lexer = new AJELexer(input);
 
-                System.out.println(lexer);
+                System.out.println(lexer.tokensToString());
 
             } catch (RuntimeException e) {
                 System.out.println("    Result | Caught an error: " + e.getMessage() + "\n");

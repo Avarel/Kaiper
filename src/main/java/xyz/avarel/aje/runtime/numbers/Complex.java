@@ -3,6 +3,7 @@ package xyz.avarel.aje.runtime.numbers;
 import xyz.avarel.aje.runtime.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class Complex implements Any, NativeObject<Double> {
     public static final Type<Complex> TYPE = new Type<>(Numeric.TYPE, "complex");
@@ -239,5 +240,13 @@ public class Complex implements Any, NativeObject<Double> {
 
     public double imaginary() {
         return im;
+    }
+
+    @Override
+    public Any invoke(List<Any> args) {
+        if (args.size() == 1) {
+            return times(args.get(0));
+        }
+        return Undefined.VALUE;
     }
 }

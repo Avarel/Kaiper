@@ -41,14 +41,18 @@ public class InvocationExpr implements Expr {
     @Override
     public void ast(StringBuilder builder, String prefix, boolean isTail) {
         builder.append(prefix).append(isTail ? "└── " : "├── ").append("invoke\n");
-        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
-        builder.append('\n');
-        for (int i = 0; i < exprs.size() - 1; i++) {
-            exprs.get(i).ast(builder, prefix + (isTail ? "    " : "│   "), false);
+        if (exprs.isEmpty()) {
+            left.ast(builder, prefix + (isTail ? "    " : "│   "), true);
+        } else {
+            left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
             builder.append('\n');
-        }
-        if (exprs.size() > 0) {
-            exprs.get(exprs.size() - 1).ast(builder, prefix + (isTail ? "    " : "│   "), true);
+            for (int i = 0; i < exprs.size() - 1; i++) {
+                exprs.get(i).ast(builder, prefix + (isTail ? "    " : "│   "), false);
+                builder.append('\n');
+            }
+            if (exprs.size() > 0) {
+                exprs.get(exprs.size() - 1).ast(builder, prefix + (isTail ? "    " : "│   "), true);
+            }
         }
     }
 }

@@ -2,6 +2,8 @@ package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.*;
 
+import java.util.List;
+
 public class Int implements Any, NativeObject<Integer> {
     public static final Type<Int> TYPE = new Type<>(Numeric.TYPE, "integer");
 
@@ -220,6 +222,14 @@ public class Int implements Any, NativeObject<Integer> {
         }
 
         return slice;
+    }
+
+    @Override
+    public Any invoke(List<Any> args) {
+        if (args.size() == 1) {
+            return times(args.get(0));
+        }
+        return Undefined.VALUE;
     }
 
     private static class IntCache {
