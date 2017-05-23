@@ -128,7 +128,7 @@ public interface Any {
         throw new AJEException(getType() + " do not support set operator.");
     }
 
-    default Any get(String name) {
+    default Any attribute(String name) {
         return Undefined.VALUE;
     }
 }

@@ -148,7 +148,7 @@ public class Slice extends ArrayList<Any> implements Any, NativeObject<List<Any>
     }
 
     @Override
-    public Any get(String name) {
+    public Any attribute(String name) {
         switch (name) {
             case "size":
                 return Int.of(size());

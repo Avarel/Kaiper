@@ -20,8 +20,8 @@ public class Variable implements Any {
     }
 
     @Override
-    public Any get(String name) {
-        return identity().get(name);
+    public Any attribute(String name) {
+        return identity().attribute(name);
     }
 
     @Override

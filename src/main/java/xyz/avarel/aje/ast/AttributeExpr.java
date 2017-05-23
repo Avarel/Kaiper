@@ -13,7 +13,7 @@ public class AttributeExpr implements Expr {
 
     @Override
     public Any compute() {
-        return left.compute().identity().get(name);
+        return left.compute().identity().attribute(name);
     }
 
     @Override

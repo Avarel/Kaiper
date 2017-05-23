@@ -45,7 +45,7 @@ public class ObjectPool {
     }
 
     public ObjectPool copy() {
-        return new ObjectPool(this);
+        return new ObjectPool(this.parent, new HashMap<>(pool));
     }
 
     public ObjectPool subPool() {
