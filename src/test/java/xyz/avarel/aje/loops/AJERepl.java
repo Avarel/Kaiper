@@ -36,7 +36,7 @@ public class AJERepl {
 
                 long start = System.nanoTime();
                 Expr expr = exp.compile();
-                Obj result = exp.compute();
+                Obj result = expr.compute();
                 long end = System.nanoTime();
 
                 Object obj = result.toNative();

@@ -57,8 +57,4 @@ public class Expression {
         }
         return expr;
     }
-
-    public Obj compute() {
-        return compile().accept(new ExprVisitor(), DefaultScope.INSTANCE.subPool());
-    }
 }
