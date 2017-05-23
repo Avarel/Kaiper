@@ -1,48 +1,49 @@
 package xyz.avarel.aje;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.lexer.AJELexer;
-import xyz.avarel.aje.runtime.Any;
-import xyz.avarel.aje.runtime.pool.DefaultPool;
-import xyz.avarel.aje.runtime.pool.ObjectPool;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.pool.DefaultScope;
+import xyz.avarel.aje.runtime.pool.Scope;
 
 import java.io.Reader;
 
 public class Expression {
     private final AJEParser parser;
-    private final ObjectPool pool;
+    private final Scope pool;
 
     private Expr expr;
 
     public Expression(String script) {
-        this(script, DefaultPool.INSTANCE.copy());
+        this(script, DefaultScope.INSTANCE.subPool());
     }
 
     public Expression(Reader reader) {
-        this(reader, DefaultPool.INSTANCE.copy());
+        this(reader, DefaultScope.INSTANCE.subPool());
     }
 
-    public Expression(String script, ObjectPool pool) {
+    public Expression(String script, Scope pool) {
         this(new AJELexer(script), pool);
     }
 
-    public Expression(Reader reader, ObjectPool pool) {
+    public Expression(Reader reader, Scope pool) {
         this(new AJELexer(reader), pool);
     }
 
-    public Expression(AJELexer lexer, ObjectPool pool) {
+    public Expression(AJELexer lexer, Scope pool) {
         this.parser = new AJEParser(lexer, pool);
         this.pool = pool;
     }
 
-    public Expression add(String name, Any object) {
-        pool.put(name, object);
+    public Expression add(String name, Obj object) {
+        pool.assign(name, object);
         return this;
     }
 
     public Expression add(String name, Expression object) {
-        pool.put(name, object.compile().compute());
+        pool.assign(name, object.compile().accept(new ExprVisitor(), pool));
         return this;
     }
 
@@ -55,5 +56,9 @@ public class Expression {
             expr = parser.compile();
         }
         return expr;
+    }
+
+    public Obj compute() {
+        return compile().accept(new ExprVisitor(), DefaultScope.INSTANCE.subPool());
     }
 }

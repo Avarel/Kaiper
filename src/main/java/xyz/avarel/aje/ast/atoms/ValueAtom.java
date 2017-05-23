@@ -1,18 +1,24 @@
 package xyz.avarel.aje.ast.atoms;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.pool.Scope;
 
 public class ValueAtom implements Expr {
-    private final Any value;
+    private final Obj value;
 
-    public ValueAtom(Any value) {
+    public ValueAtom(Obj value) {
         this.value = value;
     }
 
-    @Override
-    public Any compute() {
+    public Obj getValue() {
         return value;
+    }
+
+    @Override
+    public Obj accept(ExprVisitor visitor, Scope scope) {
+        return visitor.visit(this, scope);
     }
 
     @Override

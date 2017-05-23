@@ -5,22 +5,19 @@ import xyz.avarel.aje.ast.atoms.UndefAtom;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.pool.ObjectPool;
+import xyz.avarel.aje.runtime.pool.Scope;
 
 public class AJEParser extends Parser {
-    private final ObjectPool pool;
-
     public AJEParser(AJELexer tokens) {
-        this(tokens, new ObjectPool());
+        this(tokens, new Scope());
     }
 
-    public AJEParser(AJELexer tokens, ObjectPool objectPool) {
+    public AJEParser(AJELexer tokens, Scope scope) {
         super(tokens, DefaultGrammar.INSTANCE);
-        this.pool = objectPool;
     }
 
     public Expr compile() {
-        Expr expr = statements(pool);
+        Expr expr = statements();
 
         if (!getTokens().isEmpty()) {
             Token t = getTokens().get(0);
@@ -32,56 +29,56 @@ public class AJEParser extends Parser {
         return expr;
     }
 
-    public Expr statements(ObjectPool pool) {
+    public Expr statements() {
         if (match(TokenType.EOF)) return UndefAtom.VALUE;
 
-        Expr any = parseExpr(pool);
+        Expr any = parseExpr();
 
         while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
             if (match(TokenType.EOF)) break;
 
-            any = any.andThen(parseExpr(pool));
+            any = any.andThen(parseExpr());
         }
 
         return any;
     }
 
-    public Expr block(ObjectPool pool) {
+    public Expr block() {
         if (match(TokenType.EOF)) return UndefAtom.VALUE;
 
-        Expr any = parseExpr(pool);
+        Expr any = parseExpr();
 
         while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
             if (nextIs(TokenType.RIGHT_BRACE)) break;
             if (match(TokenType.EOF)) break;
 
-            any = any.andThen(parseExpr(pool));
+            any = any.andThen(parseExpr());
         }
 
         return any;
     }
 
-    public Expr parseExpr(ObjectPool objectPool) {
-        return parseExpr(0, objectPool);
+    public Expr parseExpr() {
+        return parseExpr(0);
     }
 
-    public Expr parseExpr(int precedence, ObjectPool pool) {
+    public Expr parseExpr(int precedence) {
         Token token = eat();
 
-        Expr expr = parsePrefix(token, pool);
+        Expr expr = parsePrefix(token);
 
-        return parseInfix(precedence, expr, pool);
+        return parseInfix(precedence, expr);
     }
 
-    public Expr parsePrefix(Token token, ObjectPool pool) {
+    public Expr parsePrefix(Token token) {
         PrefixParser prefix = getPrefixParsers().get(token.getType());
 
         if (prefix == null) throw error("Could not parse token `" + token.getText() + "`" + token.getPosition());
 
-        return prefix.parse(this, pool, token);
+        return prefix.parse(this, token);
     }
 
-    public Expr parseInfix(int precedence, Expr left, ObjectPool pool) {
+    public Expr parseInfix(int precedence, Expr left) {
         while (precedence < getPrecedence()) { // ex plus is 6, next is mult which is 7, parse it
             Token token = eat();
 
@@ -89,7 +86,7 @@ public class AJEParser extends Parser {
 
             if (infix == null) throw error("Could not parse token `" + token.getText() + "`" + token.getPosition());
 
-            left = infix.parse(this, pool, left, token);
+            left = infix.parse(this, left, token);
         }
         return left;
     }

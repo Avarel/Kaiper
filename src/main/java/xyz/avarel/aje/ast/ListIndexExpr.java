@@ -1,9 +1,7 @@
 package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.runtime.Any;
-import xyz.avarel.aje.runtime.Slice;
-import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.pool.Scope;
 
 public class ListIndexExpr implements Expr {
     private final Expr left;
@@ -14,16 +12,17 @@ public class ListIndexExpr implements Expr {
         this.indexExpr = indexExpr;
     }
 
+    public Expr getLeft() {
+        return left;
+    }
+
+    public Expr getIndex() {
+        return indexExpr;
+    }
+
     @Override
-    public Any compute() {
-        Any list = left.compute().identity();
-        Any index = indexExpr.compute().identity();
-
-        if (list instanceof Slice && index instanceof Int) {
-            return ((Slice) list).get(((Int) index).value());
-        }
-
-        return Undefined.VALUE;
+    public Obj accept(ExprVisitor visitor, Scope scope) {
+        return visitor.visit(this, scope);
     }
 
     @Override

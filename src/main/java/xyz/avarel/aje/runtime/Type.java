@@ -1,13 +1,13 @@
 package xyz.avarel.aje.runtime;
 
-public class Type<T> implements Any, NativeObject<Type> {
+public class Type<T> implements Obj, NativeObject<Type> {
     private static final Type TYPE = new Type("type");
 
     private final Type parent;
     private final String name;
 
     public Type(String name) {
-        this(Any.TYPE, name);
+        this(Obj.TYPE, name);
     }
 
     public Type(Type parent, String name) {

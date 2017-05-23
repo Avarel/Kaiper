@@ -6,15 +6,13 @@ import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.functions.CompiledFunction;
-import xyz.avarel.aje.runtime.pool.ObjectPool;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LambdaParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
+    public Expr parse(AJEParser parser, Token token) {
         List<String> parameters = new ArrayList<>();
 
         if (!parser.match(TokenType.ARROW)) {
@@ -26,12 +24,10 @@ public class LambdaParser implements PrefixParser {
             parser.eat(TokenType.ARROW);
         }
 
-        ObjectPool subPool = pool.subPool();
-
-        Expr expr = parser.block(subPool);
+        Expr expr = parser.block();
 
         parser.eat(TokenType.RIGHT_BRACE);
 
-        return new FunctionAtom(new CompiledFunction(parameters, expr, subPool));
+        return new FunctionAtom(parameters, expr);
     }
 }

@@ -1,6 +1,7 @@
 package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.pool.Scope;
 
 public class AttributeExpr implements Expr {
     private final Expr left;
@@ -11,9 +12,17 @@ public class AttributeExpr implements Expr {
         this.name = name;
     }
 
+    public Expr getLeft() {
+        return left;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     @Override
-    public Any compute() {
-        return left.compute().identity().attribute(name);
+    public Obj accept(ExprVisitor visitor, Scope scope) {
+        return visitor.visit(this, scope);
     }
 
     @Override

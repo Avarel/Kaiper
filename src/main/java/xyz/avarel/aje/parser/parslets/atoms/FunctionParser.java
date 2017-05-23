@@ -6,16 +6,14 @@ import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.functions.CompiledFunction;
-import xyz.avarel.aje.runtime.pool.ObjectPool;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
-        List<String> params = new ArrayList<>();
+    public Expr parse(AJEParser parser, Token token) {
+        List<String> parameters = new ArrayList<>();
 
         String name = null;
         if (parser.match(TokenType.NAME)) {
@@ -26,35 +24,27 @@ public class FunctionParser implements PrefixParser {
         if (!parser.match(TokenType.RIGHT_PAREN)) {
             do {
                 Token t = parser.eat(TokenType.NAME);
-                params.add(t.getText());
+                parameters.add(t.getText());
             } while (parser.match(TokenType.COMMA));
             parser.match(TokenType.RIGHT_PAREN);
         }
-
-        ObjectPool subPool = pool.subPool();
 
         Expr expr;
 
         if (parser.match(TokenType.ASSIGN)) {
             if (parser.match(TokenType.LEFT_BRACE)) {
-                expr = parser.block(subPool);
+                expr = parser.block();
                 parser.eat(TokenType.RIGHT_BRACE);
             } else {
-                expr = parser.parseExpr(subPool);
+                expr = parser.parseExpr();
             }
         } else if (parser.match(TokenType.LEFT_BRACE)) {
-            expr = parser.block(subPool);
+            expr = parser.block();
             parser.eat(TokenType.RIGHT_BRACE);
         } else {
-            expr = parser.statements(subPool);
+            expr = parser.statements();
         }
 
-        CompiledFunction function = new CompiledFunction(params, expr, subPool);
-
-        if (name != null) {
-            pool.put(name, function);
-        }
-
-        return new FunctionAtom(function);
+        return new FunctionAtom(name, parameters, expr);
     }
 }

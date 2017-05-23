@@ -1,20 +1,19 @@
 package xyz.avarel.aje.parser.parslets.atoms;
 
-import xyz.avarel.aje.parser.AJEParser;
-import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.atoms.UndefAtom;
 import xyz.avarel.aje.ast.atoms.ValueAtom;
+import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.runtime.pool.ObjectPool;
 
 public class NumberParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
+    public Expr parse(AJEParser parser, Token token) {
         if (parser.match(TokenType.IMAGINARY)) {
             String str = token.getText();
             return new ValueAtom(Complex.of(0, Double.parseDouble(str)));

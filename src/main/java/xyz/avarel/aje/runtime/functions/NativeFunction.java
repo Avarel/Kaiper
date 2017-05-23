@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
@@ -33,7 +33,7 @@ public abstract class NativeFunction extends AJEFunction {
     }
 
     @Override
-    public Any invoke(List<Any> args) {
+    public Obj invoke(List<Obj> args) {
         if (!varargs && args.size() != getArity()) {
             return Undefined.VALUE;
         }
@@ -45,7 +45,7 @@ public abstract class NativeFunction extends AJEFunction {
                 }
             }
         } else {
-            for (Any argument : args) { // all varargs should be the same size
+            for (Obj argument : args) { // all varargs should be the same size
                 if (!argument.getType().is(parameters.get(0))) {
                     return Undefined.VALUE;
                 }
@@ -55,5 +55,5 @@ public abstract class NativeFunction extends AJEFunction {
         return eval(args);
     }
 
-    protected abstract Any eval(List<Any> arguments);
+    protected abstract Obj eval(List<Obj> arguments);
 }

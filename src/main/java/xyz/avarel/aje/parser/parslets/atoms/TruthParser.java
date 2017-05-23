@@ -1,21 +1,20 @@
 package xyz.avarel.aje.parser.parslets.atoms;
 
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.atoms.BoolAtom;
+import xyz.avarel.aje.ast.atoms.UndefAtom;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
-import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.atoms.BooleanAtom;
-import xyz.avarel.aje.ast.atoms.UndefAtom;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.runtime.pool.ObjectPool;
 
 public class TruthParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, ObjectPool pool, Token token) {
+    public Expr parse(AJEParser parser, Token token) {
         switch (token.getText()) {
             case "true":
-                return BooleanAtom.TRUE;
+                return BoolAtom.TRUE;
             case "false":
-                return BooleanAtom.FALSE;
+                return BoolAtom.FALSE;
             default:
                 return UndefAtom.VALUE;
         }

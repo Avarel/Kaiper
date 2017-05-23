@@ -1,9 +1,10 @@
 package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.pool.ObjectPool;
+import xyz.avarel.aje.runtime.pool.Scope;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,13 +15,13 @@ import java.util.stream.Collectors;
  */
 public class CompiledFunction extends AJEFunction {
     private final List<String> parameters;
-    private final ObjectPool pool;
     private final Expr expr;
+    private final Scope scope;
 
-    public CompiledFunction(List<String> parameters, Expr expr, ObjectPool pool) {
+    public CompiledFunction(List<String> parameters, Expr expr, Scope scope) {
         this.parameters = parameters;
         this.expr = expr;
-        this.pool = pool;
+        this.scope = scope;
     }
 
     @Override
@@ -38,16 +39,15 @@ public class CompiledFunction extends AJEFunction {
     }
 
     @Override
-    public Any invoke(List<Any> args) {
+    public Obj invoke(List<Obj> args) {
         if (args.size() != getArity()) {
             return Undefined.VALUE;
         }
 
         for (int i = 0; i < parameters.size(); i++) {
-            //pool.resetState();
-            pool.put(parameters.get(i), args.get(i));
+            scope.assign(parameters.get(i), args.get(i));
         }
 
-        return expr.compute().identity();
+        return expr.accept(new ExprVisitor(), scope);
     }
 }

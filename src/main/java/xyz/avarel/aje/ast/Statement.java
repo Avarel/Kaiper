@@ -1,6 +1,7 @@
 package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.pool.Scope;
 
 public class Statement implements Expr {
     private final Expr before;
@@ -17,10 +18,17 @@ public class Statement implements Expr {
         }
     }
 
+    public Expr getBefore() {
+        return before;
+    }
+
+    public Expr getAfter() {
+        return after;
+    }
+
     @Override
-    public Any compute() {
-        before.compute();
-        return after.compute();
+    public Obj accept(ExprVisitor visitor, Scope scope) {
+        return visitor.visit(this, scope);
     }
 
     @Override

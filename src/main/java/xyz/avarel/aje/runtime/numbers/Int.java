@@ -4,7 +4,7 @@ import xyz.avarel.aje.runtime.*;
 
 import java.util.List;
 
-public class Int implements Any, NativeObject<Integer> {
+public class Int implements Obj, NativeObject<Integer> {
     public static final Type<Int> TYPE = new Type<>(Numeric.TYPE, "integer");
 
     private final int value;
@@ -40,7 +40,7 @@ public class Int implements Any, NativeObject<Integer> {
     }
 
     @Override
-    public Any plus(Any other) {
+    public Obj plus(Obj other) {
         if (other instanceof Int) {
             return this.plus((Int) other);
         } else if (other instanceof Decimal) {
@@ -56,7 +56,7 @@ public class Int implements Any, NativeObject<Integer> {
     }
 
     @Override
-    public Any minus(Any other) {
+    public Obj minus(Obj other) {
         if (other instanceof Int) {
             return this.minus((Int) other);
         } else if (other instanceof Decimal) {
@@ -72,7 +72,7 @@ public class Int implements Any, NativeObject<Integer> {
     }
 
     @Override
-    public Any times(Any other) {
+    public Obj times(Obj other) {
         if (other instanceof Int) {
             return this.times((Int) other);
         } else if (other instanceof Decimal) {
@@ -88,7 +88,7 @@ public class Int implements Any, NativeObject<Integer> {
     }
 
     @Override
-    public Any divide(Any other) {
+    public Obj divide(Obj other) {
         if (other instanceof Int) {
             return this.divide((Int) other);
         } else if (other instanceof Decimal) {
@@ -99,7 +99,7 @@ public class Int implements Any, NativeObject<Integer> {
         return Undefined.VALUE;
     }
 
-    private Any divide(Int other) {
+    private Obj divide(Int other) {
         if (other.value == 0) {
             return Decimal.of(value).divide(other);
         }
@@ -107,7 +107,7 @@ public class Int implements Any, NativeObject<Integer> {
     }
 
     @Override
-    public Any pow(Any other) {
+    public Obj pow(Obj other) {
         if (other instanceof Int) {
             return this.pow((Int) other);
         } else if (other instanceof Decimal) {
@@ -123,7 +123,7 @@ public class Int implements Any, NativeObject<Integer> {
     }
 
     @Override
-    public Any mod(Any other) {
+    public Obj mod(Obj other) {
         if (other instanceof Int) {
             return this.mod((Int) other);
         } else if (other instanceof Decimal) {
@@ -145,15 +145,15 @@ public class Int implements Any, NativeObject<Integer> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Any) {
-            return isEqualTo((Any) obj) == Truth.TRUE;
+        if (obj instanceof Obj) {
+            return isEqualTo((Obj) obj) == Bool.TRUE;
         } else {
             return Double.valueOf(value) == obj;
         }
     }
 
     @Override
-    public Any isEqualTo(Any other) {
+    public Obj isEqualTo(Obj other) {
         if (other instanceof Int) {
             return this.isEqualTo((Int) other);
         } else if (other instanceof Decimal) {
@@ -161,15 +161,15 @@ public class Int implements Any, NativeObject<Integer> {
         } else if (other instanceof Complex) {
             return Complex.of(value).isEqualTo(other);
         }
-        return Truth.FALSE;
+        return Bool.FALSE;
     }
 
-    private Any isEqualTo(Int other) {
-        return value == other.value ? Truth.TRUE : Truth.FALSE;
+    private Obj isEqualTo(Int other) {
+        return value == other.value ? Bool.TRUE : Bool.FALSE;
     }
 
     @Override
-    public Any greaterThan(Any other) {
+    public Obj greaterThan(Obj other) {
         if (other instanceof Int) {
             return this.greaterThan((Int) other);
         } else if (other instanceof Decimal) {
@@ -177,15 +177,15 @@ public class Int implements Any, NativeObject<Integer> {
         } else if (other instanceof Complex) {
             return Complex.of(value).greaterThan(other);
         }
-        return Truth.FALSE;
+        return Bool.FALSE;
     }
 
-    private Any greaterThan(Int other) {
-        return value > other.value ? Truth.TRUE : Truth.FALSE;
+    private Obj greaterThan(Int other) {
+        return value > other.value ? Bool.TRUE : Bool.FALSE;
     }
 
     @Override
-    public Any lessThan(Any other) {
+    public Obj lessThan(Obj other) {
         if (other instanceof Int) {
             return this.lessThan((Int) other);
         } else if (other instanceof Decimal) {
@@ -193,15 +193,15 @@ public class Int implements Any, NativeObject<Integer> {
         } else if (other instanceof Complex) {
             return Complex.of(value).lessThan(other);
         }
-        return Truth.FALSE;
+        return Bool.FALSE;
     }
 
-    private Any lessThan(Int other) {
-        return value < other.value ? Truth.TRUE : Truth.FALSE;
+    private Obj lessThan(Int other) {
+        return value < other.value ? Bool.TRUE : Bool.FALSE;
     }
 
     @Override
-    public Slice rangeTo(Any other) {
+    public Slice rangeTo(Obj other) {
         if (other instanceof Int) {
             return this.rangeTo((Int) other);
         }
@@ -225,7 +225,7 @@ public class Int implements Any, NativeObject<Integer> {
     }
 
     @Override
-    public Any invoke(List<Any> args) {
+    public Obj invoke(List<Obj> args) {
         if (args.size() == 1) {
             return times(args.get(0));
         }

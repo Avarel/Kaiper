@@ -1,14 +1,21 @@
 package xyz.avarel.aje.ast.atoms;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.pool.Scope;
 
 public enum UndefAtom implements Expr {
     VALUE;
 
-    @Override
-    public Undefined compute() {
+    public Undefined getValue() {
         return Undefined.VALUE;
+    }
+
+    @Override
+    public Obj accept(ExprVisitor visitor, Scope scope) {
+        return visitor.visit(this, scope);
     }
 
     @Override

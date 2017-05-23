@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class ComposedFunction extends AJEFunction {
     }
 
     @Override
-    public Any invoke(List<Any> args) {
+    public Obj invoke(List<Obj> args) {
         if (args.size() != getArity()) {
             return Undefined.VALUE;
         }

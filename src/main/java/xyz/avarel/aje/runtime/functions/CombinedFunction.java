@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
@@ -13,9 +13,9 @@ import java.util.function.BinaryOperator;
 public class CombinedFunction extends AJEFunction {
     private final AJEFunction left;
     private final AJEFunction right;
-    private final BinaryOperator<Any> operator;
+    private final BinaryOperator<Obj> operator;
 
-    public CombinedFunction(AJEFunction left, AJEFunction right, BinaryOperator<Any> operator) {
+    public CombinedFunction(AJEFunction left, AJEFunction right, BinaryOperator<Obj> operator) {
         this.left = left;
         this.right = right;
         this.operator = operator;
@@ -32,7 +32,7 @@ public class CombinedFunction extends AJEFunction {
     }
 
     @Override
-    public Any invoke(List<Any> args) {
+    public Obj invoke(List<Obj> args) {
         if (args.size() != getArity()) {
             return Undefined.VALUE;
         }

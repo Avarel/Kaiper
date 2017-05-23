@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime;
 
-public enum Truth implements Any, NativeObject<Boolean> {
+public enum Bool implements Obj, NativeObject<Boolean> {
     TRUE(true),
     FALSE(false);
 
@@ -8,7 +8,7 @@ public enum Truth implements Any, NativeObject<Boolean> {
 
     private final boolean value;
 
-    Truth(boolean value) {
+    Bool(boolean value) {
         this.value = value;
     }
 
@@ -28,42 +28,42 @@ public enum Truth implements Any, NativeObject<Boolean> {
     }
 
     @Override
-    public Any or(Any other) {
-        if (other instanceof Truth) {
-            return or((Truth) other);
+    public Obj or(Obj other) {
+        if (other instanceof Bool) {
+            return or((Bool) other);
         }
         return Undefined.VALUE;
     }
 
-    public Truth or(Truth other) {
+    public Bool or(Bool other) {
         if (value) return TRUE;
         if (other.value) return TRUE;
         return FALSE;
     }
 
     @Override
-    public Any and(Any other) {
-        if (other instanceof Truth) {
-            return and((Truth) other);
+    public Obj and(Obj other) {
+        if (other instanceof Bool) {
+            return and((Bool) other);
         }
         return Undefined.VALUE;
     }
 
-    public Truth and(Truth other) {
+    public Bool and(Bool other) {
         if (!value) return FALSE;
         if (!other.value) return FALSE;
         return TRUE;
     }
 
     @Override
-    public Truth negate() {
+    public Bool negate() {
         return value ? FALSE : TRUE;
     }
 
     @Override
-    public Truth isEqualTo(Any other) {
-        if (other instanceof Truth) {
-            return value == ((Truth) other).value ? TRUE : FALSE;
+    public Bool isEqualTo(Obj other) {
+        if (other instanceof Bool) {
+            return value == ((Bool) other).value ? TRUE : FALSE;
         }
         return FALSE;
     }

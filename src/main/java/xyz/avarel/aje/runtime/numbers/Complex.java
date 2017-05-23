@@ -5,7 +5,7 @@ import xyz.avarel.aje.runtime.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class Complex implements Any, NativeObject<Double> {
+public class Complex implements Obj, NativeObject<Double> {
     public static final Type<Complex> TYPE = new Type<>(Numeric.TYPE, "complex");
 
     private final double re;
@@ -48,7 +48,7 @@ public class Complex implements Any, NativeObject<Double> {
     }
 
     @Override
-    public Any plus(Any other) {
+    public Obj plus(Obj other) {
         if (other instanceof Complex) {
             return this.plus((Complex) other);
         } else if (other instanceof Int) {
@@ -64,7 +64,7 @@ public class Complex implements Any, NativeObject<Double> {
     }
 
     @Override
-    public Any minus(Any other) {
+    public Obj minus(Obj other) {
         if (other instanceof Complex) {
             return this.minus((Complex) other);
         } else if (other instanceof Int) {
@@ -80,7 +80,7 @@ public class Complex implements Any, NativeObject<Double> {
     }
 
     @Override
-    public Any times(Any other) {
+    public Obj times(Obj other) {
         if (other instanceof Complex) {
             return this.times((Complex) other);
         } else if (other instanceof Int) {
@@ -96,7 +96,7 @@ public class Complex implements Any, NativeObject<Double> {
     }
 
     @Override
-    public Any divide(Any other) {
+    public Obj divide(Obj other) {
         if (other instanceof Complex) {
             return this.divide((Complex) other);
         } else if (other instanceof Int) {
@@ -108,7 +108,7 @@ public class Complex implements Any, NativeObject<Double> {
     }
 
     @Override
-    public Any pow(Any other) {
+    public Obj pow(Obj other) {
         if (other instanceof Complex) {
             return this.pow((Complex) other);
         } else if (other instanceof Int) {
@@ -212,14 +212,14 @@ public class Complex implements Any, NativeObject<Double> {
         if (obj instanceof Complex) {
             Complex b = (Complex) obj;
             return re == b.re && im == b.im;
-        } else if (obj instanceof Any) {
-            return isEqualTo((Any) obj) == Truth.TRUE;
+        } else if (obj instanceof Obj) {
+            return isEqualTo((Obj) obj) == Bool.TRUE;
         }
         return false;
     }
 
     @Override
-    public Truth isEqualTo(Any other) {
+    public Bool isEqualTo(Obj other) {
         if (other instanceof Complex) {
             return this.isEqualTo((Complex) other);
         } else if (other instanceof Int) {
@@ -227,11 +227,11 @@ public class Complex implements Any, NativeObject<Double> {
         } else if (other instanceof Decimal) {
             return this.isEqualTo(Complex.of(((Decimal) other).value()));
         }
-        return Truth.FALSE;
+        return Bool.FALSE;
     }
 
-    private Truth isEqualTo(Complex b) {
-        return equals(b) ? Truth.TRUE : Truth.FALSE;
+    private Bool isEqualTo(Complex b) {
+        return equals(b) ? Bool.TRUE : Bool.FALSE;
     }
 
     public double real() {
@@ -243,7 +243,7 @@ public class Complex implements Any, NativeObject<Double> {
     }
 
     @Override
-    public Any invoke(List<Any> args) {
+    public Obj invoke(List<Obj> args) {
         if (args.size() == 1) {
             return times(args.get(0));
         }

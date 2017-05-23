@@ -1,14 +1,14 @@
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.runtime.Any;
 import xyz.avarel.aje.runtime.NativeObject;
+import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class AJEFunction implements Any, NativeObject<Function<List<Any>, Any>> {
+public abstract class AJEFunction implements Obj, NativeObject<Function<List<Obj>, Obj>> {
     public static final Type<AJEFunction> TYPE = new Type<>("function");
 
     public abstract int getArity();
@@ -19,15 +19,15 @@ public abstract class AJEFunction implements Any, NativeObject<Function<List<Any
     }
 
     @Override
-    public Function<List<Any>, Any> toNative() {
+    public Function<List<Obj>, Obj> toNative() {
         return this::invoke;
     }
 
     @Override
-    public abstract Any invoke(List<Any> args);
+    public abstract Obj invoke(List<Obj> args);
 
     @Override
-    public Any plus(Any other) {
+    public Obj plus(Obj other) {
         if (other instanceof AJEFunction) {
             return plus((AJEFunction) other);
         }
@@ -35,11 +35,11 @@ public abstract class AJEFunction implements Any, NativeObject<Function<List<Any
     }
 
     private AJEFunction plus(AJEFunction right) {
-        return new CombinedFunction(this, right, Any::plus);
+        return new CombinedFunction(this, right, Obj::plus);
     }
 
     @Override
-    public Any minus(Any other) {
+    public Obj minus(Obj other) {
         if (other instanceof AJEFunction) {
             return minus((AJEFunction) other);
         }
@@ -47,11 +47,11 @@ public abstract class AJEFunction implements Any, NativeObject<Function<List<Any
     }
 
     private AJEFunction minus(AJEFunction right) {
-        return new CombinedFunction(this, right, Any::minus);
+        return new CombinedFunction(this, right, Obj::minus);
     }
 
     @Override
-    public Any times(Any other) {
+    public Obj times(Obj other) {
         if (other instanceof AJEFunction) {
             return times((AJEFunction) other);
         }
@@ -59,11 +59,11 @@ public abstract class AJEFunction implements Any, NativeObject<Function<List<Any
     }
 
     private AJEFunction times(AJEFunction right) {
-        return new CombinedFunction(this, right, Any::times);
+        return new CombinedFunction(this, right, Obj::times);
     }
 
     @Override
-    public Any divide(Any other) {
+    public Obj divide(Obj other) {
         if (other instanceof AJEFunction) {
             return divide((AJEFunction) other);
         }
@@ -71,6 +71,6 @@ public abstract class AJEFunction implements Any, NativeObject<Function<List<Any
     }
 
     private AJEFunction divide(AJEFunction right) {
-        return new CombinedFunction(this, right, Any::divide);
+        return new CombinedFunction(this, right, Obj::divide);
     }
 }

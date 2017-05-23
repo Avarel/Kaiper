@@ -9,11 +9,11 @@ import java.util.List;
 /**
  * An interface containing all natively implemented operations.
  */
-public interface Any {
+public interface Obj {
     Type TYPE = new Type("any");
 
     default Type getType() {
-        return Any.TYPE;
+        return Obj.TYPE;
     }
 
     default boolean isNativeObject() {
@@ -27,108 +27,108 @@ public interface Any {
     // OPERATORS
 
     // Basic arithmetic
-    default Any plus(Any other) {
+    default Obj plus(Obj other) {
         return Undefined.VALUE;
     }
 
-    default Any minus(Any other) {
+    default Obj minus(Obj other) {
         return Undefined.VALUE;
     }
 
-    default Any times(Any other) {
+    default Obj times(Obj other) {
         return Undefined.VALUE;
     }
 
-    default Any divide(Any other) {
+    default Obj divide(Obj other) {
         return Undefined.VALUE;
     }
 
-    default Any mod(Any other) {
+    default Obj mod(Obj other) {
         return Undefined.VALUE;
     }
 
-    default Any pow(Any other) {
+    default Obj pow(Obj other) {
         return Undefined.VALUE;
     }
 
-    default Any negative() {
+    default Obj negative() {
         return Undefined.VALUE;
     }
 
-    default Any negate() {
+    default Obj negate() {
         return Undefined.VALUE;
     }
 
-    default Any plus(double other) {
+    default Obj plus(double other) {
         return plus(Decimal.of(other));
     }
 
-    default Any minus(double other) {
+    default Obj minus(double other) {
         return minus(Decimal.of(other));
     }
 
-    default Any times(double other) {
+    default Obj times(double other) {
         return times(Decimal.of(other));
     }
 
-    default Any divide(double other) {
+    default Obj divide(double other) {
         return divide(Decimal.of(other));
     }
 
-    default Any mod(double other) {
+    default Obj mod(double other) {
         return mod(Decimal.of(other));
     }
 
-    default Any pow(double other) {
+    default Obj pow(double other) {
         return pow(Decimal.of(other));
     }
 
 
     // Boolean logic
-    default Any isEqualTo(Any other) {
-        return this.equals(other) ? Truth.TRUE : Truth.FALSE;
+    default Obj isEqualTo(Obj other) {
+        return this.equals(other) ? Bool.TRUE : Bool.FALSE;
     }
 
-    default Any greaterThan(Any other) {
+    default Obj greaterThan(Obj other) {
         return Undefined.VALUE;
     }
 
-    default Any lessThan(Any other) {
+    default Obj lessThan(Obj other) {
         return Undefined.VALUE;
     }
 
-    default Any or(Any any) {
+    default Obj or(Obj obj) {
         return Undefined.VALUE;
     }
 
-    default Any and(Any any) {
+    default Obj and(Obj obj) {
         return Undefined.VALUE;
     }
 
 
     // Slices
-    default Any rangeTo(Any other) {
+    default Obj rangeTo(Obj other) {
         return Undefined.VALUE;
     }
 
     // Functional
-    default Any invoke(List<Any> args) {
+    default Obj invoke(List<Obj> args) {
         return Undefined.VALUE;
     }
 
-    default Any invoke(Any... arguments) {
+    default Obj invoke(Obj... arguments) {
         return invoke(Arrays.asList(arguments));
     }
 
-    default Any identity() {
+    default Obj identity() {
         return this;
     }
 
-    default Any set(Any other) {
+    default Obj set(Obj other) {
         throw new AJEException(getType() + " do not support set operator.");
     }
 
-    default Any attribute(String name) {
+    default Obj attribute(String name) {
         return Undefined.VALUE;
     }
 }

@@ -2,18 +2,22 @@ package xyz.avarel.aje.ast.atoms;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.pool.Scope;
 
-public class NameAtom implements Expr {
-    private final String name;
+public enum BoolAtom implements Expr {
+    TRUE(Bool.TRUE),
+    FALSE(Bool.FALSE);
 
-    public NameAtom(String name) {
-        this.name = name;
+    private final Bool value;
+
+    BoolAtom(Bool value) {
+        this.value = value;
     }
 
-    public String getName() {
-        return name;
+    public Bool getValue() {
+        return value;
     }
 
     @Override
@@ -23,6 +27,6 @@ public class NameAtom implements Expr {
 
     @Override
     public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("var ").append(name);
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append(value);
     }
 }

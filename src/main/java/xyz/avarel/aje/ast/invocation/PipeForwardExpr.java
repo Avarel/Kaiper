@@ -1,10 +1,9 @@
 package xyz.avarel.aje.ast.invocation;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.atoms.FunctionAtom;
-import xyz.avarel.aje.ast.atoms.NameAtom;
-import xyz.avarel.aje.runtime.Any;
-import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.pool.Scope;
 
 public class PipeForwardExpr implements Expr {
     private final Expr left;
@@ -15,22 +14,17 @@ public class PipeForwardExpr implements Expr {
         this.right = right;
     }
 
-    @Override
-    public Any compute() {
-        // DESUGARING
-        if (right instanceof InvocationExpr) {
-            InvocationExpr invocation = ((InvocationExpr) right).copy();
-            invocation.getExprs().add(0, left);
-            return invocation.compute();
-        } else if (right instanceof FunctionAtom) {
-            FunctionAtom function = (FunctionAtom) right;
-            return function.compute().invoke(left.compute());
-        } else if (right instanceof NameAtom) {
-            NameAtom name = (NameAtom) right;
-            return name.compute().invoke(left.compute());
-        }
+    public Expr getLeft() {
+        return left;
+    }
 
-        return Undefined.VALUE;
+    public Expr getRight() {
+        return right;
+    }
+
+    @Override
+    public Obj accept(ExprVisitor visitor, Scope scope) {
+        return visitor.visit(this, scope);
     }
 
     @Override

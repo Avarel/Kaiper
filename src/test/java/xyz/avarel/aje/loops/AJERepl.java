@@ -2,7 +2,7 @@ package xyz.avarel.aje.loops;
 
 import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Obj;
 
 import java.util.Scanner;
 
@@ -36,7 +36,7 @@ public class AJERepl {
 
                 long start = System.nanoTime();
                 Expr expr = exp.compile();
-                Any result = expr.compute();
+                Obj result = exp.compute();
                 long end = System.nanoTime();
 
                 Object obj = result.toNative();

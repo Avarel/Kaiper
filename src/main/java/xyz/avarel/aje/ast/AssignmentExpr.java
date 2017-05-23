@@ -1,26 +1,35 @@
 package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.pool.Scope;
 
 public class AssignmentExpr implements Expr {
-    private final Expr left;
-    private final Expr right;
+    private final String name;
+    private final Expr expr;
 
-    public AssignmentExpr(Expr left, Expr right) {
-        this.left = left;
-        this.right = right;
+    public AssignmentExpr(String name, Expr expr) {
+        this.name = name;
+        this.expr = expr;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Expr getExpr() {
+        return expr;
     }
 
     @Override
-    public Any compute() {
-        return left.compute().set(right.compute());
+    public Obj accept(ExprVisitor visitor, Scope scope) {
+        return visitor.visit(this, scope);
     }
 
     @Override
     public void ast(StringBuilder builder, String prefix, boolean isTail) {
         builder.append(prefix).append(isTail ? "└── " : "├── ").append("set\n");
-        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
+        builder.append(prefix).append(isTail ? "    " : "│   ").append("├── ").append(name);
         builder.append('\n');
-        right.ast(builder, prefix + (isTail ? "    " : "│   "), true);
+        expr.ast(builder, prefix + (isTail ? "    " : "│   "), true);
     }
 }

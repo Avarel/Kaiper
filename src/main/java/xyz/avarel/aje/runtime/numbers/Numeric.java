@@ -1,14 +1,14 @@
 package xyz.avarel.aje.runtime.numbers;
 
-import xyz.avarel.aje.runtime.Any;
+import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 
 import java.util.function.BinaryOperator;
 
-public abstract class Numeric extends Number implements Any {
+public abstract class Numeric extends Number implements Obj {
     public static final Type<Numeric> TYPE = new Type<>("number");
 
-    public static Any process(Any a, Any b, BinaryOperator<Any> function) {
+    public static Obj process(Obj a, Obj b, BinaryOperator<Obj> function) {
         if (a.getType() == b.getType()) {
             return function.apply(a, b);
         }
@@ -37,7 +37,7 @@ public abstract class Numeric extends Number implements Any {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T convert(Any a, Type<T> type) {
+    public static <T> T convert(Obj a, Type<T> type) {
         if (a instanceof Int) {
             if (type == Int.TYPE) {
                 return (T) a;

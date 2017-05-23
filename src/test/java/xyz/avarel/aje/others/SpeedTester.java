@@ -2,6 +2,8 @@ package xyz.avarel.aje.others;
 
 import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.runtime.pool.DefaultScope;
 
 public class SpeedTester {
     public static void main(String[] args) {
@@ -27,7 +29,7 @@ public class SpeedTester {
 
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
-            expr.compute();
+            expr.accept(new ExprVisitor(), DefaultScope.INSTANCE.subPool());
         }
         long end = System.nanoTime();
 
@@ -40,7 +42,7 @@ public class SpeedTester {
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
             Expr expr = exp.compile(true);
-            expr.compute();
+            expr.accept(new ExprVisitor(), DefaultScope.INSTANCE.subPool());
         }
         long end = System.nanoTime();
 
