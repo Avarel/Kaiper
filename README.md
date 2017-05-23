@@ -45,7 +45,7 @@ repositories {
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)(5i+3)`|
 |Lists operations|`list`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
-|First class functions|`function`|`Function*`|`fun(x) = { x + 2 }` `{ x, y -> x ^ y }`|
+|First class functions|`function`|`Function*`|`func(x) = { x + 2 }` `{ x, y -> x ^ y }`|
 
 `*` Mapped to AJE object.
 
@@ -143,17 +143,17 @@ class AJETest {
 `decimal` arguments can be either `integer`, or `decimal`.
 
 ##### Declaring a Function
-###### Traditional `fun f(it) { it + 1 }`
+###### Traditional `func f(it) { it + 1 }`
 Traditional functions can be declared with the syntax shown below.
     If the optional name field is present, then the function will be 
     available to used as an invocable variable with that name. If the 
     name field is not present, the function be an anonymous function expression.
 ```
-fun [name]([param,...]) [=] { [statements] }
-fun [name]([param,...]) = expression
+func [name]([param,...]) [=] { [statements] }
+func [name]([param,...]) = expression
 
-fun f(x) = x + 2; f(2) == 4
-fun isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
+func f(x) = x + 2; f(2) == 4
+func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
 ```
 
 ###### Lambda `{ it -> it + 1 }`
@@ -239,7 +239,7 @@ Result | [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
   REPL | add = { x, y -> x + y }; [1..10] |> fold(0, add)
 Result | 55
 
-  REPL | fun isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
+  REPL | func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
 Result | [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
 
   REPL | [1..10] |> fold(1, { x, y -> x * y })
