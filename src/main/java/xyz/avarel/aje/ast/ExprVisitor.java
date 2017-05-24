@@ -7,6 +7,7 @@ import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.RangeExpr;
 import xyz.avarel.aje.ast.operations.SliceExpr;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
+import xyz.avarel.aje.runtime.IntRange;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Slice;
 import xyz.avarel.aje.runtime.Undefined;
@@ -57,7 +58,6 @@ public class ExprVisitor {
     }
 
     public Obj visit(PipeForwardExpr expr, Scope scope) {
-        // DESUGARING
         if (expr.getRight() instanceof InvocationExpr) {
             InvocationExpr invocation = ((InvocationExpr) expr.getRight()).copy();
             invocation.getArguments().add(0, expr.getLeft());
@@ -92,7 +92,7 @@ public class ExprVisitor {
 
         for (Expr item : expr.getItems()) {
             if (item instanceof RangeExpr) {
-                slice.addAll((Slice) item.accept(this, scope));
+                slice.addAll(((IntRange) item.accept(this, scope)).toSlice());
                 continue;
             }
             slice.add(item.accept(this, scope));
@@ -103,25 +103,58 @@ public class ExprVisitor {
 
     public Obj visit(SublistExpr expr, Scope scope) {
         Obj obj = expr.getLeft().accept(this, scope);
-        Obj start = expr.getStart().accept(this, scope);
-        Obj end = expr.getEnd().accept(this, scope);
+        Expr startExpr = expr.getStart();
+        Expr endExpr = expr.getEnd();
+        Expr stepExpr = expr.getStep();
 
-        if (obj instanceof Slice && start instanceof Int && end instanceof Int) {
-            Slice obj1 = (Slice) obj;
-            Int start1 = (Int) start;
-            Int end1 = (Int) end;
+        if (obj instanceof Slice) {
+            Slice slice = (Slice) obj;
 
-            if (start1.value() > end1.value()) {
-                if (end1.value() < 0) {
-                    end1 = Int.of(Math.floorMod(end1.value(), obj1.size()));
-                } else {
-                    return Undefined.VALUE;
-                }
+            int start;
+            int end;
+            int step;
+
+            if (startExpr instanceof Int) {
+                start = ((Int) startExpr.accept(this, scope)).value();
+            } else if (startExpr == null) {
+                start = 0;
+            } else {
+                return Undefined.VALUE;
             }
 
-            List<Obj> sublist = obj1.subList(start1.value(), end1.value());
+            if (endExpr instanceof Int) {
+                end = ((Int) endExpr.accept(this, scope)).value();
+            } else if (endExpr == null) {
+                end = slice.lastIndex();
+            } else {
+                return Undefined.VALUE;
+            }
 
-            return Slice.ofList(sublist);
+            if (start > end && end < 0) {
+                end = Math.floorMod(end, slice.size());
+            } else {
+                return Undefined.VALUE;
+            }
+
+            if (stepExpr instanceof Int) {
+                step = ((Int) stepExpr.accept(this, scope)).value();
+            } else if (stepExpr == null) {
+                step = 1;
+            } else {
+                return Undefined.VALUE;
+            }
+
+            if (step == 1) {
+                return Slice.ofList(slice.subList(start, end));
+            } else {
+                Slice newSlice = new Slice();
+
+                for (int i = start; i < end; i += step) {
+                    newSlice.add(slice.get(i));
+                }
+
+                return newSlice;
+            }
         }
 
         return Undefined.VALUE;
@@ -136,14 +169,7 @@ public class ExprVisitor {
         return expr.getLeft().accept(this, scope).attribute(expr.getName());
     }
 
-    public Obj visit(ListIndexExpr expr, Scope scope) {
-        Obj list = expr.getLeft().accept(this, scope);
-        Obj index = expr.getIndex().accept(this, scope);
-
-        if (list instanceof Slice && index instanceof Int) {
-            return ((Slice) list).get(((Int) index).value());
-        }
-
-        return Undefined.VALUE;
+    public Obj visit(GetExpr expr, Scope scope) {
+        return expr.getLeft().accept(this, scope).get(expr.getArgument().accept(this, scope));
     }
 }

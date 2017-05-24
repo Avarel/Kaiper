@@ -201,27 +201,15 @@ public class Int implements Obj, NativeObject<Integer> {
     }
 
     @Override
-    public Slice rangeTo(Obj other) {
+    public Obj rangeTo(Obj other) {
         if (other instanceof Int) {
             return this.rangeTo((Int) other);
         }
-        return new Slice();
+        return Undefined.VALUE;
     }
 
-    private Slice rangeTo(Int other) {
-        Slice slice = new Slice();
-
-        if (value < other.value) {
-            for (int i = value; i <= other.value; i++) {
-                slice.add(Int.of(i));
-            }
-        } else {
-            for (int i = value; i >= other.value; i--) {
-                slice.add(Int.of(i));
-            }
-        }
-
-        return slice;
+    private IntRange rangeTo(Int other) {
+        return new IntRange(this.value, other.value, 1);
     }
 
     @Override

@@ -3,11 +3,11 @@ package xyz.avarel.aje.ast;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.pool.Scope;
 
-public class ListIndexExpr implements Expr {
+public class GetExpr implements Expr {
     private final Expr left;
     private final Expr indexExpr;
 
-    public ListIndexExpr(Expr left, Expr indexExpr) {
+    public GetExpr(Expr left, Expr indexExpr) {
         this.left = left;
         this.indexExpr = indexExpr;
     }
@@ -16,7 +16,7 @@ public class ListIndexExpr implements Expr {
         return left;
     }
 
-    public Expr getIndex() {
+    public Expr getArgument() {
         return indexExpr;
     }
 

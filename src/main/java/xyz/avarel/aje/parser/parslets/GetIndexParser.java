@@ -2,7 +2,7 @@ package xyz.avarel.aje.parser.parslets;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ListIndexExpr;
+import xyz.avarel.aje.ast.GetExpr;
 import xyz.avarel.aje.ast.SublistExpr;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
@@ -25,6 +25,6 @@ public class GetIndexParser extends BinaryParser {
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
-        return new ListIndexExpr(left, index);
+        return new GetExpr(left, index);
     }
 }

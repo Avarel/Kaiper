@@ -12,16 +12,14 @@ import java.util.List;
 public interface Obj {
     Type TYPE = new Type("any");
 
-    default Type getType() {
-        return Obj.TYPE;
-    }
+    Type getType();
 
     default boolean isNativeObject() {
         return this instanceof NativeObject;
     }
 
     default Object toNative() {
-        return ((NativeObject<?>) this).toNative();
+        return isNativeObject() ? ((NativeObject<?>) this).toNative() : null;
     }
 
     // OPERATORS
@@ -126,6 +124,10 @@ public interface Obj {
 
     default Obj set(Obj other) {
         throw new AJEException(getType() + " do not support set operator.");
+    }
+
+    default Obj get(Obj other) {
+        return Undefined.VALUE;
     }
 
     default Obj attribute(String name) {

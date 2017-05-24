@@ -31,11 +31,7 @@ public class CompiledFunction extends AJEFunction {
 
     @Override
     public String toString() {
-        return "fun(" + parameters.stream().collect(Collectors.joining(",")) + ")";
-    }
-
-    public Expr getExpr() {
-        return expr;
+        return "func(" + parameters.stream().collect(Collectors.joining(",")) + ")";
     }
 
     @Override

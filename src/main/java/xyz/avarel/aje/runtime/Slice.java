@@ -148,6 +148,18 @@ public class Slice extends ArrayList<Obj> implements Obj, NativeObject<List<Obj>
     }
 
     @Override
+    public Obj get(Obj other) {
+        if (other instanceof Int) {
+            return get((Int) other);
+        }
+        return Undefined.VALUE;
+    }
+
+    private Obj get(Int index) {
+        return this.get(index.value());
+    }
+
+    @Override
     public Obj attribute(String name) {
         switch (name) {
             case "size":
@@ -155,5 +167,9 @@ public class Slice extends ArrayList<Obj> implements Obj, NativeObject<List<Obj>
             default:
                 return Undefined.VALUE;
         }
+    }
+
+    public int lastIndex() {
+        return size() - 1;
     }
 }
