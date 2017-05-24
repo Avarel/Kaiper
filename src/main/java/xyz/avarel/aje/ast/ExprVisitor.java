@@ -3,16 +3,13 @@ package xyz.avarel.aje.ast;
 import xyz.avarel.aje.ast.atoms.*;
 import xyz.avarel.aje.ast.invocation.InvocationExpr;
 import xyz.avarel.aje.ast.invocation.PipeForwardExpr;
-import xyz.avarel.aje.ast.operations.BinaryOperation;
-import xyz.avarel.aje.ast.operations.RangeExpr;
-import xyz.avarel.aje.ast.operations.SliceExpr;
-import xyz.avarel.aje.ast.operations.UnaryOperation;
-import xyz.avarel.aje.runtime.IntRange;
+import xyz.avarel.aje.ast.operations.*;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Slice;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
 import xyz.avarel.aje.runtime.functions.CompiledFunction;
+import xyz.avarel.aje.runtime.lists.Range;
+import xyz.avarel.aje.runtime.lists.Vector;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.runtime.pool.Scope;
 
@@ -64,10 +61,10 @@ public class ExprVisitor {
             return invocation.accept(this, scope);
         } else if (expr.getRight() instanceof FunctionAtom) {
             FunctionAtom function = (FunctionAtom) expr.getRight();
-            return function.accept(this, scope).invoke(expr.getRight().accept(this, scope));
+            return function.accept(this, scope).invoke(expr.getLeft().accept(this, scope));
         } else if (expr.getRight() instanceof NameAtom) {
             NameAtom name = (NameAtom) expr.getRight();
-            return name.accept(this, scope).invoke(expr.getRight().accept(this, scope));
+            return name.accept(this, scope).invoke(expr.getLeft().accept(this, scope));
         }
 
         return Undefined.VALUE;
@@ -84,76 +81,96 @@ public class ExprVisitor {
     }
 
     public Obj visit(RangeExpr expr, Scope scope) {
-        return expr.getLeft().accept(this, scope).rangeTo(expr.getRight().accept(this, scope));
+        return expr.getLeft().accept(this, scope).rangeTo(expr.getRight().accept(this, scope), expr.isExclusive());
     }
 
-    public Obj visit(SliceExpr expr, Scope scope) {
-        Slice slice = new Slice();
+    public Obj visit(VectorAtom expr, Scope scope) {
+        Vector vector = new Vector();
 
         for (Expr item : expr.getItems()) {
             if (item instanceof RangeExpr) {
-                slice.addAll(((IntRange) item.accept(this, scope)).toSlice());
+                vector.addAll(((Range) item.accept(this, scope)).toVector());
                 continue;
             }
-            slice.add(item.accept(this, scope));
+            vector.add(item.accept(this, scope));
         }
 
-        return slice;
+        return vector;
     }
 
-    public Obj visit(SublistExpr expr, Scope scope) {
+    public Obj visit(SliceOperation expr, Scope scope) {
         Obj obj = expr.getLeft().accept(this, scope);
-        Expr startExpr = expr.getStart();
-        Expr endExpr = expr.getEnd();
-        Expr stepExpr = expr.getStep();
 
-        if (obj instanceof Slice) {
-            Slice slice = (Slice) obj;
+        if (obj instanceof Vector) {
+            Vector vector = (Vector) obj;
+
+            Expr startExpr = expr.getStart();
+            Expr endExpr = expr.getEnd();
+            Expr stepExpr = expr.getStep();
 
             int start;
             int end;
             int step;
 
-            if (startExpr instanceof Int) {
-                start = ((Int) startExpr.accept(this, scope)).value();
-            } else if (startExpr == null) {
+            if (startExpr == null) {
                 start = 0;
             } else {
-                return Undefined.VALUE;
+                Obj _obj = startExpr.accept(this, scope);
+                if (_obj instanceof Int) {
+                    start = ((Int) _obj).value();
+                    if (start < 0) {
+                        start = vector.size() + start;
+                    }
+                } else {
+                    return Undefined.VALUE;
+                }
             }
 
-            if (endExpr instanceof Int) {
-                end = ((Int) endExpr.accept(this, scope)).value();
-            } else if (endExpr == null) {
-                end = slice.lastIndex();
+            if (endExpr == null) {
+                end = vector.size();
             } else {
-                return Undefined.VALUE;
+                Obj _obj = endExpr.accept(this, scope);
+                if (_obj instanceof Int) {
+                    end = ((Int) _obj).value();
+                    if (end < 0) {
+                        end = vector.size() + end;
+                    }
+                } else {
+                    return Undefined.VALUE;
+                }
             }
 
-            if (start > end && end < 0) {
-                end = Math.floorMod(end, slice.size());
-            } else {
-                return Undefined.VALUE;
-            }
-
-            if (stepExpr instanceof Int) {
-                step = ((Int) stepExpr.accept(this, scope)).value();
-            } else if (stepExpr == null) {
+            if (stepExpr == null) {
                 step = 1;
             } else {
-                return Undefined.VALUE;
+                Obj _obj = stepExpr.accept(this, scope);
+                if (_obj instanceof Int) {
+                    step = ((Int) _obj).value();
+                } else {
+                    return Undefined.VALUE;
+                }
             }
 
             if (step == 1) {
-                return Slice.ofList(slice.subList(start, end));
+                return Vector.ofList(vector.subList(start, end));
             } else {
-                Slice newSlice = new Slice();
+                if (step > 0) {
+                    Vector newVector = new Vector();
 
-                for (int i = start; i < end; i += step) {
-                    newSlice.add(slice.get(i));
+                    for (int i = start; i < end; i += step) {
+                        newVector.add(vector.get(i));
+                    }
+
+                    return newVector;
+                } else if (step < 0) {
+                    Vector newVector = new Vector();
+
+                    for (int i = end - 1; i >= start; i += step) {
+                        newVector.add(vector.get(i));
+                    }
+
+                    return newVector;
                 }
-
-                return newSlice;
             }
         }
 
@@ -169,7 +186,7 @@ public class ExprVisitor {
         return expr.getLeft().accept(this, scope).attribute(expr.getName());
     }
 
-    public Obj visit(GetExpr expr, Scope scope) {
+    public Obj visit(GetOperation expr, Scope scope) {
         return expr.getLeft().accept(this, scope).get(expr.getArgument().accept(this, scope));
     }
 }

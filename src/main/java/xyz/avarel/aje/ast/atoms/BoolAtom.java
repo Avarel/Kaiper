@@ -26,7 +26,7 @@ public enum BoolAtom implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append(value);
+    public String toString() {
+        return "bool " + value;
     }
 }

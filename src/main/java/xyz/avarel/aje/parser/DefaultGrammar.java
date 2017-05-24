@@ -5,7 +5,8 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.*;
 import xyz.avarel.aje.parser.parslets.atoms.*;
 import xyz.avarel.aje.parser.parslets.operator.BinaryOperatorParser;
-import xyz.avarel.aje.parser.parslets.operator.RangeToOperatorParser;
+import xyz.avarel.aje.parser.parslets.operator.RangeExclusiveOperatorParser;
+import xyz.avarel.aje.parser.parslets.operator.RangeInclusiveOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.UnaryOperatorParser;
 import xyz.avarel.aje.runtime.Obj;
 
@@ -14,7 +15,7 @@ public class DefaultGrammar extends Grammar {
 
     private DefaultGrammar() {
         // BLOCKS
-        register(TokenType.LEFT_BRACKET, new SliceParser());
+        register(TokenType.LEFT_BRACKET, new VectorParser());
         register(TokenType.LEFT_PAREN, new GroupParser());
         register(TokenType.LEFT_BRACE, new LambdaParser());
 
@@ -51,12 +52,13 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, Obj::and));
         register(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, Obj::or));
 
-        register(TokenType.RANGE_TO, new RangeToOperatorParser());
+        register(TokenType.RANGE_TO, new RangeInclusiveOperatorParser());
+        register(TokenType.RANGE_TO_EXCLUSIVE, new RangeExclusiveOperatorParser());
 
         // Functional
         register(TokenType.LEFT_PAREN, new InvocationParser());
 
-        register(TokenType.LEFT_BRACKET, new GetIndexParser());
+        register(TokenType.LEFT_BRACKET, new GetParser());
         register(TokenType.DOT, new AttributeParser());
         //register(TokenType.ASSIGN, new AssignmentParser());
         register(TokenType.PIPE_FORWARD, new PipeForwardParser());

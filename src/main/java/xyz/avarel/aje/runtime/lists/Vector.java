@@ -1,5 +1,6 @@
-package xyz.avarel.aje.runtime;
+package xyz.avarel.aje.runtime.lists;
 
+import xyz.avarel.aje.runtime.*;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.runtime.numbers.Numeric;
 
@@ -7,23 +8,23 @@ import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
-public class Slice extends ArrayList<Obj> implements Obj, NativeObject<List<Obj>> {
-    public static final Type TYPE = new Type("list");
+public class Vector extends ArrayList<Obj> implements Obj, NativeObject<List<Obj>> {
+    public static final Type TYPE = new Type("vector");
 
-    public Slice() {
+    public Vector() {
         super();
     }
 
-    public static Slice of(Obj... items) {
-        Slice slice = new Slice();
-        slice.addAll(Arrays.asList(items));
-        return slice;
+    public static Vector of(Obj... items) {
+        Vector vector = new Vector();
+        vector.addAll(Arrays.asList(items));
+        return vector;
     }
 
-    public static Slice ofList(Collection<Obj> items) {
-        Slice slice = new Slice();
-        slice.addAll(items);
-        return slice;
+    public static Vector ofList(Collection<Obj> items) {
+        Vector vector = new Vector();
+        vector.addAll(items);
+        return vector;
     }
 
     @Override
@@ -38,86 +39,86 @@ public class Slice extends ArrayList<Obj> implements Obj, NativeObject<List<Obj>
 
     @Override
     public Obj plus(Obj other) {
-        if (other instanceof Slice) {
-            return plus((Slice) other);
+        if (other instanceof Vector) {
+            return plus((Vector) other);
         }
-        return plus(Slice.of(other));
+        return plus(Vector.of(other));
     }
 
-    private Slice plus(Slice other) {
+    private Vector plus(Vector other) {
         return listOperation(other, Obj::plus);
     }
 
     @Override
     public Obj minus(Obj other) {
-        if (other instanceof Slice) {
-            return minus((Slice) other);
+        if (other instanceof Vector) {
+            return minus((Vector) other);
         }
-        return minus(Slice.of(other));
+        return minus(Vector.of(other));
     }
 
-    private Slice minus(Slice other) {
+    private Vector minus(Vector other) {
         return listOperation(other, Obj::minus);
     }
 
     @Override
     public Obj times(Obj other) {
-        if (other instanceof Slice) {
-            return times((Slice) other);
+        if (other instanceof Vector) {
+            return times((Vector) other);
         }
-        return times(Slice.of(other));
+        return times(Vector.of(other));
     }
 
-    private Slice times(Slice other) {
+    private Vector times(Vector other) {
         return listOperation(other, Obj::times);
     }
 
     @Override
     public Obj divide(Obj other) {
-        if (other instanceof Slice) {
-            return divide((Slice) other);
+        if (other instanceof Vector) {
+            return divide((Vector) other);
         }
-        return divide(Slice.of(other));
+        return divide(Vector.of(other));
     }
 
-    private Slice divide(Slice other) {
+    private Vector divide(Vector other) {
         return listOperation(other, Obj::divide);
     }
 
     @Override
     public Obj pow(Obj other) {
-        if (other instanceof Slice) {
-            return pow((Slice) other);
+        if (other instanceof Vector) {
+            return pow((Vector) other);
         }
-        return pow(Slice.of(other));
+        return pow(Vector.of(other));
     }
 
-    private Slice pow(Slice other) {
+    private Vector pow(Vector other) {
         return listOperation(other, Obj::pow);
     }
 
     @Override
-    public Slice negative() {
+    public Vector negative() {
         return listOperation(Obj::negative);
     }
 
     @Override
     public Bool isEqualTo(Obj other) {
-        if (other instanceof Slice) {
-            return isEqualTo((Slice) other);
+        if (other instanceof Vector) {
+            return isEqualTo((Vector) other);
         }
         return Bool.FALSE;
     }
 
-    public Bool isEqualTo(Slice other) {
+    public Bool isEqualTo(Vector other) {
         if (this == other) {
             return Bool.TRUE;
         } else if (size() != other.size()) {
             return Bool.FALSE;
         }
 
-        Slice slice = listOperation(other, Obj::isEqualTo);
-        for (Obj o : slice) {
+        Vector vector = listOperation(other, Obj::isEqualTo);
+        for (Obj o : vector) {
             if (!(o instanceof Bool)) {
                 if (o == Bool.FALSE) {
                     return Bool.FALSE;
@@ -128,23 +129,23 @@ public class Slice extends ArrayList<Obj> implements Obj, NativeObject<List<Obj>
         return Bool.TRUE;
     }
 
-    private Slice listOperation(Slice other, BinaryOperator<Obj> operator) {
+    private Vector listOperation(Vector other, BinaryOperator<Obj> operator) {
         int len = size() == 1 ? other.size()
                 : other.size() == 1 ? size()
                 : Math.min(size(), other.size());
-        Slice slice = Slice.of();
+        Vector vector = Vector.of();
         for (int i = 0; i < len; i++) {
-            slice.add(Numeric.process(get(i % size()), other.get(i % other.size()), operator));
+            vector.add(Numeric.process(get(i % size()), other.get(i % other.size()), operator));
         }
-        return slice;
+        return vector;
     }
 
-    private Slice listOperation(UnaryOperator<Obj> operator) {
-        Slice slice = Slice.of();
+    private Vector listOperation(UnaryOperator<Obj> operator) {
+        Vector vector = Vector.of();
         for (int i = 0; i < size(); i++) {
-            slice.add(operator.apply(get(i % size())));
+            vector.add(operator.apply(get(i % size())));
         }
-        return slice;
+        return vector;
     }
 
     @Override

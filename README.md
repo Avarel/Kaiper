@@ -44,7 +44,7 @@ repositories {
 |Decimals|`decimal`|`Double`|`1.235` `-2.0/17` `3.0+2.5`|
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)(5i+3)`|
-|Lists operations|`list`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
+|Lists operations|`vector`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
 |First class functions|`function`|`Function*`|`func(x) = { x + 2 }` `{ x, y -> x ^ y }`|
 
 `*` Mapped to AJE object.
@@ -121,11 +121,17 @@ class AJETest {
 |`>=`|Greater than or equal to|`a >= b`|
 |`<=`|Less than or equal to|`a <= b`|
 
-###### List Operators `list`
+###### List and Ranges Operators `vector`
+Though ranges are of a different type, `range`, it is recommended that 
+    ranges are wrapped into a vector using `[range]` syntax. 
+
 |Symbol|Description|Example|
 |---|---|---:|
-|`[integer]`|Get item at index.|`list[i]`|
-|`[integer:integer]`|Sublist from start inclusive to end exclusive.|`list[start:end]`|
+|`..`|Range creation -`integer` and `decimal` only|`a..b`|
+|`..<`|Exclusive range -`integer` and `decimal` only|`a..<b` `[a..<b]`|
+|`[item, items...]`|List creation|`[a,b,c,d,e,f,g]`|
+|`[index]`|Get item at index.|`list[i]`|
+|`[start:end:step]`|Slice operation, search it up.|`list[::]` `list[1:-3:]` `list[3:5:2]`|
 
 ###### Functional Operators `function`
 |Symbol|Description|Example|
@@ -230,6 +236,12 @@ Result | 55
 
   REPL | x = [100..200]; x[25:30]
 Result | [125, 126, 127, 128, 129]
+
+  REPL | [1..10][2:8]
+Result | [3, 4, 5, 6, 7, 8]
+
+  REPL | [1..10][2:8:-2]
+Result | [8, 6, 4]
 ```
 ##### First Class Functions
 ```

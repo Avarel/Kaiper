@@ -126,6 +126,55 @@ public class Complex implements Obj, NativeObject<Double> {
         return Complex.of(real, imag);
     }
 
+
+    @Override
+    public Bool isEqualTo(Obj other) {
+        if (other instanceof Complex) {
+            return this.isEqualTo((Complex) other);
+        } else if (other instanceof Int) {
+            return this.isEqualTo(Complex.of(((Int) other).value()));
+        } else if (other instanceof Decimal) {
+            return this.isEqualTo(Complex.of(((Decimal) other).value()));
+        }
+        return Bool.FALSE;
+    }
+
+    private Bool isEqualTo(Complex b) {
+        return equals(b) ? Bool.TRUE : Bool.FALSE;
+    }
+
+    @Override
+    public Obj greaterThan(Obj other) {
+        if (other instanceof Complex) {
+            return this.greaterThan((Complex) other);
+        } else if (other instanceof Int) {
+            return this.greaterThan(Complex.of(((Int) other).value()));
+        } else if (other instanceof Decimal) {
+            return this.greaterThan(Complex.of(((Decimal) other).value()));
+        }
+        return Bool.FALSE;
+    }
+
+    private Obj greaterThan(Complex other) {
+        return abs() > other.abs() ? Bool.TRUE : Bool.FALSE;
+    }
+
+    @Override
+    public Obj lessThan(Obj other) {
+        if (other instanceof Complex) {
+            return this.lessThan((Complex) other);
+        } else if (other instanceof Int) {
+            return this.lessThan(Complex.of(((Int) other).value()));
+        } else if (other instanceof Decimal) {
+            return this.lessThan(Complex.of(((Decimal) other).value()));
+        }
+        return Bool.FALSE;
+    }
+
+    private Bool lessThan(Complex other) {
+        return abs() < other.abs() ? Bool.TRUE : Bool.FALSE;
+    }
+
     public Complex divide(Complex b) {
         return times(b.reciprocal());
     }
@@ -216,22 +265,6 @@ public class Complex implements Obj, NativeObject<Double> {
             return isEqualTo((Obj) obj) == Bool.TRUE;
         }
         return false;
-    }
-
-    @Override
-    public Bool isEqualTo(Obj other) {
-        if (other instanceof Complex) {
-            return this.isEqualTo((Complex) other);
-        } else if (other instanceof Int) {
-            return this.isEqualTo(Complex.of(((Int) other).value()));
-        } else if (other instanceof Decimal) {
-            return this.isEqualTo(Complex.of(((Decimal) other).value()));
-        }
-        return Bool.FALSE;
-    }
-
-    private Bool isEqualTo(Complex b) {
-        return equals(b) ? Bool.TRUE : Bool.FALSE;
     }
 
     public double real() {

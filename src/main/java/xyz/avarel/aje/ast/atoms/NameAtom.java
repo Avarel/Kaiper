@@ -22,7 +22,7 @@ public class NameAtom implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("var ").append(name);
+    public String toString() {
+        return "var " + name;
     }
 }

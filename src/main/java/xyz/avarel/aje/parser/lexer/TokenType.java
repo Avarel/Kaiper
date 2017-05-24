@@ -47,6 +47,7 @@ public enum TokenType {
 
     // MISC
     RANGE_TO,
+    RANGE_TO_EXCLUSIVE,
     ARROW,
     PIPE_FORWARD,
     TILDE,

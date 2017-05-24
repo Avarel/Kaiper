@@ -7,14 +7,14 @@ import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
 
-public class RangeToOperatorParser extends BinaryParser {
-    public RangeToOperatorParser() {
+public class RangeInclusiveOperatorParser extends BinaryParser {
+    public RangeInclusiveOperatorParser() {
         super(Precedence.RANGE_TO);
     }
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
         Expr right = parser.parseExpr(getPrecedence());
-        return new RangeExpr(left, right);
+        return new RangeExpr(left, right, false);
     }
 }

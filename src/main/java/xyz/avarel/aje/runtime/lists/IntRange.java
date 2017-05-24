@@ -1,22 +1,33 @@
-package xyz.avarel.aje.runtime;
+package xyz.avarel.aje.runtime.lists;
 
+import xyz.avarel.aje.runtime.NativeObject;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IntRange implements Obj, NativeObject<List<Integer>> {
+public class IntRange implements Obj, Range, NativeObject<List<Integer>> {
     public static final Type TYPE = new Type("range");
     
     private final int start;
+    private final boolean exclusive;
     private final int end;
     private final int step;
     private List<Integer> nativeList;
 
-    public IntRange(int start, int end, int step) {
+    public IntRange(int start, int end, int step, boolean exclusive) {
         this.start = start;
+        this.exclusive = exclusive;
         this.end = end;
         this.step = step;
+    }
+
+    @Override
+    public boolean isExclusive() {
+        return exclusive;
     }
 
     @Override
@@ -25,8 +36,14 @@ public class IntRange implements Obj, NativeObject<List<Integer>> {
         if (nativeList != null) return nativeList;
 
         nativeList = new ArrayList<>();
-        for (int i = start; i <= end; i += step) {
-            nativeList.add(i);
+        if (exclusive) {
+            for (int i = start; i < end; i += 1) {
+                nativeList.add(i * step);
+            }
+        } else {
+            for (int i = start; i <= end; i += 1) {
+                nativeList.add(i * step);
+            }
         }
         return nativeList;
     }
@@ -45,7 +62,7 @@ public class IntRange implements Obj, NativeObject<List<Integer>> {
     }
 
     private IntRange plus(Int other) {
-        return new IntRange(start + other.value(), end + other.value(), step);
+        return new IntRange(start + other.value(), end + other.value(), step, exclusive);
     }
 
     @Override
@@ -57,7 +74,7 @@ public class IntRange implements Obj, NativeObject<List<Integer>> {
     }
 
     private IntRange minus(Int other) {
-        return new IntRange(start - other.value(), end - other.value(), step);
+        return new IntRange(start - other.value(), end - other.value(), step, exclusive);
     }
 
     @Override
@@ -69,7 +86,7 @@ public class IntRange implements Obj, NativeObject<List<Integer>> {
     }
 
     private IntRange times(Int other) {
-        return new IntRange(start * other.value(), end * other.value(), step * other.value());
+        return new IntRange(start, end, step * other.value(), exclusive);
     }
 
     @Override
@@ -80,28 +97,16 @@ public class IntRange implements Obj, NativeObject<List<Integer>> {
         return Undefined.VALUE;
     }
 
-    @Override
-    public Obj get(Obj other) {
-        if (other instanceof Int) {
-            return get((Int) other);
-        }
-        return Undefined.VALUE;
-    }
-
-    private Obj get(Int index) {
-        return Int.of(start + step * index.value());
-    }
-
     private IntRange divide(Int other) {
-        return new IntRange(start / other.value(), end / other.value(), Math.max(step / other.value(), 1));
+        return new IntRange(start, end, Math.max(step / other.value(), 1), exclusive);
     }
 
-    public Slice toSlice() {
-        Slice slice = new Slice();
+    public Vector toVector() {
+        Vector vector = new Vector();
         for (int i : toNative()) {
-            slice.add(Int.of(i));
+            vector.add(Int.of(i));
         }
-        return slice;
+        return vector;
     }
 
     @Override

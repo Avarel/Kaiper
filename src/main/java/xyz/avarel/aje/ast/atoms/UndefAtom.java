@@ -19,7 +19,7 @@ public enum UndefAtom implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append(Undefined.VALUE);
+    public String toString() {
+        return "undefined";
     }
 }

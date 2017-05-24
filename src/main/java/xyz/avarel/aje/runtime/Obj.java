@@ -105,7 +105,7 @@ public interface Obj {
 
 
     // Slices
-    default Obj rangeTo(Obj other) {
+    default Obj rangeTo(Obj other, boolean exclusive) {
         return Undefined.VALUE;
     }
 

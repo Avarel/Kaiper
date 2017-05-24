@@ -1,6 +1,7 @@
 package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.*;
+import xyz.avarel.aje.runtime.lists.IntRange;
 
 import java.util.List;
 
@@ -14,8 +15,8 @@ public class Int implements Obj, NativeObject<Integer> {
     }
 
     public static Int of(int i) {
-        if (i >= IntCache.low && i <= IntCache.high) {
-            return IntCache.cache[i + (-IntCache.low)];
+        if (i >= IntCache.LOW && i <= IntCache.HIGH) {
+            return IntCache.cache[i - IntCache.LOW];
         }
         return new Int(i);
     }
@@ -201,15 +202,15 @@ public class Int implements Obj, NativeObject<Integer> {
     }
 
     @Override
-    public Obj rangeTo(Obj other) {
+    public Obj rangeTo(Obj other, boolean exclusive) {
         if (other instanceof Int) {
-            return this.rangeTo((Int) other);
+            return this.rangeTo((Int) other, exclusive);
         }
         return Undefined.VALUE;
     }
 
-    private IntRange rangeTo(Int other) {
-        return new IntRange(this.value, other.value, 1);
+    private IntRange rangeTo(Int other, boolean exclusive) {
+        return new IntRange(this.value, other.value, 1, exclusive);
     }
 
     @Override
@@ -221,15 +222,15 @@ public class Int implements Obj, NativeObject<Integer> {
     }
 
     private static class IntCache {
-        static final int low = -128;
-        static final int high = 127;
-        static final Int[] cache;
+        private static final int LOW = -128;
+        private static final int HIGH = 127;
+        private static final Int[] cache;
 
         static {
-            cache = new Int[(high - low) + 1];
-            int j = low;
-            for (int k = 0; k < cache.length; k++) {
-                cache[k] = new Int(j++);
+            cache = new Int[(HIGH - LOW) + 1];
+            int counter = LOW;
+            for (int i = 0; i < cache.length; i++) {
+                cache[i] = new Int(counter++);
             }
         }
 

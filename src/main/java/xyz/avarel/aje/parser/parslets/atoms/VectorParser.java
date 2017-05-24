@@ -1,7 +1,7 @@
 package xyz.avarel.aje.parser.parslets.atoms;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.operations.SliceExpr;
+import xyz.avarel.aje.ast.atoms.VectorAtom;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -10,7 +10,7 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SliceParser implements PrefixParser {
+public class VectorParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         List<Expr> exprs = new ArrayList<>();
@@ -22,6 +22,6 @@ public class SliceParser implements PrefixParser {
             parser.eat(TokenType.RIGHT_BRACKET);
         }
 
-        return new SliceExpr(exprs);
+        return new VectorAtom(exprs);
     }
 }

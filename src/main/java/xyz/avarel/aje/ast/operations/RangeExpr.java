@@ -8,10 +8,12 @@ import xyz.avarel.aje.runtime.pool.Scope;
 public class RangeExpr implements Expr {
     private final Expr left;
     private final Expr right;
+    private final boolean exclusive;
 
-    public RangeExpr(Expr left, Expr right) {
+    public RangeExpr(Expr left, Expr right, boolean exclusive) {
         this.left = left;
         this.right = right;
+        this.exclusive = exclusive;
     }
 
     public Expr getLeft() {
@@ -20,6 +22,10 @@ public class RangeExpr implements Expr {
 
     public Expr getRight() {
         return right;
+    }
+
+    public boolean isExclusive() {
+        return exclusive;
     }
 
     @Override

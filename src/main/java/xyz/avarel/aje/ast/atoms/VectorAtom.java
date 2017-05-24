@@ -1,4 +1,4 @@
-package xyz.avarel.aje.ast.operations;
+package xyz.avarel.aje.ast.atoms;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
@@ -7,10 +7,10 @@ import xyz.avarel.aje.runtime.pool.Scope;
 
 import java.util.List;
 
-public class SliceExpr implements Expr {
+public class VectorAtom implements Expr {
     private final List<Expr> exprs;
 
-    public SliceExpr(List<Expr> items) {
+    public VectorAtom(List<Expr> items) {
         this.exprs = items;
     }
 

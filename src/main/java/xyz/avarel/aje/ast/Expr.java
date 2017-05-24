@@ -15,5 +15,7 @@ public interface Expr {
 
     Obj accept(ExprVisitor visitor, Scope scope);
 
-    void ast(StringBuilder builder, String prefix, boolean isTail);
+    default void ast(StringBuilder builder, String prefix, boolean isTail) {
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append(toString());
+    }
 }

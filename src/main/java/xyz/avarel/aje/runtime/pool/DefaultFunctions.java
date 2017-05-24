@@ -2,11 +2,11 @@ package xyz.avarel.aje.runtime.pool;
 
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Slice;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
 import xyz.avarel.aje.runtime.functions.ComposedFunction;
 import xyz.avarel.aje.runtime.functions.NativeFunction;
+import xyz.avarel.aje.runtime.lists.Vector;
 import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -348,37 +348,37 @@ public enum DefaultFunctions {
         }
     }),
 
-    MAP(new NativeFunction(Slice.TYPE, AJEFunction.TYPE) {
+    MAP(new NativeFunction(Vector.TYPE, AJEFunction.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
-            Slice arg = (Slice) arguments.get(0);
+            Vector arg = (Vector) arguments.get(0);
             AJEFunction transform = (AJEFunction) arguments.get(1);
 
-            Slice slice = new Slice();
+            Vector vector = new Vector();
             for (Obj obj : arg) {
-                slice.add(transform.invoke(Collections.singletonList(obj)));
+                vector.add(transform.invoke(Collections.singletonList(obj)));
             }
-            return slice;
+            return vector;
         }
     }),
-    FILTER(new NativeFunction(Slice.TYPE, AJEFunction.TYPE) {
+    FILTER(new NativeFunction(Vector.TYPE, AJEFunction.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
-            Slice arg = (Slice) arguments.get(0);
+            Vector arg = (Vector) arguments.get(0);
             AJEFunction predicate = (AJEFunction) arguments.get(1);
 
-            Slice slice = new Slice();
+            Vector vector = new Vector();
             for (Obj obj : arg) {
                 Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
-                if (condition == Bool.TRUE) slice.add(obj);
+                if (condition == Bool.TRUE) vector.add(obj);
             }
-            return slice;
+            return vector;
         }
     }),
-    FOLD(new NativeFunction(Slice.TYPE, Obj.TYPE, AJEFunction.TYPE) {
+    FOLD(new NativeFunction(Vector.TYPE, Obj.TYPE, AJEFunction.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
-            Slice arg = (Slice) arguments.get(0);
+            Vector arg = (Vector) arguments.get(0);
             Obj accumulator = arguments.get(1);
             AJEFunction operation = (AJEFunction) arguments.get(2);
 

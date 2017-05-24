@@ -3,7 +3,7 @@ package xyz.avarel.aje
 import org.junit.Assert
 import org.junit.Test
 
-class SliceTest {
+class VectorTest {
     @Test
     fun `declare`() {
         Assert.assertEquals("[1, 2, 3]", eval("[1,2,3]").toString())

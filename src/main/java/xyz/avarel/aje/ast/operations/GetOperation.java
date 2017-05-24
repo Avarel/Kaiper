@@ -1,13 +1,15 @@
-package xyz.avarel.aje.ast;
+package xyz.avarel.aje.ast.operations;
 
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.pool.Scope;
 
-public class GetExpr implements Expr {
+public class GetOperation implements Expr {
     private final Expr left;
     private final Expr indexExpr;
 
-    public GetExpr(Expr left, Expr indexExpr) {
+    public GetOperation(Expr left, Expr indexExpr) {
         this.left = left;
         this.indexExpr = indexExpr;
     }
