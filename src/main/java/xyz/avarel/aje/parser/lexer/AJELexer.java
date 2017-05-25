@@ -106,7 +106,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                             case SEMICOLON:
                             case PIPE_FORWARD:
                             case LINE:
-                                tokens.remove(prev);
+                                tokens.remove(tokens.size() - 1);
                         }
                     case SEMICOLON:
                         switch (next.getType()) {

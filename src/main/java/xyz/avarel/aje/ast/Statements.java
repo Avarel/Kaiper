@@ -1,20 +1,20 @@
 package xyz.avarel.aje.ast;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.pool.Scope;
+import xyz.avarel.aje.scope.Scope;
 
-public class Statement implements Expr {
+public class Statements implements Expr {
     private final Expr before;
     private final Expr after;
 
     private boolean hasNext;
 
-    public Statement(Expr before, Expr after) {
+    public Statements(Expr before, Expr after) {
         this.before = before;
         this.after = after;
 
-        if (before instanceof Statement) {
-            ((Statement) before).hasNext = true;
+        if (before instanceof Statements) {
+            ((Statements) before).hasNext = true;
         }
     }
 
@@ -36,5 +36,10 @@ public class Statement implements Expr {
         before.ast(builder, prefix, false);
         builder.append('\n');
         after.ast(builder, prefix, !hasNext);
+    }
+
+    @Override
+    public String toString() {
+        return "statements";
     }
 }

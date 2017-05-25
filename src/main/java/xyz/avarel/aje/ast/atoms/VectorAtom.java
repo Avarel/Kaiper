@@ -3,7 +3,7 @@ package xyz.avarel.aje.ast.atoms;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.pool.Scope;
+import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 
@@ -33,5 +33,10 @@ public class VectorAtom implements Expr {
         if (exprs.size() > 0) {
             exprs.get(exprs.size() - 1).ast(builder, prefix + (isTail ? "    " : "│   "), true);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "vector";
     }
 }

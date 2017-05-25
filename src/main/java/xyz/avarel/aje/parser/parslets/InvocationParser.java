@@ -13,7 +13,7 @@ import java.util.List;
 
 public class InvocationParser extends BinaryParser {
     public InvocationParser() {
-        super(Precedence.ACCESS);
+        super(Precedence.INVOCATION);
     }
 
     @Override

@@ -3,7 +3,7 @@ package xyz.avarel.aje.ast.operations;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.pool.Scope;
+import xyz.avarel.aje.scope.Scope;
 
 public class GetOperation implements Expr {
     private final Expr left;
@@ -33,5 +33,10 @@ public class GetOperation implements Expr {
         left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
         indexExpr.ast(builder, prefix + (isTail ? "    " : "│   "), true);
+    }
+
+    @Override
+    public String toString() {
+        return "get";
     }
 }

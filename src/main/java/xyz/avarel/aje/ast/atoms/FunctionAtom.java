@@ -3,21 +3,22 @@ package xyz.avarel.aje.ast.atoms;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.pool.Scope;
+import xyz.avarel.aje.runtime.functions.Parameter;
+import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FunctionAtom implements Expr {
     private final String name;
-    private final List<String> parameters;
+    private final List<Parameter> parameters;
     private final Expr expr;
 
-    public FunctionAtom(List<String> parameters, Expr expr) {
+    public FunctionAtom(List<Parameter> parameters, Expr expr) {
         this(null, parameters, expr);
     }
 
-    public FunctionAtom(String name, List<String> parameters, Expr expr) {
+    public FunctionAtom(String name, List<Parameter> parameters, Expr expr) {
         this.name = name;
         this.parameters = parameters;
         this.expr = expr;
@@ -27,7 +28,7 @@ public class FunctionAtom implements Expr {
         return name;
     }
 
-    public List<String> getParameters() {
+    public List<Parameter> getParameters() {
         return parameters;
     }
 
@@ -45,9 +46,15 @@ public class FunctionAtom implements Expr {
         builder.append(prefix).append(isTail ? "└── " : "├── ")
                 .append("func").append(name != null ? " " + name : "")
                 .append('(')
-                .append(getParameters().stream().collect(Collectors.joining(", ")))
+                .append(getParameters().stream().map(Object::toString)
+                        .collect(Collectors.joining(", ")))
                 .append(')')
                 .append('\n');
         expr.ast(builder, prefix + (isTail ? "    " : "│   "), true);
+    }
+
+    @Override
+    public String toString() {
+        return "function";
     }
 }

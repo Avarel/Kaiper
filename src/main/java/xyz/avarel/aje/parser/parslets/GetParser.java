@@ -11,7 +11,7 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 
 public class GetParser extends BinaryParser {
     public GetParser() {
-        super(Precedence.ACCESS);
+        super(Precedence.ATTRIBUTE);
     }
 
     @Override

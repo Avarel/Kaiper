@@ -1,4 +1,4 @@
-package xyz.avarel.aje.runtime.pool;
+package xyz.avarel.aje.scope;
 
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;

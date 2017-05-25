@@ -2,8 +2,13 @@ package xyz.avarel.aje.ast;
 
 import xyz.avarel.aje.ast.atoms.*;
 import xyz.avarel.aje.ast.invocation.InvocationExpr;
-import xyz.avarel.aje.ast.invocation.PipeForwardExpr;
-import xyz.avarel.aje.ast.operations.*;
+import xyz.avarel.aje.ast.operations.BinaryOperation;
+import xyz.avarel.aje.ast.operations.GetOperation;
+import xyz.avarel.aje.ast.operations.SliceOperation;
+import xyz.avarel.aje.ast.operations.UnaryOperation;
+import xyz.avarel.aje.ast.variables.AssignmentExpr;
+import xyz.avarel.aje.ast.variables.AttributeExpr;
+import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
@@ -11,15 +16,15 @@ import xyz.avarel.aje.runtime.functions.CompiledFunction;
 import xyz.avarel.aje.runtime.lists.Range;
 import xyz.avarel.aje.runtime.lists.Vector;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.runtime.pool.Scope;
+import xyz.avarel.aje.scope.Scope;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExprVisitor {
-    public Obj visit(Statement statement, Scope scope) {
-        statement.getBefore().accept(this, scope);
-        return statement.getAfter().accept(this,scope);
+    public Obj visit(Statements statements, Scope scope) {
+        statements.getBefore().accept(this, scope);
+        return statements.getAfter().accept(this,scope);
     }
 
     public Obj visit(BoolAtom expr, Scope scope) {
@@ -28,7 +33,7 @@ public class ExprVisitor {
 
     public Obj visit(FunctionAtom expr, Scope scope) {
         AJEFunction func = new CompiledFunction(expr.getParameters(), expr.getExpr(), scope.subPool());
-        if (expr.getName() != null) scope.assign(expr.getName(), func);
+        if (expr.getName() != null) scope.declare(expr.getName(), func);
         return func;
     }
 
@@ -52,22 +57,6 @@ public class ExprVisitor {
         }
 
         return expr.getLeft().accept(this, scope).invoke(arguments);
-    }
-
-    public Obj visit(PipeForwardExpr expr, Scope scope) {
-        if (expr.getRight() instanceof InvocationExpr) {
-            InvocationExpr invocation = ((InvocationExpr) expr.getRight()).copy();
-            invocation.getArguments().add(0, expr.getLeft());
-            return invocation.accept(this, scope);
-        } else if (expr.getRight() instanceof FunctionAtom) {
-            FunctionAtom function = (FunctionAtom) expr.getRight();
-            return function.accept(this, scope).invoke(expr.getLeft().accept(this, scope));
-        } else if (expr.getRight() instanceof NameAtom) {
-            NameAtom name = (NameAtom) expr.getRight();
-            return name.accept(this, scope).invoke(expr.getLeft().accept(this, scope));
-        }
-
-        return Undefined.VALUE;
     }
 
     public Obj visit(BinaryOperation expr, Scope scope) {
@@ -185,7 +174,12 @@ public class ExprVisitor {
     }
 
     public Obj visit(AssignmentExpr expr, Scope scope) {
-        scope.assign(expr.getName(), expr.getExpr().accept(this, scope), expr.isDeclaration());
+        scope.assign(expr.getName(), expr.getExpr().accept(this, scope));
+        return Undefined.VALUE;
+    }
+
+    public Obj visit(DeclarationExpr expr, Scope scope) {
+        scope.declare(expr.getName(), expr.getExpr().accept(this, scope));
         return Undefined.VALUE;
     }
 

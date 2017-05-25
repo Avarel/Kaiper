@@ -2,7 +2,7 @@ package xyz.avarel.aje.parser.parslets.operator;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.operations.RangeExpr;
+import xyz.avarel.aje.ast.atoms.RangeExpr;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;

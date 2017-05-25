@@ -3,7 +3,7 @@ package xyz.avarel.aje.ast.operations;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.pool.Scope;
+import xyz.avarel.aje.scope.Scope;
 
 import java.util.function.UnaryOperator;
 
@@ -35,4 +35,8 @@ public class UnaryOperation implements Expr {
         target.ast(builder, prefix + (isTail ? "    " : "│   "), true);
     }
 
+    @Override
+    public String toString() {
+        return "unary operation";
+    }
 }

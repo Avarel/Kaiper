@@ -143,35 +143,35 @@ Though ranges are of a different type, `range`, it is recommended that
 |`*`|Product of functions|`(f*g)(x) == f(x) * g(x)`|
 |`/`|Quotient of functions|`(f/g)(x) == f(x) / g(x)`|
 
-### Variables
-###### Simple
-Variables are names with values. They can be easily declared using the following
-    syntax:
+### Defining Variables
+###### Declaration
+Variables are names with information that you can use to store values and use them throughout
+    the script. They can be declared using the following syntax:
 ```
-name = expression
-
-x = 10
-```
-
-###### Declaration / Scope Control
-For better scope control, it is recommended that you explicitly declare a variable
-    using the following syntax:
-```
+// Declaration
 var name = expression
 
+// Assignment - requires a declaration.
+name = expression
+```
+
+```
 var x = 10
+x = 20
+sin(x)
 ```
 
 ###### Compound Assignment
-Variables can use the short syntax-sugar operations. Such as `+=` `-=` `*=`... etc:
+Variables can use the short syntax-sugar compound assignments. They provide a shorter syntax to perform
+    the operation of the two operands and assign them to the first. Ex: `+=` `-=` `*=`
 ```
-name (operator)= expression
+name (binary operator)= expression
 
 x += 5
 y %= 2.0
 ```
 
-### Functions
+### Defining Functions
 Functions are expressions that can be invoked using the __invocation operator__.
 
 `complex` arguments can be either `integer`, `decimal`, or `complex`.

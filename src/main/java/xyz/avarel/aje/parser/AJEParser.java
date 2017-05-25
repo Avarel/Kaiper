@@ -5,19 +5,14 @@ import xyz.avarel.aje.ast.atoms.UndefAtom;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.pool.Scope;
 
 public class AJEParser extends Parser {
     public AJEParser(AJELexer tokens) {
-        this(tokens, new Scope());
-    }
-
-    public AJEParser(AJELexer tokens, Scope scope) {
         super(tokens, DefaultGrammar.INSTANCE);
     }
 
     public Expr compile() {
-        Expr expr = statements();
+        Expr expr = parseStatements();
 
         if (!getTokens().isEmpty()) {
             Token t = getTokens().get(0);
@@ -29,7 +24,7 @@ public class AJEParser extends Parser {
         return expr;
     }
 
-    public Expr statements() {
+    public Expr parseStatements() {
         if (match(TokenType.EOF)) return UndefAtom.VALUE;
 
         Expr any = parseExpr();
@@ -43,7 +38,7 @@ public class AJEParser extends Parser {
         return any;
     }
 
-    public Expr block() {
+    public Expr parseBlock() {
         if (match(TokenType.EOF)) return UndefAtom.VALUE;
 
         Expr any = parseExpr();
@@ -79,7 +74,7 @@ public class AJEParser extends Parser {
     }
 
     public Expr parseInfix(int precedence, Expr left) {
-        while (precedence < getPrecedence()) { // ex plus is 6, next is mult which is 7, parse it
+        while (precedence < getPrecedence()) { // ex plus is 6, next is mult which is 7, parse it\
             Token token = eat();
 
             InfixParser infix = getInfixParsers().get(token.getType());

@@ -1,7 +1,8 @@
 package xyz.avarel.aje;
 
 public class Precedence {
-    public static final int ACCESS = 14;
+    public static final int INVOCATION = 14;
+    public static final int ATTRIBUTE = 14;
     public static final int PIPE_FORWARD = 13;
     public static final int POSTFIX = 12;
     public static final int EXPONENTIAL = 11;

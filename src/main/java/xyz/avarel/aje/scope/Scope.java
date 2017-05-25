@@ -1,4 +1,4 @@
-package xyz.avarel.aje.runtime.pool;
+package xyz.avarel.aje.scope;
 
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
@@ -32,18 +32,18 @@ public class Scope {
         return Undefined.VALUE;
     }
 
-    public void assign(String key, Obj value) {
-        assign(key, value, true);
+    public void declare(String key, Obj value) {
+        map.put(key, value);
     }
 
-    public void assign(String key, Obj value, boolean declare) { // x = 0; [0..<9] |> each(func(it) { x = x + it }); x
-        if (!declare && parent != null) {
+    public void assign(String key, Obj value) { // var x = 0; [0..<9] |> each(func(it) { x += it }); x
+        if (map.containsKey(key)) {
+            map.put(key, value);
+        } else if (parent != null) {
             if (parent.contains(key)) {
-                parent.assign(key, value, false);
-                return;
+                parent.assign(key, value);
             }
         }
-        map.put(key, value);
     }
 
     public boolean contains(String key) {

@@ -1,6 +1,7 @@
 package xyz.avarel.aje.runtime.lists;
 
 import xyz.avarel.aje.runtime.*;
+import xyz.avarel.aje.runtime.functions.NativeFunction;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.runtime.numbers.Numeric;
 
@@ -165,6 +166,14 @@ public class Vector extends ArrayList<Obj> implements Obj, NativeObject<List<Obj
         switch (name) {
             case "size":
                 return Int.of(size());
+            case "append":
+                return new NativeFunction(true, Obj.TYPE) {
+                    @Override
+                    protected Obj eval(List<Obj> arguments) {
+                        Vector.this.addAll(arguments);
+                        return Vector.this;
+                    }
+                };
             default:
                 return Undefined.VALUE;
         }

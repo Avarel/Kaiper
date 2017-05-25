@@ -1,17 +1,19 @@
-package xyz.avarel.aje.ast.invocation;
+package xyz.avarel.aje.ast.atoms;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.pool.Scope;
+import xyz.avarel.aje.scope.Scope;
 
-public class PipeForwardExpr implements Expr {
+public class RangeExpr implements Expr {
     private final Expr left;
     private final Expr right;
+    private final boolean exclusive;
 
-    public PipeForwardExpr(Expr left, Expr right) {
+    public RangeExpr(Expr left, Expr right, boolean exclusive) {
         this.left = left;
         this.right = right;
+        this.exclusive = exclusive;
     }
 
     public Expr getLeft() {
@@ -22,6 +24,10 @@ public class PipeForwardExpr implements Expr {
         return right;
     }
 
+    public boolean isExclusive() {
+        return exclusive;
+    }
+
     @Override
     public Obj accept(ExprVisitor visitor, Scope scope) {
         return visitor.visit(this, scope);
@@ -29,9 +35,14 @@ public class PipeForwardExpr implements Expr {
 
     @Override
     public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("pipe forward\n");
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("range").append(exclusive ? " exclusive" : " inclusive").append('\n');
         left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
         right.ast(builder, prefix + (isTail ? "    " : "│   "), true);
+    }
+
+    @Override
+    public String toString() {
+        return "range";
     }
 }
