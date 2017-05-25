@@ -35,7 +35,7 @@ public class RangeExpr implements Expr {
 
     @Override
     public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("range\n");
+        builder.append(prefix).append(isTail ? "└── " : "├── ").append("range").append(exclusive ? " exclusive" : " inclusive").append('\n');
         left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
         builder.append('\n');
         right.ast(builder, prefix + (isTail ? "    " : "│   "), true);

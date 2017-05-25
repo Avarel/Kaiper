@@ -5,8 +5,7 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.*;
 import xyz.avarel.aje.parser.parslets.atoms.*;
 import xyz.avarel.aje.parser.parslets.operator.BinaryOperatorParser;
-import xyz.avarel.aje.parser.parslets.operator.RangeExclusiveOperatorParser;
-import xyz.avarel.aje.parser.parslets.operator.RangeInclusiveOperatorParser;
+import xyz.avarel.aje.parser.parslets.operator.RangeOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.UnaryOperatorParser;
 import xyz.avarel.aje.runtime.Obj;
 
@@ -20,14 +19,16 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.LEFT_BRACE, new LambdaParser());
 
         // ATOMS
-        register(TokenType.NAME, new NameParser());
         register(TokenType.INT, new NumberParser());
         register(TokenType.DECIMAL, new NumberParser());
         register(TokenType.IMAGINARY, new NumberParser());
         register(TokenType.BOOLEAN, new TruthParser());
         register(TokenType.FUNCTION, new FunctionParser());
-
         register(TokenType.UNDERSCORE, new ImplicitParser());
+
+
+        register(TokenType.NAME, new NameParser());
+        register(TokenType.VAR, new DeclarationParser());
 
         // Numeric
         register(TokenType.MINUS, new UnaryOperatorParser(Obj::negative));
@@ -52,8 +53,7 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, Obj::and));
         register(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, Obj::or));
 
-        register(TokenType.RANGE_TO, new RangeInclusiveOperatorParser());
-        register(TokenType.RANGE_TO_EXCLUSIVE, new RangeExclusiveOperatorParser());
+        register(TokenType.RANGE_TO, new RangeOperatorParser());
 
         // Functional
         register(TokenType.LEFT_PAREN, new InvocationParser());

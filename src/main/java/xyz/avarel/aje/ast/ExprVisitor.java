@@ -81,7 +81,14 @@ public class ExprVisitor {
     }
 
     public Obj visit(RangeExpr expr, Scope scope) {
-        return expr.getLeft().accept(this, scope).rangeTo(expr.getRight().accept(this, scope), expr.isExclusive());
+        Obj startObj = expr.getLeft().accept(this, scope);
+        Obj endObj = expr.getRight().accept(this, scope);
+
+        if (startObj instanceof Int && endObj instanceof Int) {
+            return new Range(((Int) startObj).value(), ((Int) endObj).value() - (expr.isExclusive() ? 1: 0));
+        }
+
+        return Undefined.VALUE;
     }
 
     public Obj visit(VectorAtom expr, Scope scope) {
@@ -178,7 +185,7 @@ public class ExprVisitor {
     }
 
     public Obj visit(AssignmentExpr expr, Scope scope) {
-        scope.assign(expr.getName(), expr.getExpr().accept(this, scope));
+        scope.assign(expr.getName(), expr.getExpr().accept(this, scope), expr.isDeclaration());
         return Undefined.VALUE;
     }
 

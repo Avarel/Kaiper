@@ -103,12 +103,6 @@ public interface Obj {
         return Undefined.VALUE;
     }
 
-
-    // Slices
-    default Obj rangeTo(Obj other, boolean exclusive) {
-        return Undefined.VALUE;
-    }
-
     // Functional
     default Obj invoke(List<Obj> args) {
         return Undefined.VALUE;

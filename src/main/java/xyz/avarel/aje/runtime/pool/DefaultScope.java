@@ -45,6 +45,8 @@ public class DefaultScope extends Scope {
         assign("acot", DefaultFunctions.ARCCOTANGENT.get());
         assign("atan2", DefaultFunctions.ARCTANGENT2.get());
 
+        assign("forEach", DefaultFunctions.FOREACH.get());
+        assign("each", DefaultFunctions.FOREACH.get());
         assign("map", DefaultFunctions.MAP.get());
         assign("filter", DefaultFunctions.FILTER.get());
         assign("fold", DefaultFunctions.FOLD.get());

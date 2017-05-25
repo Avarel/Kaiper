@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.parslets.atoms;
+package xyz.avarel.aje.parser.parslets;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.AssignmentExpr;
@@ -13,7 +13,7 @@ public class NameParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(token.getText(), parser.parseExpr(Precedence.ASSIGNMENT));
+            return new AssignmentExpr(token.getText(), parser.parseExpr(Precedence.ASSIGNMENT), false);
         }
 
         return new NameAtom(token.getText());

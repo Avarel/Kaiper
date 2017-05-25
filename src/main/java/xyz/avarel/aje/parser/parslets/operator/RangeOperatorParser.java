@@ -6,15 +6,21 @@ import xyz.avarel.aje.ast.operations.RangeExpr;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.parser.lexer.TokenType;
 
-public class RangeInclusiveOperatorParser extends BinaryParser {
-    public RangeInclusiveOperatorParser() {
+public class RangeOperatorParser extends BinaryParser {
+    public RangeOperatorParser() {
         super(Precedence.RANGE_TO);
     }
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
+        boolean exclusive = false;
+        if (parser.match(TokenType.LT)) {
+            exclusive = true;
+        }
+
         Expr right = parser.parseExpr(getPrecedence());
-        return new RangeExpr(left, right, false);
+        return new RangeExpr(left, right, exclusive);
     }
 }

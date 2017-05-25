@@ -6,10 +6,12 @@ import xyz.avarel.aje.runtime.pool.Scope;
 public class AssignmentExpr implements Expr {
     private final String name;
     private final Expr expr;
+    private final boolean declare;
 
-    public AssignmentExpr(String name, Expr expr) {
+    public AssignmentExpr(String name, Expr expr, boolean declare) {
         this.name = name;
         this.expr = expr;
+        this.declare = declare;
     }
 
     public String getName() {
@@ -18,6 +20,10 @@ public class AssignmentExpr implements Expr {
 
     public Expr getExpr() {
         return expr;
+    }
+
+    public boolean isDeclaration() {
+        return declare;
     }
 
     @Override

@@ -47,7 +47,6 @@ public enum TokenType {
 
     // MISC
     RANGE_TO,
-    RANGE_TO_EXCLUSIVE,
     ARROW,
     PIPE_FORWARD,
     TILDE,
@@ -60,6 +59,7 @@ public enum TokenType {
     UNDERSCORE,
 
     // SCRIPT
+    VAR,
     SKIP,
     SEMICOLON,
     LINE,

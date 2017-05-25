@@ -33,6 +33,16 @@ public class Scope {
     }
 
     public void assign(String key, Obj value) {
+        assign(key, value, true);
+    }
+
+    public void assign(String key, Obj value, boolean declare) { // x = 0; [0..<9] |> each(func(it) { x = x + it }); x
+        if (!declare && parent != null) {
+            if (parent.contains(key)) {
+                parent.assign(key, value, false);
+                return;
+            }
+        }
         map.put(key, value);
     }
 

@@ -153,9 +153,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case '_': return make(TokenType.UNDERSCORE);
 
             case '.': return match('.')
-                    ? match('<')
-                    ? make(TokenType.RANGE_TO_EXCLUSIVE)
-                    : make(TokenType.RANGE_TO)
+                    ? make(TokenType.RANGE_TO)
                     : make(TokenType.DOT);
             case ',': return make(TokenType.COMMA);
             case '!': return match('=')
@@ -301,6 +299,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
     private Token nameOrKeyword(String value) {
         switch (value) {
+            case "var": return make(TokenType.VAR);
             case "func": return make(TokenType.FUNCTION);
             case "true": return make(TokenType.BOOLEAN, "true");
             case "false": return make(TokenType.BOOLEAN, "false");
@@ -314,8 +313,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     private Token make(TokenType type) {
         return make(new Position(index, line, lineIndex), type);
     }
-
-
 
     private Token make(TokenType type, String value) {
         return make(new Position(index, line, lineIndex - value.length()), type, value);

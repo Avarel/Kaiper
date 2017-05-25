@@ -1,7 +1,6 @@
 package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.*;
-import xyz.avarel.aje.runtime.lists.DecimalRange;
 
 import java.util.List;
 
@@ -192,18 +191,6 @@ public class Decimal implements Obj, NativeObject<Double> {
 
     private Bool lessThan(Decimal other) {
         return value < other.value ? Bool.TRUE : Bool.FALSE;
-    }
-
-    @Override
-    public Obj rangeTo(Obj other, boolean exclusive) {
-        if (other instanceof Decimal) {
-            return this.rangeTo((Decimal) other, exclusive);
-        }
-        return Undefined.VALUE;
-    }
-
-    private DecimalRange rangeTo(Decimal other, boolean exclusive) {
-        return new DecimalRange(this.value, other.value, 1, exclusive);
     }
 
     @Override

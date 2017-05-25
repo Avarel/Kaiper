@@ -348,6 +348,18 @@ public enum DefaultFunctions {
         }
     }),
 
+    FOREACH(new NativeFunction(Vector.TYPE, AJEFunction.TYPE) {
+        @Override
+        protected Obj eval(List<Obj> arguments) {
+            Vector arg = (Vector) arguments.get(0);
+            AJEFunction action = (AJEFunction) arguments.get(1);
+
+            for (Obj obj : arg) {
+                action.invoke(Collections.singletonList(obj));
+            }
+            return Undefined.VALUE;
+        }
+    }),
     MAP(new NativeFunction(Vector.TYPE, AJEFunction.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {

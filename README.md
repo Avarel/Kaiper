@@ -143,7 +143,37 @@ Though ranges are of a different type, `range`, it is recommended that
 |`*`|Product of functions|`(f*g)(x) == f(x) * g(x)`|
 |`/`|Quotient of functions|`(f/g)(x) == f(x) / g(x)`|
 
+### Variables
+###### Simple
+Variables are names with values. They can be easily declared using the following
+    syntax:
+```
+name = expression
+
+x = 10
+```
+
+###### Declaration / Scope Control
+For better scope control, it is recommended that you explicitly declare a variable
+    using the following syntax:
+```
+var name = expression
+
+var x = 10
+```
+
+###### Compound Assignment
+Variables can use the short syntax-sugar operations. Such as `+=` `-=` `*=`... etc:
+```
+name (operator)= expression
+
+x += 5
+y %= 2.0
+```
+
 ### Functions
+Functions are expressions that can be invoked using the __invocation operator__.
+
 `complex` arguments can be either `integer`, `decimal`, or `complex`.
 
 `decimal` arguments can be either `integer`, or `decimal`.
@@ -187,11 +217,12 @@ map([1..10], _ ^ 2) == [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 ```
 
 ##### Native Functions
-These are functions that are built into AJE. 
+These are functions that are built into AJE. They include both higher-order and simple/multi-argument functions.
 
 |Symbol|Description|Arguments|Example|
 |---|---|---|---:|
 |`compose`|Create a composition of two functions|(`function(x)`,`function(x)`)|`compose(asin, sin)`|
+|`map`|List iteration action function|(`list`, `function(x)`)|<code>var x = 0; [0..<9] &#124;> each(func(it) { x += it }); x</code>|
 |`map`|List transform function|(`list`, `function(x)`)|`map([1..10], {it ^ 2})`|
 |`filter`|List filter function|(`list`, `function(x)`)|`filter([1..10], {it%2==0})`|
 |`fold`|List accumulation function|(`list`, `value`, `function(x, y)`)|`fold([1..10], 0, {a, b -> a + b})`|

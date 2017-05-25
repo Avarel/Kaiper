@@ -1,7 +1,6 @@
 package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.*;
-import xyz.avarel.aje.runtime.lists.IntRange;
 
 import java.util.List;
 
@@ -199,18 +198,6 @@ public class Int implements Obj, NativeObject<Integer> {
 
     private Obj lessThan(Int other) {
         return value < other.value ? Bool.TRUE : Bool.FALSE;
-    }
-
-    @Override
-    public Obj rangeTo(Obj other, boolean exclusive) {
-        if (other instanceof Int) {
-            return this.rangeTo((Int) other, exclusive);
-        }
-        return Undefined.VALUE;
-    }
-
-    private IntRange rangeTo(Int other, boolean exclusive) {
-        return new IntRange(this.value, other.value, 1, exclusive);
     }
 
     @Override
