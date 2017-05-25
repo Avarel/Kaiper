@@ -35,7 +35,7 @@ public class LambdaParser implements PrefixParser {
             parser.eat(TokenType.ARROW);
         }
 
-        Expr expr = parser.parseBlock();
+        Expr expr = parser.parseStatements();
 
         parser.eat(TokenType.RIGHT_BRACE);
 

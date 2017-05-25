@@ -23,13 +23,10 @@ public abstract class NativeFunction extends AJEFunction {
         this.varargs = varargs;
     }
 
+    protected abstract Obj eval(List<Obj> arguments);
+
     public List<Parameter> getParameters() {
         return parameters;
-    }
-
-    @Override
-    public String toString() {
-        return "native function";
     }
 
     @Override
@@ -60,5 +57,8 @@ public abstract class NativeFunction extends AJEFunction {
         return eval(args);
     }
 
-    protected abstract Obj eval(List<Obj> arguments);
+    @Override
+    public String toString() {
+        return "native function";
+    }
 }

@@ -52,13 +52,13 @@ public class FunctionParser implements PrefixParser {
 
         if (parser.match(TokenType.ASSIGN)) {
             if (parser.match(TokenType.LEFT_BRACE)) {
-                expr = parser.parseBlock();
+                expr = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);
             } else {
                 expr = parser.parseExpr();
             }
         } else if (parser.match(TokenType.LEFT_BRACE)) {
-            expr = parser.parseBlock();
+            expr = parser.parseStatements();
             parser.eat(TokenType.RIGHT_BRACE);
         } else {
             expr = parser.parseStatements();

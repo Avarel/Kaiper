@@ -38,21 +38,6 @@ public class AJEParser extends Parser {
         return any;
     }
 
-    public Expr parseBlock() {
-        if (match(TokenType.EOF)) return UndefAtom.VALUE;
-
-        Expr any = parseExpr();
-
-        while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
-            if (nextIs(TokenType.RIGHT_BRACE)) break;
-            if (match(TokenType.EOF)) break;
-
-            any = any.andThen(parseExpr());
-        }
-
-        return any;
-    }
-
     public Expr parseExpr() {
         return parseExpr(0);
     }

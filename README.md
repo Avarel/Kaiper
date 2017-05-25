@@ -144,7 +144,7 @@ Though ranges are of a different type, `range`, it is recommended that
 |`/`|Quotient of functions|`(f/g)(x) == f(x) / g(x)`|
 
 ### Defining Variables
-###### Declaration
+##### Declaration
 Variables are names with information that you can use to store values and use them throughout
     the script. They can be declared using the following syntax:
 ```
@@ -161,7 +161,7 @@ x = 20
 sin(x)
 ```
 
-###### Compound Assignment
+##### Compound Assignment
 Variables can use the short syntax-sugar compound assignments. They provide a shorter syntax to perform
     the operation of the two operands and assign them to the first. Ex: `+=` `-=` `*=`
 ```
@@ -178,8 +178,8 @@ Functions are expressions that can be invoked using the __invocation operator__.
 
 `decimal` arguments can be either `integer`, or `decimal`.
 
-##### Declaring a Function
-###### Traditional `func f(it) { it + 1 }`
+#### Declaring a Function
+##### Traditional `func f(it) { it + 1 }`
 Traditional functions can be declared with the syntax shown below.
     If the optional name field is present, then the function will be 
     available to used as an invocable variable with that name. If the 
@@ -191,8 +191,19 @@ func [name]([param,...]) = expression
 func f(x) = x + 2; f(2) == 4
 func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
 ```
+###### 3.2 Parameter Types and Defaults
+Functions can declare parameters with runtime type checking by appending the 
+    type name to the parameter name. Parameters can also specify default 
+    expressions that are evaluated at invocation.
+```
+func f(x = 0, y: Int = 2) {
+    x + y
+}
 
-###### Lambda `{ it -> it + 1 }`
+[f(3), f(i), f(3,2), f(), f(true)] == [5, 2.0 + 1.0i, 5, 2, undefined]
+```
+
+##### Lambda `{ it -> it + 1 }`
 Alternatively, functions can also be declared using the following syntax.
     These functions can be passed into arguments and used as variables.
     They are anonymous but variables can be set to this function, of which 
@@ -204,7 +215,7 @@ add = { x, y -> x + y }; [1..10] |> fold(0, add) == 55
 [1..10] |> fold(1, { x, y -> x * y })
 ```
     
-###### Quick `_ + 1`
+##### Quick `_ + 1`
 These functions are basically anonymous alternatives that only takes in one argument.
     Beware that in this quick expression, you can only reference the implied parameter
     once. However you may use as many operators as you want until the end of the expression.
@@ -216,7 +227,7 @@ _ ...expression
 map([1..10], _ ^ 2) == [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 ```
 
-##### Native Functions
+#### Native Functions
 These are functions that are built into AJE. They include both higher-order and simple/multi-argument functions.
 
 |Symbol|Description|Arguments|Example|
@@ -240,7 +251,7 @@ These are functions that are built into AJE. They include both higher-order and 
 |`atan2`|Inverse trigonomic<br>four-quadrant tangent function|(`decimal`,`decimal`)|`atan2(x,y)`|
 
 ### REPL Demonstrations
-##### Complex Numbers
+#### Complex Numbers
 ```
   REPL | sqrt(-1)
 Result | i
@@ -254,7 +265,7 @@ Result | 2.0i
   REPL | (8+2i)*(5i+3)
 Result | 14.0 + 46.0i
 ```
-##### Slices and Lists
+#### Slices and Lists
 ```
   REPL | [1,2,3][1]
 Result | 2
@@ -274,7 +285,7 @@ Result | [3, 4, 5, 6, 7, 8]
   REPL | [1..10][2:8:-2]
 Result | [8, 6, 4]
 ```
-##### First Class Functions
+#### First Class Functions
 ```
   REPL | [1..10] |> map(_ ^ 2)
 Result | [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
