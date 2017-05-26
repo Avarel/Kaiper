@@ -282,4 +282,17 @@ public class Complex implements Obj, NativeObject<Double> {
         }
         return Undefined.VALUE;
     }
+
+    @Override
+    public Obj attribute(String name) {
+        switch (name) {
+            case "toInteger":
+                return Int.of((int) re);
+            case "toDecimal":
+                return Decimal.of(re);
+            case "toComplex":
+                return this;
+        }
+        return Undefined.VALUE;
+    }
 }

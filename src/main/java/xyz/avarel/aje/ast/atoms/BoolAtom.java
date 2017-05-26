@@ -21,6 +21,11 @@ public enum BoolAtom implements Expr {
     }
 
     @Override
+    public Obj compute() {
+        return value;
+    }
+
+    @Override
     public Obj accept(ExprVisitor visitor, Scope scope) {
         return visitor.visit(this, scope);
     }

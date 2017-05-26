@@ -174,9 +174,8 @@ public class Vector extends ArrayList<Obj> implements Obj, NativeObject<List<Obj
                         return Vector.this;
                     }
                 };
-            default:
-                return Undefined.VALUE;
         }
+        return Undefined.VALUE;
     }
 
     public int lastIndex() {

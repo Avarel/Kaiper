@@ -46,9 +46,15 @@ public class Parameter {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(name);
+        StringBuilder sb = new StringBuilder();
+        if (name != null) {
+            sb.append(name);
+        }
         if (type != Obj.TYPE) {
-            sb.append(": ").append(type);
+            if (name != null) {
+                sb.append(": ");
+            }
+            sb.append(type);
         }
         if (defaultExpr != null) {
             sb.append(" = ").append(defaultExpr);

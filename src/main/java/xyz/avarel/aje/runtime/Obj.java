@@ -10,7 +10,7 @@ import java.util.List;
  * An interface containing all natively implemented operations.
  */
 public interface Obj {
-    Type TYPE = new Type("any");
+    Type TYPE = new Type("Object");
 
     Type getType();
 

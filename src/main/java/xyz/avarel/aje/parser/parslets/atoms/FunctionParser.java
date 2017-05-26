@@ -27,6 +27,7 @@ public class FunctionParser implements PrefixParser {
 
         parser.eat(TokenType.LEFT_PAREN);
         if (!parser.match(TokenType.RIGHT_PAREN)) {
+            boolean requireDef = false;
             do {
                 String p_name = parser.eat(TokenType.NAME).getText();
                 Expr p_type = new ValueAtom(Obj.TYPE);
@@ -40,6 +41,9 @@ public class FunctionParser implements PrefixParser {
                 }
                 if (parser.match(TokenType.ASSIGN)) {
                     p_def = parser.parseExpr();
+                    requireDef = true;
+                } else if (requireDef) {
+                    throw parser.error("All parameters after the first default requires a default." + parser.peek(0).getPosition());
                 }
 
                 Parameter parameter = new Parameter(p_name, p_type, p_def);

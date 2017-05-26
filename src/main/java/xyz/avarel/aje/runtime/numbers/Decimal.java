@@ -200,4 +200,17 @@ public class Decimal implements Obj, NativeObject<Double> {
         }
         return Undefined.VALUE;
     }
+
+    @Override
+    public Obj attribute(String name) {
+        switch (name) {
+            case "toInteger":
+                return Int.of((int) value);
+            case "toDecimal":
+                return this;
+            case "toComplex":
+                return Complex.of(value);
+        }
+        return Undefined.VALUE;
+    }
 }

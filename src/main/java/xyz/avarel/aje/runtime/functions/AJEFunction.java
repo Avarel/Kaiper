@@ -4,6 +4,7 @@ import xyz.avarel.aje.runtime.NativeObject;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.List;
 import java.util.function.Function;
@@ -72,5 +73,14 @@ public abstract class AJEFunction implements Obj, NativeObject<Function<List<Obj
 
     private AJEFunction divide(AJEFunction right) {
         return new CombinedFunction(this, right, Obj::divide);
+    }
+
+    @Override
+    public Obj attribute(String name) {
+        switch (name) {
+            case "arity":
+                return Int.of(getArity());
+        }
+        return Undefined.VALUE;
     }
 }

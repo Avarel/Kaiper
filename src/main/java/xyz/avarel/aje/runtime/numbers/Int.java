@@ -208,6 +208,19 @@ public class Int implements Obj, NativeObject<Integer> {
         return Undefined.VALUE;
     }
 
+    @Override
+    public Obj attribute(String name) {
+        switch (name) {
+            case "toInteger":
+                return this;
+            case "toDecimal":
+                return Decimal.of(value);
+            case "toComplex":
+                return Complex.of(value);
+        }
+        return Undefined.VALUE;
+    }
+
     private static class IntCache {
         private static final int LOW = -128;
         private static final int HIGH = 127;
