@@ -21,11 +21,11 @@ public class Expression {
     private Expr expr;
 
     public Expression(String script) {
-        this(script, DefaultScope.INSTANCE.subPool());
+        this(script, DefaultScope.INSTANCE.copy());
     }
 
     public Expression(Reader reader) {
-        this(reader, DefaultScope.INSTANCE.subPool());
+        this(reader, DefaultScope.INSTANCE.copy());
     }
 
     public Expression(String script, Scope scope) {

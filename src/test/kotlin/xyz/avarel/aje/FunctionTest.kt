@@ -1,0 +1,65 @@
+package xyz.avarel.aje
+
+import org.junit.Assert
+import org.junit.Test
+
+class FunctionTest {
+    val evaluator = Evaluator().apply {
+        eval("func isEven0(x) { x % 2 == 0 }")
+        eval("func isEven1(x) = { x % 2 == 0 }")
+        eval("func isEven2(x) = x % 2 == 0")
+        eval("var isEven3 = { x -> x % 2 == 0 }")
+        eval("var isEven4 = _ % 2 == 0")
+
+        eval("var add = { x, y -> x + y }")
+    }
+
+    @Test
+    fun `alternative syntax`() {
+        Assert.assertEquals(evaluator.eval("isEven0(1)"), evaluator.eval("isEven1(1)"))
+        Assert.assertEquals(evaluator.eval("isEven0(1)"), evaluator.eval("isEven2(1)"))
+        Assert.assertEquals(evaluator.eval("isEven0(1)"), evaluator.eval("isEven3(1)"))
+        Assert.assertNotEquals(evaluator.eval("isEven0(1)"), evaluator.eval("isEven4(2)"))
+
+        Assert.assertEquals(evaluator.eval("isEven1(1)"), evaluator.eval("isEven0(1)"))
+        Assert.assertEquals(evaluator.eval("isEven1(1)"), evaluator.eval("isEven2(1)"))
+        Assert.assertNotEquals(evaluator.eval("isEven1(2)"), evaluator.eval("isEven3(1)"))
+        Assert.assertEquals(evaluator.eval("isEven1(1)"), evaluator.eval("isEven4(1)"))
+
+        Assert.assertEquals(evaluator.eval("isEven2(1)"), evaluator.eval("isEven0(1)"))
+        Assert.assertNotEquals(evaluator.eval("isEven2(3)"), evaluator.eval("isEven1(0)"))
+        Assert.assertEquals(evaluator.eval("isEven2(1)"), evaluator.eval("isEven3(1)"))
+        Assert.assertEquals(evaluator.eval("isEven2(1)"), evaluator.eval("isEven4(1)"))
+
+        Assert.assertNotEquals(evaluator.eval("isEven3(5)"), evaluator.eval("isEven0(2)"))
+        Assert.assertEquals(evaluator.eval("isEven3(1)"), evaluator.eval("isEven1(1)"))
+        Assert.assertEquals(evaluator.eval("isEven3(1)"), evaluator.eval("isEven2(1)"))
+        Assert.assertEquals(evaluator.eval("isEven3(1)"), evaluator.eval("isEven4(1)"))
+
+        Assert.assertEquals(evaluator.eval("isEven4(1)"), evaluator.eval("isEven0(1)"))
+        Assert.assertNotEquals(evaluator.eval("isEven4(4)"), evaluator.eval("isEven1(7)"))
+        Assert.assertNotEquals(evaluator.eval("isEven4(0)"), evaluator.eval("isEven2(9)"))
+        Assert.assertEquals(evaluator.eval("isEven4(1)"), evaluator.eval("isEven3(1)"))
+
+    }
+
+    @Test
+    fun `implicit vs named`() {
+        Assert.assertEquals(evaluator.eval("[1..10] |> filter(_ % 2 == 0)"), evaluator.eval("[1..10] |> filter(isEven0)"))
+    }
+
+    @Test
+    fun `pipe forward`() {
+        Assert.assertEquals(evaluator.eval("[[1, 2, 3], [1, 5, 8, 9, 10], [1..50]] |> map(_.size)"), eval("[3, 5, 50]"))
+    }
+
+    @Test
+    fun `higher order`() {
+        Assert.assertEquals(evaluator.eval("[1..10] |> fold(0, add)"), eval("55"))
+    }
+
+    @Test
+    fun `higher order function`() {
+        Assert.assertEquals(evaluator.eval("map([1..10], _ ^ 2)"), eval("[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]"))
+    }
+}

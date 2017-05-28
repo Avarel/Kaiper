@@ -91,7 +91,8 @@ public class ExprVisitor {
             return new Range(start, end);
         }
 
-        throw new ComputeException("Start and end of range must be integers", expr.getPosition());
+        return Undefined.VALUE;
+        //throw new ComputeException("Start and end of range must be integers", expr.getPosition());
     }
 
     public Obj visit(VectorAtom expr, Scope scope) {
@@ -132,7 +133,8 @@ public class ExprVisitor {
                         start += vector.size();
                     }
                 } else {
-                    throw new ComputeException("Slice indices must be integers", startExpr.getPosition());
+                    return Undefined.VALUE;
+                    //throw new ComputeException("Slice indices must be integers", startExpr.getPosition());
                 }
             }
 
@@ -146,7 +148,8 @@ public class ExprVisitor {
                         end += vector.size();
                     }
                 } else {
-                    throw new ComputeException("Slice indices must be integers", endExpr.getPosition());
+                    return Undefined.VALUE;
+                    //throw new ComputeException("Slice indices must be integers", endExpr.getPosition());
                 }
             }
 
@@ -157,7 +160,8 @@ public class ExprVisitor {
                 if (_obj instanceof Int) {
                     step = ((Int) _obj).value();
                 } else {
-                    throw new ComputeException("Slice indices must be integers", stepExpr.getPosition());
+                    return Undefined.VALUE;
+                    //throw new ComputeException("Slice indices must be integers", stepExpr.getPosition());
                 }
             }
 
@@ -183,8 +187,8 @@ public class ExprVisitor {
                 }
             }
         }
-
-        throw new ComputeException("Slice not applicable to " + obj, expr.getPosition());
+        return Undefined.VALUE;
+        //throw new ComputeException("Slice not applicable to " + obj, expr.getPosition());
     }
 
     public Obj visit(AssignmentExpr expr, Scope scope) {
@@ -220,6 +224,7 @@ public class ExprVisitor {
             }
             return Undefined.VALUE;
         }
-        throw new ComputeException("Condition of if expression did not return boolean", expr.getCondition().getPosition());
+        return Undefined.VALUE;
+        //throw new ComputeException("Condition of if expression did not return boolean", expr.getCondition().getPosition());
     }
 }

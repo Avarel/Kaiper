@@ -233,7 +233,7 @@ These are functions that are built into AJE. They include both higher-order and 
 |Symbol|Description|Arguments|Example|
 |---|---|---|---:|
 |`compose`|Create a composition of two functions|(`function(x)`,`function(x)`)|`compose(asin, sin)`|
-|`map`|List iteration action function|(`list`, `function(x)`)|<code>var x = 0; [0..<9] &#124;> each(func(it) { x += it }); x</code>|
+|`each`|List iteration action function|(`list`, `function(x)`)|<code>var x = 0; [0..<9] &#124;> each(func(it) { x += it }); x</code>|
 |`map`|List transform function|(`list`, `function(x)`)|`map([1..10], {it ^ 2})`|
 |`filter`|List filter function|(`list`, `function(x)`)|`filter([1..10], {it%2==0})`|
 |`fold`|List accumulation function|(`list`, `value`, `function(x, y)`)|`fold([1..10], 0, {a, b -> a + b})`|
@@ -262,7 +262,7 @@ Result | 0.7071068 + 0.7071068i
   REPL | (1+i)^2
 Result | 2.0i
 
-  REPL | (8+2i)*(5i+3)
+  REPL | (8+2i)(5i+3)
 Result | 14.0 + 46.0i
 ```
 #### Slices and Lists
@@ -273,10 +273,10 @@ Result | 2
   REPL | [1..3] + [2]
 Result | [3, 4, 5]
 
-  REPL | x = [50..60]; x[5]
+  REPL | var x = [50..60]; x[5]
 Result | 55
 
-  REPL | x = [100..200]; x[25:30]
+  REPL | var x = [100..200]; x[25:30]
 Result | [125, 126, 127, 128, 129]
 
   REPL | [1..10][2:8]
@@ -290,7 +290,7 @@ Result | [8, 6, 4]
   REPL | [1..10] |> map(_ ^ 2)
 Result | [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
-  REPL | add = { x, y -> x + y }; [1..10] |> fold(0, add)
+  REPL | var add = { x, y -> x + y }; [1..10] |> fold(0, add)
 Result | 55
 
   REPL | func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)

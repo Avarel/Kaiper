@@ -125,7 +125,7 @@ public enum DefaultFunctions {
             if (arguments.isEmpty()) return Int.of(0);
             Obj accumulator = arguments.get(0);
             for (int i = 1; i < arguments.size(); i++) {
-                accumulator = Numeric.process(accumulator, arguments.get(i), Obj::times);
+                accumulator = Numeric.process(accumulator, arguments.get(i), Obj::plus);
             }
             return accumulator;
         }

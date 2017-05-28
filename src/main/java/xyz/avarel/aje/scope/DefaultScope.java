@@ -72,4 +72,10 @@ public class DefaultScope extends Scope {
 
         declare("undefined", Undefined.VALUE);
     }
+
+    @Deprecated
+    @Override
+    public Scope subPool() {
+        throw new UnsupportedOperationException();
+    }
 }

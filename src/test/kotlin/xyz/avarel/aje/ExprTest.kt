@@ -30,7 +30,7 @@ class ExprTest {
         eval("func f(x) = x + 2; f(2) == 4")
         eval("func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)")
 
-        eval("add = { x, y -> x + y }; [1..10] |> fold(0, add) == 55")
+        eval("var add = { x, y -> x + y }; [1..10] |> fold(0, add) == 55")
         eval("[1..10] |> fold(1, { x, y -> x * y })")
 
         eval("[[1, 2, 3], [1, 5, 8, 9, 10], [1..50]] |> map(_.size)")
@@ -43,11 +43,11 @@ class ExprTest {
 
         eval("[1,2,3][1]")
         eval("[1..3] + [2]")
-        eval("x = [50..60]; x[5]")
-        eval("x = [100..200]; x[25:30]")
+        eval("var x = [50..60]; x[5]")
+        eval("var x = [100..200]; x[25:30]")
 
         eval("[1..10] |> map(_ ^ 2)")
-        eval("add = { x, y -> x + y }; [1..10] |> fold(0, add)")
+        eval("var add = { x, y -> x + y }; [1..10] |> fold(0, add)")
         eval("func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)")
         eval("[1..10] |> fold(1, { x, y -> x * y })")
     }

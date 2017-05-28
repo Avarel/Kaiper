@@ -162,6 +162,9 @@ public class Vector extends ArrayList<Obj> implements Obj, NativeObject<List<Obj
         if (i < 0) {
             i += size();
         }
+        if (i < 0 || i >= size()) {
+            return Undefined.VALUE;
+        }
         return this.get(i);
     }
 

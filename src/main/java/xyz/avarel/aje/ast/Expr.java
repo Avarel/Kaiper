@@ -27,7 +27,7 @@ public abstract class Expr {
 
     public Obj compute() {
         try {
-            return accept(new ExprVisitor(), DefaultScope.INSTANCE.subPool());
+            return accept(new ExprVisitor(), DefaultScope.INSTANCE.copy());
         } catch (ReturnException re) {
             return re.getValue();
         } catch (AJEException re) {

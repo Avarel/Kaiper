@@ -59,7 +59,7 @@ public class AJEParser extends Parser {
     public Expr parsePrefix(Token token) {
         PrefixParser prefix = getPrefixParsers().get(token.getType());
 
-        if (prefix == null) throw new SyntaxException("Unexpected " + token.getText(), token.getPosition());
+        if (prefix == null) throw new SyntaxException("Unexpected " + token, token.getPosition());
 
         return prefix.parse(this, token);
     }
@@ -70,7 +70,7 @@ public class AJEParser extends Parser {
 
             InfixParser infix = getInfixParsers().get(token.getType());
 
-            if (infix == null) throw new SyntaxException("Unexpected " + token.getText(), token.getPosition());
+            if (infix == null) throw new SyntaxException("Unexpected " + token, token.getPosition());
 
             left = infix.parse(this, left, token);
         }
