@@ -22,6 +22,6 @@ public class VectorParser implements PrefixParser {
             parser.eat(TokenType.RIGHT_BRACKET);
         }
 
-        return new VectorAtom(exprs);
+        return new VectorAtom(token.getPosition(), exprs);
     }
 }

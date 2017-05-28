@@ -1,14 +1,16 @@
 package xyz.avarel.aje.ast;
 
+import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class ConditionalExpr implements Expr {
+public class ConditionalExpr extends Expr {
     private final Expr condition;
     private final Expr ifBranch;
     private final Expr elseBranch;
 
-    public ConditionalExpr(Expr condition, Expr ifBranch, Expr elseBranch) {
+    public ConditionalExpr(Position position, Expr condition, Expr ifBranch, Expr elseBranch) {
+        super(position);
         this.condition = condition;
         this.ifBranch = ifBranch;
         this.elseBranch = elseBranch;
@@ -38,7 +40,7 @@ public class ConditionalExpr implements Expr {
         condition.ast("condition", builder, indent + (isTail ? "    " : "│   "), false);
         builder.append('\n');
 
-        ifBranch.ast("true", builder, indent + (isTail ? "    " : "│   "), false);
+        ifBranch.ast("true", builder, indent + (isTail ? "    " : "│   "), elseBranch == null);
 
         if (elseBranch != null) {
             builder.append('\n');

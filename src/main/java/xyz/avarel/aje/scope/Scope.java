@@ -1,7 +1,6 @@
 package xyz.avarel.aje.scope;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class Scope {
         } else if (parent != null && parent.contains(key)) {
             return parent.lookup(key);
         }
-        return Undefined.VALUE;
+        return null;
     }
 
     public void declare(String key, Obj value) {

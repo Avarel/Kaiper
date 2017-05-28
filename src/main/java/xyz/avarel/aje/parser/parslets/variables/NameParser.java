@@ -12,9 +12,9 @@ public class NameParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(token.getText(), parser.parseExpr());
+            return new AssignmentExpr(token.getPosition(), token.getText(), parser.parseExpr());
         }
 
-        return new NameAtom(token.getText());
+        return new NameAtom(token.getPosition(), token.getText());
     }
 }

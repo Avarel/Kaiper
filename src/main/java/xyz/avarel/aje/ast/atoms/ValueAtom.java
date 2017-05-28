@@ -2,23 +2,20 @@ package xyz.avarel.aje.ast.atoms;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class ValueAtom implements Expr {
+public class ValueAtom extends Expr {
     private final Obj value;
 
-    public ValueAtom(Obj value) {
+    public ValueAtom(Position position, Obj value) {
+        super(position);
         this.value = value;
     }
 
     public Obj getValue() {
         return value;
-    }
-
-    @Override
-    public Obj compute() {
-        return getValue();
     }
 
     @Override

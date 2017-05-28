@@ -1,4 +1,4 @@
-package xyz.avarel.aje;
+package xyz.avarel.aje.exceptions;
 
 public class AJEException extends RuntimeException {
     public AJEException(String msg) {
@@ -11,9 +11,5 @@ public class AJEException extends RuntimeException {
 
     public AJEException(Throwable throwable) {
         super(throwable);
-    }
-
-    protected AJEException(String s, Throwable throwable, boolean b, boolean b1) {
-        super(s, throwable, b, b1);
     }
 }

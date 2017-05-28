@@ -2,15 +2,17 @@ package xyz.avarel.aje.ast.atoms;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 
-public class VectorAtom implements Expr {
+public class VectorAtom extends Expr {
     private final List<Expr> exprs;
 
-    public VectorAtom(List<Expr> items) {
+    public VectorAtom(Position position, List<Expr> items) {
+        super(position);
         this.exprs = items;
     }
 

@@ -27,6 +27,6 @@ public class InvocationParser extends BinaryParser {
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return new InvocationExpr(left, list);
+        return new InvocationExpr(token.getPosition(), left, list);
     }
 }

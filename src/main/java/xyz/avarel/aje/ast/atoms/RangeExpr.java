@@ -2,15 +2,17 @@ package xyz.avarel.aje.ast.atoms;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class RangeExpr implements Expr {
+public class RangeExpr extends Expr {
     private final Expr left;
     private final Expr right;
     private final boolean exclusive;
 
-    public RangeExpr(Expr left, Expr right, boolean exclusive) {
+    public RangeExpr(Position position, Expr left, Expr right, boolean exclusive) {
+        super(position);
         this.left = left;
         this.right = right;
         this.exclusive = exclusive;

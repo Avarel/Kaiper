@@ -21,6 +21,6 @@ public class RangeOperatorParser extends BinaryParser {
         }
 
         Expr right = parser.parseExpr(getPrecedence());
-        return new RangeExpr(left, right, exclusive);
+        return new RangeExpr(token.getPosition(), left, right, exclusive);
     }
 }

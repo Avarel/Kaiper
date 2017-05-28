@@ -1,6 +1,6 @@
 package xyz.avarel.aje.parser;
 
-import xyz.avarel.aje.AJEException;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
@@ -55,7 +55,7 @@ public abstract class Parser {
     public Token eat(TokenType expected) {
         Token token = peek(0);
         if (token.getType() != expected) {
-            throw error("Expected token " + expected + " but found " + token.getType() + token.getPosition());
+            throw new SyntaxException("Expected token " + expected + " but found " + token.getType(), token.getPosition());
         }
         return eat();
     }
@@ -112,9 +112,5 @@ public abstract class Parser {
         if (parser != null) return parser.getPrecedence();
 
         return 0;
-    }
-
-    public AJEException error(String message) {
-        return new AJEException(message);
     }
 }

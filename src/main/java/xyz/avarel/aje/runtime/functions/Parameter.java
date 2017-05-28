@@ -11,11 +11,11 @@ public class Parameter {
     private final Expr defaultExpr;
 
     public Parameter(String name) {
-        this(name, new ValueAtom(Obj.TYPE), null);
+        this(name, new ValueAtom(null, Obj.TYPE), null);
     }
 
     public Parameter(Type type) {
-        this(null, new ValueAtom(type), null);
+        this(null, new ValueAtom(null, type), null);
     }
 
     public Parameter(String name, Expr type) {

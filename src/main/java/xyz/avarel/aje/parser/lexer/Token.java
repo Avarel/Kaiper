@@ -6,7 +6,7 @@ public final class Token {
     private final String str;
 
     public Token(Position position, TokenType type) {
-        this(position, type, type.toString());
+        this(position, type, null);
     }
 
     public Token(Position position, TokenType type, String str) {
@@ -29,6 +29,6 @@ public final class Token {
 
     @Override
     public String toString() {
-        return str;
+        return type.toString();
     }
 }

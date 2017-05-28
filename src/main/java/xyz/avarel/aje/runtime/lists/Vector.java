@@ -158,7 +158,11 @@ public class Vector extends ArrayList<Obj> implements Obj, NativeObject<List<Obj
     }
 
     private Obj get(Int index) {
-        return this.get(index.value());
+        int i = index.value();
+        if (i < 0) {
+            i += size();
+        }
+        return this.get(i);
     }
 
     @Override

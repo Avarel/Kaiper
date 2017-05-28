@@ -2,20 +2,21 @@ package xyz.avarel.aje.ast.operations;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class SliceOperation implements Expr {
+public class SliceOperation extends Expr {
     private final Expr left;
     private final Expr start;
     private final Expr end;
     private final Expr step;
 
-    public SliceOperation(Expr left, Expr start, Expr end, Expr step) {
+    public SliceOperation(Position position, Expr left, Expr start, Expr end, Expr step) {
+        super(position);
         this.left = left;
         this.start = start;
         this.end = end;
-
         this.step = step;
     }
 

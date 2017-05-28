@@ -1,6 +1,6 @@
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.AJEException;
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 
 import java.util.Arrays;
@@ -117,7 +117,7 @@ public interface Obj {
     }
 
     default Obj set(Obj other) {
-        throw new AJEException(getType() + " do not support set operator.");
+        throw new ComputeException(getType() + " do not support set operator.");
     }
 
     default Obj get(Obj other) {

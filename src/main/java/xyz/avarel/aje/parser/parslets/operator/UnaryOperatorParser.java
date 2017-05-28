@@ -20,6 +20,6 @@ public class UnaryOperatorParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         Expr left = parser.parseExpr(Precedence.PREFIX);
-        return new UnaryOperation(left, operator);
+        return new UnaryOperation(token.getPosition(), left, operator);
     }
 }

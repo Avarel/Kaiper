@@ -2,6 +2,7 @@ package xyz.avarel.aje.ast.atoms;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.scope.Scope;
@@ -9,16 +10,17 @@ import xyz.avarel.aje.scope.Scope;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FunctionAtom implements Expr {
+public class FunctionAtom extends Expr {
     private final String name;
     private final List<Parameter> parameters;
     private final Expr expr;
 
-    public FunctionAtom(List<Parameter> parameters, Expr expr) {
-        this(null, parameters, expr);
+    public FunctionAtom(Position position, List<Parameter> parameters, Expr expr) {
+        this(position, null, parameters, expr);
     }
 
-    public FunctionAtom(String name, List<Parameter> parameters, Expr expr) {
+    public FunctionAtom(Position position, String name, List<Parameter> parameters, Expr expr) {
+        super(position);
         this.name = name;
         this.parameters = parameters;
         this.expr = expr;

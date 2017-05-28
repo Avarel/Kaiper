@@ -2,14 +2,16 @@ package xyz.avarel.aje.ast.operations;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class GetOperation implements Expr {
+public class GetOperation extends Expr {
     private final Expr left;
     private final Expr indexExpr;
 
-    public GetOperation(Expr left, Expr indexExpr) {
+    public GetOperation(Position position, Expr left, Expr indexExpr) {
+        super(position);
         this.left = left;
         this.indexExpr = indexExpr;
     }

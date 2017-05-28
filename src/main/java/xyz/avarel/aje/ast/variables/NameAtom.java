@@ -2,18 +2,20 @@ package xyz.avarel.aje.ast.variables;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class NameAtom implements Expr {
+public class NameAtom extends Expr {
     private final Expr from;
     private final String name;
 
-    public NameAtom(String name) {
-        this(null, name);
+    public NameAtom(Position position, String name) {
+        this(position, null, name);
     }
 
-    public NameAtom(Expr from, String name) {
+    public NameAtom(Position position, Expr from, String name) {
+        super(position);
         this.from = from;
         this.name = name;
     }
@@ -40,11 +42,11 @@ public class NameAtom implements Expr {
     public void ast(StringBuilder builder, String indent, boolean isTail) {
         if (from != null) {
             builder.append(indent).append(isTail ? "└── " : "├── ").append("attr\n");
-            from.ast(builder, indent + (isTail ? "    " : "│   "), false);
+            from.ast("from", builder, indent + (isTail ? "    " : "│   "), false);
             builder.append('\n');
             builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append(name);
         } else {
-            Expr.super.ast(builder, indent, isTail);
+            super.ast(builder, indent, isTail);
         }
     }
 }

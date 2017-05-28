@@ -1,10 +1,12 @@
 package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.atoms.UndefAtom;
+import xyz.avarel.aje.ast.atoms.ValueAtom;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.runtime.Undefined;
 
 public class AJEParser extends Parser {
     public AJEParser(AJELexer tokens) {
@@ -21,7 +23,7 @@ public class AJEParser extends Parser {
         if (!getTokens().isEmpty()) {
             Token t = getTokens().get(0);
             if (t.getType() != TokenType.EOF) {
-                throw error("Did not parse " + t.getText() + t.getPosition());
+                throw new SyntaxException("Unexpected " + t, t.getPosition());
             }
         }
 
@@ -29,7 +31,7 @@ public class AJEParser extends Parser {
     }
 
     public Expr parseStatements() {
-        if (match(TokenType.EOF)) return UndefAtom.VALUE;
+        if (match(TokenType.EOF)) return new ValueAtom(getLast().getPosition(), Undefined.VALUE);
 
         Expr any = parseExpr();
 
@@ -57,7 +59,7 @@ public class AJEParser extends Parser {
     public Expr parsePrefix(Token token) {
         PrefixParser prefix = getPrefixParsers().get(token.getType());
 
-        if (prefix == null) throw error("Could not parse token `" + token.getText() + "`" + token.getPosition());
+        if (prefix == null) throw new SyntaxException("Unexpected " + token.getText(), token.getPosition());
 
         return prefix.parse(this, token);
     }
@@ -68,7 +70,7 @@ public class AJEParser extends Parser {
 
             InfixParser infix = getInfixParsers().get(token.getType());
 
-            if (infix == null) throw error("Could not parse token `" + token.getText() + "`" + token.getPosition());
+            if (infix == null) throw new SyntaxException("Unexpected " + token.getText(), token.getPosition());
 
             left = infix.parse(this, left, token);
         }

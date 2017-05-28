@@ -41,7 +41,7 @@ public class CompiledFunction extends AJEFunction {
 
     @Override
     public Obj invoke(List<Obj> args) {
-
+        Scope scope = this.scope.copy();
         for (int i = 0; i < getArity(); i++) {
             Parameter parameter = parameters.get(i);
             Obj obj = parameter.getType().accept(new ExprVisitor(), scope);

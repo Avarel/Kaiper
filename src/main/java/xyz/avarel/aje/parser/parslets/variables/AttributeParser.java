@@ -19,9 +19,9 @@ public class AttributeParser extends BinaryParser {
         Token name = parser.eat(TokenType.NAME);
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(left, name.getText(), parser.parseExpr());
+            return new AssignmentExpr(token.getPosition(), left, name.getText(), parser.parseExpr());
         }
 
-        return new NameAtom(left, name.getText());
+        return new NameAtom(token.getPosition(), left, name.getText());
     }
 }

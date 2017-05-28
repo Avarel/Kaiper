@@ -5,6 +5,7 @@ import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.atoms.FunctionAtom;
 import xyz.avarel.aje.ast.invocation.InvocationExpr;
 import xyz.avarel.aje.ast.variables.NameAtom;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -26,9 +27,9 @@ public class BlockParameterParser extends BinaryParser {
         } else if (left instanceof FunctionAtom || left instanceof NameAtom) {
             List<Expr> args = new ArrayList<>();
             args.add(block);
-            return new InvocationExpr(left, args);
+            return new InvocationExpr(token.getPosition(), left, args);
         }
 
-        throw parser.error("Block-pass requires the left operand to be either: invocation, function, or name.");
+        throw new SyntaxException("Block parameters incompatible with " + left.getClass().getSimpleName(), token.getPosition());
     }
 }

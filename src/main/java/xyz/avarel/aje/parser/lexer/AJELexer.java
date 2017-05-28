@@ -1,6 +1,7 @@
 package xyz.avarel.aje.parser.lexer;
 
-import xyz.avarel.aje.AJEException;
+import xyz.avarel.aje.exceptions.AJEException;
+import xyz.avarel.aje.exceptions.SyntaxException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -160,7 +161,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     while (match('_')) {
                         builder.append('_');
                     }
-
                     return make(TokenType.UNDERSCORE, builder.toString());
                 }
             }
@@ -231,7 +231,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     return nextName(c);
                 } else {
                     if (hasNext()) return make(TokenType.EOF);
-                    throw syntaxError("Unrecognized `" + c + "`");
+                    throw new SyntaxException("Unrecognized `" + c + "`", getPosition());
                 }
         }
     }
@@ -278,9 +278,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     break;
                 default:
                     back();
-                    if (Character.isAlphabetic(peek())) {
-                        queue('*');
-                    }
                     if (point) {
                         return make(TokenType.DECIMAL, sb.toString());
                     } else {
@@ -368,7 +365,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             try {
                 c = this.reader.read();
             } catch (IOException exception) {
-                throw syntaxError("Exception occurred while lexing", exception);
+                throw new SyntaxException("Exception occurred while lexing", getPosition(), exception);
             }
 
             if (c <= 0) { // End of stream
@@ -406,7 +403,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     private char advance(char c) {
         char n = this.advance();
         if (n != c) {
-            throw this.syntaxError("Expected '" + c + "' and instead saw '" + n + "'");
+            throw new SyntaxException("Expected '" + c + "' and instead saw '" + n + "'", getPosition());
         }
         return n;
     }
@@ -431,7 +428,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         while (pos < n) {
             chars[pos] = this.advance();
             if (this.hasNext()) {
-                throw this.syntaxError("Substring bounds error");
+                throw new SyntaxException("Substring bounds error", getPosition());
             }
             pos += 1;
         }
@@ -557,32 +554,10 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 }
             } while (c != to);
         } catch (IOException exception) {
-            throw syntaxError("Exception occurred while lexing", exception);
+            throw new SyntaxException("Exception occurred while lexing", getPosition(), exception);
         }
         this.back();
         return c;
-    }
-
-
-    /**
-     * Make an AJEException to signal a syntax error.
-     *
-     * @param message The error message.
-     * @return A AJEException object, suitable for throwing
-     */
-    private AJEException syntaxError(String message) {
-        return new AJEException(message + this.toString());
-    }
-
-    /**
-     * Make an AJEException to signal a syntax error.
-     *
-     * @param message  The error message.
-     * @param causedBy The throwable that caused the error.
-     * @return A AJEException object, suitable for throwing
-     */
-    private AJEException syntaxError(String message, Throwable causedBy) {
-        return new AJEException(message + this.toString(), causedBy);
     }
 
     public String tokensToString() {
@@ -592,12 +567,15 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
     /**
      * Make a printable string of this AJELexer.
-     *
      * @return " at {index} [character {character} line {line}]"
      */
     @Override
     public String toString() {
-        return " at " + this.index + " [line " + this.line + " : char " + this.lineIndex + "]";
+        return getPosition().toString();
+    }
+
+    public Position getPosition() {
+        return new Position(index, line, lineIndex);
     }
 
     private static final class Entry {

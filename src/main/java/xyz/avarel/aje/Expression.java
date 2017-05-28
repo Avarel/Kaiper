@@ -3,6 +3,8 @@ package xyz.avarel.aje;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.ast.Statements;
+import xyz.avarel.aje.exceptions.AJEException;
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.runtime.Obj;
@@ -60,10 +62,11 @@ public class Expression {
         return expr;
     }
 
-    private class ExpressionExpr implements Expr {
+    private class ExpressionExpr extends Expr {
         private final Expr expr;
 
         public ExpressionExpr(Expr expr) {
+            super(expr.getPosition());
             this.expr = expr;
         }
 
@@ -78,6 +81,10 @@ public class Expression {
                 return expr.accept(new ExprVisitor(), scope.copy());
             } catch (ReturnException re) {
                 return re.getValue();
+            } catch (AJEException re) {
+                throw re;
+            } catch (RuntimeException re) {
+                throw new ComputeException(re);
             }
         }
 

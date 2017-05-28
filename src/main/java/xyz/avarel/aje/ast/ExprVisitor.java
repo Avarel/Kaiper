@@ -1,6 +1,9 @@
 package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.ast.atoms.*;
+import xyz.avarel.aje.ast.atoms.FunctionAtom;
+import xyz.avarel.aje.ast.atoms.RangeExpr;
+import xyz.avarel.aje.ast.atoms.ValueAtom;
+import xyz.avarel.aje.ast.atoms.VectorAtom;
 import xyz.avarel.aje.ast.invocation.InvocationExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.GetOperation;
@@ -8,6 +11,7 @@ import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.NameAtom;
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
@@ -28,10 +32,6 @@ public class ExprVisitor {
         return statements.getAfter().accept(this, scope);
     }
 
-    public Obj visit(BoolAtom expr, Scope scope) {
-        return expr.getValue();
-    }
-
     public Obj visit(FunctionAtom expr, Scope scope) {
         AJEFunction func = new CompiledFunction(expr.getParameters(), expr.getExpr(), scope.subPool());
         if (expr.getName() != null) scope.declare(expr.getName(), func);
@@ -43,11 +43,12 @@ public class ExprVisitor {
             return expr.getFrom().accept(this, scope).getAttr(expr.getName());
         }
 
-        return scope.lookup(expr.getName());
-    }
-
-    public Obj visit(UndefAtom expr, Scope scope) {
-        return expr.getValue();
+        Obj value = scope.lookup(expr.getName());
+        if (value != null) {
+            return value;
+        } else {
+            throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
+        }
     }
 
     public Obj visit(ValueAtom expr, Scope scope) {
@@ -90,7 +91,7 @@ public class ExprVisitor {
             return new Range(start, end);
         }
 
-        return Undefined.VALUE;
+        throw new ComputeException("Start and end of range must be integers", expr.getPosition());
     }
 
     public Obj visit(VectorAtom expr, Scope scope) {
@@ -128,10 +129,10 @@ public class ExprVisitor {
                 if (_obj instanceof Int) {
                     start = ((Int) _obj).value();
                     if (start < 0) {
-                        start = vector.size() + start;
+                        start += vector.size();
                     }
                 } else {
-                    return Undefined.VALUE;
+                    throw new ComputeException("Slice indices must be integers", startExpr.getPosition());
                 }
             }
 
@@ -142,10 +143,10 @@ public class ExprVisitor {
                 if (_obj instanceof Int) {
                     end = ((Int) _obj).value();
                     if (end < 0) {
-                        end = vector.size() + end;
+                        end += vector.size();
                     }
                 } else {
-                    return Undefined.VALUE;
+                    throw new ComputeException("Slice indices must be integers", endExpr.getPosition());
                 }
             }
 
@@ -156,7 +157,7 @@ public class ExprVisitor {
                 if (_obj instanceof Int) {
                     step = ((Int) _obj).value();
                 } else {
-                    return Undefined.VALUE;
+                    throw new ComputeException("Slice indices must be integers", stepExpr.getPosition());
                 }
             }
 
@@ -183,7 +184,7 @@ public class ExprVisitor {
             }
         }
 
-        return Undefined.VALUE;
+        throw new ComputeException("Slice not applicable to " + obj, expr.getPosition());
     }
 
     public Obj visit(AssignmentExpr expr, Scope scope) {
@@ -206,7 +207,7 @@ public class ExprVisitor {
 
     public Obj visit(ReturnExpr expr, Scope scope) {
         Obj obj = expr.getExpr().accept(this, scope);
-        throw new ReturnException(obj);
+        throw new ReturnException(expr.getPosition(), obj);
     }
 
     public Obj visit(ConditionalExpr expr, Scope scope) {
@@ -217,7 +218,8 @@ public class ExprVisitor {
             } else if (expr.getElseBranch() != null) {
                 return expr.getElseBranch().accept(this, scope);
             }
+            return Undefined.VALUE;
         }
-        return Undefined.VALUE;
+        throw new ComputeException("Condition of if expression did not return boolean", expr.getCondition().getPosition());
     }
 }

@@ -3,13 +3,15 @@ package xyz.avarel.aje.ast;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class Statements implements Expr {
+public class Statements extends Expr {
     private final Expr before;
     private final Expr after;
 
     private boolean hasNext;
 
     public Statements(Expr before, Expr after) {
+        super(null);
+
         this.before = before;
         this.after = after;
 
