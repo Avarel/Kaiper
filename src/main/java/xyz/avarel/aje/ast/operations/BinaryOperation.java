@@ -36,11 +36,11 @@ public class BinaryOperation implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("binary op\n");
-        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("binary op\n");
+        left.ast(builder, indent + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        right.ast(builder, prefix + (isTail ? "    " : "│   "), true);
+        right.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 
     @Override

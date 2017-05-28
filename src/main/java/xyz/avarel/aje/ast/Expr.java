@@ -20,7 +20,12 @@ public interface Expr {
         }
     }
 
-    default void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append(toString());
+    default void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append(toString());
+    }
+
+    default void ast(String label, StringBuilder builder, String indent, boolean tail) {
+        builder.append(indent).append(tail ? "└── " : "├── ").append(label).append(":\n");
+        ast(builder, indent + (tail ? "    " : "│   "), true);
     }
 }

@@ -42,15 +42,15 @@ public class FunctionAtom implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ")
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ")
                 .append("func").append(name != null ? " " + name : "")
                 .append('(')
                 .append(getParameters().stream().map(Object::toString)
                         .collect(Collectors.joining(", ")))
                 .append(')')
                 .append('\n');
-        expr.ast(builder, prefix + (isTail ? "    " : "│   "), true);
+        expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 
     @Override

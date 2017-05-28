@@ -28,11 +28,11 @@ public class GetOperation implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("list index\n");
-        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("get\n");
+        left.ast("target", builder, indent + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        indexExpr.ast(builder, prefix + (isTail ? "    " : "│   "), true);
+        indexExpr.ast("key", builder, indent + (isTail ? "    " : "│   "), true);
     }
 
     @Override

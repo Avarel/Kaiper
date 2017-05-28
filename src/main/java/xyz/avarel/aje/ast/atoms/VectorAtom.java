@@ -24,14 +24,14 @@ public class VectorAtom implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("list\n");
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("list\n");
         for (int i = 0; i < exprs.size() - 1; i++) {
-            exprs.get(i).ast(builder, prefix + (isTail ? "    " : "│   "), false);
+            exprs.get(i).ast(builder, indent + (isTail ? "    " : "│   "), false);
             builder.append('\n');
         }
         if (exprs.size() > 0) {
-            exprs.get(exprs.size() - 1).ast(builder, prefix + (isTail ? "    " : "│   "), true);
+            exprs.get(exprs.size() - 1).ast(builder, indent + (isTail ? "    " : "│   "), true);
         }
     }
 

@@ -34,11 +34,11 @@ public class RangeExpr implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("range").append(exclusive ? " exclusive" : " inclusive").append('\n');
-        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("range").append(exclusive ? " exclusive" : " inclusive").append('\n');
+        left.ast("start", builder, indent + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        right.ast(builder, prefix + (isTail ? "    " : "│   "), true);
+        right.ast("end", builder, indent + (isTail ? "    " : "│   "), true);
     }
 
     @Override

@@ -6,15 +6,25 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
 public class AssignmentExpr implements Expr {
+    private final boolean declare;
     private final Expr from;
     private final String name;
     private final Expr expr;
 
     public AssignmentExpr(String name, Expr expr) {
-        this(null, name, expr);
+        this(false, name, expr);
+    }
+
+    public AssignmentExpr(boolean declare, String name, Expr expr) {
+        this(declare, null, name, expr);
     }
 
     public AssignmentExpr(Expr from, String name, Expr expr) {
+        this(false, from, name, expr);
+    }
+
+    public AssignmentExpr(boolean declare, Expr from, String name, Expr expr) {
+        this.declare = declare;
         this.from = from;
         this.name = name;
         this.expr = expr;
@@ -32,23 +42,28 @@ public class AssignmentExpr implements Expr {
         return expr;
     }
 
+    public boolean isDeclare() {
+        return declare;
+    }
+
     @Override
     public Obj accept(ExprVisitor visitor, Scope scope) {
         return visitor.visit(this, scope);
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("assign\n");
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append(declare ? "declare\n" : "assign\n");
 
         if (from != null) {
-            from.ast(builder, prefix + (isTail ? "    " : "│   "), false);
+            from.ast("from", builder, indent + (isTail ? "    " : "│   "), false);
             builder.append('\n');
         }
 
-        builder.append(prefix).append(isTail ? "    " : "│   ").append("├── ").append(name);
+        builder.append(indent).append(isTail ? "    " : "│   ").append("├── ").append(name);
         builder.append('\n');
-        expr.ast(builder, prefix + (isTail ? "    " : "│   "), true);
+
+        expr.ast("to", builder, indent + (isTail ? "    " : "│   "), true);
     }
 
     @Override

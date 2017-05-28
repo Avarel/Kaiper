@@ -37,14 +37,14 @@ public class NameAtom implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
         if (from != null) {
-            builder.append(prefix).append(isTail ? "└── " : "├── ").append("attr\n");
-            from.ast(builder, prefix + (isTail ? "    " : "│   "), false);
+            builder.append(indent).append(isTail ? "└── " : "├── ").append("attr\n");
+            from.ast(builder, indent + (isTail ? "    " : "│   "), false);
             builder.append('\n');
-            builder.append(prefix).append(isTail ? "    " : "│   ").append("└── ").append(name);
+            builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append(name);
         } else {
-            Expr.super.ast(builder, prefix, isTail);
+            Expr.super.ast(builder, indent, isTail);
         }
     }
 }

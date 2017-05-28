@@ -7,8 +7,8 @@ import xyz.avarel.aje.ast.operations.GetOperation;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
-import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.NameAtom;
+import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
@@ -192,12 +192,11 @@ public class ExprVisitor {
             return Undefined.VALUE;
         }
 
-        scope.assign(expr.getName(), expr.getExpr().accept(this, scope));
-        return Undefined.VALUE;
-    }
-
-    public Obj visit(DeclarationExpr expr, Scope scope) {
-        scope.declare(expr.getName(), expr.getExpr().accept(this, scope));
+        if (expr.isDeclare()) {
+            scope.declare(expr.getName(), expr.getExpr().accept(this, scope));
+        } else {
+            scope.assign(expr.getName(), expr.getExpr().accept(this, scope));
+        }
         return Undefined.VALUE;
     }
 
@@ -208,5 +207,17 @@ public class ExprVisitor {
     public Obj visit(ReturnExpr expr, Scope scope) {
         Obj obj = expr.getExpr().accept(this, scope);
         throw new ReturnException(obj);
+    }
+
+    public Obj visit(ConditionalExpr expr, Scope scope) {
+        Obj condition = expr.getCondition().accept(this, scope);
+        if (condition instanceof Bool) {
+            if (condition == Bool.TRUE) {
+                return expr.getIfBranch().accept(this, scope);
+            } else if (expr.getElseBranch() != null) {
+                return expr.getElseBranch().accept(this, scope);
+            }
+        }
+        return Undefined.VALUE;
     }
 }

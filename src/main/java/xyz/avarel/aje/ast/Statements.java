@@ -32,10 +32,10 @@ public class Statements implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        before.ast(builder, prefix, false);
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        before.ast(builder, indent, false);
         builder.append('\n');
-        after.ast(builder, prefix, !hasNext);
+        after.ast(builder, indent, !hasNext);
     }
 
     @Override

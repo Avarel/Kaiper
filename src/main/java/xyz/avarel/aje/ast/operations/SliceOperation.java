@@ -41,30 +41,24 @@ public class SliceOperation implements Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String prefix, boolean isTail) {
-        builder.append(prefix).append(isTail ? "└── " : "├── ").append("sublist\n");
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("slice\n");
 
-        left.ast(builder, prefix + (isTail ? "    " : "│   "), false);
+        left.ast(builder, indent + (isTail ? "    " : "│   "), false);
 
-        builder.append('\n');
         if (start != null) {
-            start.ast(builder, prefix + (isTail ? "    " : "│   "), false);
-        } else {
-            builder.append(prefix).append(isTail ? "    " : "│   ").append("├── ").append("no start");
+            builder.append('\n');
+            start.ast("start", builder, indent + (isTail ? "    " : "│   "), false);
         }
 
-        builder.append('\n');
         if (end != null) {
-            end.ast(builder, prefix + (isTail ? "    " : "│   "), false);
-        } else {
-            builder.append(prefix).append(isTail ? "    " : "│   ").append("├── ").append("no end");
+            builder.append('\n');
+            end.ast("end", builder, indent + (isTail ? "    " : "│   "), false);
         }
 
-        builder.append('\n');
         if (step != null) {
-            step.ast(builder, prefix + (isTail ? "    " : "│   "), true);
-        } else {
-            builder.append(prefix).append(isTail ? "    " : "│   ").append("└── ").append("no step");
+            builder.append('\n');
+            step.ast("step", builder, indent + (isTail ? "    " : "│   "), true);
         }
     }
 

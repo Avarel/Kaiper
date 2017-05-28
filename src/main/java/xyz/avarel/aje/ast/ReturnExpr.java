@@ -23,4 +23,10 @@ public class ReturnExpr implements Expr {
     public String toString() {
         return "return " + expr.toString();
     }
+
+    @Override
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("return\n");
+        expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
+    }
 }

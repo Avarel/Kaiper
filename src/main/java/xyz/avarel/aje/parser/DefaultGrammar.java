@@ -4,6 +4,7 @@ import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.GetParser;
 import xyz.avarel.aje.parser.parslets.GroupParser;
+import xyz.avarel.aje.parser.parslets.IfElseParser;
 import xyz.avarel.aje.parser.parslets.ReturnParser;
 import xyz.avarel.aje.parser.parslets.atoms.NumberParser;
 import xyz.avarel.aje.parser.parslets.atoms.TruthParser;
@@ -26,6 +27,10 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.LEFT_PAREN, new GroupParser());
         register(TokenType.LEFT_BRACE, new LambdaFunctionParser());
 
+        // FLOW CONTROL
+        register(TokenType.IF, new IfElseParser());
+        register(TokenType.RETURN, new ReturnParser());
+
         // ATOMS
         register(TokenType.INT, new NumberParser());
         register(TokenType.DECIMAL, new NumberParser());
@@ -37,7 +42,6 @@ public class DefaultGrammar extends Grammar {
 
         register(TokenType.NAME, new NameParser());
         register(TokenType.VAR, new DeclarationParser());
-        register(TokenType.RETURN, new ReturnParser());
 
         // Numeric
         register(TokenType.MINUS, new UnaryOperatorParser(Obj::negative));

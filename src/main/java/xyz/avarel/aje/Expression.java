@@ -87,8 +87,8 @@ public class Expression {
         }
 
         @Override
-        public void ast(StringBuilder builder, String prefix, boolean isTail) {
-            expr.ast(builder, prefix, isTail);
+        public void ast(StringBuilder builder, String indent, boolean isTail) {
+            expr.ast(builder, indent, isTail);
         }
     }
 }
