@@ -36,11 +36,12 @@ public class CompiledFunction extends AJEFunction {
 
     @Override
     public String toString() {
-        return "func(" + parameters.stream().map(Object::toString).collect(Collectors.joining(",")) + ")";
+        return "func(" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
     }
 
     @Override
     public Obj invoke(List<Obj> args) {
+
         for (int i = 0; i < getArity(); i++) {
             Parameter parameter = parameters.get(i);
             Obj obj = parameter.getType().accept(new ExprVisitor(), scope);
@@ -62,6 +63,10 @@ public class CompiledFunction extends AJEFunction {
             }
         }
 
-        return expr.accept(new ExprVisitor(), scope);
+        try {
+            return expr.accept(new ExprVisitor(), scope);
+        } catch (ReturnException re) {
+            return re.getValue();
+        }
     }
 }

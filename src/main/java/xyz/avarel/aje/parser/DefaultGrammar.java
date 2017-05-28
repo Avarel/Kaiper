@@ -2,11 +2,19 @@ package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.parser.parslets.*;
-import xyz.avarel.aje.parser.parslets.atoms.*;
+import xyz.avarel.aje.parser.parslets.GetParser;
+import xyz.avarel.aje.parser.parslets.GroupParser;
+import xyz.avarel.aje.parser.parslets.ReturnParser;
+import xyz.avarel.aje.parser.parslets.atoms.NumberParser;
+import xyz.avarel.aje.parser.parslets.atoms.TruthParser;
+import xyz.avarel.aje.parser.parslets.atoms.VectorParser;
+import xyz.avarel.aje.parser.parslets.function.*;
 import xyz.avarel.aje.parser.parslets.operator.BinaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.RangeOperatorParser;
 import xyz.avarel.aje.parser.parslets.operator.UnaryOperatorParser;
+import xyz.avarel.aje.parser.parslets.variables.AttributeParser;
+import xyz.avarel.aje.parser.parslets.variables.DeclarationParser;
+import xyz.avarel.aje.parser.parslets.variables.NameParser;
 import xyz.avarel.aje.runtime.Obj;
 
 public class DefaultGrammar extends Grammar {
@@ -16,7 +24,7 @@ public class DefaultGrammar extends Grammar {
         // BLOCKS
         register(TokenType.LEFT_BRACKET, new VectorParser());
         register(TokenType.LEFT_PAREN, new GroupParser());
-        register(TokenType.LEFT_BRACE, new LambdaParser());
+        register(TokenType.LEFT_BRACE, new LambdaFunctionParser());
 
         // ATOMS
         register(TokenType.INT, new NumberParser());
@@ -24,11 +32,12 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.IMAGINARY, new NumberParser());
         register(TokenType.BOOLEAN, new TruthParser());
         register(TokenType.FUNCTION, new FunctionParser());
-        register(TokenType.UNDERSCORE, new ImplicitParser());
+        register(TokenType.UNDERSCORE, new ImplicitFunctionParser());
 
 
         register(TokenType.NAME, new NameParser());
         register(TokenType.VAR, new DeclarationParser());
+        register(TokenType.RETURN, new ReturnParser());
 
         // Numeric
         register(TokenType.MINUS, new UnaryOperatorParser(Obj::negative));
@@ -57,6 +66,7 @@ public class DefaultGrammar extends Grammar {
 
         // Functional
         register(TokenType.LEFT_PAREN, new InvocationParser());
+        register(TokenType.LEFT_BRACE, new BlockParameterParser());
 
         register(TokenType.LEFT_BRACKET, new GetParser());
         register(TokenType.DOT, new AttributeParser());

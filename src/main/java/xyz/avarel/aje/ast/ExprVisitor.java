@@ -7,12 +7,13 @@ import xyz.avarel.aje.ast.operations.GetOperation;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
-import xyz.avarel.aje.ast.variables.AttributeExpr;
 import xyz.avarel.aje.ast.variables.DeclarationExpr;
+import xyz.avarel.aje.ast.variables.NameAtom;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
 import xyz.avarel.aje.runtime.functions.CompiledFunction;
+import xyz.avarel.aje.runtime.functions.ReturnException;
 import xyz.avarel.aje.runtime.lists.Range;
 import xyz.avarel.aje.runtime.lists.Vector;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -24,7 +25,7 @@ import java.util.List;
 public class ExprVisitor {
     public Obj visit(Statements statements, Scope scope) {
         statements.getBefore().accept(this, scope);
-        return statements.getAfter().accept(this,scope);
+        return statements.getAfter().accept(this, scope);
     }
 
     public Obj visit(BoolAtom expr, Scope scope) {
@@ -38,6 +39,10 @@ public class ExprVisitor {
     }
 
     public Obj visit(NameAtom expr, Scope scope) {
+        if (expr.getFrom() != null) {
+            return expr.getFrom().accept(this, scope).getAttr(expr.getName());
+        }
+
         return scope.lookup(expr.getName());
     }
 
@@ -74,7 +79,15 @@ public class ExprVisitor {
         Obj endObj = expr.getRight().accept(this, scope);
 
         if (startObj instanceof Int && endObj instanceof Int) {
-            return new Range(((Int) startObj).value(), ((Int) endObj).value() - (expr.isExclusive() ? 1: 0));
+            int start = ((Int) startObj).value();
+            int end = ((Int) endObj).value();
+
+            if (expr.isExclusive()) {
+                if (start < end) end -= 1;
+                else end += 1;
+            }
+
+            return new Range(start, end);
         }
 
         return Undefined.VALUE;
@@ -174,6 +187,11 @@ public class ExprVisitor {
     }
 
     public Obj visit(AssignmentExpr expr, Scope scope) {
+        if (expr.getFrom() != null) {
+            expr.getFrom().accept(this, scope).setAttr(expr.getName(), expr.getExpr().accept(this, scope));
+            return Undefined.VALUE;
+        }
+
         scope.assign(expr.getName(), expr.getExpr().accept(this, scope));
         return Undefined.VALUE;
     }
@@ -183,11 +201,12 @@ public class ExprVisitor {
         return Undefined.VALUE;
     }
 
-    public Obj visit(AttributeExpr expr, Scope scope) {
-        return expr.getLeft().accept(this, scope).attribute(expr.getName());
-    }
-
     public Obj visit(GetOperation expr, Scope scope) {
         return expr.getLeft().accept(this, scope).get(expr.getArgument().accept(this, scope));
+    }
+
+    public Obj visit(ReturnExpr expr, Scope scope) {
+        Obj obj = expr.getExpr().accept(this, scope);
+        throw new ReturnException(obj);
     }
 }

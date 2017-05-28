@@ -78,14 +78,15 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         do {
             Token next = readToken();
 
-            if (prev != null) {
-                if (tokens.size() == 0) {
-                    switch (next.getType()) {
-                        case SEMICOLON:
-                        case LINE:
-                            continue;
-                    }
+            if (tokens.size() == 0) {
+                switch (next.getType()) {
+                    case SEMICOLON:
+                    case LINE:
+                        continue;
                 }
+            }
+
+            if (prev != null) {
                 switch (prev.getType()) {
                     case LEFT_BRACE:
                     case LEFT_BRACKET:
@@ -151,7 +152,18 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case '{': return make(TokenType.LEFT_BRACE);
             case '}': return make(TokenType.RIGHT_BRACE);
 
-            case '_': return make(TokenType.UNDERSCORE);
+            case '_': {
+                if (Character.isLetterOrDigit(peek())) {
+                    return nextName(c);
+                } else {
+                    StringBuilder builder = new StringBuilder().append(c);
+                    while (match('_')) {
+                        builder.append('_');
+                    }
+
+                    return make(TokenType.UNDERSCORE, builder.toString());
+                }
+            }
 
             case '.': return match('.')
                     ? make(TokenType.RANGE_TO)
@@ -286,7 +298,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         while (true) {
             c = advance();
 
-            if (Character.isLetterOrDigit(c)) {
+            if (Character.isLetterOrDigit(c) || c == '_') {
                 sb.append(c);
             } else {
                 break;
@@ -295,18 +307,16 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
         back();
 
-        return nameOrKeyword(sb.toString());
-    }
-
-    private Token nameOrKeyword(String value) {
+        String value = sb.toString();
         switch (value) {
-            case "var": return make(TokenType.VAR);
-            case "func": return make(TokenType.FUNCTION);
+            case "return": return make(TokenType.RETURN, "return");
+            case "var": return make(TokenType.VAR, "var");
+            case "func": return make(TokenType.FUNCTION, "func");
             case "true": return make(TokenType.BOOLEAN, "true");
             case "false": return make(TokenType.BOOLEAN, "false");
-            case "i": return make(TokenType.IMAGINARY);
-            case "and": return make(TokenType.AND);
-            case "or": return make(TokenType.OR);
+            case "i": return make(TokenType.IMAGINARY, "i");
+            case "and": return make(TokenType.AND, "and");
+            case "or": return make(TokenType.OR, "or");
             default: return make(TokenType.NAME, value);
         }
     }

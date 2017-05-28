@@ -1,6 +1,5 @@
-package xyz.avarel.aje.parser.parslets;
+package xyz.avarel.aje.parser.parslets.variables;
 
-import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.atoms.UndefAtom;
 import xyz.avarel.aje.ast.variables.DeclarationExpr;
@@ -15,7 +14,7 @@ public class DeclarationParser implements PrefixParser {
         Token name = parser.eat(TokenType.NAME);
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new DeclarationExpr(name.getText(), parser.parseExpr(Precedence.ASSIGNMENT));
+            return new DeclarationExpr(name.getText(), parser.parseExpr());
         }
 
         return new DeclarationExpr(name.getText(), UndefAtom.VALUE);

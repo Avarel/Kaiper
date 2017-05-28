@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.parslets.atoms;
+package xyz.avarel.aje.parser.parslets.function;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
@@ -14,7 +14,7 @@ import xyz.avarel.aje.runtime.functions.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LambdaParser implements PrefixParser {
+public class LambdaFunctionParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         List<Parameter> parameters = new ArrayList<>();

@@ -18,7 +18,7 @@ public class ValueAtom implements Expr {
 
     @Override
     public Obj compute() {
-        return value;
+        return getValue();
     }
 
     @Override
@@ -28,6 +28,6 @@ public class ValueAtom implements Expr {
 
     @Override
     public String toString() {
-        return "value " + value;
+        return value.toString();
     }
 }

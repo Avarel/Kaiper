@@ -1,4 +1,4 @@
-package xyz.avarel.aje.parser.parslets;
+package xyz.avarel.aje.parser.parslets.function;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;

@@ -22,8 +22,14 @@ public class Range implements Obj, NativeObject<List<Integer>> {
     @Override
     public List<Integer> toNative() {
         List<Integer> list = new ArrayList<>();
-        for (int i = start; i <= end; i ++) {
-            list.add(i);
+        if (start < end) {
+            for (int i = start; i <= end; i++) {
+                list.add(i);
+            }
+        } else {
+            for (int i = start; i >= end; i--) {
+                list.add(i);
+            }
         }
         return list;
     }
@@ -35,8 +41,14 @@ public class Range implements Obj, NativeObject<List<Integer>> {
 
     public Vector toVector() {
         Vector vector = new Vector();
-        for (int i = start; i <= end; i ++) {
-            vector.add(Int.of(i));
+        if (start < end) {
+            for (int i = start; i <= end; i++) {
+                vector.add(Int.of(i));
+            }
+        } else {
+            for (int i = start; i >= end; i--) {
+                vector.add(Int.of(i));
+            }
         }
         return vector;
     }

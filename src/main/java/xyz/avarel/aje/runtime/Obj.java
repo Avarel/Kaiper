@@ -124,7 +124,11 @@ public interface Obj {
         return Undefined.VALUE;
     }
 
-    default Obj attribute(String name) {
+    default Obj getAttr(String name) {
+        return Undefined.VALUE;
+    }
+
+    default Obj setAttr(String name, Obj value) {
         return Undefined.VALUE;
     }
 }

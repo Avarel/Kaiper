@@ -209,7 +209,7 @@ public class Int implements Obj, NativeObject<Integer> {
     }
 
     @Override
-    public Obj attribute(String name) {
+    public Obj getAttr(String name) {
         switch (name) {
             case "toInteger":
                 return this;

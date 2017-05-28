@@ -1,10 +1,9 @@
-package xyz.avarel.aje.parser.parslets.atoms;
+package xyz.avarel.aje.parser.parslets.function;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.atoms.FunctionAtom;
-import xyz.avarel.aje.ast.atoms.NameAtom;
 import xyz.avarel.aje.ast.atoms.ValueAtom;
-import xyz.avarel.aje.ast.variables.AttributeExpr;
+import xyz.avarel.aje.ast.variables.NameAtom;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -15,7 +14,8 @@ import xyz.avarel.aje.runtime.functions.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FunctionParser implements PrefixParser {
+public class
+FunctionParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         List<Parameter> parameters = new ArrayList<>();
@@ -36,7 +36,7 @@ public class FunctionParser implements PrefixParser {
                 if (parser.match(TokenType.COLON)) {
                     p_type = new NameAtom(parser.eat(TokenType.NAME).getText());
                     while (parser.match(TokenType.DOT)) {
-                        p_type = new AttributeExpr(p_type, parser.eat(TokenType.NAME).getText());
+                        p_type = new NameAtom(p_type, parser.eat(TokenType.NAME).getText());
                     }
                 }
                 if (parser.match(TokenType.ASSIGN)) {

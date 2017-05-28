@@ -26,6 +26,12 @@ public abstract class Parser {
         this.grammar = grammar;
     }
 
+    protected Parser(Parser proxy) {
+        this.lexer = proxy.lexer;
+        this.tokens = proxy.tokens;
+        this.grammar = proxy.grammar;
+    }
+
     public Token getLast() {
         return last;
     }
@@ -79,6 +85,22 @@ public abstract class Parser {
 
         // Get the queued token.
         return tokens.get(distance);
+    }
+
+    public boolean peek(TokenType... tokens) {
+        for (int i = 0; i < tokens.length; i++) {
+            if (peek(i).getType() != tokens[i]) return false;
+        }
+
+        return true;
+    }
+
+    public boolean peekAny(TokenType... tokens) {
+        for (TokenType token : tokens) {
+            if (peek(token)) return true;
+        }
+
+        return false;
     }
 
     public boolean nextIs(TokenType type) {

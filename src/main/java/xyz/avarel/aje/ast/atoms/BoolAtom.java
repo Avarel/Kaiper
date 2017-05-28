@@ -22,7 +22,7 @@ public enum BoolAtom implements Expr {
 
     @Override
     public Obj compute() {
-        return value;
+        return getValue();
     }
 
     @Override
@@ -32,6 +32,6 @@ public enum BoolAtom implements Expr {
 
     @Override
     public String toString() {
-        return "atom " + value;
+        return value.toString();
     }
 }

@@ -202,7 +202,7 @@ public class Decimal implements Obj, NativeObject<Double> {
     }
 
     @Override
-    public Obj attribute(String name) {
+    public Obj getAttr(String name) {
         switch (name) {
             case "toInteger":
                 return Int.of((int) value);

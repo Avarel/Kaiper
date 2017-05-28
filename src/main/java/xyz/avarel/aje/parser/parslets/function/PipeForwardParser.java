@@ -1,10 +1,10 @@
-package xyz.avarel.aje.parser.parslets;
+package xyz.avarel.aje.parser.parslets.function;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.atoms.FunctionAtom;
-import xyz.avarel.aje.ast.atoms.NameAtom;
 import xyz.avarel.aje.ast.invocation.InvocationExpr;
+import xyz.avarel.aje.ast.variables.NameAtom;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;

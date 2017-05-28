@@ -6,12 +6,22 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
 public class AssignmentExpr implements Expr {
+    private final Expr from;
     private final String name;
     private final Expr expr;
 
     public AssignmentExpr(String name, Expr expr) {
+        this(null, name, expr);
+    }
+
+    public AssignmentExpr(Expr from, String name, Expr expr) {
+        this.from = from;
         this.name = name;
         this.expr = expr;
+    }
+
+    public Expr getFrom() {
+        return from;
     }
 
     public String getName() {
@@ -30,6 +40,12 @@ public class AssignmentExpr implements Expr {
     @Override
     public void ast(StringBuilder builder, String prefix, boolean isTail) {
         builder.append(prefix).append(isTail ? "└── " : "├── ").append("assign\n");
+
+        if (from != null) {
+            from.ast(builder, prefix + (isTail ? "    " : "│   "), false);
+            builder.append('\n');
+        }
+
         builder.append(prefix).append(isTail ? "    " : "│   ").append("├── ").append(name);
         builder.append('\n');
         expr.ast(builder, prefix + (isTail ? "    " : "│   "), true);

@@ -54,7 +54,8 @@ public abstract class NativeFunction extends AJEFunction {
             }
         }
 
-        return eval(args);
+        Obj result = eval(args);
+        return result != null ? result : Undefined.VALUE;
     }
 
     @Override

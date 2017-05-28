@@ -60,6 +60,8 @@ public enum TokenType {
 
     // SCRIPT
     VAR,
+    RETURN,
+
     SKIP,
     SEMICOLON,
     LINE,

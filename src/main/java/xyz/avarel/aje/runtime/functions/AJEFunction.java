@@ -76,7 +76,7 @@ public abstract class AJEFunction implements Obj, NativeObject<Function<List<Obj
     }
 
     @Override
-    public Obj attribute(String name) {
+    public Obj getAttr(String name) {
         switch (name) {
             case "arity":
                 return Int.of(getArity());

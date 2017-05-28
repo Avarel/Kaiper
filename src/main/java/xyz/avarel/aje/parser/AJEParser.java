@@ -11,6 +11,10 @@ public class AJEParser extends Parser {
         super(tokens, DefaultGrammar.INSTANCE);
     }
 
+    public AJEParser(AJEParser proxy) {
+        super(proxy);
+    }
+
     public Expr compile() {
         Expr expr = parseStatements();
 

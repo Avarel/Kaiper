@@ -162,12 +162,20 @@ public class Vector extends ArrayList<Obj> implements Obj, NativeObject<List<Obj
     }
 
     @Override
-    public Obj attribute(String name) {
+    public Obj getAttr(String name) {
         switch (name) {
             case "size":
                 return Int.of(size());
             case "append":
                 return new NativeFunction(true, Obj.TYPE) {
+                    @Override
+                    protected Obj eval(List<Obj> arguments) {
+                        Vector.this.addAll(arguments);
+                        return Vector.this;
+                    }
+                };
+            case "extend":
+                return new NativeFunction(Vector.TYPE) {
                     @Override
                     protected Obj eval(List<Obj> arguments) {
                         Vector.this.addAll(arguments);

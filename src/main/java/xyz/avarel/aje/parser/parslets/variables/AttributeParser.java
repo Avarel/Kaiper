@@ -1,8 +1,9 @@
-package xyz.avarel.aje.parser.parslets;
+package xyz.avarel.aje.parser.parslets.variables;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.variables.AttributeExpr;
+import xyz.avarel.aje.ast.variables.AssignmentExpr;
+import xyz.avarel.aje.ast.variables.NameAtom;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -16,6 +17,11 @@ public class AttributeParser extends BinaryParser {
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
         Token name = parser.eat(TokenType.NAME);
-        return new AttributeExpr(left, name.getText());
+
+        if (parser.match(TokenType.ASSIGN)) {
+            return new AssignmentExpr(left, name.getText(), parser.parseExpr());
+        }
+
+        return new NameAtom(left, name.getText());
     }
 }

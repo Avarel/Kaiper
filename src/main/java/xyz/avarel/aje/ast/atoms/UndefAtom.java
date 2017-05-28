@@ -14,6 +14,11 @@ public enum UndefAtom implements Expr {
     }
 
     @Override
+    public Obj compute() {
+        return getValue();
+    }
+
+    @Override
     public Obj accept(ExprVisitor visitor, Scope scope) {
         return visitor.visit(this, scope);
     }

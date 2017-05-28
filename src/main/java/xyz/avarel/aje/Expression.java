@@ -6,6 +6,7 @@ import xyz.avarel.aje.ast.Statements;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.functions.ReturnException;
 import xyz.avarel.aje.scope.DefaultScope;
 import xyz.avarel.aje.scope.Scope;
 
@@ -73,7 +74,11 @@ public class Expression {
 
         @Override
         public Obj accept(ExprVisitor visitor, Scope scope) {
-            return expr.accept(visitor, scope.copy());
+            try {
+                return expr.accept(new ExprVisitor(), scope.copy());
+            } catch (ReturnException re) {
+                return re.getValue();
+            }
         }
 
         @Override
