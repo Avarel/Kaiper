@@ -19,13 +19,15 @@
 
 package xyz.avarel.aje.loops;
 
-import xyz.avarel.aje.parser.lexer.AJELexer;
+import xyz.avarel.aje.Expression;
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.runtime.Obj;
 
 import java.util.Scanner;
 
-public class LexerLoop {
+public class AJEDevRepl {
     public static void main(String[] args) {
-        System.out.println("LEXER EVALUATOR");
+        System.out.println("AJE REPL - Developer");
         System.out.println();
 
         Scanner sc = new Scanner(System.in);
@@ -34,22 +36,38 @@ public class LexerLoop {
 
         while (running) {
             try {
-                System.out.print("String | ");
+                System.out.print("  REPL | ");
 
                 String input = sc.nextLine();
 
                 switch (input) {
-                    case "-stop":
+                    case "exit":
                         running = false;
                         continue;
                 }
 
-                AJELexer lexer = new AJELexer(input);
+                Expression exp = new Expression(input);
 
-                System.out.println(lexer.tokensToString());
+                long start = System.nanoTime();
+                Expr expr = exp.compile();
+                Obj result = expr.compute();
+                long end = System.nanoTime();
 
+                long ns =  (end - start);
+                double ms = ns / 1000000D;
+
+                System.out.println("RESULT | " + result + " : " + result.getType());
+                System.out.println("  TIME | " + ms + "ms " + ns + "ns" );
+
+                StringBuilder builder = new StringBuilder();
+
+                expr.ast(builder, "\t\t ", true);
+
+                System.out.println("   AST > +\n" + builder);
+
+                System.out.println();
             } catch (RuntimeException e) {
-                System.out.println("    Result | Caught an error: " + e.getMessage() + "\n");
+                System.out.println(" ERROR | " + e.getMessage() + "\n");
                 e.printStackTrace();
                 return;
             }

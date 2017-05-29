@@ -1,3 +1,22 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package xyz.avarel.aje.ast;
 
 import xyz.avarel.aje.ast.atoms.FunctionAtom;
@@ -17,7 +36,6 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
 import xyz.avarel.aje.runtime.functions.CompiledFunction;
-import xyz.avarel.aje.runtime.functions.ReturnException;
 import xyz.avarel.aje.runtime.lists.Range;
 import xyz.avarel.aje.runtime.lists.Vector;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -43,12 +61,10 @@ public class ExprVisitor {
             return expr.getFrom().accept(this, scope).getAttr(expr.getName());
         }
 
-        Obj value = scope.lookup(expr.getName());
-        if (value != null) {
-            return value;
-        } else {
-            throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
+        if (scope.contains(expr.getName())) {
+            return scope.lookup(expr.getName());
         }
+        throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
     }
 
     public Obj visit(ValueAtom expr, Scope scope) {
@@ -200,7 +216,10 @@ public class ExprVisitor {
         if (expr.isDeclare()) {
             scope.declare(expr.getName(), expr.getExpr().accept(this, scope));
         } else {
-            scope.assign(expr.getName(), expr.getExpr().accept(this, scope));
+            if (scope.contains(expr.getName())) {
+                scope.assign(expr.getName(), expr.getExpr().accept(this, scope));
+            }
+            throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
         }
         return Undefined.VALUE;
     }

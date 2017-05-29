@@ -17,27 +17,25 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser;
+package xyz.avarel.aje.ast;
 
-public abstract class BinaryParser implements InfixParser {
-    private final int precedence;
-    private final boolean leftAssoc;
+import xyz.avarel.aje.parser.lexer.Position;
+import xyz.avarel.aje.runtime.Obj;
 
-    public BinaryParser(int precedence) {
-        this(precedence, true);
+public class ReturnException extends RuntimeException {
+    private final Position position;
+    private final Obj value;
+
+    public ReturnException(Position position, Obj value) {
+        this.position = position;
+        this.value = value;
     }
 
-    public BinaryParser(int precedence, boolean leftAssoc) {
-        this.precedence = precedence;
-        this.leftAssoc = leftAssoc;
+    public Position getPosition() {
+        return position;
     }
 
-    @Override
-    public int getPrecedence() {
-        return precedence;
-    }
-
-    public boolean isLeftAssoc() {
-        return leftAssoc;
+    public Obj getValue() {
+        return value;
     }
 }
