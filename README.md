@@ -1,11 +1,78 @@
 AJE [![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg)](https://bintray.com/avarel/maven/AJE/_latestVersion) [![Build Status](https://travis-ci.org/Avarel/AJE.svg?branch=master)](https://travis-ci.org/Avarel/AJE)
 ===
-**What is AJE?** AJE is powerful and expressive mathematical evaluator for
-    the Java programming language. It features **flexible syntax, complex numbers, 
-    booleans, first-class functions, user-defined variables**, along with mimicking 
-    useful functional programming language features in order to provide a rich end-user experience.
+**What is AJE?** AJE is an easy powerful mathematical evaluator for the Java programming language. It has built-in
+    support for complex numbers, list literals, functions expressions and other programmatic quirks. 
+    The parser support expressions provided from texts, readers, or input streams.
 
-**TL;DR:** AJE is a math evaluator with a programming twist.
+### REPL Demonstrations
+Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xyz/avarel/aje/loops/AJERepl.java)
+    main method.
+
+#### Complex Numbers
+```
+▶ sqrt(-1)
+◀ i : complex
+
+▶ sqrt(i)
+◀ 0.7071068 + 0.7071068i : complex
+
+▶ (1+i)^2
+◀ 2.0i : complex
+
+▶ (8+2i)(5i+3)
+◀ 14.0 + 46.0i : complex
+```
+
+#### Slices and Lists
+```
+▶ [1,2,3][1]
+◀ 2 : integer
+
+▶ [1..3] + 2
+◀ [3, 4, 5] : vector
+
+▶ var x = [50..60]; x[::-1]
+◀ [60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50] : vector
+
+▶ var x = [100..200]; x[25:30]
+◀ [125, 126, 127, 128, 129] : vector
+
+▶ [1..10][2:8]
+◀ [3, 4, 5, 6, 7, 8] : vector
+
+▶ [1..10][2:8:-2]
+◀ [8, 6, 4] : vector
+```
+
+#### Flow Control
+```
+▶ var x = 50
+◀ undefined : undefined
+
+▶ return if (x > 10) i else pi
+◀ i : complex
+
+▶ func fib(n: Int) = return if (n <= 1) n else fib(n - 1) + fib(n - 2)
+◀ func(n: Int) : function
+
+▶ fib(14)
+◀ 377 : integer
+```
+
+#### First Class Functions
+```
+▶ [1..10] |> map(_ ^ 2)
+◀ [1, 4, 9, 16, 25, 36, 49, 64, 81, 100] : vector
+
+▶ var add = { x, y -> x + y }; [1..10] |> fold(0, add)
+◀ 55 : integer
+
+▶ func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
+◀ [2, 4, 6, 8, 10, 12, 14, 16, 18, 20] : vector
+
+▶ [1..10] |> fold(1, _ * __)
+◀ 3628800 : integer
+```
 
 ### Download [![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg)](https://bintray.com/avarel/maven/AJE/_latestVersion)
 Be sure to replace the VERSION key below with the latest version shown above!
@@ -38,14 +105,16 @@ repositories {
 ```
 
 ### Features
-|Feature|AJE Type|Java Type|Examples|
+|Feature| | |Examples|
 |---|---|---|---:|
-|Simple arithmetic|`integer`|`Integer`|`1` `42` `1+2^3` `2*(3+4)`|
-|Decimals|`decimal`|`Double`|`1.235` `-2.0/17` `3.0+2.5`|
+|Integer numbers|`integer`|`Integer`|`1` `42` `1+2^3` `2*(3+4)`|
+|Decimal numbers|`decimal`|`Double`|`1.235` `-2.0/17` `3.0+2.5`|
+|Complex numbers|`complex`|`Complex`|`i^2` `3i` `(8+2i)(5i+3)`|
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
-|Imaginary calculations|`complex`|`Complex*`|`i^2` `3i` `(8+2i)(5i+3)`|
-|Lists operations|`vector`|`List<Any>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
-|First class functions|`function`|`Function*`|`func(x) = { x + 2 }` `{ x, y -> x ^ y }`|
+|Ranges|`range`|`List<Integer>`|`1..10` `10..<1`|
+|Lists operations|`vector`|`List<Obj>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
+|First class functions|`function`| |`func(x) = { x + 2 }` `{ x, y -> x ^ y }`|
+|Flow control| | |`if (true) { 1 } else { 2 }`<br>`return 2`|
 
 `*` Mapped to AJE object.
 
@@ -62,7 +131,7 @@ class AJETest {
         // Add a normal function.
         exp.add("double", new NativeFunction(Numeric.TYPE) {
             @Override
-            protected Any eval(List<Any> arguments) {
+            protected Obj eval(List<Obj> arguments) {
                 return arguments.get(0).times(2); 
                 // Only works for decimals/complex.
                 // Check out DefaultFunction.java to handle integers.
@@ -72,18 +141,18 @@ class AJETest {
         // Add a varargs function.
         exp.add("sum", new NativeFunction(true, Numeric.TYPE) {
             @Override
-            protected Any eval(List<Any> arguments) {
+            protected Obj eval(List<Obj> arguments) {
                 if (arguments.isEmpty()) return Int.of(0);
-                Any accumulator = arguments.get(0);
+                Obj accumulator = arguments.get(0);
                 for (int i = 1; i < arguments.size(); i++) {
-                    accumulator = Numeric.process(accumulator, arguments.get(i), Any::plus);
+                    accumulator = Numeric.process(accumulator, arguments.get(i), Obj::plus);
                 }
                 return accumulator;
             }
         });
         
         // Calculate into AJE object.
-        Any result = exp.compute();
+        Obj result = exp.compute();
         
         // Get the native representation of the object.
         // Each AJE object is mapped to a native object.
@@ -236,8 +305,8 @@ These are functions that are built into AJE. They include both higher-order and 
 |---|---|---|---:|
 |`compose`|Create a composition of two functions|(`function(x)`,`function(x)`)|`compose(asin, sin)`|
 |`each`|List iteration action function|(`list`, `function(x)`)|<code>var x = 0; [0..<9] &#124;> each(func(it) { x += it }); x</code>|
-|`map`|List transform function|(`list`, `function(x)`)|`map([1..10], {it ^ 2})`|
-|`filter`|List filter function|(`list`, `function(x)`)|`filter([1..10], {it%2==0})`|
+|`map`|List transform function|(`list`, `function(x)`)|`map([1..10], _ ^ 2)`|
+|`filter`|List filter function|(`list`, `function(x)`)|`filter([1..10], _ % 2 == 0)`|
 |`fold`|List accumulation function|(`list`, `value`, `function(x, y)`)|`fold([1..10], 0, {a, b -> a + b})`|
 |`sqrt`|Square root function|(`complex`)|`sqrt(x)`|
 |`cbrt`|Cube root function|(`complex`)|`cbrt(x)`|
@@ -251,53 +320,3 @@ These are functions that are built into AJE. They include both higher-order and 
 |`sinh` `cosh` `tanh`<br>`csch` `sech` `coth`|Trigonomic hyperbolic functions|(`complex`)|`sinh(x)`|
 |`asin` `acos` `atan`<br>`acsc` `asec` `acot`|Inverse trigonomic functions|(`decimal`)|`asin(x)`|
 |`atan2`|Inverse trigonomic<br>four-quadrant tangent function|(`decimal`,`decimal`)|`atan2(x,y)`|
-
-### REPL Demonstrations
-#### Complex Numbers
-```
-  REPL | sqrt(-1)
-Result | i
-
-  REPL | sqrt(i)
-Result | 0.7071068 + 0.7071068i 
-
-  REPL | (1+i)^2
-Result | 2.0i
-
-  REPL | (8+2i)(5i+3)
-Result | 14.0 + 46.0i
-```
-#### Slices and Lists
-```
-  REPL | [1,2,3][1]
-Result | 2
-
-  REPL | [1..3] + [2]
-Result | [3, 4, 5]
-
-  REPL | var x = [50..60]; x[5]
-Result | 55
-
-  REPL | var x = [100..200]; x[25:30]
-Result | [125, 126, 127, 128, 129]
-
-  REPL | [1..10][2:8]
-Result | [3, 4, 5, 6, 7, 8]
-
-  REPL | [1..10][2:8:-2]
-Result | [8, 6, 4]
-```
-#### First Class Functions
-```
-  REPL | [1..10] |> map(_ ^ 2)
-Result | [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
-
-  REPL | var add = { x, y -> x + y }; [1..10] |> fold(0, add)
-Result | 55
-
-  REPL | func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
-Result | [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
-
-  REPL | [1..10] |> fold(1, { x, y -> x * y })
-Result | 3628800
-```

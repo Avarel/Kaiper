@@ -20,6 +20,8 @@
 package xyz.avarel.aje;
 
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.ReturnException;
+import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
@@ -103,7 +105,8 @@ public class Evaluator {
         try {
             return eval(new FileReader(file));
         } catch (FileNotFoundException e) {
-            return Undefined.VALUE;
+            e.printStackTrace();
+            return answer = Undefined.VALUE;
         }
     }
 
@@ -137,7 +140,16 @@ public class Evaluator {
      *          Error during the lexing or parsing process of the expression.
      */
     public Obj eval(AJELexer lexer) {
-        return answer = new AJEParser(lexer).compile().accept(new ExprVisitor(), scope);
+        try {
+            return answer = new AJEParser(lexer).compile().accept(new ExprVisitor(), scope);
+        } catch (ReturnException re) {
+            return answer = re.getValue();
+        } catch (AJEException re) {
+            re.printStackTrace();
+        } catch (RuntimeException re) {
+            new ComputeException(re).printStackTrace();
+        }
+        return answer = Undefined.VALUE;
     }
 
     /**

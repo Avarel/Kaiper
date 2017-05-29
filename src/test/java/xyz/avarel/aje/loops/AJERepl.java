@@ -23,6 +23,7 @@ import xyz.avarel.aje.Evaluator;
 import xyz.avarel.aje.runtime.Obj;
 
 import java.util.Scanner;
+import java.util.concurrent.*;
 
 public class AJERepl {
     public static void main(String[] args) {
@@ -44,13 +45,18 @@ public class AJERepl {
                         continue;
                 }
 
-                Obj result = evaluator.eval(input);
+                Future<Obj> future = CompletableFuture.supplyAsync(() -> evaluator.eval(input));
+
+                Obj result = future.get(300, TimeUnit.MILLISECONDS);
 
                 System.out.println("\u25c0 " + result + " : " + result.getType());
 
                 System.out.println();
             } catch (RuntimeException e) {
                 System.out.println("\u25c0 Exception: " + e.getMessage() + "\n");
+                e.printStackTrace();
+            } catch (InterruptedException | TimeoutException | ExecutionException e) {
+                e.printStackTrace();
             }
         }
     }
