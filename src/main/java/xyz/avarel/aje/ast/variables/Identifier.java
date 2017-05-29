@@ -25,15 +25,15 @@ import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class NameAtom extends Expr {
+public class Identifier extends Expr {
     private final Expr from;
     private final String name;
 
-    public NameAtom(Position position, String name) {
+    public Identifier(Position position, String name) {
         this(position, null, name);
     }
 
-    public NameAtom(Position position, Expr from, String name) {
+    public Identifier(Position position, Expr from, String name) {
         super(position);
         this.from = from;
         this.name = name;

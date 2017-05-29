@@ -22,7 +22,7 @@ package xyz.avarel.aje.parser.parslets.function;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.atoms.FunctionAtom;
 import xyz.avarel.aje.ast.atoms.ValueAtom;
-import xyz.avarel.aje.ast.variables.NameAtom;
+import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
@@ -43,7 +43,7 @@ public class FunctionParser implements PrefixParser {
 
         String name = null;
         if (parser.match(TokenType.IDENTIFIER)) {
-            name = parser.getLast().getText();
+            name = parser.getLast().getString();
         }
 
         parser.eat(TokenType.LEFT_PAREN);
@@ -52,7 +52,7 @@ public class FunctionParser implements PrefixParser {
             boolean requireDef = false;
 
             do {
-                String parameterName = parser.eat(TokenType.IDENTIFIER).getText();
+                String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
 
                 if (paramNames.contains(parameterName)) {
                     throw new SyntaxException("Duplicate parameter name", parser.getLast().getPosition());
@@ -65,9 +65,9 @@ public class FunctionParser implements PrefixParser {
 
                 if (parser.match(TokenType.COLON)) {
                     Token typeToken = parser.eat(TokenType.IDENTIFIER);
-                    parameterType = new NameAtom(typeToken.getPosition(), typeToken.getText());
+                    parameterType = new Identifier(typeToken.getPosition(), typeToken.getString());
                     while (parser.match(TokenType.DOT)) {
-                        parameterType = new NameAtom(typeToken.getPosition(), parameterType, parser.eat(TokenType.IDENTIFIER).getText());
+                        parameterType = new Identifier(typeToken.getPosition(), parameterType, parser.eat(TokenType.IDENTIFIER).getString());
                     }
                 }
                 if (parser.match(TokenType.ASSIGN)) {

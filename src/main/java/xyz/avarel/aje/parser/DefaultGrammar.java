@@ -25,8 +25,8 @@ import xyz.avarel.aje.parser.parslets.GetParser;
 import xyz.avarel.aje.parser.parslets.GroupParser;
 import xyz.avarel.aje.parser.parslets.IfElseParser;
 import xyz.avarel.aje.parser.parslets.ReturnParser;
+import xyz.avarel.aje.parser.parslets.atoms.BoolParser;
 import xyz.avarel.aje.parser.parslets.atoms.NumberParser;
-import xyz.avarel.aje.parser.parslets.atoms.TruthParser;
 import xyz.avarel.aje.parser.parslets.atoms.VectorParser;
 import xyz.avarel.aje.parser.parslets.function.*;
 import xyz.avarel.aje.parser.parslets.operator.BinaryOperatorParser;
@@ -54,7 +54,7 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.INT, new NumberParser());
         register(TokenType.DECIMAL, new NumberParser());
         register(TokenType.IMAGINARY, new NumberParser());
-        register(TokenType.BOOLEAN, new TruthParser());
+        register(TokenType.BOOLEAN, new BoolParser());
         register(TokenType.FUNCTION, new FunctionParser());
         register(TokenType.UNDERSCORE, new ImplicitFunctionParser());
 

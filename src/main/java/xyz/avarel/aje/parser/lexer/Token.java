@@ -42,7 +42,7 @@ public final class Token {
         return type;
     }
 
-    public String getText() {
+    public String getString() {
         return str;
     }
 

@@ -23,7 +23,7 @@ import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.atoms.FunctionAtom;
 import xyz.avarel.aje.ast.invocation.InvocationExpr;
-import xyz.avarel.aje.ast.variables.NameAtom;
+import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
@@ -43,7 +43,7 @@ public class PipeForwardParser extends BinaryParser {
         if (right instanceof InvocationExpr) {
             ((InvocationExpr) right).getArguments().add(0, left);
             return right;
-        } else if (right instanceof FunctionAtom || right instanceof NameAtom) {
+        } else if (right instanceof FunctionAtom || right instanceof Identifier) {
             return new InvocationExpr(token.getPosition(), right, Collections.singletonList(left));
         }
 

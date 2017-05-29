@@ -51,11 +51,11 @@ public class CombinedFunction extends AJEFunction {
     }
 
     @Override
-    public Obj invoke(List<Obj> args) {
-        if (args.size() != getArity()) {
+    public Obj invoke(List<Obj> arguments) {
+        if (arguments.size() != getArity()) {
             return Undefined.VALUE;
         }
 
-        return operator.apply(left.invoke(args), right.invoke(args));
+        return operator.apply(left.invoke(arguments), right.invoke(arguments));
     }
 }

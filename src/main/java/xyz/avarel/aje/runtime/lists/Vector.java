@@ -28,28 +28,60 @@ import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
-public class Vector extends ArrayList<Obj> implements Obj, NativeObject<List<Obj>> {
+/**
+ * AJE wrapper class for a one dimensional vector.
+ */
+public class Vector extends ArrayList<Obj> implements Obj, Iterable<Obj>, NativeObject<List<Object>> {
     public static final Type TYPE = new Type("vector");
 
+    /**
+     * Creates an empty vector.
+     */
     public Vector() {
         super();
     }
 
+    /**
+     * Creates a vector of items.
+     *
+     * @param   items
+     *          {@link Obj} items to put into the list.
+     * @return  The created {@link Vector}.
+     */
     public static Vector of(Obj... items) {
         Vector vector = new Vector();
         vector.addAll(Arrays.asList(items));
         return vector;
     }
 
-    public static Vector ofList(Collection<Obj> items) {
+    /**
+     * Creates a vector of items from a native {@link Collection collection}.
+     *
+     * @param   collection
+     *          Native {@link Collection collection} of {@link Obj AJE objects}.
+     * @return  The created {@link Vector}.
+     */
+    public static Vector ofList(Collection<Obj> collection) {
         Vector vector = new Vector();
-        vector.addAll(items);
+        vector.addAll(collection);
         return vector;
     }
 
+    /**
+     * Returns an unmodifiable representation of the vector. Note that the list's contents are all converted to
+     * their native representation or {@code null} if unable to.
+     *
+     * @return An unmodifiable representation of the vector.
+     */
     @Override
-    public List<Obj> toNative() {
-        return Collections.unmodifiableList(this);
+    public List<Object> toNative() {
+        List<Object> objects = new ArrayList<>();
+
+        for (Obj obj : this) {
+            objects.add(obj.isNativeObject() ? obj.toNative() : null);
+        }
+
+        return Collections.unmodifiableList(objects);
     }
 
     @Override
@@ -192,6 +224,10 @@ public class Vector extends ArrayList<Obj> implements Obj, NativeObject<List<Obj
         switch (name) {
             case "size":
                 return Int.of(size());
+            case "length":
+                return Int.of(size());
+            case "lastIndex":
+                return Int.of(size() - 1);
             case "append":
                 return new NativeFunction(true, Obj.TYPE) {
                     @Override
@@ -210,9 +246,5 @@ public class Vector extends ArrayList<Obj> implements Obj, NativeObject<List<Obj
                 };
         }
         return Undefined.VALUE;
-    }
-
-    public int lastIndex() {
-        return size() - 1;
     }
 }

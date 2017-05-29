@@ -220,9 +220,9 @@ public class Int implements Obj, NativeObject<Integer> {
     }
 
     @Override
-    public Obj invoke(List<Obj> args) {
-        if (args.size() == 1) {
-            return times(args.get(0));
+    public Obj invoke(List<Obj> arguments) {
+        if (arguments.size() == 1) {
+            return times(arguments.get(0));
         }
         return Undefined.VALUE;
     }

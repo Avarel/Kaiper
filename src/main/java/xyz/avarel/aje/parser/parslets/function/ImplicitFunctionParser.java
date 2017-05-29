@@ -21,7 +21,7 @@ package xyz.avarel.aje.parser.parslets.function;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.atoms.FunctionAtom;
-import xyz.avarel.aje.ast.variables.NameAtom;
+import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.InfixParser;
@@ -40,7 +40,7 @@ public class ImplicitFunctionParser implements PrefixParser {
     public Expr parse(AJEParser parser, Token token) {
         ParserProxy ip = new ParserProxy(parser, token);
 
-        Expr expr = ip.parseInfix(0, new NameAtom(token.getPosition(), token.getText()));
+        Expr expr = ip.parseInfix(0, new Identifier(token.getPosition(), token.getString()));
 
         List<Parameter> list = new ArrayList<>();
 
@@ -51,25 +51,25 @@ public class ImplicitFunctionParser implements PrefixParser {
         return new FunctionAtom(token.getPosition(), list, expr);
     }
 
-    private class ParserProxy extends AJEParser {
-        private AJEParser proxy;
-        private AJEParser current;
+    private static final class ParserProxy extends AJEParser {
         private final Set<String> parameters = new LinkedHashSet<>();
+        private final AJEParser proxy;
+        private AJEParser current;
 
-        public ParserProxy(AJEParser proxy, Token token) {
+        private ParserProxy(AJEParser proxy, Token token) {
             super(proxy);
 
             this.proxy = proxy;
             this.current = this;
-            this.parameters.add(token.getText());
+            this.parameters.add(token.getString());
         }
 
         @Override
         public Token eat() {
             Token token = super.eat();
             if (token.getType() == TokenType.UNDERSCORE) {
-                parameters.add(token.getText());
-                return new Token(token.getPosition(), TokenType.IDENTIFIER, token.getText());
+                parameters.add(token.getString());
+                return new Token(token.getPosition(), TokenType.IDENTIFIER, token.getString());
             }
             return token;
         }
@@ -85,7 +85,7 @@ public class ImplicitFunctionParser implements PrefixParser {
 
                 InfixParser infix = getInfixParsers().get(token.getType());
 
-                if (infix == null) throw new SyntaxException("Could not parse token `" + token.getText() + "`", token.getPosition());
+                if (infix == null) throw new SyntaxException("Could not parse token `" + token.getString() + "`", token.getPosition());
 
                 left = infix.parse(current, left, token);
             }

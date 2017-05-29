@@ -22,7 +22,7 @@ package xyz.avarel.aje.parser.parslets.operator;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
-import xyz.avarel.aje.ast.variables.NameAtom;
+import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -41,10 +41,10 @@ public class BinaryOperatorParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
-        if (left instanceof NameAtom) {
+        if (left instanceof Identifier) {
             if (parser.match(TokenType.ASSIGN)) {
                 Expr right = parser.parseExpr(0);
-                return new AssignmentExpr(token.getPosition(), ((NameAtom) left).getName(), new BinaryOperation(token.getPosition(), left, right, operator));
+                return new AssignmentExpr(token.getPosition(), ((Identifier) left).getName(), new BinaryOperation(token.getPosition(), left, right, operator));
             }
         }
 

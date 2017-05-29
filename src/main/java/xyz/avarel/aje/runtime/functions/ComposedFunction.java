@@ -48,11 +48,11 @@ public class ComposedFunction extends AJEFunction {
     }
 
     @Override
-    public Obj invoke(List<Obj> args) {
-        if (args.size() != getArity()) {
+    public Obj invoke(List<Obj> arguments) {
+        if (arguments.size() != getArity()) {
             return Undefined.VALUE;
         }
 
-        return left.invoke(right.invoke(args));
+        return left.invoke(right.invoke(arguments));
     }
 }

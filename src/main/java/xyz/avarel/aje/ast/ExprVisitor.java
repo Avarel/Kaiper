@@ -29,7 +29,7 @@ import xyz.avarel.aje.ast.operations.GetOperation;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
-import xyz.avarel.aje.ast.variables.NameAtom;
+import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
@@ -56,7 +56,7 @@ public class ExprVisitor {
         return func;
     }
 
-    public Obj visit(NameAtom expr, Scope scope) {
+    public Obj visit(Identifier expr, Scope scope) {
         if (expr.getFrom() != null) {
             return expr.getFrom().accept(this, scope).getAttr(expr.getName());
         }

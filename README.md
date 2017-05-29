@@ -160,6 +160,8 @@ var x = 10
 x = 20
 sin(x)
 ```
+**Note:** Due to AJE having built in support for complex numbers, the identifier `i` denotes a
+    keyword for complex numbers and can not be assigned to. Use other identifiers such as `_i` instead.
 
 ##### Compound Assignment
 Variables can use the short syntax-sugar compound assignments. They provide a shorter syntax to perform
@@ -172,7 +174,7 @@ y %= 2.0
 ```
 
 ### Defining Functions
-Functions are expressions that can be invoked using the __invocation operator__.
+Functions are first class objects that can be invoked using the __invocation operator__.
 
 `complex` arguments can be either `integer`, `decimal`, or `complex`.
 

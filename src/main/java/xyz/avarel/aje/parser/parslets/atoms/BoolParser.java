@@ -27,10 +27,10 @@ import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.runtime.Bool;
 
-public class TruthParser implements PrefixParser {
+public class BoolParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        switch (token.getText()) {
+        switch (token.getString()) {
             case "true":
                 return new ValueAtom(token.getPosition(), Bool.TRUE);
             case "false":

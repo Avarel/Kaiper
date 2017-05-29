@@ -25,9 +25,10 @@ import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class Range implements Obj, NativeObject<List<Integer>> {
+public class Range implements Obj, Iterable<Int>, NativeObject<List<Integer>> {
     public static final Type TYPE = new Type("range");
     
     private final int start;
@@ -60,14 +61,8 @@ public class Range implements Obj, NativeObject<List<Integer>> {
 
     public Vector toVector() {
         Vector vector = new Vector();
-        if (start < end) {
-            for (int i = start; i <= end; i++) {
-                vector.add(Int.of(i));
-            }
-        } else {
-            for (int i = start; i >= end; i--) {
-                vector.add(Int.of(i));
-            }
+        for (Int i : this) {
+            vector.add(i);
         }
         return vector;
     }
@@ -75,5 +70,28 @@ public class Range implements Obj, NativeObject<List<Integer>> {
     @Override
     public String toString() {
         return start + ".." + end;
+    }
+
+    @Override
+    public Iterator<Int> iterator() {
+        return new RangeIterator();
+    }
+
+    private final class RangeIterator implements Iterator<Int> {
+        private int cursor;
+
+        private RangeIterator() {
+            this.cursor = start;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return start < end ? cursor <= end : cursor >= end;
+        }
+
+        @Override
+        public Int next() {
+            return start < end ? Int.of(cursor++) : Int.of(cursor--);
+        }
     }
 }

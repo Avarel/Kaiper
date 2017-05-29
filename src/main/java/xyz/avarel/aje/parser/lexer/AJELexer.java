@@ -51,7 +51,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
     public AJELexer(Reader reader) {
-        this(reader, 3);
+        this(reader, 2);
     }
 
     public AJELexer(Reader reader, int historyBuffer) {
@@ -64,7 +64,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         history = new Entry[historyBuffer];
 
         this.current = 0;
-        this.index = 0;
+        this.index = -1;
         this.lineIndex = 0;
         this.line = 1;
     }
@@ -348,7 +348,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
     private Token make(TokenType type, String value) {
-        return make(new Position(index, line, lineIndex - value.length()), type, value);
+        return make(new Position(index - value.length(), line, lineIndex - value.length()), type, value);
     }
 
     private Token make(Position position, TokenType type) {
@@ -396,6 +396,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 c = 0;
             }
         }
+
         this.index += 1;
         if (this.current == '\r') {
             this.line += 1;

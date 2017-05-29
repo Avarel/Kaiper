@@ -60,16 +60,16 @@ public class CompiledFunction extends AJEFunction {
     }
 
     @Override
-    public Obj invoke(List<Obj> args) {
+    public Obj invoke(List<Obj> arguments) {
         Scope scope = this.scope.copy();
         for (int i = 0; i < getArity(); i++) {
             Parameter parameter = parameters.get(i);
             Obj obj = parameter.getType().accept(new ExprVisitor(), scope);
             if (obj instanceof Type) {
                 Type type = (Type) obj;
-                if (i < args.size()) {
-                    if (args.get(i).getType().is(type)) {
-                        scope.declare(parameter.getName(), args.get(i));
+                if (i < arguments.size()) {
+                    if (arguments.get(i).getType().is(type)) {
+                        scope.declare(parameter.getName(), arguments.get(i));
                     } else {
                         return Undefined.VALUE;
                     }

@@ -44,7 +44,7 @@ public abstract class AJEFunction implements Obj, NativeObject<Function<List<Obj
     }
 
     @Override
-    public abstract Obj invoke(List<Obj> args);
+    public abstract Obj invoke(List<Obj> arguments);
 
     @Override
     public Obj plus(Obj other) {

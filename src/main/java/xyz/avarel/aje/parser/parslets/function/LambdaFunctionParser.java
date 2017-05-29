@@ -22,7 +22,7 @@ package xyz.avarel.aje.parser.parslets.function;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.atoms.FunctionAtom;
 import xyz.avarel.aje.ast.atoms.ValueAtom;
-import xyz.avarel.aje.ast.variables.NameAtom;
+import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
@@ -45,7 +45,7 @@ public class LambdaFunctionParser implements PrefixParser {
             Set<String> paramNames = new HashSet<>();
 
             do {
-                String parameterName = parser.eat(TokenType.IDENTIFIER).getText();
+                String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
 
                 if (paramNames.contains(parameterName)) {
                     throw new SyntaxException("Duplicate parameter names", parser.getLast().getPosition());
@@ -57,9 +57,9 @@ public class LambdaFunctionParser implements PrefixParser {
 
                 if (parser.match(TokenType.COLON)) {
                     Token typeToken = parser.eat(TokenType.IDENTIFIER);
-                    parameterType = new NameAtom(typeToken.getPosition(), typeToken.getText());
+                    parameterType = new Identifier(typeToken.getPosition(), typeToken.getString());
                     while (parser.match(TokenType.DOT)) {
-                        parameterType = new NameAtom(typeToken.getPosition(), parameterType, parser.eat(TokenType.IDENTIFIER).getText());
+                        parameterType = new Identifier(typeToken.getPosition(), parameterType, parser.eat(TokenType.IDENTIFIER).getString());
                     }
                 }
 

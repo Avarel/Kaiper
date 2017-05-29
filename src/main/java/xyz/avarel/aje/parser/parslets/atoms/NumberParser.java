@@ -39,15 +39,15 @@ public class NumberParser implements PrefixParser {
         Expr value = null;
 
         if (parser.match(TokenType.IMAGINARY)) {
-            String str = token.getText();
+            String str = token.getString();
             value = new ValueAtom(token.getPosition(), Complex.of(0, Double.parseDouble(str)));
         } else if (token.getType() == TokenType.IMAGINARY) {
             value = new ValueAtom(token.getPosition(), Complex.of(0, 1));
         } else if (token.getType() == TokenType.INT) {
-            String str = token.getText();
+            String str = token.getString();
             value = new ValueAtom(token.getPosition(), Int.of(Integer.parseInt(str)));
         } else if (token.getType() == TokenType.DECIMAL) {
-            String str = token.getText();
+            String str = token.getString();
             value = new ValueAtom(token.getPosition(), Decimal.of(Double.parseDouble(str)));
         }
 
