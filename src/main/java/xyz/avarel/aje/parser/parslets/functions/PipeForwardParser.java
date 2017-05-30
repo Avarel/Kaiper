@@ -17,38 +17,36 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.operator;
+package xyz.avarel.aje.parser.parslets.functions;
 
+import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.operations.BinaryOperation;
-import xyz.avarel.aje.ast.variables.AssignmentExpr;
+import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.invocation.InvocationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Obj;
 
-import java.util.function.BinaryOperator;
+import java.util.Collections;
 
-public class BinaryOperatorParser extends BinaryParser {
-    private final BinaryOperator<Obj> operator;
-
-    public BinaryOperatorParser(int precedence, boolean leftAssoc, BinaryOperator<Obj> operator) {
-        super(precedence, leftAssoc);
-        this.operator = operator;
+public class PipeForwardParser extends BinaryParser {
+    public PipeForwardParser() {
+        super(Precedence.PIPE_FORWARD);
     }
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
-        if (left instanceof Identifier) {
-            if (parser.match(TokenType.ASSIGN)) {
-                Expr right = parser.parseExpr(0);
-                return new AssignmentExpr(token.getPosition(), ((Identifier) left).getName(), new BinaryOperation(token.getPosition(), left, right, operator));
-            }
+        Expr right = parser.parseExpr(getPrecedence());
+
+        if (right instanceof InvocationExpr) {
+            ((InvocationExpr) right).getArguments().add(0, left);
+            return right;
+        } else if (right instanceof FunctionAtom || right instanceof Identifier) {
+            return new InvocationExpr(token.getPosition(), right, Collections.singletonList(left));
         }
 
-        Expr right = parser.parseExpr(getPrecedence() - (isLeftAssoc() ? 0 : 1));
-        return new BinaryOperation(token.getPosition(), left, right, operator);
+        throw new SyntaxException("Pipe-forward requires the right operand to be either: invocation, function, or name", token.getPosition());
     }
 }

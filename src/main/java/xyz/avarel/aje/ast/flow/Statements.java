@@ -17,34 +17,36 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast;
+package xyz.avarel.aje.ast.flow;
 
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class Statements extends Expr {
-    private final Expr before;
-    private final Expr after;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-    private boolean hasNext;
+public class Statements extends Expr implements Iterable<Expr> {
+    private final List<Expr> statements;
 
     public Statements(Expr before, Expr after) {
-        super(null);
+        super(before.getPosition());
 
-        this.before = before;
-        this.after = after;
-
-        if (before instanceof Statements) {
-            ((Statements) before).hasNext = true;
-        }
+        this.statements = new ArrayList<>();
+        statements.add(before);
+        statements.add(after);
     }
 
-    public Expr getBefore() {
-        return before;
+    @Override
+    public Expr andThen(Expr after) {
+        statements.add(after);
+        return this;
     }
 
-    public Expr getAfter() {
-        return after;
+    public List<Expr> getExprs() {
+        return statements;
     }
 
     @Override
@@ -54,13 +56,22 @@ public class Statements extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        before.ast(builder, indent, false);
-        builder.append('\n');
-        after.ast(builder, indent, !hasNext);
+        for (int i = 0; i < statements.size() - 1; i++) {
+            statements.get(i).ast(builder, indent, false);
+            builder.append('\n');
+        }
+        if (statements.size() >= 1) {
+            statements.get(statements.size() - 1).ast(builder, indent, true);
+        }
     }
 
     @Override
     public String toString() {
         return "statements";
+    }
+
+    @Override
+    public Iterator<Expr> iterator() {
+        return statements.iterator();
     }
 }

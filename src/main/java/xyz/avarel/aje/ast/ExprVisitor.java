@@ -19,10 +19,12 @@
 
 package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.ast.atoms.FunctionAtom;
 import xyz.avarel.aje.ast.atoms.RangeExpr;
 import xyz.avarel.aje.ast.atoms.ValueAtom;
 import xyz.avarel.aje.ast.atoms.VectorAtom;
+import xyz.avarel.aje.ast.flow.*;
+import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.invocation.InvocationExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.GetOperation;
@@ -48,8 +50,12 @@ import java.util.List;
 
 public class ExprVisitor {
     public Obj visit(Statements statements, Scope scope) {
-        statements.getBefore().accept(this, scope);
-        return statements.getAfter().accept(this, scope);
+        List<Expr> exprs = statements.getExprs();
+
+        for (int i = 0; i < exprs.size() - 1; i++) {
+            exprs.get(i).accept(this, scope);
+        }
+        return exprs.get(exprs.size() - 1).accept(this, scope);
     }
 
     public Obj visit(FunctionAtom expr, Scope scope) {
@@ -233,8 +239,9 @@ public class ExprVisitor {
         } else {
             if (scope.contains(expr.getName())) {
                 scope.assign(expr.getName(), expr.getExpr().accept(this, scope));
+            } else {
+                throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
             }
-            throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
         }
         return Undefined.VALUE;
     }
@@ -260,5 +267,24 @@ public class ExprVisitor {
         }
         return Undefined.VALUE;
         //throw new ComputeException("Condition of if expression did not return boolean", expr.getCondition().getPosition());
+    }
+
+    @SuppressWarnings("unchecked")
+    public Obj visit(ForEachExpr expr, Scope scope) {
+        Obj obj = expr.getIterable().accept(this, scope);
+
+        if (obj instanceof Iterable) {
+            Iterable<Obj> iterable = (Iterable<Obj>) obj;
+
+            String variant = expr.getVariant();
+            Expr loopExpr = expr.getExpr();
+
+            for (Obj var : iterable) {
+                Scope copy = scope.copy();
+                copy.declare(variant, var);
+                loopExpr.accept(this, copy);
+            }
+        }
+        return Undefined.VALUE;
     }
 }

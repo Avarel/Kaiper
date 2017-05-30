@@ -17,12 +17,12 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.function;
+package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ParameterData;
-import xyz.avarel.aje.ast.atoms.FunctionAtom;
 import xyz.avarel.aje.ast.atoms.ValueAtom;
+import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;

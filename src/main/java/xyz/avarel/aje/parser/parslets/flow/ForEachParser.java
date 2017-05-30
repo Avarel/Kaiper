@@ -17,29 +17,38 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.operator;
+package xyz.avarel.aje.parser.parslets.flow;
 
-import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.atoms.RangeExpr;
+import xyz.avarel.aje.ast.flow.ForEachExpr;
 import xyz.avarel.aje.parser.AJEParser;
-import xyz.avarel.aje.parser.BinaryParser;
+import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 
-public class RangeOperatorParser extends BinaryParser {
-    public RangeOperatorParser() {
-        super(Precedence.RANGE_TO);
-    }
-
+public class ForEachParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        boolean exclusive = false;
-        if (parser.match(TokenType.LT)) {
-            exclusive = true;
+    public Expr parse(AJEParser parser, Token token) {
+        parser.eat(TokenType.LEFT_PAREN);
+
+        String variant = parser.eat(TokenType.IDENTIFIER).getString();
+
+        parser.eat(TokenType.IN);
+
+        Expr iterable = parser.parseExpr();
+
+        parser.eat(TokenType.RIGHT_PAREN);
+
+        Expr expr;
+
+        if (parser.match(TokenType.LEFT_BRACE)) {
+            expr = parser.parseStatements();
+            parser.eat(TokenType.RIGHT_BRACE);
+        } else {
+            expr = parser.parseExpr();
         }
 
-        Expr right = parser.parseExpr(getPrecedence());
-        return new RangeExpr(token.getPosition(), left, right, exclusive);
+
+        return new ForEachExpr(token.getPosition(), variant, iterable, expr);
     }
 }

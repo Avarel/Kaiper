@@ -37,19 +37,19 @@ public class ComposedFunction extends AJEFunction {
         this.left = left;
         this.right = right;
 
-        if (left.getParameters().size() != 1 || right.getParameters().size() != 1) {
-            throw new ComputeException("Composed functions require both functions to be arity-1.");
+        if (left.getParameters().size() != 1) {
+            throw new ComputeException("Composed functions require the outer function to be arity-1.");
         }
     }
 
     @Override
     public List<Parameter> getParameters() {
-        return left.getParameters();
+        return right.getParameters();
     }
 
     @Override
     public int getArity() {
-        return 1;
+        return right.getArity();
     }
 
     @Override

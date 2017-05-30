@@ -20,7 +20,7 @@
 package xyz.avarel.aje;
 
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.ast.ReturnException;
+import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -149,6 +149,7 @@ public class Evaluator {
         } catch (RuntimeException re) {
             new ComputeException(re).printStackTrace();
         }
+
         return answer = Undefined.VALUE;
     }
 

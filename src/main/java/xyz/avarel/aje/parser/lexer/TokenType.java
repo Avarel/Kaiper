@@ -39,6 +39,7 @@ public enum TokenType {
     IMAGINARY,
     BOOLEAN,
     FUNCTION,
+    STRING,
 
     // ARITHMETIC
     PLUS,
@@ -78,10 +79,13 @@ public enum TokenType {
 
     // SCRIPT
     IDENTIFIER,
+    UNDEFINED,
     VAR,
     RETURN,
     IF,
     ELSE,
+    FOR,
+    IN,
 
     SKIP,
     SEMICOLON,

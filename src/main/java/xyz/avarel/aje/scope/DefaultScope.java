@@ -21,7 +21,6 @@ package xyz.avarel.aje.scope;
 
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
 import xyz.avarel.aje.runtime.lists.Range;
 import xyz.avarel.aje.runtime.lists.Vector;
@@ -88,8 +87,6 @@ public class DefaultScope extends Scope {
         declare("Vector", Vector.TYPE);
         declare("Range", Range.TYPE);
         declare("Function", AJEFunction.TYPE);
-
-        declare("undefined", Undefined.VALUE);
     }
 
     @Deprecated

@@ -17,35 +17,38 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.function;
+package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.functions.FunctionAtom;
 import xyz.avarel.aje.ast.invocation.InvocationExpr;
+import xyz.avarel.aje.ast.variables.Identifier;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.parser.lexer.TokenType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InvocationParser extends BinaryParser {
-    public InvocationParser() {
+public class BlockParameterParser extends BinaryParser {
+    public BlockParameterParser() {
         super(Precedence.INVOCATION);
     }
 
-    @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        List<Expr> list = new ArrayList<>();
+    @Override // [1..10] |> fold(0) { a, b -> a + b }
+    public Expr parse(AJEParser parser, Expr left, Token token) { // [1..10] |> filter { it -> it % 2 == 0 }
+        Expr block = parser.getPrefixParsers().get(token.getType()).parse(parser, token);
 
-        if (!parser.match(TokenType.RIGHT_PAREN)) {
-            do {
-                list.add(parser.parseExpr());
-            } while (parser.match(TokenType.COMMA));
-            parser.eat(TokenType.RIGHT_PAREN);
+        if (left instanceof InvocationExpr) {
+            ((InvocationExpr) left).getArguments().add(block);
+        } else if (left instanceof FunctionAtom || left instanceof Identifier) {
+            List<Expr> args = new ArrayList<>();
+            args.add(block);
+            return new InvocationExpr(token.getPosition(), left, args);
         }
 
-        return new InvocationExpr(token.getPosition(), left, list);
+        throw new SyntaxException("Block parameters incompatible with " + left.getClass().getSimpleName(), token.getPosition());
     }
 }

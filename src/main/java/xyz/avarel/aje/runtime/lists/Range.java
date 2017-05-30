@@ -22,6 +22,7 @@ package xyz.avarel.aje.runtime.lists;
 import xyz.avarel.aje.runtime.NativeObject;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.ArrayList;
@@ -42,14 +43,8 @@ public class Range implements Obj, Iterable<Int>, NativeObject<List<Integer>> {
     @Override
     public List<Integer> toNative() {
         List<Integer> list = new ArrayList<>();
-        if (start < end) {
-            for (int i = start; i <= end; i++) {
-                list.add(i);
-            }
-        } else {
-            for (int i = start; i >= end; i--) {
-                list.add(i);
-            }
+        for (Int i : this) {
+            list.add(i.value());
         }
         return list;
     }
@@ -73,8 +68,40 @@ public class Range implements Obj, Iterable<Int>, NativeObject<List<Integer>> {
     }
 
     @Override
+    public Obj get(Obj other) {
+        if (other instanceof Int) {
+            return get((Int) other);
+        }
+        return Undefined.VALUE;
+    }
+
+    public Obj get(Int index) {
+        if (index.value() < size()) {
+            return Int.of(start + index.value());
+        }
+        return Undefined.VALUE;
+    }
+
+    @Override
     public Iterator<Int> iterator() {
         return new RangeIterator();
+    }
+
+    public int size() {
+        return end - start + 1;
+    }
+
+    @Override
+    public Obj getAttr(String name) {
+        switch (name) {
+            case "size":
+                return Int.of(size());
+            case "length":
+                return Int.of(size());
+            case "lastIndex":
+                return Int.of(size() - 1);
+        }
+        return Undefined.VALUE;
     }
 
     private final class RangeIterator implements Iterator<Int> {
@@ -91,7 +118,7 @@ public class Range implements Obj, Iterable<Int>, NativeObject<List<Integer>> {
 
         @Override
         public Int next() {
-            return start < end ? Int.of(cursor++) : Int.of(cursor--);
+            return Int.of(start < end ? cursor++ : cursor--);
         }
     }
 }

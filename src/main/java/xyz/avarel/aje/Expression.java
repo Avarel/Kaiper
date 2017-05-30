@@ -21,8 +21,8 @@ package xyz.avarel.aje;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.ast.ReturnException;
-import xyz.avarel.aje.ast.Statements;
+import xyz.avarel.aje.ast.flow.ReturnException;
+import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -144,21 +144,7 @@ public class Expression {
      *          Error during the lexing or parsing process of the expression.
      */
     public Expr compile() {
-        return compile(false);
-    }
-
-    /**
-     * Parse the expression into an AST structure of {@link Expr} nodes.
-     *
-     * @param   recompile
-     *          Whether to recompile the script or not if it is already compiled. This parameter has a default
-     *          overload to false in {@link #compile()}.
-     * @return  The compiled {@link Expr}.
-     * @throws  SyntaxException
-     *          Error during the lexing or parsing process of the expression.
-     */
-    public Expr compile(boolean recompile) {
-        if (recompile || expr == null) {
+        if (expr == null) {
             expr = new ExpressionExpr(parser.compile());
         }
         return expr;
@@ -188,6 +174,10 @@ public class Expression {
 
         @Override
         public Expr andThen(Expr after) {
+            if (expr instanceof Statements) {
+                ((Statements) expr).getExprs().add(after);
+                return this;
+            }
             return new ExpressionExpr(new Statements(expr, after));
         }
 

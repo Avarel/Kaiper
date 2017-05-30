@@ -17,40 +17,20 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast.atoms;
+package xyz.avarel.aje.ast.flow;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.ast.ParameterData;
 import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class FunctionAtom extends Expr {
-    private final String name;
-    private final List<ParameterData> parameters;
+public class ReturnExpr extends Expr {
     private final Expr expr;
 
-    public FunctionAtom(Position position, List<ParameterData> parameters, Expr expr) {
-        this(position, null, parameters, expr);
-    }
-
-    public FunctionAtom(Position position, String name, List<ParameterData> parameters, Expr expr) {
+    public ReturnExpr(Position position, Expr expr) {
         super(position);
-        this.name = name;
-        this.parameters = parameters;
         this.expr = expr;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<ParameterData> getParameterExprs() {
-        return parameters;
     }
 
     public Expr getExpr() {
@@ -63,19 +43,12 @@ public class FunctionAtom extends Expr {
     }
 
     @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ")
-                .append("func").append(name != null ? " " + name : "")
-                .append('(')
-                .append(getParameterExprs().stream().map(Object::toString)
-                        .collect(Collectors.joining(", ")))
-                .append(')')
-                .append('\n');
-        expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
+    public String toString() {
+        return "return " + expr.toString();
     }
 
     @Override
-    public String toString() {
-        return "function";
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        expr.ast("return", builder, indent, true);
     }
 }

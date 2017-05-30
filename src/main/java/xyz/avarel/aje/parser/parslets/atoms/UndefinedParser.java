@@ -17,36 +17,18 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast;
+package xyz.avarel.aje.parser.parslets.atoms;
 
-import xyz.avarel.aje.parser.lexer.Position;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.scope.Scope;
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.atoms.ValueAtom;
+import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.PrefixParser;
+import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.runtime.Undefined;
 
-public class ReturnExpr extends Expr {
-    private final Expr expr;
-
-    public ReturnExpr(Position position, Expr expr) {
-        super(position);
-        this.expr = expr;
-    }
-
-    public Expr getExpr() {
-        return expr;
-    }
-
+public class UndefinedParser implements PrefixParser {
     @Override
-    public Obj accept(ExprVisitor visitor, Scope scope) {
-        return visitor.visit(this, scope);
-    }
-
-    @Override
-    public String toString() {
-        return "return " + expr.toString();
-    }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        expr.ast("return", builder, indent, true);
+    public Expr parse(AJEParser parser, Token token) {
+        return new ValueAtom(token.getPosition(), Undefined.VALUE);
     }
 }

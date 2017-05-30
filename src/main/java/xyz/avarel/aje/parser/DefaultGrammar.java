@@ -23,15 +23,17 @@ import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.GetParser;
 import xyz.avarel.aje.parser.parslets.GroupParser;
-import xyz.avarel.aje.parser.parslets.IfElseParser;
-import xyz.avarel.aje.parser.parslets.ReturnParser;
 import xyz.avarel.aje.parser.parslets.atoms.BoolParser;
 import xyz.avarel.aje.parser.parslets.atoms.NumberParser;
+import xyz.avarel.aje.parser.parslets.atoms.UndefinedParser;
 import xyz.avarel.aje.parser.parslets.atoms.VectorParser;
-import xyz.avarel.aje.parser.parslets.function.*;
-import xyz.avarel.aje.parser.parslets.operator.BinaryOperatorParser;
-import xyz.avarel.aje.parser.parslets.operator.RangeOperatorParser;
-import xyz.avarel.aje.parser.parslets.operator.UnaryOperatorParser;
+import xyz.avarel.aje.parser.parslets.flow.ForEachParser;
+import xyz.avarel.aje.parser.parslets.flow.IfElseParser;
+import xyz.avarel.aje.parser.parslets.flow.ReturnParser;
+import xyz.avarel.aje.parser.parslets.functions.*;
+import xyz.avarel.aje.parser.parslets.operators.BinaryOperatorParser;
+import xyz.avarel.aje.parser.parslets.operators.RangeOperatorParser;
+import xyz.avarel.aje.parser.parslets.operators.UnaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.variables.AttributeParser;
 import xyz.avarel.aje.parser.parslets.variables.DeclarationParser;
 import xyz.avarel.aje.parser.parslets.variables.NameParser;
@@ -44,10 +46,10 @@ public class DefaultGrammar extends Grammar {
         // BLOCKS
         register(TokenType.LEFT_BRACKET, new VectorParser());
         register(TokenType.LEFT_PAREN, new GroupParser());
-        register(TokenType.LEFT_BRACE, new LambdaFunctionParser());
 
         // FLOW CONTROL
         register(TokenType.IF, new IfElseParser());
+        register(TokenType.FOR, new ForEachParser());
         register(TokenType.RETURN, new ReturnParser());
 
         // ATOMS
@@ -55,8 +57,12 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.DECIMAL, new NumberParser());
         register(TokenType.IMAGINARY, new NumberParser());
         register(TokenType.BOOLEAN, new BoolParser());
+        register(TokenType.UNDEFINED, new UndefinedParser());
+
+
         register(TokenType.FUNCTION, new FunctionParser());
         register(TokenType.UNDERSCORE, new ImplicitFunctionParser());
+        register(TokenType.LEFT_BRACE, new LambdaFunctionParser());
 
 
         register(TokenType.IDENTIFIER, new NameParser());

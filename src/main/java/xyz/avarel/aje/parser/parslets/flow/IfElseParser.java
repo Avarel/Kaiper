@@ -17,10 +17,10 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets;
+package xyz.avarel.aje.parser.parslets.flow;
 
-import xyz.avarel.aje.ast.ConditionalExpr;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;

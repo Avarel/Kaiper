@@ -236,6 +236,9 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 match('\n');
                 return make(TokenType.SEMICOLON);
 
+            case '"':
+                return nextString('"');
+
             case '\r': match('\n');
             case '\n': return make(TokenType.LINE);
 
@@ -329,8 +332,10 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case "else": return make(TokenType.ELSE, "else");
             case "return": return make(TokenType.RETURN, "return");
             case "var": return make(TokenType.VAR, "var");
+            case "in": return make(TokenType.IN, "in");
+            case "for": return make(TokenType.FOR, "for");
+            case "undefined": return make(TokenType.UNDEFINED, "undefined");
 
-            case "fn": return make(TokenType.FUNCTION, "fn");
             case "fun": return make(TokenType.FUNCTION, "fun");
             case "func": return make(TokenType.FUNCTION, "func");
 
@@ -340,6 +345,60 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case "and": return make(TokenType.AND, "and");
             case "or": return make(TokenType.OR, "or");
             default: return make(TokenType.IDENTIFIER, value);
+        }
+    }
+
+    public Token nextString(char quote) {
+        char c;
+        StringBuilder sb = new StringBuilder();
+        while(true) {
+            c = this.advance();
+            switch (c) {
+                case 0:
+                case '\r':
+                case '\n':
+                    throw new SyntaxException("Unterminated string.");
+                case '\\':
+                    c = this.advance();
+                    switch (c) {
+                        case 'b':
+                            sb.append('\b');
+                            break;
+                        case 't':
+                            sb.append('\t');
+                            break;
+                        case 'n':
+                            sb.append('\n');
+                            break;
+                        case 'f':
+                            sb.append('\f');
+                            break;
+                        case 'r':
+                            sb.append('\r');
+                            break;
+                        case 'u':
+                            try {
+                                sb.append((char)Integer.parseInt(this.advance(4), 16));
+                            } catch (NumberFormatException e) {
+                                throw new SyntaxException("Illegal escape.", e);
+                            }
+                            break;
+                        case '"':
+                        case '\'':
+                        case '\\':
+                        case '/':
+                            sb.append(c);
+                            break;
+                        default:
+                            throw new SyntaxException("Illegal escape.");
+                    }
+                    break;
+                default:
+                    if (c == quote) {
+                        return make(TokenType.STRING, sb.toString());
+                    }
+                    sb.append(c);
+            }
         }
     }
 

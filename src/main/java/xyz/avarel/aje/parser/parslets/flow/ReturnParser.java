@@ -17,25 +17,26 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast;
+package xyz.avarel.aje.parser.parslets.flow;
 
-import xyz.avarel.aje.parser.lexer.Position;
-import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.atoms.ValueAtom;
+import xyz.avarel.aje.ast.flow.ReturnExpr;
+import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.PrefixParser;
+import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.runtime.Undefined;
 
-public class ReturnException extends RuntimeException {
-    private final Position position;
-    private final Obj value;
-
-    public ReturnException(Position position, Obj value) {
-        this.position = position;
-        this.value = value;
-    }
-
-    public Position getPosition() {
-        return position;
-    }
-
-    public Obj getValue() {
-        return value;
+public class ReturnParser implements PrefixParser {
+    @Override
+    public Expr parse(AJEParser parser, Token token) {
+        Expr expr;
+        if (parser.peekAny(TokenType.LINE, TokenType.SEMICOLON, TokenType.RIGHT_BRACE)) {
+            expr = new ValueAtom(token.getPosition(), Undefined.VALUE);
+        } else {
+            expr = parser.parseExpr();
+        }
+        return new ReturnExpr(token.getPosition(), expr);
     }
 }

@@ -17,26 +17,40 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets;
+package xyz.avarel.aje.ast.flow;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ReturnExpr;
-import xyz.avarel.aje.ast.atoms.ValueAtom;
-import xyz.avarel.aje.parser.AJEParser;
-import xyz.avarel.aje.parser.PrefixParser;
-import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.parser.lexer.Position;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.scope.Scope;
 
-public class ReturnParser implements PrefixParser {
+public class ForEachExpr extends Expr {
+    private final String variant;
+    private final Expr iterable;
+    private final Expr expr;
+
+    public ForEachExpr(Position position, String variant, Expr iterable, Expr expr) {
+        super(position);
+        this.variant = variant;
+        this.iterable = iterable;
+        this.expr = expr;
+    }
+
+    public String getVariant() {
+        return variant;
+    }
+
+    public Expr getIterable() {
+        return iterable;
+    }
+
+    public Expr getExpr() {
+        return expr;
+    }
+
     @Override
-    public Expr parse(AJEParser parser, Token token) {
-        Expr expr;
-        if (parser.peekAny(TokenType.LINE, TokenType.SEMICOLON, TokenType.RIGHT_BRACE)) {
-            expr = new ValueAtom(token.getPosition(), Undefined.VALUE);
-        } else {
-            expr = parser.parseExpr();
-        }
-        return new ReturnExpr(token.getPosition(), expr);
+    public Obj accept(ExprVisitor visitor, Scope scope) {
+        return visitor.visit(this, scope);
     }
 }

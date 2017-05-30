@@ -54,11 +54,10 @@ public class SpeedTester {
     }
 
     private static long testRecompileSpeed(String script, long tests) {
-        Expression exp = new Expression(script);
-
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
-            Expr expr = exp.compile(true);
+            Expression exp = new Expression(script);
+            Expr expr = exp.compile();
             expr.compute();
         }
         long end = System.nanoTime();

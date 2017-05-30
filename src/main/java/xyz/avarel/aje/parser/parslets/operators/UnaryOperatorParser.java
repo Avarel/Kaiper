@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.operator;
+package xyz.avarel.aje.parser.parslets.operators;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;

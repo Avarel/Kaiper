@@ -19,6 +19,8 @@
 
 package xyz.avarel.aje.ast;
 
+import xyz.avarel.aje.ast.flow.ReturnException;
+import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.parser.lexer.Position;
