@@ -21,9 +21,9 @@ package xyz.avarel.aje.ast.atoms;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.ParameterData;
 import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
@@ -31,14 +31,14 @@ import java.util.stream.Collectors;
 
 public class FunctionAtom extends Expr {
     private final String name;
-    private final List<Parameter> parameters;
+    private final List<ParameterData> parameters;
     private final Expr expr;
 
-    public FunctionAtom(Position position, List<Parameter> parameters, Expr expr) {
+    public FunctionAtom(Position position, List<ParameterData> parameters, Expr expr) {
         this(position, null, parameters, expr);
     }
 
-    public FunctionAtom(Position position, String name, List<Parameter> parameters, Expr expr) {
+    public FunctionAtom(Position position, String name, List<ParameterData> parameters, Expr expr) {
         super(position);
         this.name = name;
         this.parameters = parameters;
@@ -49,7 +49,7 @@ public class FunctionAtom extends Expr {
         return name;
     }
 
-    public List<Parameter> getParameters() {
+    public List<ParameterData> getParameterExprs() {
         return parameters;
     }
 
@@ -67,7 +67,7 @@ public class FunctionAtom extends Expr {
         builder.append(indent).append(isTail ? "└── " : "├── ")
                 .append("func").append(name != null ? " " + name : "")
                 .append('(')
-                .append(getParameters().stream().map(Object::toString)
+                .append(getParameterExprs().stream().map(Object::toString)
                         .collect(Collectors.joining(", ")))
                 .append(')')
                 .append('\n');

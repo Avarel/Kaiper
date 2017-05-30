@@ -64,20 +64,21 @@ public class CompiledFunction extends AJEFunction {
         Scope scope = this.scope.copy();
         for (int i = 0; i < getArity(); i++) {
             Parameter parameter = parameters.get(i);
-            Obj obj = parameter.getType().accept(new ExprVisitor(), scope);
-            if (obj instanceof Type) {
-                Type type = (Type) obj;
-                if (i < arguments.size()) {
-                    if (arguments.get(i).getType().is(type)) {
-                        scope.declare(parameter.getName(), arguments.get(i));
-                    } else {
-                        return Undefined.VALUE;
-                    }
-                } else if (parameter.hasDefault()) {
-                    scope.declare(parameter.getName(), parameter.getDefault().accept(new ExprVisitor(), scope));
+
+            Type type = parameter.getType();
+
+            if (i < arguments.size()) {
+                if (arguments.get(i).getType().is(type)) {
+                    scope.declare(parameter.getName(), arguments.get(i));
+                } else if (type == Obj.TYPE) {
+                    scope.declare(parameter.getName(), Undefined.VALUE);
                 } else {
                     return Undefined.VALUE;
                 }
+            } else if (parameter.hasDefault()) {
+                scope.declare(parameter.getName(), parameter.getDefault().accept(new ExprVisitor(), scope));
+            } else if (type == Obj.TYPE) {
+                scope.declare(parameter.getName(), Undefined.VALUE);
             } else {
                 return Undefined.VALUE;
             }

@@ -19,6 +19,7 @@
 
 package xyz.avarel.aje.runtime.functions;
 
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 
@@ -35,6 +36,15 @@ public class ComposedFunction extends AJEFunction {
     public ComposedFunction(AJEFunction left, AJEFunction right) {
         this.left = left;
         this.right = right;
+
+        if (left.getParameters().size() != 1 || right.getParameters().size() != 1) {
+            throw new ComputeException("Composed functions require both functions to be arity-1.");
+        }
+    }
+
+    @Override
+    public List<Parameter> getParameters() {
+        return left.getParameters();
     }
 
     @Override

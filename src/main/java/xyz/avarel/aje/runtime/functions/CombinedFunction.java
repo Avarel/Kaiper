@@ -19,6 +19,7 @@
 
 package xyz.avarel.aje.runtime.functions;
 
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 
@@ -38,11 +39,26 @@ public class CombinedFunction extends AJEFunction {
         this.left = left;
         this.right = right;
         this.operator = operator;
+
+        if (left.getParameters().size() != right.getParameters().size()) {
+            throw new ComputeException("Combined functions require both functions to have the same arity.");
+        } else {
+            for (int i = 0; i < left.getParameters().size(); i++) {
+                if (left.getParameters().get(i).getType() != right.getParameters().get(i).getType()) {
+                    throw new ComputeException("Combined functions require both functions to have the same parameters.");
+                }
+            }
+        }
     }
 
     @Override
     public int getArity() {
-        return 1;
+        return left.getArity();
+    }
+
+    @Override
+    public List<Parameter> getParameters() {
+        return left.getParameters();
     }
 
     @Override

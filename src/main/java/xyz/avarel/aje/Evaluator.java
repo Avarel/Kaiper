@@ -105,7 +105,7 @@ public class Evaluator {
         try {
             return eval(new FileReader(file));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return answer = Undefined.VALUE;
         }
     }

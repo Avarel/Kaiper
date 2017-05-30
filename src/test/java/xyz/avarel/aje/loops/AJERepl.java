@@ -21,6 +21,7 @@ package xyz.avarel.aje.loops;
 
 import xyz.avarel.aje.Evaluator;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.Scanner;
 import java.util.concurrent.*;
@@ -45,7 +46,10 @@ public class AJERepl {
                         continue;
                 }
 
-                Future<Obj> future = CompletableFuture.supplyAsync(() -> evaluator.eval(input));
+                Future<Obj> future = CompletableFuture.supplyAsync(() -> evaluator.eval(input)).exceptionally(t -> {
+                    System.out.println("! " + t.getMessage());
+                    return Undefined.VALUE;
+                });
 
                 Obj result = future.get(300, TimeUnit.MILLISECONDS);
 

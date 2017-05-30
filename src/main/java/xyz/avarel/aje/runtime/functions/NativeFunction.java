@@ -55,19 +55,19 @@ public abstract class NativeFunction extends AJEFunction {
 
     @Override
     public Obj invoke(List<Obj> arguments) {
-        if (!varargs && arguments.size() != getArity()) {
+        if (!varargs && arguments.size() < getArity()) {
             return Undefined.VALUE;
         }
 
         if (!varargs) {
             for (int i = 0; i < parameters.size(); i++) {
-                if (!arguments.get(i).getType().is((Type) parameters.get(i).getType().compute())) {
+                if (!arguments.get(i).getType().is(parameters.get(i).getType())) {
                     return Undefined.VALUE;
                 }
             }
         } else {
             for (Obj argument : arguments) { // all varargs should be the same size
-                if (!argument.getType().is((Type) parameters.get(0).getType().compute())) {
+                if (!argument.getType().is(parameters.get(0).getType())) {
                     return Undefined.VALUE;
                 }
             }

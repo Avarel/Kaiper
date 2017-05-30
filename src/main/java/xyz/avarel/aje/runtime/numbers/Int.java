@@ -24,7 +24,7 @@ import xyz.avarel.aje.runtime.*;
 import java.util.List;
 
 public class Int implements Obj, NativeObject<Integer> {
-    public static final Type<Int> TYPE = new Type<>(Numeric.TYPE, "integer");
+    public static final Type<Int> TYPE = new Type<>(Decimal.TYPE, "integer");
 
     private final int value;
 

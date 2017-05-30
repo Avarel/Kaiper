@@ -20,6 +20,7 @@
 package xyz.avarel.aje.parser.parslets.function;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.ParameterData;
 import xyz.avarel.aje.ast.atoms.FunctionAtom;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -28,7 +29,6 @@ import xyz.avarel.aje.parser.InfixParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -42,10 +42,10 @@ public class ImplicitFunctionParser implements PrefixParser {
 
         Expr expr = ip.parseInfix(0, new Identifier(token.getPosition(), token.getString()));
 
-        List<Parameter> list = new ArrayList<>();
+        List<ParameterData> list = new ArrayList<>();
 
         for (String param : ip.parameters) {
-            list.add(new Parameter(param));
+            list.add(new ParameterData(param));
         }
 
         return new FunctionAtom(token.getPosition(), list, expr);

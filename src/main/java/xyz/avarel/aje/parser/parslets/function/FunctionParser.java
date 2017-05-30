@@ -20,6 +20,7 @@
 package xyz.avarel.aje.parser.parslets.function;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.ParameterData;
 import xyz.avarel.aje.ast.atoms.FunctionAtom;
 import xyz.avarel.aje.ast.atoms.ValueAtom;
 import xyz.avarel.aje.ast.variables.Identifier;
@@ -29,7 +30,6 @@ import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,7 +39,7 @@ import java.util.Set;
 public class FunctionParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        List<Parameter> parameters = new ArrayList<>();
+        List<ParameterData> parameters = new ArrayList<>();
 
         String name = null;
         if (parser.match(TokenType.IDENTIFIER)) {
@@ -77,7 +77,7 @@ public class FunctionParser implements PrefixParser {
                     throw new SyntaxException("All parameters after the first default requires a default", parser.peek(0).getPosition());
                 }
 
-                Parameter parameter = new Parameter(parameterName, parameterType, parameterDefault);
+                ParameterData parameter = new ParameterData(parameterName, parameterType, parameterDefault);
                 parameters.add(parameter);
             } while (parser.match(TokenType.COMMA));
             parser.match(TokenType.RIGHT_PAREN);

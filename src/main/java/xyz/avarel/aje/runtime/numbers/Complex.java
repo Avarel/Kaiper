@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Complex implements Obj, NativeObject<Double> {
-    public static final Type<Complex> TYPE = new Type<>(Numeric.TYPE, "complex");
+    public static final Type<Complex> TYPE = new Type<>(Complex.TYPE, "complex");
 
     private final double re;
     private final double im;

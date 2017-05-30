@@ -33,9 +33,11 @@ import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
 import xyz.avarel.aje.runtime.functions.CompiledFunction;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.lists.Range;
 import xyz.avarel.aje.runtime.lists.Vector;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -51,7 +53,20 @@ public class ExprVisitor {
     }
 
     public Obj visit(FunctionAtom expr, Scope scope) {
-        AJEFunction func = new CompiledFunction(expr.getParameters(), expr.getExpr(), scope.subPool());
+
+        List<Parameter> parameters = new ArrayList<>();
+
+        for (ParameterData data : expr.getParameterExprs()) {
+            Obj obj_type = data.getTypeExpr().accept(this, scope);
+
+            if (!(obj_type instanceof Type)) {
+                throw new ComputeException(obj_type + " is not a valid parameter type", data.getTypeExpr().getPosition());
+            }
+
+            parameters.add(new Parameter(data.getName(), (Type) obj_type, data.getDefault()));
+        }
+
+        AJEFunction func = new CompiledFunction(parameters, expr.getExpr(), scope.subPool());
         if (expr.getName() != null) scope.declare(expr.getName(), func);
         return func;
     }

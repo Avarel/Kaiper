@@ -33,6 +33,8 @@ public abstract class AJEFunction implements Obj, NativeObject<Function<List<Obj
 
     public abstract int getArity();
 
+    public abstract List<Parameter> getParameters();
+
     @Override
     public Type<AJEFunction> getType() {
         return TYPE;

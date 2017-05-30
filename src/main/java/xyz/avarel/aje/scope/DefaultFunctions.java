@@ -314,49 +314,49 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    ARCSINE(new NativeFunction(Numeric.TYPE) {
+    ARCSINE(new NativeFunction(Decimal.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return Decimal.of(Math.asin(Numeric.convert(a, Decimal.TYPE).toNative()));
         }
     }),
-    ARCCOSINE(new NativeFunction(Numeric.TYPE) {
+    ARCCOSINE(new NativeFunction(Decimal.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return Decimal.of(Math.acos(Numeric.convert(a, Decimal.TYPE).toNative()));
         }
     }),
-    ARCTANGENT(new NativeFunction(Numeric.TYPE) {
+    ARCTANGENT(new NativeFunction(Decimal.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return Decimal.of(Math.atan(Numeric.convert(a, Decimal.TYPE).toNative()));
         }
     }),
-    ARCCOSECANT(new NativeFunction(Numeric.TYPE) {
+    ARCCOSECANT(new NativeFunction(Decimal.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return ARCSINE.get().invoke(Decimal.of(1).divide(Numeric.convert(a, Decimal.TYPE)));
         }
     }),
-    ARCSECANT(new NativeFunction(Numeric.TYPE) {
+    ARCSECANT(new NativeFunction(Decimal.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return ARCCOSINE.get().invoke(Decimal.of(1).divide(Numeric.convert(a, Decimal.TYPE)));
         }
     }),
-    ARCCOTANGENT(new NativeFunction(Numeric.TYPE) {
+    ARCCOTANGENT(new NativeFunction(Decimal.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return ARCTANGENT.get().invoke(Decimal.of(1).divide(Numeric.convert(a, Decimal.TYPE)));
         }
     }),
-    ARCTANGENT2(new NativeFunction(Numeric.TYPE, Numeric.TYPE) {
+    ARCTANGENT2(new NativeFunction(Decimal.TYPE, Decimal.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
