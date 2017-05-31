@@ -29,7 +29,7 @@ Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xy
 ◀ 14.0 + 46.0i : complex
 ```
 
-#### Slices and Lists
+#### Vectors
 ```
 ▶ [1,2,3][1]
 ◀ 2 : integer
@@ -63,6 +63,15 @@ Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xy
 
 ▶ fib(14)
 ◀ 377 : integer
+
+▶ var a = 0
+◀ 0 : integer
+
+▶ for (n in 1..10) { a += n }
+◀ undefined : undefined
+
+▶ a
+◀ 55 : integer
 ```
 
 #### First Class Functions
@@ -118,9 +127,10 @@ repositories {
 |Complex numbers|`complex`|`Complex`|`i^2` `3i` `(8+2i)(5i+3)`|
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Ranges|`range`|`List<Integer>`|`1..10` `10..<1`|
-|Lists operations|`vector`|`List<Obj>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
+|Vectors|`vector`|`List<Obj>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
+|Dictionaries|`dictionary`|`Map<Object, Object>`|`dictionary()` `map["hello"] = "there"`|
 |Strings|`string`|`String`|`"Hello there!`|
-|First class functions|`function`| |`func(x) = { x + 2 }` `{ x, y -> x ^ y }`|
+|Functions (first-class)|`function`| |`func(x) = { x + 2 }` `{ x, y -> x ^ y }`|
 |Flow control| | |`if (true) { 1 } else { 2 }`<br>`return 2`|
 
 `*` Mapped to AJE object.
@@ -219,7 +229,7 @@ Though ranges are of a different type, `range`, it is recommended that
 |`/`|Quotient of functions|`(f/g)(x) == f(x) / g(x)`|
 
 ### Defining Variables
-##### Declaration
+##### Declaration and Assignment
 Variables are names with information that you can use to store values and use them throughout
     the script. They can be declared using the following syntax:
 ```
@@ -237,6 +247,19 @@ sin(x)
 ```
 **Note:** Due to AJE having built in support for complex numbers, the identifier `i` denotes a
     keyword for complex numbers and can not be assigned to. Use other identifiers such as `_i` instead.
+
+##### Optional Assignment
+There is an optional assignment operator that only assigns a value to a property if it is undefined.
+    This works with variables, vectors and dictionaries.
+```
+name ?= expression
+
+x ?= 3
+list[2] ?= "there"
+
+map["hello"] = 2
+map["hello"] ?= "there" // evaluates to 2 instead of "there"
+```
 
 ##### Compound Assignment
 Variables can use the short syntax-sugar compound assignments. They provide a shorter syntax to perform
@@ -268,7 +291,7 @@ func [name]([param,...]) = expression
 func f(x) = x + 2; f(2) == 4
 func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
 ```
-###### 3.2 Parameter Types and Defaults
+###### Parameter Types and Defaults
 Functions can declare parameters with runtime type checking by appending the 
     type name to the parameter name. Parameters can also specify default 
     expressions that are evaluated at invocation.
@@ -292,11 +315,15 @@ add = { x, y -> x + y }; [1..10] |> fold(0, add) == 55
 [1..10] |> fold(1, { x, y -> x * y })
 ```
     
-##### Quick `_ + 1`
-These functions are basically anonymous alternatives that only takes in one argument.
-    Beware that in this quick expression, you can only reference the implied parameter
-    once. However you may use as many operators as you want until the end of the expression.
+##### Implicits `_ + 1`
+These functions are basically anonymous alternatives that uses a shorter syntax.
     This allows functions to be used in higher-order functions in a concise manner.
+    
+The implicit parameters are based on the underscore length, for example: `_ + _` will
+    reference the same implicit parameter and add them together, much like `func(a) = a + a`.
+    However, adding more consecutive underscores will allow for more complex implicits, such as
+    `_ + __ * ___` which translate into `func(a, b, c) = a + b * c`.
+
 ```
 _ ...expression
 
