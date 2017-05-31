@@ -43,6 +43,8 @@ public class Int implements Obj, NativeObject<Integer> {
         return value;
     }
 
+
+
     @Override
     public Integer toNative() {
         return value();
@@ -54,8 +56,22 @@ public class Int implements Obj, NativeObject<Integer> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Obj) {
+            return isEqualTo((Obj) obj) == Bool.TRUE;
+        } else {
+            return Double.valueOf(value) == obj;
+        }
+    }
+
+    @Override
     public String toString() {
         return String.valueOf(value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(value);
     }
 
     @Override
@@ -160,15 +176,6 @@ public class Int implements Obj, NativeObject<Integer> {
     @Override
     public Int negative() {
         return Int.of(-value);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Obj) {
-            return isEqualTo((Obj) obj) == Bool.TRUE;
-        } else {
-            return Double.valueOf(value) == obj;
-        }
     }
 
     @Override

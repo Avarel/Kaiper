@@ -23,6 +23,7 @@ import xyz.avarel.aje.runtime.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 public class Complex implements Obj, NativeObject<Double> {
     public static final Type<Complex> TYPE = new Type<>(Complex.TYPE, "complex");
@@ -58,12 +59,28 @@ public class Complex implements Obj, NativeObject<Double> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Complex) {
+            Complex b = (Complex) obj;
+            return re == b.re && im == b.im;
+        } else if (obj instanceof Obj) {
+            return isEqualTo((Obj) obj) == Bool.TRUE;
+        }
+        return false;
+    }
+
+    @Override
     public String toString() {
         if (im == 0) return String.valueOf(re);
         if (re == 0 && im == 1) return "i";
         if (re == 0) return im + "i";
         if (im < 0) return re + " - " + (-im) + "i";
         return re + " + " + im + "i";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Double.hashCode(re), Double.hashCode(im));
     }
 
     @Override
@@ -273,17 +290,6 @@ public class Complex implements Obj, NativeObject<Double> {
 
     public Complex round() {
         return Complex.of(Math.round(re), Math.round(im));
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Complex) {
-            Complex b = (Complex) obj;
-            return re == b.re && im == b.im;
-        } else if (obj instanceof Obj) {
-            return isEqualTo((Obj) obj) == Bool.TRUE;
-        }
-        return false;
     }
 
     public double real() {

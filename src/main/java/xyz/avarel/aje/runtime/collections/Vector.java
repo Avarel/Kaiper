@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.runtime.lists;
+package xyz.avarel.aje.runtime.collections;
 
 import xyz.avarel.aje.runtime.*;
 import xyz.avarel.aje.runtime.functions.NativeFunction;
@@ -201,9 +201,76 @@ public class Vector extends ArrayList<Obj> implements Obj, Iterable<Obj>, Native
     }
 
     @Override
-    public Obj get(Obj other) {
-        if (other instanceof Int) {
-            return get((Int) other);
+    public Obj slice(Obj startObj, Obj endObj, Obj stepObj) {
+        int start;
+        int end;
+        int step;
+
+        if (startObj == null) {
+            start = 0;
+        } else {
+            if (startObj instanceof Int) {
+                start = ((Int) startObj).value();
+                if (start < 0) {
+                    start += size();
+                }
+            } else {
+                return Undefined.VALUE;
+            }
+        }
+
+        if (endObj == null) {
+            end = size();
+        } else {
+            if (endObj instanceof Int) {
+                end = ((Int) endObj).value();
+                if (end < 0) {
+                    end += size();
+                }
+            } else {
+                return Undefined.VALUE;
+            }
+        }
+
+        if (stepObj == null) {
+            step = 1;
+        } else {
+            if (stepObj instanceof Int) {
+                step = ((Int) stepObj).value();
+            } else {
+                return Undefined.VALUE;
+            }
+        }
+
+        if (step == 1) {
+            return Vector.ofList(subList(start, end));
+        } else {
+            if (step > 0) {
+                Vector newVector = new Vector();
+
+                for (int i = start; i < end; i += step) {
+                    newVector.add(get(i));
+                }
+
+                return newVector;
+            } else if (step < 0) {
+                Vector newVector = new Vector();
+
+                for (int i = end - 1; i >= start; i += step) {
+                    newVector.add(get(i));
+                }
+
+                return newVector;
+            } else { // step == 0
+                return Undefined.VALUE;
+            }
+        }
+    }
+
+    @Override
+    public Obj get(Obj key) {
+        if (key instanceof Int) {
+            return get((Int) key);
         }
         return Undefined.VALUE;
     }

@@ -51,7 +51,7 @@ public class AJERepl {
                     return Undefined.VALUE;
                 });
 
-                Obj result = future.get(300, TimeUnit.MILLISECONDS);
+                Obj result = future.get(500, TimeUnit.MILLISECONDS);
 
                 System.out.println("\u25c0 " + result + " : " + result.getType());
 

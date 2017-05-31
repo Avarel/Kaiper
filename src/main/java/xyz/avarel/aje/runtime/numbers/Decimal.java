@@ -51,8 +51,22 @@ public class Decimal implements Obj, NativeObject<Double> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Obj) {
+            return isEqualTo((Obj) obj) == Bool.TRUE;
+        } else {
+            return Double.valueOf(value) == obj;
+        }
+    }
+
+    @Override
     public String toString() {
         return String.valueOf(value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Double.hashCode(value);
     }
 
     @Override
@@ -153,15 +167,6 @@ public class Decimal implements Obj, NativeObject<Double> {
 
     public Decimal negative() {
         return Decimal.of(-value);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Obj) {
-            return isEqualTo((Obj) obj) == Bool.TRUE;
-        } else {
-            return Double.valueOf(value) == obj;
-        }
     }
 
     @Override

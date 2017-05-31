@@ -21,9 +21,11 @@ package xyz.avarel.aje.scope;
 
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Text;
+import xyz.avarel.aje.runtime.collections.Dictionary;
+import xyz.avarel.aje.runtime.collections.Range;
+import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
-import xyz.avarel.aje.runtime.lists.Range;
-import xyz.avarel.aje.runtime.lists.Vector;
 import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -77,6 +79,8 @@ public class DefaultScope extends Scope {
         declare("filter", DefaultFunctions.FILTER.get());
         declare("fold", DefaultFunctions.FOLD.get());
 
+        declare("dictionary", DefaultFunctions.MAKE_DICTIONARY.get());
+
         // Types
         declare("Int", Int.TYPE);
         declare("Decimal", Decimal.TYPE);
@@ -86,6 +90,8 @@ public class DefaultScope extends Scope {
         declare("Boolean", Bool.TYPE);
         declare("Vector", Vector.TYPE);
         declare("Range", Range.TYPE);
+        declare("Dictionary", Dictionary.TYPE);
+        declare("String", Text.TYPE);
         declare("Function", AJEFunction.TYPE);
     }
 

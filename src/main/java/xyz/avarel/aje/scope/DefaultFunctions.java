@@ -22,10 +22,11 @@ package xyz.avarel.aje.scope;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.collections.Dictionary;
+import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
 import xyz.avarel.aje.runtime.functions.ComposedFunction;
 import xyz.avarel.aje.runtime.functions.NativeFunction;
-import xyz.avarel.aje.runtime.lists.Vector;
 import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -35,6 +36,13 @@ import java.util.Collections;
 import java.util.List;
 
 public enum DefaultFunctions {
+    MAKE_DICTIONARY(new NativeFunction() {
+        @Override
+        protected Obj eval(List<Obj> arguments) {
+            return new Dictionary();
+        }
+    }),
+
     SQUARE_ROOT(new NativeFunction(Numeric.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {

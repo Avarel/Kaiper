@@ -39,7 +39,7 @@ public enum TokenType {
     IMAGINARY,
     BOOLEAN,
     FUNCTION,
-    STRING,
+    TEXT,
 
     // ARITHMETIC
     PLUS,

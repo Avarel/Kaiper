@@ -21,12 +21,9 @@ package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.parser.parslets.GetParser;
+import xyz.avarel.aje.parser.parslets.GetSetParser;
 import xyz.avarel.aje.parser.parslets.GroupParser;
-import xyz.avarel.aje.parser.parslets.atoms.BoolParser;
-import xyz.avarel.aje.parser.parslets.atoms.NumberParser;
-import xyz.avarel.aje.parser.parslets.atoms.UndefinedParser;
-import xyz.avarel.aje.parser.parslets.atoms.VectorParser;
+import xyz.avarel.aje.parser.parslets.atoms.*;
 import xyz.avarel.aje.parser.parslets.flow.ForEachParser;
 import xyz.avarel.aje.parser.parslets.flow.IfElseParser;
 import xyz.avarel.aje.parser.parslets.flow.ReturnParser;
@@ -57,6 +54,7 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.DECIMAL, new NumberParser());
         register(TokenType.IMAGINARY, new NumberParser());
         register(TokenType.BOOLEAN, new BoolParser());
+        register(TokenType.TEXT, new TextParser());
         register(TokenType.UNDEFINED, new UndefinedParser());
 
 
@@ -97,7 +95,7 @@ public class DefaultGrammar extends Grammar {
         register(TokenType.LEFT_PAREN, new InvocationParser());
         register(TokenType.LEFT_BRACE, new BlockParameterParser());
 
-        register(TokenType.LEFT_BRACKET, new GetParser());
+        register(TokenType.LEFT_BRACKET, new GetSetParser());
         register(TokenType.DOT, new AttributeParser());
         //register(TokenType.ASSIGN, new AssignmentParser());
         register(TokenType.PIPE_FORWARD, new PipeForwardParser());

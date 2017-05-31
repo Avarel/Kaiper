@@ -227,6 +227,10 @@ public interface Obj {
         return invoke(Arrays.asList(arguments));
     }
 
+    default Obj slice(Obj start, Obj end, Obj step) {
+        return Undefined.VALUE;
+    }
+
     /**
      * @return  This {@link Obj}.
      */
@@ -234,7 +238,7 @@ public interface Obj {
         return this;
     }
 
-    default Obj set(Obj other) {
+    default Obj set(Obj key, Obj value) {
         throw new ComputeException(getType() + " do not support set operator.");
     }
 
@@ -242,11 +246,11 @@ public interface Obj {
      * Get operator in AJE. Default symbol is {@code a[b]}.
      * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
      *
-     * @param   other
+     * @param   key
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj get(Obj other) {
+    default Obj get(Obj key) {
         return Undefined.VALUE;
     }
 

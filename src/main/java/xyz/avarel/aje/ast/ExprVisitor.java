@@ -22,12 +22,13 @@ package xyz.avarel.aje.ast;
 import xyz.avarel.aje.ast.atoms.RangeExpr;
 import xyz.avarel.aje.ast.atoms.ValueAtom;
 import xyz.avarel.aje.ast.atoms.VectorAtom;
+import xyz.avarel.aje.ast.collections.GetOperation;
+import xyz.avarel.aje.ast.collections.SetOperation;
 import xyz.avarel.aje.ast.flow.*;
 import xyz.avarel.aje.ast.functions.FunctionAtom;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.invocation.InvocationExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
-import xyz.avarel.aje.ast.operations.GetOperation;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
@@ -37,11 +38,11 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.collections.Range;
+import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
 import xyz.avarel.aje.runtime.functions.CompiledFunction;
 import xyz.avarel.aje.runtime.functions.Parameter;
-import xyz.avarel.aje.runtime.lists.Range;
-import xyz.avarel.aje.runtime.lists.Vector;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.scope.Scope;
 
@@ -58,8 +59,8 @@ public class ExprVisitor {
         return exprs.get(exprs.size() - 1).accept(this, scope);
     }
 
+    // func print(str: String, n: Int) { for (x in 0..n) { print(str) } }
     public Obj visit(FunctionAtom expr, Scope scope) {
-
         List<Parameter> parameters = new ArrayList<>();
 
         for (ParameterData data : expr.getParameterExprs()) {
@@ -149,82 +150,12 @@ public class ExprVisitor {
     public Obj visit(SliceOperation expr, Scope scope) {
         Obj obj = expr.getLeft().accept(this, scope);
 
-        if (obj instanceof Vector) {
-            Vector vector = (Vector) obj;
 
-            Expr startExpr = expr.getStart();
-            Expr endExpr = expr.getEnd();
-            Expr stepExpr = expr.getStep();
+        Obj start = expr.getStart() != null ? expr.getStart().accept(this, scope) : null;
+        Obj end = expr.getEnd() != null ? expr.getEnd().accept(this, scope) : null;
+        Obj step = expr.getStep() != null ? expr.getStep().accept(this, scope) : null;
 
-            int start;
-            int end;
-            int step;
-
-            if (startExpr == null) {
-                start = 0;
-            } else {
-                Obj _obj = startExpr.accept(this, scope);
-                if (_obj instanceof Int) {
-                    start = ((Int) _obj).value();
-                    if (start < 0) {
-                        start += vector.size();
-                    }
-                } else {
-                    return Undefined.VALUE;
-                    //throw new ComputeException("Slice indices must be integers", startExpr.getPosition());
-                }
-            }
-
-            if (endExpr == null) {
-                end = vector.size();
-            } else {
-                Obj _obj = endExpr.accept(this, scope);
-                if (_obj instanceof Int) {
-                    end = ((Int) _obj).value();
-                    if (end < 0) {
-                        end += vector.size();
-                    }
-                } else {
-                    return Undefined.VALUE;
-                    //throw new ComputeException("Slice indices must be integers", endExpr.getPosition());
-                }
-            }
-
-            if (stepExpr == null) {
-                step = 1;
-            } else {
-                Obj _obj = stepExpr.accept(this, scope);
-                if (_obj instanceof Int) {
-                    step = ((Int) _obj).value();
-                } else {
-                    return Undefined.VALUE;
-                    //throw new ComputeException("Slice indices must be integers", stepExpr.getPosition());
-                }
-            }
-
-            if (step == 1) {
-                return Vector.ofList(vector.subList(start, end));
-            } else {
-                if (step > 0) {
-                    Vector newVector = new Vector();
-
-                    for (int i = start; i < end; i += step) {
-                        newVector.add(vector.get(i));
-                    }
-
-                    return newVector;
-                } else if (step < 0) {
-                    Vector newVector = new Vector();
-
-                    for (int i = end - 1; i >= start; i += step) {
-                        newVector.add(vector.get(i));
-                    }
-
-                    return newVector;
-                }
-            }
-        }
-        return Undefined.VALUE;
+        return obj.slice(start, end, step);
         //throw new ComputeException("Slice not applicable to " + obj, expr.getPosition());
     }
 
@@ -247,7 +178,18 @@ public class ExprVisitor {
     }
 
     public Obj visit(GetOperation expr, Scope scope) {
-        return expr.getLeft().accept(this, scope).get(expr.getArgument().accept(this, scope));
+        Obj target = expr.getLeft().accept(this, scope);
+        Obj key = expr.getKey().accept(this, scope);
+
+        return target.get(key);
+    }
+
+    public Obj visit(SetOperation expr, Scope scope) {
+        Obj target = expr.getLeft().accept(this, scope);
+        Obj key = expr.getKey().accept(this, scope);
+        Obj value = expr.getExpr().accept(this, scope);
+
+        return target.set(key, value);
     }
 
     public Obj visit(ReturnExpr expr, Scope scope) {
@@ -256,12 +198,12 @@ public class ExprVisitor {
     }
 
     public Obj visit(ConditionalExpr expr, Scope scope) {
-        Obj condition = expr.getCondition().accept(this, scope);
+        Obj condition = expr.getCondition().accept(this, scope.subPool());
         if (condition instanceof Bool) {
             if (condition == Bool.TRUE) {
-                return expr.getIfBranch().accept(this, scope);
+                return expr.getIfBranch().accept(this, scope.subPool());
             } else if (expr.getElseBranch() != null) {
-                return expr.getElseBranch().accept(this, scope);
+                return expr.getElseBranch().accept(this, scope.subPool());
             }
             return Undefined.VALUE;
         }
@@ -280,11 +222,15 @@ public class ExprVisitor {
             Expr loopExpr = expr.getExpr();
 
             for (Obj var : iterable) {
-                Scope copy = scope.copy();
+                Scope copy = scope.subPool();
                 copy.declare(variant, var);
                 loopExpr.accept(this, copy);
             }
         }
         return Undefined.VALUE;
+    }
+
+    public Obj visit(DictionaryAtom expr, Scope scope) {
+        return null;
     }
 }

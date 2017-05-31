@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast.atoms;
+package xyz.avarel.aje.ast.collections;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
@@ -25,18 +25,22 @@ import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-import java.util.List;
+public class GetOperation extends Expr {
+    private final Expr left;
+    private final Expr key;
 
-public class VectorAtom extends Expr {
-    private final List<Expr> items;
-
-    public VectorAtom(Position position, List<Expr> items) {
+    public GetOperation(Position position, Expr left, Expr key) {
         super(position);
-        this.items = items;
+        this.left = left;
+        this.key = key;
     }
 
-    public List<Expr> getItems() {
-        return items;
+    public Expr getLeft() {
+        return left;
+    }
+
+    public Expr getKey() {
+        return key;
     }
 
     @Override
@@ -46,18 +50,14 @@ public class VectorAtom extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("list\n");
-        for (int i = 0; i < items.size() - 1; i++) {
-            items.get(i).ast(builder, indent + (isTail ? "    " : "│   "), false);
-            builder.append('\n');
-        }
-        if (items.size() > 0) {
-            items.get(items.size() - 1).ast(builder, indent + (isTail ? "    " : "│   "), true);
-        }
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("get\n");
+        left.ast("target", builder, indent + (isTail ? "    " : "│   "), false);
+        builder.append('\n');
+        key.ast("key", builder, indent + (isTail ? "    " : "│   "), true);
     }
 
     @Override
     public String toString() {
-        return "vector";
+        return "get";
     }
 }

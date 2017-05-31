@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast.operations;
+package xyz.avarel.aje.ast.collections;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
@@ -25,22 +25,28 @@ import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class GetOperation extends Expr {
+public class SetOperation extends GetOperation {
     private final Expr left;
-    private final Expr indexExpr;
+    private final Expr key;
+    private final Expr expr;
 
-    public GetOperation(Position position, Expr left, Expr indexExpr) {
-        super(position);
+    public SetOperation(Position position, Expr left, Expr key, Expr expr) {
+        super(position, left, key);
         this.left = left;
-        this.indexExpr = indexExpr;
+        this.key = key;
+        this.expr = expr;
     }
 
     public Expr getLeft() {
         return left;
     }
 
-    public Expr getArgument() {
-        return indexExpr;
+    public Expr getKey() {
+        return key;
+    }
+
+    public Expr getExpr() {
+        return expr;
     }
 
     @Override
@@ -53,11 +59,13 @@ public class GetOperation extends Expr {
         builder.append(indent).append(isTail ? "└── " : "├── ").append("get\n");
         left.ast("target", builder, indent + (isTail ? "    " : "│   "), false);
         builder.append('\n');
-        indexExpr.ast("key", builder, indent + (isTail ? "    " : "│   "), true);
+        key.ast("key", builder, indent + (isTail ? "    " : "│   "), false);
+        builder.append('\n');
+        expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 
     @Override
     public String toString() {
-        return "get";
+        return "set";
     }
 }

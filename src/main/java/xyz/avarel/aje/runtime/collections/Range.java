@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.runtime.lists;
+package xyz.avarel.aje.runtime.collections;
 
 import xyz.avarel.aje.runtime.NativeObject;
 import xyz.avarel.aje.runtime.Obj;
@@ -68,9 +68,9 @@ public class Range implements Obj, Iterable<Int>, NativeObject<List<Integer>> {
     }
 
     @Override
-    public Obj get(Obj other) {
-        if (other instanceof Int) {
-            return get((Int) other);
+    public Obj get(Obj key) {
+        if (key instanceof Int) {
+            return get((Int) key);
         }
         return Undefined.VALUE;
     }

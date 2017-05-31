@@ -395,7 +395,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     break;
                 default:
                     if (c == quote) {
-                        return make(TokenType.STRING, sb.toString());
+                        return make(TokenType.TEXT, sb.toString());
                     }
                     sb.append(c);
             }
@@ -510,14 +510,13 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
         while (pos < n) {
             chars[pos] = this.advance();
-            if (this.hasNext()) {
+            if (!this.hasNext()) {
                 throw new SyntaxException("Substring bounds error", getPosition());
             }
             pos += 1;
         }
         return new String(chars);
     }
-
 
     /**
      * Get the next char in the string, skipping whitespace.
