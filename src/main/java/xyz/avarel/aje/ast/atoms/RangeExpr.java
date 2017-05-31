@@ -1,9 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
+ * Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -28,13 +24,11 @@ import xyz.avarel.aje.scope.Scope;
 public class RangeExpr extends Expr {
     private final Expr left;
     private final Expr right;
-    private final boolean exclusive;
 
-    public RangeExpr(Position position, Expr left, Expr right, boolean exclusive) {
+    public RangeExpr(Position position, Expr left, Expr right) {
         super(position);
         this.left = left;
         this.right = right;
-        this.exclusive = exclusive;
     }
 
     public Expr getLeft() {
@@ -45,10 +39,6 @@ public class RangeExpr extends Expr {
         return right;
     }
 
-    public boolean isExclusive() {
-        return exclusive;
-    }
-
     @Override
     public Obj accept(ExprVisitor visitor, Scope scope) {
         return visitor.visit(this, scope);
@@ -56,7 +46,7 @@ public class RangeExpr extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("range").append(exclusive ? " exclusive" : " inclusive").append('\n');
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("range").append('\n');
         left.ast("start", builder, indent + (isTail ? "    " : "│   "), false);
         builder.append('\n');
         right.ast("end", builder, indent + (isTail ? "    " : "│   "), true);

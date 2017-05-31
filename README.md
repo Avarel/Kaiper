@@ -3,6 +3,12 @@ AJE [![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/downlo
 **What is AJE?** AJE is an easy powerful mathematical evaluator for the Java programming language. It has built-in
     support for complex numbers, list literals, functions expressions and other programmatic quirks. 
     The parser support expressions provided from texts, readers, or input streams.
+    
+AJE was built as a challenge to evaluate programming constructs that can be operated on like
+    mathematical values. The result of which was that AJE can support natural mathematical syntax
+    such as implicit multiplication (ie. `2pi` `(2)(3)`), built-in syntax for writing complex numbers
+    as if they were on paper (ie. `2 + 5i`) while providing variable and function declarations that
+    are reminiscent of several languages that inspired AJE's syntax.
 
 ### REPL Demonstrations
 Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xyz/avarel/aje/loops/AJERepl.java)
@@ -113,6 +119,7 @@ repositories {
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Ranges|`range`|`List<Integer>`|`1..10` `10..<1`|
 |Lists operations|`vector`|`List<Obj>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
+|Strings|`string`|`String`|`"Hello there!`|
 |First class functions|`function`| |`func(x) = { x + 2 }` `{ x, y -> x ^ y }`|
 |Flow control| | |`if (true) { 1 } else { 2 }`<br>`return 2`|
 
@@ -196,11 +203,10 @@ Though ranges are of a different type, `range`, it is recommended that
 
 |Symbol|Description|Example|
 |---|---|---:|
-|`..`|Range creation -`integer` and `decimal` only|`a..b`|
-|`..<`|Exclusive range -`integer` and `decimal` only|`a..<b` `[a..<b]`|
+|`..`|Range creation -`integer` only|`a..b`|
 |`[item, items...]`|List creation|`[a,b,c,d,e,f,g]`|
-|`[index]`|Get item at index.|`list[i]`|
-|`[start:end:step]`|Slice operation, search it up.|`list[::]` `list[1:-3:]` `list[3:5:2]`|
+|`[index]`|Get item at index - negative indexes also work.|`list[i]`|
+|`[start:end:step]`|Slice operation from Python.|`list[::]` `list[1:-3:]` `list[3:5:2]`|
 
 ###### Functional Operators `function`
 |Symbol|Description|Example|
@@ -304,7 +310,7 @@ These are functions that are built into AJE. They include both higher-order and 
 |Symbol|Description|Arguments|Example|
 |---|---|---|---:|
 |`compose`|Create a composition of two functions|(`function(x)`,`function(x)`)|`compose(asin, sin)`|
-|`each`|List iteration action function|(`list`, `function(x)`)|<code>var x = 0; [0..<9] &#124;> each(func(it) { x += it }); x</code>|
+|`each`|List iteration action function|(`list`, `function(x)`)|<code>var x = 0;<br>[0..9] &#124;> each {it-> x += it }</code>|
 |`map`|List transform function|(`list`, `function(x)`)|`map([1..10], _ ^ 2)`|
 |`filter`|List filter function|(`list`, `function(x)`)|`filter([1..10], _ % 2 == 0)`|
 |`fold`|List accumulation function|(`list`, `value`, `function(x, y)`)|`fold([1..10], 0, {a, b -> a + b})`|

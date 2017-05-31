@@ -1,9 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
+ * Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -34,10 +30,24 @@ public class Range implements Obj, Iterable<Int>, NativeObject<List<Integer>> {
     
     private final int start;
     private final int end;
+    private final boolean exclusive;
 
     public Range(int start, int end) {
+        this(start, end, false);
+    }
+
+    public Range(int start, int end, boolean exclusive) {
         this.start = start;
         this.end = end;
+        this.exclusive = exclusive;
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public int getEnd() {
+        return end;
     }
 
     @Override

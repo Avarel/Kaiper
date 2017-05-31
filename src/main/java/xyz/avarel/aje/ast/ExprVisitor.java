@@ -1,9 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
+ * Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -56,6 +52,7 @@ public class ExprVisitor {
         for (int i = 0; i < exprs.size() - 1; i++) {
             exprs.get(i).accept(this, scope);
         }
+
         return exprs.get(exprs.size() - 1).accept(this, scope);
     }
 
@@ -86,6 +83,7 @@ public class ExprVisitor {
         if (scope.contains(expr.getName())) {
             return scope.lookup(expr.getName());
         }
+
         throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
     }
 
@@ -94,23 +92,27 @@ public class ExprVisitor {
     }
 
     public Obj visit(InvocationExpr expr, Scope scope) {
+        Obj target = expr.getLeft().accept(this, scope);
         List<Obj> arguments = new ArrayList<>();
 
         for (Expr arg : expr.getArguments()) {
             arguments.add(arg.accept(this, scope));
         }
 
-        return expr.getLeft().accept(this, scope).invoke(arguments);
+        return target.invoke(arguments);
     }
 
     public Obj visit(BinaryOperation expr, Scope scope) {
-        return expr.getOperator().apply(
-                expr.getLeft().accept(this, scope),
-                expr.getRight().accept(this, scope));
+        Obj left = expr.getLeft().accept(this, scope);
+        Obj right = expr.getRight().accept(this, scope);
+
+        return expr.getOperator().apply(left, right);
     }
 
     public Obj visit(UnaryOperation expr, Scope scope) {
-        return expr.getOperator().apply(expr.getTarget().accept(this, scope));
+        Obj operand = expr.getTarget().accept(this, scope);
+
+        return expr.getOperator().apply(operand);
     }
 
     public Obj visit(RangeExpr expr, Scope scope) {
@@ -120,11 +122,6 @@ public class ExprVisitor {
         if (startObj instanceof Int && endObj instanceof Int) {
             int start = ((Int) startObj).value();
             int end = ((Int) endObj).value();
-
-            if (expr.isExclusive()) {
-                if (start < end) end -= 1;
-                else end += 1;
-            }
 
             return new Range(start, end);
         }
@@ -136,12 +133,14 @@ public class ExprVisitor {
     public Obj visit(VectorAtom expr, Scope scope) {
         Vector vector = new Vector();
 
-        for (Expr item : expr.getItems()) {
-            if (item instanceof RangeExpr) {
-                vector.addAll(((Range) item.accept(this, scope)).toVector());
-                continue;
+        for (Expr itemExpr : expr.getItems()) {
+            Obj item = itemExpr.accept(this, scope);
+
+            if (item instanceof Range) {
+                vector.addAll(((Range) item).toVector());
+            } else {
+                vector.add(item);
             }
-            vector.add(item.accept(this, scope));
         }
 
         return vector;
@@ -150,13 +149,11 @@ public class ExprVisitor {
     public Obj visit(SliceOperation expr, Scope scope) {
         Obj obj = expr.getLeft().accept(this, scope);
 
-
         Obj start = expr.getStart() != null ? expr.getStart().accept(this, scope) : null;
         Obj end = expr.getEnd() != null ? expr.getEnd().accept(this, scope) : null;
         Obj step = expr.getStep() != null ? expr.getStep().accept(this, scope) : null;
 
         return obj.slice(start, end, step);
-        //throw new ComputeException("Slice not applicable to " + obj, expr.getPosition());
     }
 
     public Obj visit(AssignmentExpr expr, Scope scope) {
@@ -198,39 +195,45 @@ public class ExprVisitor {
 
     public Obj visit(ReturnExpr expr, Scope scope) {
         Obj obj = expr.getExpr().accept(this, scope);
+
         throw new ReturnException(expr.getPosition(), obj);
     }
 
     public Obj visit(ConditionalExpr expr, Scope scope) {
         Obj condition = expr.getCondition().accept(this, scope.subPool());
+
         if (condition instanceof Bool) {
             if (condition == Bool.TRUE) {
                 return expr.getIfBranch().accept(this, scope.subPool());
-            } else if (expr.getElseBranch() != null) {
-                return expr.getElseBranch().accept(this, scope.subPool());
             }
-            return Undefined.VALUE;
         }
+        if (expr.getElseBranch() != null) {
+            return expr.getElseBranch().accept(this, scope.subPool());
+        }
+
         return Undefined.VALUE;
-        //throw new ComputeException("Condition of if expression did not return boolean", expr.getCondition().getPosition());
     }
 
-    @SuppressWarnings("unchecked")
     public Obj visit(ForEachExpr expr, Scope scope) {
-        Obj obj = expr.getIterable().accept(this, scope);
+        Obj iterExpr = expr.getIterable().accept(this, scope);
 
-        if (obj instanceof Iterable) {
-            Iterable<Obj> iterable = (Iterable<Obj>) obj;
+        if (iterExpr instanceof Iterable) {
+            Iterable iterable = (Iterable) iterExpr;
 
             String variant = expr.getVariant();
             Expr loopExpr = expr.getExpr();
 
-            for (Obj var : iterable) {
-                Scope copy = scope.subPool();
-                copy.declare(variant, var);
-                loopExpr.accept(this, copy);
+            for (Object var : iterable) {
+                if (var instanceof Obj) {
+                    Scope copy = scope.subPool();
+                    copy.declare(variant, (Obj) var);
+                    loopExpr.accept(this, copy);
+                } else {
+                    throw new ComputeException("Items in iterable do not implement Obj interface", expr.getIterable().getPosition());
+                }
             }
         }
+
         return Undefined.VALUE;
     }
 }

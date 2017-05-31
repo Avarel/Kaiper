@@ -1,9 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
+ * Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -23,6 +19,7 @@ import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -43,6 +40,12 @@ public class BinaryOperatorParser extends BinaryParser {
     public Expr parse(AJEParser parser, Expr left, Token token) {
         if (left instanceof Identifier) {
             if (parser.match(TokenType.ASSIGN)) {
+                if (parser.getLast().getPosition().getIndex() - token.getPosition().getIndex() != 2) {
+                    System.out.println(parser.getLast().getPosition().getIndex() - token.getPosition().getIndex());
+                    throw new SyntaxException("Compound assignment requires assign token directly next to operator",
+                            parser.getLast().getPosition());
+                }
+
                 Expr right = parser.parseExpr(0);
                 return new AssignmentExpr(token.getPosition(), null, ((Identifier) left).getName(),
                         new BinaryOperation(token.getPosition(), left, right, operator),

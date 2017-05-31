@@ -1,9 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
+ * Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -275,15 +271,51 @@ public class Vector extends ArrayList<Obj> implements Obj, Iterable<Obj>, Native
         return Undefined.VALUE;
     }
 
+    @Override
+    public Obj set(Obj key, Obj value) {
+        if (key instanceof Int) {
+            return set((Int) key, value);
+        }
+        return Undefined.VALUE;
+    }
+
+    private Obj set(Int index, Obj element) {
+        return set(index.value(), element);
+    }
+
+    @Override
+    public Obj set(int index, Obj element) {
+        if (index < 0) {
+            index += size();
+        }
+
+        if (index < 0) {
+            return Undefined.VALUE;
+        } else if (index >= size()) {
+            for (int i = size(); i <= index; i++) {
+                super.add(Undefined.VALUE);
+            }
+        }
+
+        super.set(index, element);
+        return element;
+    }
+
     private Obj get(Int index) {
         int i = index.value();
-        if (i < 0) {
-            i += size();
+
+        return get(i);
+    }
+
+    @Override
+    public Obj get(int index) {
+        if (index < 0) {
+            index += size();
         }
-        if (i < 0 || i >= size()) {
+        if (index < 0 || index >= size()) {
             return Undefined.VALUE;
         }
-        return this.get(i);
+        return super.get(index);
     }
 
     @Override
