@@ -20,18 +20,34 @@
 package xyz.avarel.aje.parser.parslets.variables;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.atoms.ValueAtom;
+import xyz.avarel.aje.ast.flow.ConditionalExpr;
+import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Undefined;
 
 public class NameParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(token.getPosition(), token.getString(), parser.parseExpr());
+            return new AssignmentExpr(token.getPosition(), null, token.getString(), parser.parseExpr(), false);
+        } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
+
+            Expr getOp = new Identifier(token.getPosition(), token.getString());
+
+            return new ConditionalExpr(token.getPosition(),
+                    new BinaryOperation(token.getPosition(),
+                            getOp,
+                            new ValueAtom(token.getPosition(), Undefined.VALUE),
+                            Obj::isEqualTo),
+                    new AssignmentExpr(token.getPosition(), null, token.getString(), parser.parseExpr(), false),
+                    getOp);
         }
 
         return new Identifier(token.getPosition(), token.getString());

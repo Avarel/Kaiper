@@ -21,14 +21,19 @@ package xyz.avarel.aje.parser.parslets;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.atoms.ValueAtom;
 import xyz.avarel.aje.ast.collections.GetOperation;
 import xyz.avarel.aje.ast.collections.SetOperation;
+import xyz.avarel.aje.ast.flow.ConditionalExpr;
+import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Undefined;
 
 public class GetSetParser extends BinaryParser {
     public GetSetParser() {
@@ -51,8 +56,19 @@ public class GetSetParser extends BinaryParser {
 
         if (parser.match(TokenType.ASSIGN)) {
             Expr value = parser.parseExpr();
-
             return new SetOperation(token.getPosition(), left, key, value);
+        } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
+            Expr value = parser.parseExpr();
+
+            Expr getOp = new GetOperation(token.getPosition(), left, key);
+
+            return new ConditionalExpr(token.getPosition(),
+                    new BinaryOperation(token.getPosition(),
+                            getOp,
+                            new ValueAtom(token.getPosition(), Undefined.VALUE),
+                            Obj::isEqualTo),
+                    new SetOperation(token.getPosition(), left, key, value),
+                    getOp);
         }
 
         return new GetOperation(token.getPosition(), left, key);

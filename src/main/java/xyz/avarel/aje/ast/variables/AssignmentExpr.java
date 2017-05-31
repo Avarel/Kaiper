@@ -31,21 +31,9 @@ public class AssignmentExpr extends Expr {
     private final String name;
     private final Expr expr;
 
-    public AssignmentExpr(Position position, String name, Expr expr) {
-        this(position, false, name, expr);
-    }
-
-    public AssignmentExpr(Position position, boolean declare, String name, Expr expr) {
-        this(position, declare, null, name, expr);
-    }
-
-    public AssignmentExpr(Position position, Expr from, String name, Expr expr) {
-        this(position, false, from, name, expr);
-    }
-
-    public AssignmentExpr(Position position, boolean declare, Expr from, String name, Expr expr) {
+    public AssignmentExpr(Position position, Expr from, String name, Expr expr, boolean declaration) {
         super(position);
-        this.declare = declare;
+        this.declare = declaration;
         this.from = from;
         this.name = name;
         this.expr = expr;
@@ -63,7 +51,7 @@ public class AssignmentExpr extends Expr {
         return expr;
     }
 
-    public boolean isDeclare() {
+    public boolean isDeclaration() {
         return declare;
     }
 
@@ -77,13 +65,13 @@ public class AssignmentExpr extends Expr {
         builder.append(indent).append(isTail ? "└── " : "├── ").append(declare ? "declare\n" : "assign\n");
 
         builder.append(indent).append(isTail ? "    " : "│   ").append("├── name: ").append(name);
-        builder.append('\n');
 
         if (from != null) {
             builder.append('\n');
             from.ast("of", builder, indent + (isTail ? "    " : "│   "), false);
         }
 
+        builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 

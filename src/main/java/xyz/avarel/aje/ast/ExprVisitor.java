@@ -160,21 +160,25 @@ public class ExprVisitor {
     }
 
     public Obj visit(AssignmentExpr expr, Scope scope) {
+        String attr = expr.getName();
+
         if (expr.getFrom() != null) {
-            expr.getFrom().accept(this, scope).setAttr(expr.getName(), expr.getExpr().accept(this, scope));
-            return Undefined.VALUE;
+            Obj target = expr.getFrom().accept(this, scope);
+            Obj value = expr.getExpr().accept(this, scope);
+            return target.setAttr(attr, value);
         }
 
-        if (expr.isDeclare()) {
-            scope.declare(expr.getName(), expr.getExpr().accept(this, scope));
+        if (expr.isDeclaration()) {
+            Obj value = expr.getExpr().accept(this, scope);
+            scope.declare(attr, value);
+            return value;
+        } else if (scope.contains(expr.getName())) {
+            Obj value = expr.getExpr().accept(this, scope);
+            scope.assign(attr, value);
+            return value;
         } else {
-            if (scope.contains(expr.getName())) {
-                scope.assign(expr.getName(), expr.getExpr().accept(this, scope));
-            } else {
-                throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
-            }
+            throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
         }
-        return Undefined.VALUE;
     }
 
     public Obj visit(GetOperation expr, Scope scope) {
@@ -228,9 +232,5 @@ public class ExprVisitor {
             }
         }
         return Undefined.VALUE;
-    }
-
-    public Obj visit(DictionaryAtom expr, Scope scope) {
-        return null;
     }
 }

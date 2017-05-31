@@ -191,7 +191,9 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case '!': return match('=')
                     ? make(TokenType.NOT_EQUAL)
                     : make(TokenType.BANG);
-            case '?': return make(TokenType.QUESTION);
+            case '?': return match('=')
+                    ? make(TokenType.OPTIONAL_ASSIGN)
+                    : make(TokenType.QUESTION);
             case '~': return make(TokenType.TILDE);
 
             case '+': return make(TokenType.PLUS);

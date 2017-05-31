@@ -44,7 +44,9 @@ public class BinaryOperatorParser extends BinaryParser {
         if (left instanceof Identifier) {
             if (parser.match(TokenType.ASSIGN)) {
                 Expr right = parser.parseExpr(0);
-                return new AssignmentExpr(token.getPosition(), ((Identifier) left).getName(), new BinaryOperation(token.getPosition(), left, right, operator));
+                return new AssignmentExpr(token.getPosition(), null, ((Identifier) left).getName(),
+                        new BinaryOperation(token.getPosition(), left, right, operator),
+                        false);
             }
         }
 
