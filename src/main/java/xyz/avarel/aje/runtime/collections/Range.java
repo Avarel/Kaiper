@@ -30,16 +30,10 @@ public class Range implements Obj, Iterable<Int>, NativeObject<List<Integer>> {
     
     private final int start;
     private final int end;
-    private final boolean exclusive;
 
     public Range(int start, int end) {
-        this(start, end, false);
-    }
-
-    public Range(int start, int end, boolean exclusive) {
         this.start = start;
         this.end = end;
-        this.exclusive = exclusive;
     }
 
     public int getStart() {
@@ -123,12 +117,12 @@ public class Range implements Obj, Iterable<Int>, NativeObject<List<Integer>> {
 
         @Override
         public boolean hasNext() {
-            return start < end ? cursor <= end : cursor >= end;
+            return cursor <= end;
         }
 
         @Override
         public Int next() {
-            return Int.of(start < end ? cursor++ : cursor--);
+            return Int.of(cursor++);
         }
     }
 }

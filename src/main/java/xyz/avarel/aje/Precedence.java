@@ -19,45 +19,45 @@ package xyz.avarel.aje;
  * Default precedence table for the AJE parser.
  */
 public class Precedence {
-    /** a(b, c...) */
+    /* a(b, c...) */
     public static final int INVOCATION = 14;
 
-    /** a.b */
+    /* a.b */
     public static final int ATTRIBUTE = 13;
 
-    /** a |> b */
+    /* a |> b */
     public static final int PIPE_FORWARD = 12;
 
-    /** Unused */
+    /* Unused */
     public static final int POSTFIX = 11;
 
-    /** a ^ b */
+    /* a ^ b */
     public static final int EXPONENTIAL = 10;
 
-    /** -a | +a | !a | ~a */
+    /* -a | +a | !a | ~a */
     public static final int PREFIX = 9;
 
-    /** a * b | a / b | a % b */
+    /* a * b | a / b | a % b */
     public static final int MULTIPLICATIVE = 8;
 
-    /** a + b | a - b */
+    /* a + b | a - b */
     public static final int ADDITIVE = 7;
 
-    /** a..b */
+    /* a..b */
     public static final int RANGE_TO = 6;
 
-    /** */
+    /* Unused */
     public static final int INFIX = 5;
 
-
+    /* a > b | a < b | a >= b | a <= b */
     public static final int COMPARISON = 4;
 
-
+    /* a == b | a != b */
     public static final int EQUALITY = 3;
 
-
+    /* a && b */
     public static final int CONJUNCTION = 2;
 
-
+    /* a || b */
     public static final int DISJUNCTION = 1;
 }

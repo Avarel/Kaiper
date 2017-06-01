@@ -58,7 +58,9 @@ public abstract class Expr {
     }
 
     public void ast(String label, StringBuilder builder, String indent, boolean tail) {
-        builder.append(indent).append(tail ? "└── " : "├── ").append(label).append(": \n");
+        builder.append(indent).append(tail ? "└── " : "├── ").append(label).append(':');
+
+        builder.append('\n');
         ast(builder, indent + (tail ? "    " : "│   "), true);
     }
 }

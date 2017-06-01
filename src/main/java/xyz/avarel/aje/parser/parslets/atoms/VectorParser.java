@@ -16,7 +16,7 @@
 package xyz.avarel.aje.parser.parslets.atoms;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.atoms.VectorAtom;
+import xyz.avarel.aje.ast.collections.VectorAtom;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;

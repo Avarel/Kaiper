@@ -52,11 +52,12 @@ public class ConditionalExpr extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) { // return if (sin(0) == 0) sin(50) else false
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("if\n");
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("if");
 
-        condition.ast("condition", builder, indent + (isTail ? "    " : "│   "), false);
         builder.append('\n');
+        condition.ast("condition", builder, indent + (isTail ? "    " : "│   "), false);
 
+        builder.append('\n');
         ifBranch.ast("true", builder, indent + (isTail ? "    " : "│   "), elseBranch == null);
 
         if (elseBranch != null) {

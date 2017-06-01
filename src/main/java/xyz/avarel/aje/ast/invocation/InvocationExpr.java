@@ -48,8 +48,11 @@ public class InvocationExpr extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("invoke\n");
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("invoke");
+
+        builder.append('\n');
         left.ast("target", builder, indent + (isTail ? "    " : "│   "), false);
+
         builder.append('\n');
         if (arguments.isEmpty()) {
             builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append("*");

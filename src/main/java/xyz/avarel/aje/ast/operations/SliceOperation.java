@@ -58,8 +58,9 @@ public class SliceOperation extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("slice\n");
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("slice");
 
+        builder.append('\n');
         left.ast(builder, indent + (isTail ? "    " : "│   "), false);
 
         if (start != null) {

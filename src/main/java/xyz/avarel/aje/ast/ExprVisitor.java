@@ -15,11 +15,10 @@
 
 package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.ast.atoms.RangeExpr;
-import xyz.avarel.aje.ast.atoms.ValueAtom;
-import xyz.avarel.aje.ast.atoms.VectorAtom;
 import xyz.avarel.aje.ast.collections.GetOperation;
+import xyz.avarel.aje.ast.collections.RangeExpr;
 import xyz.avarel.aje.ast.collections.SetOperation;
+import xyz.avarel.aje.ast.collections.VectorAtom;
 import xyz.avarel.aje.ast.flow.*;
 import xyz.avarel.aje.ast.functions.FunctionAtom;
 import xyz.avarel.aje.ast.functions.ParameterData;
@@ -221,7 +220,7 @@ public class ExprVisitor {
             Iterable iterable = (Iterable) iterExpr;
 
             String variant = expr.getVariant();
-            Expr loopExpr = expr.getExpr();
+            Expr loopExpr = expr.getAction();
 
             for (Object var : iterable) {
                 if (var instanceof Obj) {

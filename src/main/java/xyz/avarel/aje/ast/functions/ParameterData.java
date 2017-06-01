@@ -16,7 +16,7 @@
 package xyz.avarel.aje.ast.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.atoms.ValueAtom;
+import xyz.avarel.aje.ast.ValueAtom;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 
@@ -64,16 +64,6 @@ public class ParameterData {
         StringBuilder sb = new StringBuilder();
         if (name != null) {
             sb.append(name);
-        }
-        if (!(type instanceof ValueAtom && type.compute() == Obj.TYPE)) {
-            if (name != null) {
-                sb.append(": ");
-            }
-            sb.append(type);
-        }
-
-        if (defaultExpr != null) {
-            sb.append(" = ").append(defaultExpr);
         }
         return sb.toString();
     }

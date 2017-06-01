@@ -64,8 +64,9 @@ public class FunctionAtom extends Expr {
                 .append('(')
                 .append(getParameterExprs().stream().map(Object::toString)
                         .collect(Collectors.joining(", ")))
-                .append(')')
-                .append('\n');
+                .append(')');
+
+        builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 

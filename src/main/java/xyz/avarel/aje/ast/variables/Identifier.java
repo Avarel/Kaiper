@@ -56,8 +56,11 @@ public class Identifier extends Expr {
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
         if (from != null) {
-            builder.append(indent).append(isTail ? "└── " : "├── ").append("attr\n");
+            builder.append(indent).append(isTail ? "└── " : "├── ").append("attribute");
+
+            builder.append('\n');
             from.ast("from", builder, indent + (isTail ? "    " : "│   "), false);
+
             builder.append('\n');
             builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append(name);
         } else {

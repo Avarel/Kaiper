@@ -48,7 +48,9 @@ public class UnaryOperation extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("unary op\n");
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("unary op");
+
+        builder.append('\n');
         target.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 

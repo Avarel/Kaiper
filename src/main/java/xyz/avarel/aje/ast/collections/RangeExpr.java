@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast.atoms;
+package xyz.avarel.aje.ast.collections;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
@@ -46,8 +46,11 @@ public class RangeExpr extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("range").append('\n');
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("range");
+
+        builder.append('\n');
         left.ast("start", builder, indent + (isTail ? "    " : "│   "), false);
+
         builder.append('\n');
         right.ast("end", builder, indent + (isTail ? "    " : "│   "), true);
     }

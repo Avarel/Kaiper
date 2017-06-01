@@ -132,8 +132,7 @@ public class Expression {
     }
 
     /**
-     * Parse the expression into an AST structure of {@link Expr} nodes. This is a shortcut for
-     * {@link #compile(boolean) compile(false)}.
+     * Parse the expression into an AST structure of {@link Expr} nodes.
      *
      * @return  The compiled {@link Expr}.
      * @throws  SyntaxException
@@ -152,7 +151,7 @@ public class Expression {
      * @return  Returns the computed value of this expression.
      * @throws  SyntaxException
      *          Error during the lexing or parsing process of the expression. Thrown by the invocation of
-     *          {@link #compile()} or {@link #compile(boolean)}.
+     *          {@link #compile()}.
      * @throws  ComputeException
      *          Error during the execution of the expression.
      */

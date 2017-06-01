@@ -16,7 +16,7 @@
 package xyz.avarel.aje.parser.parslets.atoms;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.atoms.ValueAtom;
+import xyz.avarel.aje.ast.ValueAtom;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;

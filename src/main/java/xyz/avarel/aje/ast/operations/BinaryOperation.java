@@ -54,8 +54,11 @@ public class BinaryOperation extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("binary op\n");
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("binary op");
+
+        builder.append('\n');
         left.ast(builder, indent + (isTail ? "    " : "│   "), false);
+
         builder.append('\n');
         right.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }

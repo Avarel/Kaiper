@@ -58,8 +58,9 @@ public class AssignmentExpr extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append(declare ? "declare\n" : "assign\n");
+        builder.append(indent).append(isTail ? "└── " : "├── ").append(declare ? "declare" : "assign");
 
+        builder.append('\n');
         builder.append(indent).append(isTail ? "    " : "│   ").append("├── name: ").append(name);
 
         if (from != null) {

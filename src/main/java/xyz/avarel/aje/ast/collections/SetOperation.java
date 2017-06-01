@@ -52,10 +52,14 @@ public class SetOperation extends GetOperation {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("get\n");
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("get");
+
+        builder.append('\n');
         left.ast("target", builder, indent + (isTail ? "    " : "│   "), false);
+
         builder.append('\n');
         key.ast("key", builder, indent + (isTail ? "    " : "│   "), false);
+
         builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }

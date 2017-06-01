@@ -17,7 +17,7 @@ package xyz.avarel.aje.parser.parslets.variables;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.atoms.ValueAtom;
+import xyz.avarel.aje.ast.ValueAtom;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;

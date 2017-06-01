@@ -24,13 +24,13 @@ import xyz.avarel.aje.scope.Scope;
 public class ForEachExpr extends Expr {
     private final String variant;
     private final Expr iterable;
-    private final Expr expr;
+    private final Expr action;
 
-    public ForEachExpr(Position position, String variant, Expr iterable, Expr expr) {
+    public ForEachExpr(Position position, String variant, Expr iterable, Expr action) {
         super(position);
         this.variant = variant;
         this.iterable = iterable;
-        this.expr = expr;
+        this.action = action;
     }
 
     public String getVariant() {
@@ -41,12 +41,26 @@ public class ForEachExpr extends Expr {
         return iterable;
     }
 
-    public Expr getExpr() {
-        return expr;
+    public Expr getAction() {
+        return action;
     }
 
     @Override
     public Obj accept(ExprVisitor visitor, Scope scope) {
         return visitor.visit(this, scope);
+    }
+
+    @Override
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("if");
+
+        builder.append('\n');
+        builder.append(indent).append(isTail ? "    " : "│   ").append("├── variant: ").append(variant);
+
+        builder.append('\n');
+        iterable.ast("iterable", builder, indent + (isTail ? "    " : "│   "), false);
+
+        builder.append('\n');
+        action.ast("action", builder, indent + (isTail ? "    " : "│   "), true);
     }
 }
