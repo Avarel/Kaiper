@@ -22,6 +22,8 @@ package xyz.avarel.aje.loops;
 import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.java.JavaModel;
+import xyz.avarel.aje.runtime.java.NativeMapper;
 
 import java.util.Scanner;
 
@@ -47,6 +49,7 @@ public class AJEDevRepl {
                 }
 
                 Expression exp = new Expression(input);
+                exp.add("model", new NativeMapper(new JavaModel("hello world! how are you")));
 
                 long start = System.nanoTime();
                 Expr expr = exp.compile();
