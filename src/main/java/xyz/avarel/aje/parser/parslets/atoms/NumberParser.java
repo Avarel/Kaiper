@@ -25,7 +25,6 @@ import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
 
@@ -34,12 +33,7 @@ public class NumberParser implements PrefixParser {
     public Expr parse(AJEParser parser, Token token) {
         Expr value = null;
 
-        if (parser.match(TokenType.IMAGINARY)) {
-            String str = token.getString();
-            value = new ValueAtom(token.getPosition(), Complex.of(0, Double.parseDouble(str)));
-        } else if (token.getType() == TokenType.IMAGINARY) {
-            value = new ValueAtom(token.getPosition(), Complex.of(0, 1));
-        } else if (token.getType() == TokenType.INT) {
+        if (token.getType() == TokenType.INT) {
             String str = token.getString();
             value = new ValueAtom(token.getPosition(), Int.of(Integer.parseInt(str)));
         } else if (token.getType() == TokenType.DECIMAL) {

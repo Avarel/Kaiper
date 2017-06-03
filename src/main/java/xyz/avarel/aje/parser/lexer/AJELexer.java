@@ -169,15 +169,16 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case '}': return make(TokenType.RIGHT_BRACE);
 
             case '_': {
-                if (Character.isLetterOrDigit(peek())) {
-                    return nextName(c);
-                } else {
-                    StringBuilder builder = new StringBuilder().append(c);
-                    while (match('_')) {
-                        builder.append('_');
-                    }
-                    return make(TokenType.UNDERSCORE, builder.toString());
+                StringBuilder builder = new StringBuilder().append(c);
+                while (match('_')) {
+                    builder.append('_');
                 }
+
+                if (Character.isLetterOrDigit(peek())) {
+                    return nextName(builder.toString());
+                }
+
+                return make(TokenType.UNDERSCORE, builder.toString());
             }
 
             case '.': return match('.')
@@ -189,6 +190,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     : make(TokenType.BANG);
             case '?': return match('=')
                     ? make(TokenType.OPTIONAL_ASSIGN)
+                    : match(':')
+                    ? make(TokenType.ELVIS)
                     : make(TokenType.QUESTION);
             case '~': return make(TokenType.TILDE);
 
@@ -308,8 +311,11 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
     private Token nextName(char init) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(init);
+        return nextName(String.valueOf(init));
+    }
+
+    private Token nextName(String init) {
+        StringBuilder sb = new StringBuilder(init);
 
         char c;
         while (true) {
@@ -339,7 +345,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
             case "true": return make(TokenType.BOOLEAN, "true");
             case "false": return make(TokenType.BOOLEAN, "false");
-            case "i": return make(TokenType.IMAGINARY, "i");
             case "and": return make(TokenType.AND, "and");
             case "or": return make(TokenType.OR, "or");
             default: return make(TokenType.IDENTIFIER, value);

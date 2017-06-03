@@ -18,7 +18,7 @@ package xyz.avarel.aje.parser.parslets.functions;
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.functions.FunctionAtom;
-import xyz.avarel.aje.ast.invocation.InvocationExpr;
+import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
@@ -37,12 +37,12 @@ public class BlockParameterParser extends BinaryParser {
     public Expr parse(AJEParser parser, Expr left, Token token) { // [1..10] |> filter { it -> it % 2 == 0 }
         Expr block = parser.getPrefixParsers().get(token.getType()).parse(parser, token);
 
-        if (left instanceof InvocationExpr) {
-            ((InvocationExpr) left).getArguments().add(block);
+        if (left instanceof Invocation) {
+            ((Invocation) left).getArguments().add(block);
         } else if (left instanceof FunctionAtom || left instanceof Identifier) {
             List<Expr> args = new ArrayList<>();
             args.add(block);
-            return new InvocationExpr(token.getPosition(), left, args);
+            return new Invocation(token.getPosition(), left, args);
         }
 
         throw new SyntaxException("Block parameters incompatible with " + left.getClass().getSimpleName(), token.getPosition());

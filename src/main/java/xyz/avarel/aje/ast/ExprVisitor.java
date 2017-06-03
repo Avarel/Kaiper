@@ -15,14 +15,11 @@
 
 package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.ast.collections.GetOperation;
-import xyz.avarel.aje.ast.collections.RangeExpr;
-import xyz.avarel.aje.ast.collections.SetOperation;
-import xyz.avarel.aje.ast.collections.VectorAtom;
+import xyz.avarel.aje.ast.collections.*;
 import xyz.avarel.aje.ast.flow.*;
 import xyz.avarel.aje.ast.functions.FunctionAtom;
 import xyz.avarel.aje.ast.functions.ParameterData;
-import xyz.avarel.aje.ast.invocation.InvocationExpr;
+import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
@@ -33,6 +30,7 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
 import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
@@ -43,6 +41,7 @@ import xyz.avarel.aje.scope.Scope;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ExprVisitor {
     public Obj visit(Statements statements, Scope scope) {
@@ -75,8 +74,8 @@ public class ExprVisitor {
     }
 
     public Obj visit(Identifier expr, Scope scope) {
-        if (expr.getFrom() != null) {
-            return expr.getFrom().accept(this, scope).getAttr(expr.getName());
+        if (expr.getParent() != null) {
+            return expr.getParent().accept(this, scope).getAttr(expr.getName());
         }
 
         if (scope.contains(expr.getName())) {
@@ -90,7 +89,7 @@ public class ExprVisitor {
         return expr.getValue();
     }
 
-    public Obj visit(InvocationExpr expr, Scope scope) {
+    public Obj visit(Invocation expr, Scope scope) {
         Obj target = expr.getLeft().accept(this, scope);
         List<Obj> arguments = new ArrayList<>();
 
@@ -114,7 +113,7 @@ public class ExprVisitor {
         return expr.getOperator().apply(operand);
     }
 
-    public Obj visit(RangeExpr expr, Scope scope) {
+    public Obj visit(RangeAtom expr, Scope scope) {
         Obj startObj = expr.getLeft().accept(this, scope);
         Obj endObj = expr.getRight().accept(this, scope);
 
@@ -135,11 +134,7 @@ public class ExprVisitor {
         for (Expr itemExpr : expr.getItems()) {
             Obj item = itemExpr.accept(this, scope);
 
-            if (item instanceof Range) {
-                vector.addAll(((Range) item).toVector());
-            } else {
-                vector.add(item);
-            }
+            vector.add(item);
         }
 
         return vector;
@@ -158,8 +153,8 @@ public class ExprVisitor {
     public Obj visit(AssignmentExpr expr, Scope scope) {
         String attr = expr.getName();
 
-        if (expr.getFrom() != null) {
-            Obj target = expr.getFrom().accept(this, scope);
+        if (expr.getParent() != null) {
+            Obj target = expr.getParent().accept(this, scope);
             Obj value = expr.getExpr().accept(this, scope);
             return target.setAttr(attr, value);
         }
@@ -234,5 +229,19 @@ public class ExprVisitor {
         }
 
         return Undefined.VALUE;
+    }
+
+    public Obj visit(DictionaryAtom expr, Scope scope) {
+        Map<Expr, Expr> map = expr.getMap();
+
+        Dictionary dict = new Dictionary();
+
+        for(Map.Entry<Expr, Expr> entry : map.entrySet()) {
+            dict.put(
+                    entry.getKey().accept(this, scope),
+                    entry.getValue().accept(this, scope));
+        }
+
+        return dict;
     }
 }

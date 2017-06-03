@@ -13,35 +13,32 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.functions;
+package xyz.avarel.aje.parser.parslets;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.invocation.Invocation;
+import xyz.avarel.aje.ast.ValueAtom;
+import xyz.avarel.aje.ast.flow.ConditionalExpr;
+import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Undefined;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class InvocationParser extends BinaryParser {
-    public InvocationParser() {
-        super(Precedence.INVOCATION);
+public class ElvisParser extends BinaryParser {
+    public ElvisParser() {
+        super(Precedence.INFIX, true);
     }
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
-        List<Expr> list = new ArrayList<>();
-
-        if (!parser.match(TokenType.RIGHT_PAREN)) {
-            do {
-                list.add(parser.parseExpr());
-            } while (parser.match(TokenType.COMMA));
-            parser.eat(TokenType.RIGHT_PAREN);
-        }
-
-        return new Invocation(token.getPosition(), left, list);
+        return new ConditionalExpr(token.getPosition(),
+                new BinaryOperation(token.getPosition(),
+                    left,
+                    new ValueAtom(token.getPosition(), Undefined.VALUE),
+                    Obj::isEqualTo),
+                parser.parseExpr(),
+                left);
     }
 }

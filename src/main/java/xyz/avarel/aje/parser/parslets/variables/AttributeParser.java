@@ -41,7 +41,6 @@ public class AttributeParser extends BinaryParser {
         if (parser.match(TokenType.ASSIGN)) {
             return new AssignmentExpr(token.getPosition(), left, name.getString(), parser.parseExpr(), false);
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
-
             Expr getOp = new Identifier(token.getPosition(), left, token.getString());
 
             return new ConditionalExpr(token.getPosition(),
