@@ -140,7 +140,7 @@ public interface Obj<JAVA> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj isEqualTo(Obj other) {
-        return this.equals(other) ? Bool.TRUE : Bool.FALSE;
+        return Bool.of(this.equals(other));
     }
 
     /**

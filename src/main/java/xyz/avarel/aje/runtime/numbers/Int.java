@@ -57,7 +57,7 @@ public class Int implements Obj<Integer> {
         if (obj instanceof Obj) {
             return isEqualTo((Obj) obj) == Bool.TRUE;
         } else {
-            return Double.valueOf(value) == obj;
+            return Integer.valueOf(value) == obj;
         }
     }
 
@@ -188,7 +188,7 @@ public class Int implements Obj<Integer> {
     }
 
     private Obj isEqualTo(Int other) {
-        return value == other.value ? Bool.TRUE : Bool.FALSE;
+        return Bool.of(value == other.value);
     }
 
     @Override
@@ -204,7 +204,7 @@ public class Int implements Obj<Integer> {
     }
 
     private Obj greaterThan(Int other) {
-        return value > other.value ? Bool.TRUE : Bool.FALSE;
+        return Bool.of(value > other.value);
     }
 
     @Override
@@ -220,7 +220,7 @@ public class Int implements Obj<Integer> {
     }
 
     private Obj lessThan(Int other) {
-        return value < other.value ? Bool.TRUE : Bool.FALSE;
+        return Bool.of(value < other.value);
     }
 
     @Override

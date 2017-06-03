@@ -27,6 +27,10 @@ public enum Bool implements Obj<Boolean> {
         this.value = value;
     }
 
+    public static Bool of(boolean value) {
+        return value ? TRUE : FALSE;
+    }
+
     @Override
     public String toString() {
         return Boolean.toString(value);
