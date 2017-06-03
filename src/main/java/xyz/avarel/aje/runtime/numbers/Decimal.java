@@ -181,7 +181,7 @@ public class Decimal implements Obj<Double> {
     }
 
     private Obj isEqualTo(Decimal other) {
-        return value == other.value ? Bool.TRUE : Bool.FALSE;
+        return Bool.of(value == other.value);
     }
 
     @Override
@@ -197,7 +197,7 @@ public class Decimal implements Obj<Double> {
     }
 
     private Obj greaterThan(Decimal other) {
-        return value > other.value ? Bool.TRUE : Bool.FALSE;
+        return Bool.of(value > other.value);
     }
 
     @Override
@@ -213,7 +213,7 @@ public class Decimal implements Obj<Double> {
     }
 
     private Bool lessThan(Decimal other) {
-        return value < other.value ? Bool.TRUE : Bool.FALSE;
+        return Bool.of(value < other.value);
     }
 
     @Override

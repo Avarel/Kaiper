@@ -175,7 +175,7 @@ public class Complex implements Obj<Double> {
     }
 
     private Bool isEqualTo(Complex b) {
-        return equals(b) ? Bool.TRUE : Bool.FALSE;
+        return Bool.of(equals(b));
     }
 
     @Override
@@ -191,7 +191,7 @@ public class Complex implements Obj<Double> {
     }
 
     private Obj greaterThan(Complex other) {
-        return abs() > other.abs() ? Bool.TRUE : Bool.FALSE;
+        return Bool.of(abs() > other.abs());
     }
 
     @Override
@@ -207,7 +207,7 @@ public class Complex implements Obj<Double> {
     }
 
     private Bool lessThan(Complex other) {
-        return abs() < other.abs() ? Bool.TRUE : Bool.FALSE;
+        return Bool.of(abs() < other.abs());
     }
 
     public Complex divide(Complex b) {
