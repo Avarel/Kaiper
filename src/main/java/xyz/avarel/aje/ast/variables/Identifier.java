@@ -22,21 +22,21 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
 public class Identifier extends Expr {
-    private final Expr from;
+    private final Expr parent;
     private final String name;
 
     public Identifier(Position position, String name) {
         this(position, null, name);
     }
 
-    public Identifier(Position position, Expr from, String name) {
+    public Identifier(Position position, Expr parent, String name) {
         super(position);
-        this.from = from;
+        this.parent = parent;
         this.name = name;
     }
 
-    public Expr getFrom() {
-        return from;
+    public Expr getParent() {
+        return parent;
     }
 
     public String getName() {
@@ -55,11 +55,11 @@ public class Identifier extends Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        if (from != null) {
+        if (parent != null) {
             builder.append(indent).append(isTail ? "└── " : "├── ").append("attribute");
 
             builder.append('\n');
-            from.ast("from", builder, indent + (isTail ? "    " : "│   "), false);
+            parent.ast("parent", builder, indent + (isTail ? "    " : "│   "), false);
 
             builder.append('\n');
             builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append(name);

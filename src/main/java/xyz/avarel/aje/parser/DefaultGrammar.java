@@ -17,6 +17,7 @@ package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.parser.parslets.ElvisParser;
 import xyz.avarel.aje.parser.parslets.GetSetParser;
 import xyz.avarel.aje.parser.parslets.GroupParser;
 import xyz.avarel.aje.parser.parslets.atoms.*;
@@ -37,13 +38,14 @@ public class DefaultGrammar extends Grammar {
 
     private DefaultGrammar() {
         // BLOCKS
-        register(TokenType.LEFT_BRACKET, new VectorParser());
+        register(TokenType.LEFT_BRACKET, new CollectionsParser());
         register(TokenType.LEFT_PAREN, new GroupParser());
 
         // FLOW CONTROL
         register(TokenType.IF, new IfElseParser());
         register(TokenType.FOR, new ForEachParser());
         register(TokenType.RETURN, new ReturnParser());
+        register(TokenType.ELVIS, new ElvisParser());
 
         // ATOMS
         register(TokenType.INT, new NumberParser());

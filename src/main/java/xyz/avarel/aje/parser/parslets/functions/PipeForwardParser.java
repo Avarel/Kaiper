@@ -18,7 +18,7 @@ package xyz.avarel.aje.parser.parslets.functions;
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.functions.FunctionAtom;
-import xyz.avarel.aje.ast.invocation.InvocationExpr;
+import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
@@ -36,11 +36,11 @@ public class PipeForwardParser extends BinaryParser {
     public Expr parse(AJEParser parser, Expr left, Token token) {
         Expr right = parser.parseExpr(getPrecedence());
 
-        if (right instanceof InvocationExpr) {
-            ((InvocationExpr) right).getArguments().add(0, left);
+        if (right instanceof Invocation) {
+            ((Invocation) right).getArguments().add(0, left);
             return right;
         } else if (right instanceof FunctionAtom || right instanceof Identifier) {
-            return new InvocationExpr(token.getPosition(), right, Collections.singletonList(left));
+            return new Invocation(token.getPosition(), right, Collections.singletonList(left));
         }
 
         throw new SyntaxException("Pipe-forward requires the right operand to be either: invocation, function, or name", token.getPosition());

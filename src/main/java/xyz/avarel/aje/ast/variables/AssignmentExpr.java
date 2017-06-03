@@ -23,20 +23,20 @@ import xyz.avarel.aje.scope.Scope;
 
 public class AssignmentExpr extends Expr {
     private final boolean declare;
-    private final Expr from;
+    private final Expr parent;
     private final String name;
     private final Expr expr;
 
-    public AssignmentExpr(Position position, Expr from, String name, Expr expr, boolean declaration) {
+    public AssignmentExpr(Position position, Expr parent, String name, Expr expr, boolean declaration) {
         super(position);
         this.declare = declaration;
-        this.from = from;
+        this.parent = parent;
         this.name = name;
         this.expr = expr;
     }
 
-    public Expr getFrom() {
-        return from;
+    public Expr getParent() {
+        return parent;
     }
 
     public String getName() {
@@ -60,13 +60,13 @@ public class AssignmentExpr extends Expr {
     public void ast(StringBuilder builder, String indent, boolean isTail) {
         builder.append(indent).append(isTail ? "└── " : "├── ").append(declare ? "declare" : "assign");
 
+        if (parent != null) {
+            builder.append('\n');
+            parent.ast("parent", builder, indent + (isTail ? "    " : "│   "), false);
+        }
+
         builder.append('\n');
         builder.append(indent).append(isTail ? "    " : "│   ").append("├── name: ").append(name);
-
-        if (from != null) {
-            builder.append('\n');
-            from.ast("of", builder, indent + (isTail ? "    " : "│   "), false);
-        }
 
         builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);

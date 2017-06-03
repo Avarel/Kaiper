@@ -26,8 +26,10 @@ public enum TokenType {
     LEFT_BRACE,
     RIGHT_BRACE,
 
-    // ASSIGNMENT
     OPTIONAL_ASSIGN,
+    ELVIS,
+
+    // ASSIGNMENT
     ASSIGN,
 
     // TYPES

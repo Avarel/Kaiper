@@ -23,11 +23,11 @@ import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 
-public class InvocationExpr extends Expr {
+public class Invocation extends Expr {
     private final Expr left;
     private final List<Expr> arguments;
 
-    public InvocationExpr(Position position, Expr left, List<Expr> arguments) {
+    public Invocation(Position position, Expr left, List<Expr> arguments) {
         super(position);
         this.left = left;
         this.arguments = arguments;

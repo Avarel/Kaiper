@@ -1,4 +1,4 @@
-var memo = [0, 1]
+var memo = [0.0, 1.0]
 
 fun fib(n) {
     return memo[n] ?= fib(n - 1) + fib(n - 2)

@@ -308,6 +308,14 @@ public class Vector extends ArrayList<Obj> implements Obj, Iterable<Obj>, Native
     }
 
     @Override
+    public boolean add(Obj obj) {
+        if (obj instanceof Range) {
+            return super.addAll(((Range) obj).toVector());
+        }
+        return super.add(obj);
+    }
+
+    @Override
     public Obj get(int index) {
         if (index < 0) {
             index += size();
