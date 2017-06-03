@@ -345,7 +345,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
             case "true": return make(TokenType.BOOLEAN, "true");
             case "false": return make(TokenType.BOOLEAN, "false");
-            case "i": return make(TokenType.IMAGINARY, "i");
             case "and": return make(TokenType.AND, "and");
             case "or": return make(TokenType.OR, "or");
             default: return make(TokenType.IDENTIFIER, value);

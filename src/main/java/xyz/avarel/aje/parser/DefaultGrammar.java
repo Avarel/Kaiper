@@ -50,7 +50,6 @@ public class DefaultGrammar extends Grammar {
         // ATOMS
         register(TokenType.INT, new NumberParser());
         register(TokenType.DECIMAL, new NumberParser());
-        register(TokenType.IMAGINARY, new NumberParser());
         register(TokenType.BOOLEAN, new BoolParser());
         register(TokenType.TEXT, new TextParser());
         register(TokenType.UNDEFINED, new UndefinedParser());

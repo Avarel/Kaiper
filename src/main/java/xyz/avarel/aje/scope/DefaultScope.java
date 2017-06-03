@@ -33,6 +33,7 @@ public class DefaultScope extends Scope {
     private DefaultScope() {
         declare("pi", Decimal.of(Math.PI));
         declare("e", Decimal.of(Math.E));
+        declare("i", Complex.of(0, 1));
 
         declare("compose", DefaultFunctions.COMPOSE.get());
 
@@ -74,8 +75,6 @@ public class DefaultScope extends Scope {
         declare("map", DefaultFunctions.MAP.get());
         declare("filter", DefaultFunctions.FILTER.get());
         declare("fold", DefaultFunctions.FOLD.get());
-
-        declare("dictionary", DefaultFunctions.MAKE_DICTIONARY.get());
 
         // Types
         declare("Int", Int.TYPE);

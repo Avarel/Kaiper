@@ -245,8 +245,9 @@ var x = 10
 x = 20
 sin(x)
 ```
-**Note:** Due to AJE having built in support for complex numbers, the identifier `i` denotes a
-    keyword for complex numbers and can not be assigned to. Use other identifiers such as `_i` instead.
+**Note:** Due to AJE having built in support for complex numbers, the identifier `i` is a globally assigned
+    variable. If a variable is declared with the name of `i`, complex number notation will be unavailable for
+    that scope.
 
 ##### Optional Assignment
 There is an optional assignment operator that only assigns a value to a property if it is undefined.

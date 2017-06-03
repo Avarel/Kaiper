@@ -35,7 +35,6 @@ public enum TokenType {
     // TYPES
     INT,
     DECIMAL,
-    IMAGINARY,
     BOOLEAN,
     FUNCTION,
     TEXT,
