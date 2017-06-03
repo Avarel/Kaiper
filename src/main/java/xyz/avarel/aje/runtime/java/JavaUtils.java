@@ -28,7 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NativeUtils {
+public class JavaUtils {
+
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>();
     static {
         primitiveWrapperMap.put(Boolean.TYPE, Boolean.class);
@@ -173,7 +174,7 @@ public class NativeUtils {
 
             return dict;
         } else {
-            return new NativeMapper(result);
+            return new JavaObject(result);
         }
     }
 }

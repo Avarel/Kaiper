@@ -15,14 +15,16 @@
 
 package xyz.avarel.aje.runtime.java;
 
-import xyz.avarel.aje.runtime.NativeObject;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Undefined;
 
-public class NativeMapper implements Obj, NativeObject<Object> {
+import java.lang.reflect.Field;
+
+public class JavaObject implements Obj<Object> {
     private final Object object;
 
-    public NativeMapper(Object object) {
+    public JavaObject(Object object) {
         this.object = object;
     }
 
@@ -41,8 +43,23 @@ public class NativeMapper implements Obj, NativeObject<Object> {
     }
 
     @Override
+    public Obj setAttr(String name, Obj value) {
+        if (name != null) {
+            try {
+                Field field = getObject().getClass().getField(name);
+                Object val = value.toNative();
+                field.set(object, val);
+                return value;
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                return Undefined.VALUE;
+            }
+        }
+        return Undefined.VALUE;
+    }
+
+    @Override
     public Obj getAttr(String name) {
-        return new NativeField(object, name);
+        return new JavaField(object, name);
     }
 
     @Override

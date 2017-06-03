@@ -47,13 +47,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public class JavaModel {
-    public final String name;
+    public final JavaModel me;
 
-    public final int size;
+    public String name;
+
+    public int size;
 
     public JavaModel(String name) {
         this.name = name;
         this.size = name.length();
+        this.me = this;
     }
 
     public JavaModel me() {

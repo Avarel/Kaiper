@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * An interface containing all natively implemented operations.
  */
-public interface Obj<NATIVE> {
+public interface Obj<JAVA> {
     Type<Obj> TYPE = new Type<>("Object");
 
     /**
@@ -36,7 +36,7 @@ public interface Obj<NATIVE> {
     /**
      * @return  The native object representation of this object or {@code null}.
      */
-    default NATIVE toNative() {
+    default JAVA toNative() {
         return null;
     }
 

@@ -15,7 +15,6 @@
 
 package xyz.avarel.aje.runtime.java;
 
-import xyz.avarel.aje.runtime.NativeObject;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
@@ -26,10 +25,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NativeField extends NativeMapper implements Obj, NativeObject<Object> {
+public class JavaField extends JavaObject implements Obj<Object> {
     private final String name;
 
-    public NativeField(Object object, String name) {
+    public JavaField(Object object, String name) {
         super(object);
         this.name = name;
     }
@@ -49,8 +48,8 @@ public class NativeField extends NativeMapper implements Obj, NativeObject<Objec
     @Override
     public Type getType() {
         Object field = getField();
-        if (NativeUtils.isAJEType(field)) {
-            return NativeUtils.mapToAJE(field).getType();
+        if (JavaUtils.isAJEType(field)) {
+            return JavaUtils.mapToAJE(field).getType();
         }
 
         return new Type("java/" + getField().getClass().getSimpleName());
@@ -59,16 +58,31 @@ public class NativeField extends NativeMapper implements Obj, NativeObject<Objec
     @Override
     public Object toNative() {
         Object field = getField();
-        if (NativeUtils.isAJEType(field)) {
-            return NativeUtils.mapToAJE(field).toNative();
+        if (JavaUtils.isAJEType(field)) {
+            return JavaUtils.mapToAJE(field).toNative();
         }
 
         return getField();
     }
 
     @Override
+    public Obj setAttr(String name, Obj value) {
+        if (name != null) {
+            try {
+                Field field = getField().getClass().getField(name);
+                Object val = value.toNative();
+                field.set(getField(), val);
+                return value;
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                return Undefined.VALUE;
+            }
+        }
+        return Undefined.VALUE;
+    }
+
+    @Override
     public Obj getAttr(String name) {
-        return new NativeField(getField(), name);
+        return new JavaField(getField(), name);
     }
 
     @Override
@@ -92,7 +106,7 @@ public class NativeField extends NativeMapper implements Obj, NativeObject<Objec
             Class<?>[] parameterTypes = method.getParameterTypes();
             for (int i = 0; i < method.getParameterCount(); i++) {
 
-                if (!NativeUtils.isAssignable(classes.get(i), parameterTypes[i])) {
+                if (!JavaUtils.isAssignable(classes.get(i), parameterTypes[i])) {
                     continue outer;
                 }
             }
@@ -102,14 +116,14 @@ public class NativeField extends NativeMapper implements Obj, NativeObject<Objec
             } catch (IllegalAccessException | InvocationTargetException ignore) {}
         }
 
-        return NativeUtils.mapToAJE(result);
+        return JavaUtils.mapToAJE(result);
     }
 
     @Override
     public boolean equals(Object obj) {
         Object field = getField();
-        if (NativeUtils.isAJEType(field)) {
-            return NativeUtils.mapToAJE(field).equals(obj);
+        if (JavaUtils.isAJEType(field)) {
+            return JavaUtils.mapToAJE(field).equals(obj);
         }
 
         return getObject() == obj;
@@ -118,8 +132,8 @@ public class NativeField extends NativeMapper implements Obj, NativeObject<Objec
     @Override
     public String toString() {
         Object field = getField();
-        if (NativeUtils.isAJEType(field)) {
-            return NativeUtils.mapToAJE(field).toString();
+        if (JavaUtils.isAJEType(field)) {
+            return JavaUtils.mapToAJE(field).toString();
         }
 
         return getField().toString();
@@ -128,8 +142,8 @@ public class NativeField extends NativeMapper implements Obj, NativeObject<Objec
     @Override
     public int hashCode() {
         Object field = getField();
-        if (NativeUtils.isAJEType(field)) {
-            return NativeUtils.mapToAJE(field).hashCode();
+        if (JavaUtils.isAJEType(field)) {
+            return JavaUtils.mapToAJE(field).hashCode();
         }
 
         return getField().hashCode();
