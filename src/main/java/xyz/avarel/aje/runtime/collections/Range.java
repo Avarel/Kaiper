@@ -15,7 +15,6 @@
 
 package xyz.avarel.aje.runtime.collections;
 
-import xyz.avarel.aje.runtime.NativeObject;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
@@ -25,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Range implements Obj, Iterable<Int>, NativeObject<List<Integer>> {
-    public static final Type TYPE = new Type("range");
+public class Range implements Obj<List<Integer>>, Iterable<Int> {
+    public static final Type<Range> TYPE = new Type<>("range");
     
     private final int start;
     private final int end;
@@ -105,7 +104,7 @@ public class Range implements Obj, Iterable<Int>, NativeObject<List<Integer>> {
             case "lastIndex":
                 return Int.of(size() - 1);
         }
-        return Undefined.VALUE;
+        return Obj.super.getAttr(name);
     }
 
     private final class RangeIterator implements Iterator<Int> {

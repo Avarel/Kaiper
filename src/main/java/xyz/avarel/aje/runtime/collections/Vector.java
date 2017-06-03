@@ -15,10 +15,12 @@
 
 package xyz.avarel.aje.runtime.collections;
 
-import xyz.avarel.aje.runtime.*;
+import xyz.avarel.aje.runtime.Bool;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunction;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.runtime.numbers.Numeric;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -27,8 +29,8 @@ import java.util.function.UnaryOperator;
 /**
  * AJE wrapper class for a one dimensional vector.
  */
-public class Vector extends ArrayList<Obj> implements Obj, Iterable<Obj>, NativeObject<List<Object>> {
-    public static final Type TYPE = new Type("vector");
+public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterable<Obj> {
+    public static final Type<Vector> TYPE = new Type<>("vector");
 
     /**
      * Creates an empty vector.
@@ -74,7 +76,7 @@ public class Vector extends ArrayList<Obj> implements Obj, Iterable<Obj>, Native
         List<Object> objects = new ArrayList<>();
 
         for (Obj obj : this) {
-            objects.add(obj.isNativeObject() ? obj.toNative() : null);
+            objects.add(obj.toNative());
         }
 
         return Collections.unmodifiableList(objects);
@@ -183,7 +185,7 @@ public class Vector extends ArrayList<Obj> implements Obj, Iterable<Obj>, Native
                 : Math.min(size(), other.size());
         Vector vector = Vector.of();
         for (int i = 0; i < len; i++) {
-            vector.add(Numeric.process(get(i % size()), other.get(i % other.size()), operator));
+            vector.add(operator.apply(get(i % size()), other.get(i % other.size())));
         }
         return vector;
     }
@@ -352,6 +354,6 @@ public class Vector extends ArrayList<Obj> implements Obj, Iterable<Obj>, Native
                     }
                 };
         }
-        return Undefined.VALUE;
+        return Obj.super.getAttr(name);
     }
 }

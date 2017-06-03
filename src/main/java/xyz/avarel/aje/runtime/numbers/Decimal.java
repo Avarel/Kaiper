@@ -15,12 +15,15 @@
 
 package xyz.avarel.aje.runtime.numbers;
 
-import xyz.avarel.aje.runtime.*;
+import xyz.avarel.aje.runtime.Bool;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
 
-public class Decimal implements Obj, NativeObject<Double> {
-    public static final Type<Decimal> TYPE = new Type<>(Numeric.TYPE, "decimal");
+public class Decimal implements Obj<Double> {
+    public static final Type<Decimal> TYPE = new Type<>(Complex.TYPE, "decimal");
 
     private final double value;
 
@@ -231,6 +234,6 @@ public class Decimal implements Obj, NativeObject<Double> {
             case "toComplex":
                 return Complex.of(value);
         }
-        return Undefined.VALUE;
+        return Obj.super.getAttr(name);
     }
 }

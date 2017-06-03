@@ -15,7 +15,6 @@
 
 package xyz.avarel.aje.runtime.collections;
 
-import xyz.avarel.aje.runtime.NativeObject;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
@@ -28,8 +27,8 @@ import java.util.Map;
 /**
  * AJE wrapper class for a one dimensional vector.
  */
-public class Dictionary extends HashMap<Obj, Obj> implements Obj, NativeObject<Map<Object, Object>> {
-    public static final Type TYPE = new Type("dictionary");
+public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Object>> {
+    public static final Type<Dictionary> TYPE = new Type<>("dictionary");
 
     /**
      * Creates an empty vector.
@@ -79,6 +78,6 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj, NativeObject<M
             case "length":
                 return Int.of(size());
         }
-        return Undefined.VALUE;
+        return Obj.super.getAttr(name);
     }
 }

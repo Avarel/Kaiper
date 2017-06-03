@@ -28,7 +28,7 @@ import xyz.avarel.aje.runtime.numbers.Numeric;
 import java.util.List;
 
 class AJETest {
-    public static void go() {
+    public static void main(String[] args) {
         // Base expression.
         Expression exp = new Expression("sum(tau,2,i)");
 
@@ -40,8 +40,6 @@ class AJETest {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 return arguments.get(0).times(2);
-                // Only works for decimals/complex.
-                // Check out DefaultFunction.java to handle integers.
             }
         });
 
@@ -52,7 +50,7 @@ class AJETest {
                 if (arguments.isEmpty()) return Int.of(0);
                 Obj accumulator = arguments.get(0);
                 for (int i = 1; i < arguments.size(); i++) {
-                    accumulator = Numeric.process(accumulator, arguments.get(i), Obj::plus);
+                    accumulator = accumulator.plus(arguments.get(i));
                 }
                 return accumulator;
             }

@@ -15,14 +15,17 @@
 
 package xyz.avarel.aje.runtime.numbers;
 
-import xyz.avarel.aje.runtime.*;
+import xyz.avarel.aje.runtime.Bool;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Undefined;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-public class Complex implements Obj, NativeObject<Double> {
-    public static final Type<Complex> TYPE = new Type<>(Complex.TYPE, "complex");
+public class Complex implements Obj<Double> {
+    public static final Type<Complex> TYPE = new Type<>(Numeric.TYPE, "complex");
 
     private final double re;
     private final double im;
@@ -244,7 +247,7 @@ public class Complex implements Obj, NativeObject<Double> {
         return sinh().divide(cosh());
     }
 
-    private double abs() {
+    private double abs() { // distance from origin
         if (re != 0 || im != 0) {
             return Math.sqrt(re * re + im * im);
         } else {
@@ -314,6 +317,6 @@ public class Complex implements Obj, NativeObject<Double> {
             case "toComplex":
                 return this;
         }
-        return Undefined.VALUE;
+        return Obj.super.getAttr(name);
     }
 }

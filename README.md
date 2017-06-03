@@ -124,37 +124,41 @@ repositories {
 |---|---|---|---:|
 |Integer numbers|`integer`|`Integer`|`1` `42` `1+2^3` `2*(3+4)`|
 |Decimal numbers|`decimal`|`Double`|`1.235` `-2.0/17` `3.0+2.5`|
-|Complex numbers|`complex`|`Complex`|`i^2` `3i` `(8+2i)(5i+3)`|
+|Complex numbers|`complex`| |`i^2` `3i` `(8+2i)(5i+3)`|
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Ranges|`range`|`List<Integer>`|`1..10` `10..<1`|
 |Vectors|`vector`|`List<Obj>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
-|Dictionaries|`dictionary`|`Map<Object, Object>`|`dictionary()` `map["hello"] = "there"`|
+|Dictionaries|`dictionary`|`Map<Object, Object>`|`[:]` `["hello":"there"]`|
 |Strings|`string`|`String`|`"Hello there!`|
 |Functions (first-class)|`function`| |`func(x) = { x + 2 }` `{ x, y -> x ^ y }`|
 |Flow control| | |`if (true) { 1 } else { 2 }`<br>`return 2`|
 
-`*` Mapped to AJE object.
-
 ### Usage 
 ```java
+import xyz.avarel.aje.Expression;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.functions.NativeFunction;
+import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.numbers.Numeric;
+
+import java.util.List;
+
 class AJETest {
-    public static void go() {
+    public static void main(String[] args) {
         // Base expression.
         Expression exp = new Expression("sum(tau,2,i)");
-        
+
         // Add a constant.
         exp.add("tau", new Expression("2 * pi"));
-        
+
         // Add a normal function.
         exp.add("double", new NativeFunction(Numeric.TYPE) {
             @Override
             protected Obj eval(List<Obj> arguments) {
-                return arguments.get(0).times(2); 
-                // Only works for decimals/complex.
-                // Check out DefaultFunction.java to handle integers.
+                return arguments.get(0).times(2);
             }
         });
-        
+
         // Add a varargs function.
         exp.add("sum", new NativeFunction(true, Numeric.TYPE) {
             @Override
@@ -162,19 +166,19 @@ class AJETest {
                 if (arguments.isEmpty()) return Int.of(0);
                 Obj accumulator = arguments.get(0);
                 for (int i = 1; i < arguments.size(); i++) {
-                    accumulator = Numeric.process(accumulator, arguments.get(i), Obj::plus);
+                    accumulator = accumulator.plus(arguments.get(i));
                 }
                 return accumulator;
             }
         });
-        
+
         // Calculate into AJE object.
         Obj result = exp.compute();
-        
+
         // Get the native representation of the object.
         // Each AJE object is mapped to a native object.
         Object obj = result.toNative();
-        
+
         // Prints the result.
         System.out.println(result);
     }

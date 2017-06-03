@@ -19,10 +19,10 @@ package xyz.avarel.aje.runtime;
  * Every operation results in the same
  * instance, NOTHING.
  */
-public enum Undefined implements Obj, NativeObject<Undefined> {
+public enum Undefined implements Obj<Undefined> {
     VALUE;
 
-    public static final Type<Void> TYPE = new Type<>("undefined");
+    public static final Type<Undefined> TYPE = new Type<>("undefined");
 
     @Override
     public String toString() {

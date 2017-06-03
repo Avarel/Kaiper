@@ -15,11 +15,14 @@
 
 package xyz.avarel.aje.runtime.numbers;
 
-import xyz.avarel.aje.runtime.*;
+import xyz.avarel.aje.runtime.Bool;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
 
-public class Int implements Obj, NativeObject<Integer> {
+public class Int implements Obj<Integer> {
     public static final Type<Int> TYPE = new Type<>(Decimal.TYPE, "integer");
 
     private final int value;
@@ -238,7 +241,7 @@ public class Int implements Obj, NativeObject<Integer> {
             case "toComplex":
                 return Complex.of(value);
         }
-        return Undefined.VALUE;
+        return Obj.super.getAttr(name);
     }
 
     private static class IntCache {
