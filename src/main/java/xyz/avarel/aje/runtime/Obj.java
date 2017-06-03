@@ -15,6 +15,7 @@
 
 package xyz.avarel.aje.runtime;
 
+import xyz.avarel.aje.runtime.functions.NativeFunction;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
 
@@ -24,8 +25,8 @@ import java.util.List;
 /**
  * An interface containing all natively implemented operations.
  */
-public interface Obj {
-    Type TYPE = new Type("Object");
+public interface Obj<NATIVE> {
+    Type<Obj> TYPE = new Type<>("Object");
 
     /**
      * @return The {@link Type} of the object.
@@ -33,18 +34,10 @@ public interface Obj {
     Type getType();
 
     /**
-     * @return  {@code true} if the object implements the {@link NativeObject} interface.
+     * @return  The native object representation of this object or {@code null}.
      */
-    default boolean isNativeObject() {
-        return this instanceof NativeObject;
-    }
-
-    /**
-     * @return  The native object representation of this object or {@code null} if it doesn't implement the
-     *          {@link NativeObject} interface.
-     */
-    default Object toNative() {
-        return isNativeObject() ? ((NativeObject<?>) this).toNative() : null;
+    default NATIVE toNative() {
+        return null;
     }
 
     /**
@@ -258,6 +251,25 @@ public interface Obj {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj getAttr(String name) {
+        switch (name) {
+            case "type":
+                return getType();
+            case "get":
+                return new NativeFunction(Obj.TYPE) {
+                    @Override
+                    protected Obj eval(List<Obj> arguments) {
+                        return Obj.this.get(arguments.get(0));
+                    }
+                };
+            case "set":
+                return new NativeFunction(Obj.TYPE, Obj.TYPE) {
+                    @Override
+                    protected Obj eval(List<Obj> arguments) {
+                        return Obj.this.set(arguments.get(0), arguments.get(1));
+                    }
+                };
+        }
+
         return Undefined.VALUE;
     }
 

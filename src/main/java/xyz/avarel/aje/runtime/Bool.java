@@ -15,11 +15,11 @@
 
 package xyz.avarel.aje.runtime;
 
-public enum Bool implements Obj, NativeObject<Boolean> {
+public enum Bool implements Obj<Boolean> {
     TRUE(true),
     FALSE(false);
 
-    public static final Type TYPE = new Type("boolean");
+    public static final Type<Bool> TYPE = new Type<>("boolean");
 
     private final boolean value;
 

@@ -15,7 +15,6 @@
 
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.runtime.NativeObject;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
@@ -24,7 +23,7 @@ import xyz.avarel.aje.runtime.numbers.Int;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class AJEFunction implements Obj, NativeObject<Function<List<Obj>, Obj>> {
+public abstract class AJEFunction implements Obj<Function<List<Obj>, Obj>> {
     public static final Type<AJEFunction> TYPE = new Type<>("function");
 
     public abstract int getArity();
@@ -98,6 +97,6 @@ public abstract class AJEFunction implements Obj, NativeObject<Function<List<Obj
             case "arity":
                 return Int.of(getArity());
         }
-        return Undefined.VALUE;
+        return Obj.super.getAttr(name);
     }
 }

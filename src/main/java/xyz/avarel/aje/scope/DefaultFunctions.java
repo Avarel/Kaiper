@@ -18,7 +18,6 @@ package xyz.avarel.aje.scope;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.functions.AJEFunction;
 import xyz.avarel.aje.runtime.functions.ComposedFunction;
@@ -32,13 +31,6 @@ import java.util.Collections;
 import java.util.List;
 
 public enum DefaultFunctions {
-    MAKE_DICTIONARY(new NativeFunction() {
-        @Override
-        protected Obj eval(List<Obj> arguments) {
-            return new Dictionary();
-        }
-    }),
-
     SQUARE_ROOT(new NativeFunction(Numeric.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
@@ -148,7 +140,7 @@ public enum DefaultFunctions {
             if (arguments.isEmpty()) return Int.of(0);
             Obj accumulator = arguments.get(0);
             for (int i = 1; i < arguments.size(); i++) {
-                accumulator = Numeric.process(accumulator, arguments.get(i), Obj::plus);
+                accumulator = accumulator.plus(arguments.get(i));
             }
             return accumulator;
         }
@@ -160,7 +152,7 @@ public enum DefaultFunctions {
             if (arguments.isEmpty()) return Int.of(0);
             Obj accumulator = arguments.get(0);
             for (int i = 1; i < arguments.size(); i++) {
-                accumulator = Numeric.process(accumulator, arguments.get(i), Obj::times);
+                accumulator = accumulator.times(arguments.get(i));
             }
             return accumulator;
         }

@@ -17,7 +17,7 @@ package xyz.avarel.aje.runtime;
 
 import xyz.avarel.aje.runtime.numbers.Int;
 
-public class Text implements Obj, NativeObject<String> {
+public class Text implements Obj<String> {
     public static final Type<Text> TYPE = new Type<>("string");
 
     private final String string;
@@ -156,7 +156,7 @@ public class Text implements Obj, NativeObject<String> {
             case "lastIndex":
                 return Int.of(length() - 1);
         }
-        return Undefined.VALUE;
+        return Obj.super.getAttr(name);
     }
 
     @Override
