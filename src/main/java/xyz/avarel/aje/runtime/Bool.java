@@ -55,9 +55,7 @@ public enum Bool implements Obj<Boolean> {
     }
 
     public Bool or(Bool other) {
-        if (value) return TRUE;
-        if (other.value) return TRUE;
-        return FALSE;
+        return Bool.of(value || other.value);
     }
 
     @Override
@@ -69,20 +67,18 @@ public enum Bool implements Obj<Boolean> {
     }
 
     public Bool and(Bool other) {
-        if (!value) return FALSE;
-        if (!other.value) return FALSE;
-        return TRUE;
+        return Bool.of(value && other.value);
     }
 
     @Override
     public Bool negate() {
-        return value ? FALSE : TRUE;
+        return Bool.of(!value);
     }
 
     @Override
     public Bool isEqualTo(Obj other) {
         if (other instanceof Bool) {
-            return value == ((Bool) other).value ? TRUE : FALSE;
+            return Bool.of(value == ((Bool) other).value);
         }
         return FALSE;
     }

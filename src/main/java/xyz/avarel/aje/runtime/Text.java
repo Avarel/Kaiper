@@ -15,15 +15,17 @@
 
 package xyz.avarel.aje.runtime;
 
+import xyz.avarel.aje.runtime.classes.TextType;
+import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 public class Text implements Obj<String> {
-    public static final Type<Text> TYPE = new Type<>("string");
+    public static final Type<Text> TYPE = new TextType();
 
-    private final String string;
+    private final String value;
 
-    private Text(String string) {
-        this.string = string;
+    private Text(String value) {
+        this.value = value;
     }
 
     public static Text of(String value) {
@@ -31,7 +33,7 @@ public class Text implements Obj<String> {
     }
 
     public String value() {
-        return string;
+        return value;
     }
 
     @Override
@@ -155,8 +157,66 @@ public class Text implements Obj<String> {
                 return Int.of(length());
             case "lastIndex":
                 return Int.of(length() - 1);
+            case "type":
+                return TYPE;
         }
-        return Obj.super.getAttr(name);
+        return TYPE.getAttr(name);
+    }
+
+    public Bool contains(Text text) {
+        return Bool.of(value.contains(text.value));
+    }
+
+    public Int indexOf(Text text) {
+        return Int.of(value.indexOf(text.value));
+    }
+
+    public Vector split(Text text) {
+        Vector vector = new Vector();
+        for (String part : value.split(text.value)) {
+            vector.add(Text.of(part));
+        }
+        return vector;
+    }
+
+    public Bool startsWith(Text text) {
+        return Bool.of(value.startsWith(text.value));
+    }
+
+    public Text substring(Int start) {
+        return Text.of(value.substring(start.value()));
+    }
+
+    public Text substring(int start) {
+        return Text.of(value.substring(start));
+    }
+
+    public Text substring(Int start, Int end) {
+        return Text.of(value.substring(start.value(), end.value()));
+    }
+
+    public Text substring(int start, int end) {
+        return Text.of(value.substring(start, end));
+    }
+
+    public Vector toVector() {
+        Vector vector = new Vector();
+        for (int i = 0; i < length(); i++) {
+            vector.add(substring(i, i + 1));
+        }
+        return vector;
+    }
+
+    public Text toLowerCase() {
+        return Text.of(value.toLowerCase());
+    }
+
+    public Text toUpperCase() {
+        return Text.of(value.toUpperCase());
+    }
+
+    public Text trim() {
+        return Text.of(value.trim());
     }
 
     @Override

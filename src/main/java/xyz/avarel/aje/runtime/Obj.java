@@ -15,7 +15,6 @@
 
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.runtime.functions.NativeFunction;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
 
@@ -199,7 +198,7 @@ public interface Obj<NATIVE> {
      *          List of {@link Obj} arguments.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj invoke(List<Obj> arguments) {
+    default Obj invoke(Obj receiver, List<Obj> arguments) {
         return Undefined.VALUE;
     }
 
@@ -211,8 +210,8 @@ public interface Obj<NATIVE> {
      *          Array of {@link Obj} arguments.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj invoke(Obj... arguments) {
-        return invoke(Arrays.asList(arguments));
+    default Obj invoke(Obj receiver, Obj... arguments) {
+        return invoke(receiver, Arrays.asList(arguments));
     }
 
     default Obj slice(Obj start, Obj end, Obj step) {
@@ -254,20 +253,22 @@ public interface Obj<NATIVE> {
         switch (name) {
             case "type":
                 return getType();
-            case "get":
-                return new NativeFunction(Obj.TYPE) {
-                    @Override
-                    protected Obj eval(List<Obj> arguments) {
-                        return Obj.this.get(arguments.get(0));
-                    }
-                };
-            case "set":
-                return new NativeFunction(Obj.TYPE, Obj.TYPE) {
-                    @Override
-                    protected Obj eval(List<Obj> arguments) {
-                        return Obj.this.set(arguments.get(0), arguments.get(1));
-                    }
-                };
+            case "toString":
+                return Text.of(toString());
+//            case "get":
+//                return new NativeFunction(Obj.TYPE) {
+//                    @Override
+//                    protected Obj eval(Obj target, List<Obj> arguments) {
+//                        return Obj.this.get(arguments.get(0));
+//                    }
+//                };
+//            case "set":
+//                return new NativeFunction(Obj.TYPE, Obj.TYPE) {
+//                    @Override
+//                    protected Obj eval(Obj target, List<Obj> arguments) {
+//                        return Obj.this.set(arguments.get(0), arguments.get(1));
+//                    }
+//                };
         }
 
         return Undefined.VALUE;

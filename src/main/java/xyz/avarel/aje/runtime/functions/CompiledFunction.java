@@ -31,11 +31,14 @@ import java.util.stream.Collectors;
  * instance, NOTHING.
  */
 public class CompiledFunction extends AJEFunction {
+    private final Type receiverType;
+
     private final List<Parameter> parameters;
     private final Expr expr;
     private final Scope scope;
 
-    public CompiledFunction(List<Parameter> parameters, Expr expr, Scope scope) {
+    public CompiledFunction(Type<?> receiverType, List<Parameter> parameters, Expr expr, Scope scope) {
+        this.receiverType = receiverType;
         this.parameters = parameters;
         this.expr = expr;
         this.scope = scope;
@@ -56,7 +59,11 @@ public class CompiledFunction extends AJEFunction {
     }
 
     @Override
-    public Obj invoke(List<Obj> arguments) {
+    public Obj invoke(Obj receiver, List<Obj> arguments) {
+        if (!receiver.getType().is(receiverType)) {
+            return Undefined.VALUE;
+        }
+
         Scope scope = this.scope.subPool();
         for (int i = 0; i < getArity(); i++) {
             Parameter parameter = parameters.get(i);
@@ -79,6 +86,8 @@ public class CompiledFunction extends AJEFunction {
                 return Undefined.VALUE;
             }
         }
+
+        // TODO scope.declare("self", target);
 
         try {
             return expr.accept(new ExprVisitor(), scope);

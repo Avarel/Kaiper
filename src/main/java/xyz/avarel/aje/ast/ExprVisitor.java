@@ -68,7 +68,7 @@ public class ExprVisitor {
             parameters.add(new Parameter(data.getName(), (Type) obj_type, data.getDefault()));
         }
 
-        AJEFunction func = new CompiledFunction(parameters, expr.getExpr(), scope.subPool());
+        AJEFunction func = new CompiledFunction(Obj.TYPE, parameters, expr.getExpr(), scope.subPool());
         if (expr.getName() != null) scope.declare(expr.getName(), func);
         return func;
     }
@@ -90,14 +90,25 @@ public class ExprVisitor {
     }
 
     public Obj visit(Invocation expr, Scope scope) {
-        Obj target = expr.getLeft().accept(this, scope);
+        Obj receiver = Undefined.VALUE;
+        Obj target;
+
+        // w/ receiver:     a.function(args...)
+        // no receiver:     function(args...)
+        if (expr.getLeft() instanceof Identifier && ((Identifier) expr.getLeft()).getParent() != null) {
+            receiver = ((Identifier) expr.getLeft()).getParent().accept(this, scope);
+            target = receiver.getAttr(((Identifier) expr.getLeft()).getName());
+        } else {
+            target = expr.getLeft().accept(this, scope);
+        }
+
         List<Obj> arguments = new ArrayList<>();
 
         for (Expr arg : expr.getArguments()) {
             arguments.add(arg.accept(this, scope));
         }
 
-        return target.invoke(arguments);
+        return target.invoke(receiver, arguments);
     }
 
     public Obj visit(BinaryOperation expr, Scope scope) {

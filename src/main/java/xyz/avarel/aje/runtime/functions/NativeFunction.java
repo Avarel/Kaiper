@@ -25,20 +25,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class NativeFunction extends AJEFunction {
+    private final Type receiverType;
     private final List<Parameter> parameters;
     private final boolean varargs;
 
-    public NativeFunction(Type... types) {
+    public NativeFunction(Type receiverType, Type... types) {
+        this.receiverType = receiverType;
         this.parameters = Arrays.stream(types).map(Parameter::new).collect(Collectors.toList());
         this.varargs = false;
     }
 
-    public NativeFunction(boolean varargs, Type type) {
+    public NativeFunction(Type receiverType, boolean varargs, Type type) {
+        this.receiverType = receiverType;
         this.parameters = Collections.singletonList(new Parameter(type));
         this.varargs = varargs;
     }
 
-    protected abstract Obj eval(List<Obj> arguments);
+    protected abstract Obj eval(Obj receiver, List<Obj> arguments);
 
     public List<Parameter> getParameters() {
         return parameters;
@@ -50,7 +53,15 @@ public abstract class NativeFunction extends AJEFunction {
     }
 
     @Override
-    public Obj invoke(List<Obj> arguments) {
+    public Obj invoke(Obj receiver, List<Obj> arguments) {
+        if (receiver == receiverType) {
+            receiver = arguments.remove(0);
+        }
+
+        if (!receiver.getType().is(receiverType)) {
+            return Undefined.VALUE;
+        }
+
         if (!varargs && arguments.size() < getArity()) {
             return Undefined.VALUE;
         }
@@ -69,7 +80,7 @@ public abstract class NativeFunction extends AJEFunction {
             }
         }
 
-        Obj result = eval(arguments);
+        Obj result = eval(receiver, arguments);
         return result != null ? result : Undefined.VALUE;
     }
 

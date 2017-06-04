@@ -19,7 +19,6 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.functions.NativeFunction;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.*;
@@ -337,22 +336,22 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 return Int.of(size());
             case "lastIndex":
                 return Int.of(size() - 1);
-            case "append":
-                return new NativeFunction(true, Obj.TYPE) {
-                    @Override
-                    protected Obj eval(List<Obj> arguments) {
-                        Vector.this.addAll(arguments);
-                        return Vector.this;
-                    }
-                };
-            case "extend":
-                return new NativeFunction(Vector.TYPE) {
-                    @Override
-                    protected Obj eval(List<Obj> arguments) {
-                        Vector.this.addAll(arguments);
-                        return Vector.this;
-                    }
-                };
+//            case "append":
+//                return new NativeFunction(true, Obj.TYPE) {
+//                    @Override
+//                    protected Obj eval(Obj target, List<Obj> arguments) {
+//                        Vector.this.addAll(arguments);
+//                        return Vector.this;
+//                    }
+//                };
+//            case "extend":
+//                return new NativeFunction(Vector.TYPE) {
+//                    @Override
+//                    protected Obj eval(Obj target, List<Obj> arguments) {
+//                        Vector.this.addAll(arguments);
+//                        return Vector.this;
+//                    }
+//                };
         }
         return Obj.super.getAttr(name);
     }

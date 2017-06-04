@@ -17,7 +17,7 @@ package xyz.avarel.aje.runtime;
 
 @SuppressWarnings("unused")
 public class Type<T> implements Obj<Type> {
-    private static final Type<Type> TYPE = new Type<>("type");
+    public static final Type<Type> TYPE = new Type<>("type");
 
     private final Type parent;
     private final String name;

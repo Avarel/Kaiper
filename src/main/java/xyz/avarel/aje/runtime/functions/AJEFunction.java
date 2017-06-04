@@ -21,9 +21,9 @@ import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
-public abstract class AJEFunction implements Obj<Function<List<Obj>, Obj>> {
+public abstract class AJEFunction implements Obj<BiFunction<Obj, List<Obj>, Obj>> {
     public static final Type<AJEFunction> TYPE = new Type<>("function");
 
     public abstract int getArity();
@@ -36,12 +36,12 @@ public abstract class AJEFunction implements Obj<Function<List<Obj>, Obj>> {
     }
 
     @Override
-    public Function<List<Obj>, Obj> toNative() {
+    public BiFunction<Obj, List<Obj>, Obj> toNative() {
         return this::invoke;
     }
 
     @Override
-    public abstract Obj invoke(List<Obj> arguments);
+    public abstract Obj invoke(Obj receiver, List<Obj> arguments);
 
     @Override
     public Obj plus(Obj other) {

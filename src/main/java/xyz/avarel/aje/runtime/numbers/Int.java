@@ -224,8 +224,8 @@ public class Int implements Obj<Integer> {
     }
 
     @Override
-    public Obj invoke(List<Obj> arguments) {
-        if (arguments.size() == 1) {
+    public Obj invoke(Obj receiver, List<Obj> arguments) {
+        if (receiver == Undefined.VALUE && arguments.size() == 1) {
             return times(arguments.get(0));
         }
         return Undefined.VALUE;

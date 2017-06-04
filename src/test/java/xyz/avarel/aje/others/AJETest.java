@@ -21,11 +21,6 @@ package xyz.avarel.aje.others;
 
 import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.functions.NativeFunction;
-import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.runtime.numbers.Numeric;
-
-import java.util.List;
 
 class AJETest {
     public static void main(String[] args) {
@@ -35,26 +30,26 @@ class AJETest {
         // Add a constant.
         exp.add("tau", new Expression("2 * pi"));
 
-        // Add a normal function.
-        exp.add("double", new NativeFunction(Numeric.TYPE) {
-            @Override
-            protected Obj eval(List<Obj> arguments) {
-                return arguments.get(0).times(2);
-            }
-        });
-
-        // Add a varargs function.
-        exp.add("sum", new NativeFunction(true, Numeric.TYPE) {
-            @Override
-            protected Obj eval(List<Obj> arguments) {
-                if (arguments.isEmpty()) return Int.of(0);
-                Obj accumulator = arguments.get(0);
-                for (int i = 1; i < arguments.size(); i++) {
-                    accumulator = accumulator.plus(arguments.get(i));
-                }
-                return accumulator;
-            }
-        });
+//        // Add a normal function.
+//        exp.add("double", new NativeFunction(Numeric.TYPE) {
+//            @Override
+//            protected Obj eval(Obj target, List<Obj> arguments) {
+//                return arguments.get(0).times(2);
+//            }
+//        });
+//
+//        // Add a varargs function.
+//        exp.add("sum", new NativeFunction(true, Numeric.TYPE) {
+//            @Override
+//            protected Obj eval(Obj target, List<Obj> arguments) {
+//                if (arguments.isEmpty()) return Int.of(0);
+//                Obj accumulator = arguments.get(0);
+//                for (int i = 1; i < arguments.size(); i++) {
+//                    accumulator = accumulator.plus(arguments.get(i));
+//                }
+//                return accumulator;
+//            }
+//        });
 
         // Calculate into AJE object.
         Obj result = exp.compute();
