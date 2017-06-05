@@ -410,7 +410,7 @@ public enum DefaultFunctions {
             AJEFunction operation = (AJEFunction) arguments.get(2);
 
             for (Obj obj : arg) {
-                accumulator = operation.invoke(accumulator, obj);
+                accumulator = operation.invoke(Undefined.VALUE, accumulator, obj);
             }
             return accumulator;
         }

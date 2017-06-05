@@ -64,12 +64,11 @@ public class Parameter {
         if (name != null) {
             sb.append(name);
         }
-        if (type != Obj.TYPE) {
-            if (name != null) {
-                sb.append(": ");
-            }
-            sb.append(type);
+
+        if (name != null) {
+            sb.append(": ");
         }
+        sb.append(type);
 
         if (defaultExpr != null) {
             sb.append(" = ").append(defaultExpr);

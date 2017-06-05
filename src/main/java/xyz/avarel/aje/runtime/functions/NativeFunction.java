@@ -29,15 +29,15 @@ public abstract class NativeFunction extends AJEFunction {
     private final List<Parameter> parameters;
     private final boolean varargs;
 
-    public NativeFunction(Type receiverType, Type... types) {
+    public NativeFunction(Type receiverType, Type... parameterTypes) {
         this.receiverType = receiverType;
-        this.parameters = Arrays.stream(types).map(Parameter::new).collect(Collectors.toList());
+        this.parameters = Arrays.stream(parameterTypes).map(Parameter::new).collect(Collectors.toList());
         this.varargs = false;
     }
 
-    public NativeFunction(Type receiverType, boolean varargs, Type type) {
+    public NativeFunction(Type receiverType, boolean varargs, Type parameterTypes) {
         this.receiverType = receiverType;
-        this.parameters = Collections.singletonList(new Parameter(type));
+        this.parameters = Collections.singletonList(new Parameter(parameterTypes));
         this.varargs = varargs;
     }
 
@@ -55,6 +55,9 @@ public abstract class NativeFunction extends AJEFunction {
     @Override
     public Obj invoke(Obj receiver, List<Obj> arguments) {
         if (receiver == receiverType) {
+            if (arguments.size() == 0) {
+                return Undefined.VALUE;
+            }
             receiver = arguments.remove(0);
         }
 

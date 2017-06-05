@@ -19,13 +19,14 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.scope.Scope;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
 public class Complex implements Obj<Double> {
-    public static final Type<Complex> TYPE = new Type<>(Numeric.TYPE, "complex");
+    public static final Type<Complex> TYPE = new ComplexType();
 
     private final double re;
     private final double im;
@@ -307,16 +308,20 @@ public class Complex implements Obj<Double> {
         return Undefined.VALUE;
     }
 
-    @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "toInteger":
-                return Int.of((int) re);
-            case "toDecimal":
-                return Decimal.of(re);
-            case "toComplex":
-                return this;
+    public static class ComplexType extends Type<Complex> {
+        private Scope scope = new Scope();
+
+        public ComplexType() {
+            super(Numeric.TYPE, "Complex");
         }
-        return Obj.super.getAttr(name);
+
+        @Override
+        public Obj getAttr(String name) {
+            if (scope.contains(name)) {
+                return scope.lookup(name);
+            }
+
+            return getParent().getAttr(name);
+        }
     }
 }

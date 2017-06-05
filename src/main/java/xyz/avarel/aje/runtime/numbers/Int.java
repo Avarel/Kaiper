@@ -19,11 +19,12 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 
 public class Int implements Obj<Integer> {
-    public static final Type<Int> TYPE = new Type<>(Decimal.TYPE, "integer");
+    public static final Type<Int> TYPE = new IntType();
 
     private final int value;
 
@@ -231,19 +232,6 @@ public class Int implements Obj<Integer> {
         return Undefined.VALUE;
     }
 
-    @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "toInteger":
-                return this;
-            case "toDecimal":
-                return Decimal.of(value);
-            case "toComplex":
-                return Complex.of(value);
-        }
-        return Obj.super.getAttr(name);
-    }
-
     private static class IntCache {
         private static final int LOW = -128;
         private static final int HIGH = 127;
@@ -258,5 +246,22 @@ public class Int implements Obj<Integer> {
         }
 
         private IntCache() {}
+    }
+
+    public static class IntType extends Type<Int> {
+        private Scope scope = new Scope();
+
+        public IntType() {
+            super(Decimal.TYPE, "Int");
+        }
+
+        @Override
+        public Obj getAttr(String name) {
+            if (scope.contains(name)) {
+                return scope.lookup(name);
+            }
+
+            return getParent().getAttr(name);
+        }
     }
 }

@@ -19,6 +19,7 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.scope.Scope;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ import java.util.Map;
  * AJE wrapper class for a one dimensional vector.
  */
 public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Object>> {
-    public static final Type<Dictionary> TYPE = new Type<>("dictionary");
+    public static final Type<Dictionary> TYPE = new DictionaryType();
 
     /**
      * Creates an empty vector.
@@ -79,5 +80,22 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
                 return Int.of(size());
         }
         return Obj.super.getAttr(name);
+    }
+
+    public static class DictionaryType extends Type<Dictionary> {
+        private Scope scope = new Scope();
+
+        public DictionaryType() {
+            super("Dictionary");
+        }
+
+        @Override
+        public Obj getAttr(String name) {
+            if (scope.contains(name)) {
+                return scope.lookup(name);
+            }
+
+            return getParent().getAttr(name);
+        }
     }
 }

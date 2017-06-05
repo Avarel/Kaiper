@@ -19,11 +19,12 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 
 public class Decimal implements Obj<Double> {
-    public static final Type<Decimal> TYPE = new Type<>(Complex.TYPE, "decimal");
+    public static final Type<Decimal> TYPE = new DecimalType();
 
     private final double value;
 
@@ -224,16 +225,20 @@ public class Decimal implements Obj<Double> {
         return Undefined.VALUE;
     }
 
-    @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "toInteger":
-                return Int.of((int) value);
-            case "toDecimal":
-                return this;
-            case "toComplex":
-                return Complex.of(value);
+    public static class DecimalType extends Type<Decimal> {
+        private Scope scope = new Scope();
+
+        public DecimalType() {
+            super(Complex.TYPE, "Decimal");
         }
-        return Obj.super.getAttr(name);
+
+        @Override
+        public Obj getAttr(String name) {
+            if (scope.contains(name)) {
+                return scope.lookup(name);
+            }
+
+            return getParent().getAttr(name);
+        }
     }
 }

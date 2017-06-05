@@ -73,12 +73,17 @@ class FunctionTest {
     }
 
     @Test
-    fun `higher order`() {
-        Assert.assertEquals(evaluator.eval("[1..10] |> fold(0, add)"), eval("55"))
+    fun `higher order map`() {
+        Assert.assertEquals(evaluator.eval("map([1..10], _ ^ 2)"), eval("[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]"))
     }
 
     @Test
-    fun `higher order function`() {
-        Assert.assertEquals(evaluator.eval("map([1..10], _ ^ 2)"), eval("[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]"))
+    fun `higher order filter` () {
+        Assert.assertEquals(evaluator.eval("[1..10] |> filter(_ % 2 == 0)"), eval("[2,4,6,8,10]"))
+    }
+
+    @Test
+    fun `higher order fold`() {
+        Assert.assertEquals(evaluator.eval("[1..10] |> fold(0, add)"), eval("55"))
     }
 }

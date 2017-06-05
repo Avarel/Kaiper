@@ -19,13 +19,14 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.scope.Scope;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class Range implements Obj<List<Integer>>, Iterable<Int> {
-    public static final Type<Range> TYPE = new Type<>("range");
+    public static final Type<Range> TYPE = new RangeType();
     
     private final int start;
     private final int end;
@@ -104,7 +105,7 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
             case "lastIndex":
                 return Int.of(size() - 1);
         }
-        return Obj.super.getAttr(name);
+        return TYPE.getAttr(name);
     }
 
     private final class RangeIterator implements Iterator<Int> {
@@ -122,6 +123,23 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
         @Override
         public Int next() {
             return Int.of(cursor++);
+        }
+    }
+
+    public static class RangeType extends Type<Range> {
+        private Scope scope = new Scope();
+
+        public RangeType() {
+            super("Range");
+        }
+
+        @Override
+        public Obj getAttr(String name) {
+            if (scope.contains(name)) {
+                return scope.lookup(name);
+            }
+
+            return getParent().getAttr(name);
         }
     }
 }

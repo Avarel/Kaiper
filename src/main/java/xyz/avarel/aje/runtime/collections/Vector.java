@@ -20,6 +20,7 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.scope.Scope;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -29,7 +30,7 @@ import java.util.function.UnaryOperator;
  * AJE wrapper class for a one dimensional vector.
  */
 public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterable<Obj> {
-    public static final Type<Vector> TYPE = new Type<>("vector");
+    public static final Type<Vector> TYPE = new VectorType();
 
     /**
      * Creates an empty vector.
@@ -353,6 +354,23 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
 //                    }
 //                };
         }
-        return Obj.super.getAttr(name);
+        return TYPE.getAttr(name);
+    }
+
+    public static class VectorType extends Type<Vector> {
+        private Scope scope = new Scope();
+
+        public VectorType() {
+            super("Vector");
+        }
+
+        @Override
+        public Obj getAttr(String name) {
+            if (scope.contains(name)) {
+                return scope.lookup(name);
+            }
+
+            return getParent().getAttr(name);
+        }
     }
 }
