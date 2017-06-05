@@ -17,7 +17,6 @@ package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
-import xyz.avarel.aje.scope.Scope;
 
 public abstract class Numeric extends Number implements Obj {
     public static final Type<Numeric> TYPE = new NumericType();
@@ -58,19 +57,8 @@ public abstract class Numeric extends Number implements Obj {
     }
 
     public static class NumericType extends Type<Numeric> {
-        private Scope scope = new Scope();
-
         public NumericType() {
             super("Number");
-        }
-
-        @Override
-        public Obj getAttr(String name) {
-            if (scope.contains(name)) {
-                return scope.lookup(name);
-            }
-
-            return getParent().getAttr(name);
         }
     }
 }

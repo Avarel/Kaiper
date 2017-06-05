@@ -15,8 +15,6 @@
 
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.scope.Scope;
-
 public enum Bool implements Obj<Boolean> {
     TRUE(true),
     FALSE(false);
@@ -91,19 +89,8 @@ public enum Bool implements Obj<Boolean> {
     }
 
     public static class BoolType extends Type<Bool> {
-        private Scope scope = new Scope();
-
         public BoolType() {
             super("Boolean");
-        }
-
-        @Override
-        public Obj getAttr(String name) {
-            if (scope.contains(name)) {
-                return scope.lookup(name);
-            }
-
-            return getParent().getAttr(name);
         }
     }
 }

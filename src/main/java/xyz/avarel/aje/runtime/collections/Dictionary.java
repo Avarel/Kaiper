@@ -19,7 +19,6 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.scope.Scope;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -83,19 +82,8 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
     }
 
     public static class DictionaryType extends Type<Dictionary> {
-        private Scope scope = new Scope();
-
         public DictionaryType() {
             super("Dictionary");
-        }
-
-        @Override
-        public Obj getAttr(String name) {
-            if (scope.contains(name)) {
-                return scope.lookup(name);
-            }
-
-            return getParent().getAttr(name);
         }
     }
 }

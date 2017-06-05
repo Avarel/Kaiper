@@ -19,7 +19,6 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.scope.Scope;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -127,19 +126,8 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
     }
 
     public static class RangeType extends Type<Range> {
-        private Scope scope = new Scope();
-
         public RangeType() {
             super("Range");
-        }
-
-        @Override
-        public Obj getAttr(String name) {
-            if (scope.contains(name)) {
-                return scope.lookup(name);
-            }
-
-            return getParent().getAttr(name);
         }
     }
 }

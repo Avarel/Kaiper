@@ -15,9 +15,13 @@
 
 package xyz.avarel.aje.runtime;
 
+import xyz.avarel.aje.scope.Scope;
+
 @SuppressWarnings("unused")
 public class Type<T> implements Obj<Type> {
     public static final Type<Type> TYPE = new Type<>("type");
+
+    private Scope scope;
 
     private final Type parent;
     private final String name;
@@ -27,6 +31,7 @@ public class Type<T> implements Obj<Type> {
     }
 
     public Type(Type parent, String name) {
+        this.scope = parent != null ? parent.scope.subPool() : new Scope();
         this.parent = parent;
         this.name = name;
     }
@@ -38,6 +43,15 @@ public class Type<T> implements Obj<Type> {
             t = t.parent;
         } while (t != null);
         return false;
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    @Override
+    public Obj getAttr(String name) {
+        return scope.lookup(name);
     }
 
     @Override

@@ -18,7 +18,6 @@ package xyz.avarel.aje.runtime;
 import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.functions.NativeFunction;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 
@@ -233,30 +232,28 @@ public class Text implements Obj<String> {
     }
 
     public static class TextType extends Type<Text> {
-        private Scope scope = new Scope();
-
         public TextType() {
             super("String");
-
-            scope.declare("contains", new NativeFunction(this, this) {
+            
+            getScope().declare("contains", new NativeFunction(this, this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).contains((Text) arguments.get(0));
                 }
             });
-            scope.declare("indexOf", new NativeFunction(this, this) {
+            getScope().declare("indexOf", new NativeFunction(this, this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).indexOf((Text) arguments.get(0));
                 }
             });
-            scope.declare("split", new NativeFunction(this, this) {
+            getScope().declare("split", new NativeFunction(this, this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).split((Text) arguments.get(0));
                 }
             });
-            scope.declare("substring", new NativeFunction(this, Int.TYPE) {
+            getScope().declare("substring", new NativeFunction(this, Int.TYPE) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     if (arguments.size() >= 2) {
@@ -269,39 +266,30 @@ public class Text implements Obj<String> {
                     }
                 }
             });
-            scope.declare("toVector", new NativeFunction(this) {
+            getScope().declare("toVector", new NativeFunction(this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).toVector();
                 }
             });
-            scope.declare("toLowerCase", new NativeFunction(this) {
+            getScope().declare("toLowerCase", new NativeFunction(this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).toLowerCase();
                 }
             });
-            scope.declare("toUpperCase", new NativeFunction(this) {
+            getScope().declare("toUpperCase", new NativeFunction(this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).toUpperCase();
                 }
             });
-            scope.declare("trim", new NativeFunction(this) {
+            getScope().declare("trim", new NativeFunction(this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).trim();
                 }
             });
-        }
-
-        @Override
-        public Obj getAttr(String name) {
-            if (scope.contains(name)) {
-                return scope.lookup(name);
-            }
-
-            return getParent().getAttr(name);
         }
     }
 }

@@ -18,7 +18,6 @@ package xyz.avarel.aje.runtime;
 import xyz.avarel.aje.runtime.functions.NativeFunction;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.scope.Scope;
 
 import java.util.Arrays;
 import java.util.List;
@@ -313,39 +312,28 @@ public interface Obj<NATIVE> {
     }
 
     class ObjType extends Type<Obj> {
-        private Scope scope = new Scope();
-
         public ObjType() {
             super("Object");
 
-            scope.declare("toString", new NativeFunction(this) {
+            getScope().declare("toString", new NativeFunction(this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return Text.of(receiver.toString());
                 }
             });
 
-            scope.declare("get", new NativeFunction(this, this) {
+            getScope().declare("get", new NativeFunction(this, this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return receiver.get(arguments.get(0));
                 }
             });
-            scope.declare("set", new NativeFunction(this, this, this) {
+            getScope().declare("set", new NativeFunction(this, this, this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return receiver.set(arguments.get(0), arguments.get(1));
                 }
             });
-        }
-
-        @Override
-        public Obj getAttr(String name) {
-            if (scope.contains(name)) {
-                return scope.lookup(name);
-            }
-
-            return Undefined.VALUE;
         }
     }
 }

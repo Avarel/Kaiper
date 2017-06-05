@@ -231,14 +231,5 @@ public class Decimal implements Obj<Double> {
         public DecimalType() {
             super(Complex.TYPE, "Decimal");
         }
-
-        @Override
-        public Obj getAttr(String name) {
-            if (scope.contains(name)) {
-                return scope.lookup(name);
-            }
-
-            return getParent().getAttr(name);
-        }
     }
 }

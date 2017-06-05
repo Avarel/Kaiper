@@ -19,7 +19,6 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.scope.Scope;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -309,19 +308,8 @@ public class Complex implements Obj<Double> {
     }
 
     public static class ComplexType extends Type<Complex> {
-        private Scope scope = new Scope();
-
         public ComplexType() {
             super(Numeric.TYPE, "Complex");
-        }
-
-        @Override
-        public Obj getAttr(String name) {
-            if (scope.contains(name)) {
-                return scope.lookup(name);
-            }
-
-            return getParent().getAttr(name);
         }
     }
 }

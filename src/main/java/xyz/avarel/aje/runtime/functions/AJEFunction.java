@@ -19,7 +19,6 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -102,19 +101,8 @@ public abstract class AJEFunction implements Obj<BiFunction<Obj, List<Obj>, Obj>
     }
 
     public static class FunctionType extends Type<AJEFunction> {
-        private Scope scope = new Scope();
-
         public FunctionType() {
             super("Function");
-        }
-
-        @Override
-        public Obj getAttr(String name) {
-            if (scope.contains(name)) {
-                return scope.lookup(name);
-            }
-
-            return getParent().getAttr(name);
         }
     }
 }
