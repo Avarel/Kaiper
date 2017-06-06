@@ -26,15 +26,19 @@ import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Undefined;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class LambdaFunctionParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
+        if (parser.match(TokenType.RIGHT_BRACE)) {
+            return new FunctionAtom(token.getPosition(),
+                    Collections.emptyList(),
+                    new ValueAtom(token.getPosition(), Undefined.VALUE));
+        }
+
         List<ParameterData> parameters = new ArrayList<>();
 
         // Check for arrows.
