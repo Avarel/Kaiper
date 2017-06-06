@@ -29,6 +29,7 @@ import xyz.avarel.aje.runtime.numbers.Numeric;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public enum DefaultFunctions {
     SQUARE_ROOT(new NativeFunction(Numeric.TYPE) {
@@ -414,7 +415,27 @@ public enum DefaultFunctions {
             }
             return accumulator;
         }
-    }),;
+    }),
+    FACTORIAL(new NativeFunction(Decimal.TYPE) {
+        @Override
+        protected Obj eval(List<Obj> arguments) {
+            int arg = Numeric.convert(arguments.get(0), Int.TYPE).toNative();
+            int result = arg;
+            
+            for(int i = arg - 1; i > 0; i--) {
+                result *= i;
+            }
+
+            return Decimal.of(result);
+        }
+    }),
+    RANDOM(new NativeFunction() {
+        @Override
+        protected Obj eval(List<Obj> arguments) {
+            return Decimal.of(Math.random());
+        }
+    });
+    
     private final NativeFunction function;
 
     DefaultFunctions(NativeFunction function) {
