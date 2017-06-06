@@ -30,7 +30,7 @@ import java.util.List;
 class AJETest {
     public static void main(String[] args) {
         // Base expression.
-        Expression exp = new Expression("sum(tau,2,i)");
+        Expression exp = new Expression("factorial(5.2)");
 
         // Add a constant.
         exp.add("tau", new Expression("2 * pi"));

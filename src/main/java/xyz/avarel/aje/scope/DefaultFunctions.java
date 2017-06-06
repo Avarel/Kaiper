@@ -414,7 +414,23 @@ public enum DefaultFunctions {
             }
             return accumulator;
         }
-    }),;
+    }),
+    FACTORIAL(new NativeFunction(Decimal.TYPE) {
+        @Override
+        protected Obj eval(List<Obj> arguments) {
+            int number = Numeric.convert(arguments.get(0), Int.TYPE).toNative();
+            int endNumber = 0;
+            for(int i = number;  i > 0; i--) {
+                if(endNumber == 0) {
+                    endNumber = i;
+                } else {
+                    endNumber *= i;
+                }
+            }
+
+            return Decimal.of(endNumber);
+        }
+    });
     private final NativeFunction function;
 
     DefaultFunctions(NativeFunction function) {
