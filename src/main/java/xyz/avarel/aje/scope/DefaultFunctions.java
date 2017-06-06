@@ -29,6 +29,7 @@ import xyz.avarel.aje.runtime.numbers.Numeric;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public enum DefaultFunctions {
     SQUARE_ROOT(new NativeFunction(Numeric.TYPE) {
@@ -425,6 +426,12 @@ public enum DefaultFunctions {
             }
 
             return Decimal.of(endNumber);
+        }
+    }),
+    RANDOM(new NativeFunction(Int.TYPE) {
+        @Override
+        protected Obj eval(List<Obj> arguments) {
+            return Decimal.of(new Random().nextInt(Numeric.convert(arguments.get(0), Int.TYPE).toNative()));
         }
     });
     private final NativeFunction function;

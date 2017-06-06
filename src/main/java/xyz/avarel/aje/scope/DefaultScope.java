@@ -48,6 +48,7 @@ public class DefaultScope extends Scope {
         declare("sum", DefaultFunctions.SUM.get());
         declare("product", DefaultFunctions.PRODUCT.get());
         declare("factorial", DefaultFunctions.FACTORIAL.get());
+        declare("random", DefaultFunctions.RANDOM.get());
 
         declare("sin", DefaultFunctions.SINE.get());
         declare("cos", DefaultFunctions.COSINE.get());
