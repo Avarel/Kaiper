@@ -19,6 +19,7 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.numbers.Int;
 
@@ -338,7 +339,7 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
             case "lastIndex":
                 return Int.of(size() - 1);
         }
-        return TYPE.getAttr(name);
+        return Obj.super.getAttr(name);
     }
 
     public static class VectorType extends Type<Vector> {
@@ -350,6 +351,58 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     ((Vector) receiver).addAll(arguments);
                     return receiver;
+                }
+            });
+
+            getScope().declare("each", new NativeFunc(this, Func.TYPE) {
+                @Override
+                protected Obj eval(Obj receiver, List<Obj> arguments) {
+                    Func action = (Func) arguments.get(0);
+
+                    for (Obj obj : (Vector) receiver) {
+                        action.invoke(Undefined.VALUE, Collections.singletonList(obj));
+                    }
+                    return Undefined.VALUE;
+                }
+            });
+
+            getScope().declare("map", new NativeFunc(this, Func.TYPE) {
+                @Override
+                protected Obj eval(Obj receiver, List<Obj> arguments) {
+                    Func transform = (Func) arguments.get(0);
+
+                    Vector vector = new Vector();
+                    for (Obj obj : (Vector) receiver) {
+                        vector.add(transform.invoke(Undefined.VALUE, Collections.singletonList(obj)));
+                    }
+                    return vector;
+                }
+            });
+
+            getScope().declare("filter", new NativeFunc(this, Func.TYPE) {
+                @Override
+                protected Obj eval(Obj receiver, List<Obj> arguments) {
+                    Func predicate = (Func) arguments.get(0);
+
+                    Vector vector = new Vector();
+                    for (Obj obj : (Vector) receiver) {
+                        Bool condition = (Bool) predicate.invoke(Undefined.VALUE, Collections.singletonList(obj));
+                        if (condition == Bool.TRUE) vector.add(obj);
+                    }
+                    return vector;
+                }
+            });
+
+            getScope().declare("fold", new NativeFunc(this, Obj.TYPE, Func.TYPE) {
+                @Override
+                protected Obj eval(Obj receiver, List<Obj> arguments) {
+                    Obj accumulator = arguments.get(0);
+                    Func operation = (Func) arguments.get(1);
+
+                    for (Obj obj : (Vector) receiver) {
+                        accumulator = operation.invoke(Undefined.VALUE, accumulator, obj);
+                    }
+                    return accumulator;
                 }
             });
         }
