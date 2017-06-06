@@ -23,20 +23,22 @@ import xyz.avarel.aje.runtime.numbers.Int;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public abstract class AJEFunction implements Obj<BiFunction<Obj, List<Obj>, Obj>> {
-    public static final Type<AJEFunction> TYPE = new FunctionType();
+public abstract class Func implements Obj<BiFunction<Obj, List<Obj>, Obj>> {
+    public static final Type<Func> TYPE = new FunctionType();
 
     public abstract int getArity();
+
+    public abstract Type<?> getReceiverType();
 
     public abstract List<Parameter> getParameters();
 
     @Override
-    public Type<AJEFunction> getType() {
+    public Type<Func> getType() {
         return TYPE;
     }
 
     @Override
-    public BiFunction<Obj, List<Obj>, Obj> toNative() {
+    public BiFunction<Obj, List<Obj>, Obj> toJava() {
         return this::invoke;
     }
 
@@ -45,50 +47,50 @@ public abstract class AJEFunction implements Obj<BiFunction<Obj, List<Obj>, Obj>
 
     @Override
     public Obj plus(Obj other) {
-        if (other instanceof AJEFunction) {
-            return plus((AJEFunction) other);
+        if (other instanceof Func) {
+            return plus((Func) other);
         }
         return Undefined.VALUE;
     }
 
-    private AJEFunction plus(AJEFunction right) {
-        return new CombinedFunction(this, right, Obj::plus);
+    private Func plus(Func right) {
+        return new CombinedFunc(this, right, Obj::plus);
     }
 
     @Override
     public Obj minus(Obj other) {
-        if (other instanceof AJEFunction) {
-            return minus((AJEFunction) other);
+        if (other instanceof Func) {
+            return minus((Func) other);
         }
         return Undefined.VALUE;
     }
 
-    private AJEFunction minus(AJEFunction right) {
-        return new CombinedFunction(this, right, Obj::minus);
+    private Func minus(Func right) {
+        return new CombinedFunc(this, right, Obj::minus);
     }
 
     @Override
     public Obj times(Obj other) {
-        if (other instanceof AJEFunction) {
-            return times((AJEFunction) other);
+        if (other instanceof Func) {
+            return times((Func) other);
         }
         return Undefined.VALUE;
     }
 
-    private AJEFunction times(AJEFunction right) {
-        return new CombinedFunction(this, right, Obj::times);
+    private Func times(Func right) {
+        return new CombinedFunc(this, right, Obj::times);
     }
 
     @Override
     public Obj divide(Obj other) {
-        if (other instanceof AJEFunction) {
-            return divide((AJEFunction) other);
+        if (other instanceof Func) {
+            return divide((Func) other);
         }
         return Undefined.VALUE;
     }
 
-    private AJEFunction divide(AJEFunction right) {
-        return new CombinedFunction(this, right, Obj::divide);
+    private Func divide(Func right) {
+        return new CombinedFunc(this, right, Obj::divide);
     }
 
     @Override
@@ -100,7 +102,7 @@ public abstract class AJEFunction implements Obj<BiFunction<Obj, List<Obj>, Obj>
         return Obj.super.getAttr(name);
     }
 
-    public static class FunctionType extends Type<AJEFunction> {
+    public static class FunctionType extends Type<Func> {
         public FunctionType() {
             super("Function");
         }

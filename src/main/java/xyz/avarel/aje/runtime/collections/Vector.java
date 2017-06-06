@@ -19,6 +19,7 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.*;
@@ -71,11 +72,11 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
      * @return An unmodifiable representation of the vector.
      */
     @Override
-    public List<Object> toNative() {
+    public List<Object> toJava() {
         List<Object> objects = new ArrayList<>();
 
         for (Obj obj : this) {
-            objects.add(obj.toNative());
+            objects.add(obj.toJava());
         }
 
         return Collections.unmodifiableList(objects);
@@ -336,22 +337,6 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 return Int.of(size());
             case "lastIndex":
                 return Int.of(size() - 1);
-//            case "append":
-//                return new NativeFunction(true, Obj.TYPE) {
-//                    @Override
-//                    protected Obj eval(Obj target, List<Obj> arguments) {
-//                        Vector.this.addAll(arguments);
-//                        return Vector.this;
-//                    }
-//                };
-//            case "extend":
-//                return new NativeFunction(Vector.TYPE) {
-//                    @Override
-//                    protected Obj eval(Obj target, List<Obj> arguments) {
-//                        Vector.this.addAll(arguments);
-//                        return Vector.this;
-//                    }
-//                };
         }
         return TYPE.getAttr(name);
     }
@@ -359,6 +344,14 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
     public static class VectorType extends Type<Vector> {
         public VectorType() {
             super("Vector");
+
+            getScope().declare("append", new NativeFunc(this, true, Obj.TYPE) {
+                @Override
+                protected Obj eval(Obj receiver, List<Obj> arguments) {
+                    ((Vector) receiver).addAll(arguments);
+                    return receiver;
+                }
+            });
         }
     }
 }

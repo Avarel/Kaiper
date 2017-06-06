@@ -37,33 +37,58 @@ public class LambdaFunctionParser implements PrefixParser {
     public Expr parse(AJEParser parser, Token token) {
         List<ParameterData> parameters = new ArrayList<>();
 
-        if (!parser.match(TokenType.ARROW)) {
-            Set<String> paramNames = new HashSet<>();
+        // Check for arrows.
+        int peek = 0;
+        boolean hasArrow = false;
+        lookAhead:
+        while (parser.peek(0).getType() != TokenType.RIGHT_BRACE) {
+            TokenType type = parser.peek(peek).getType();
+            switch (type) {
+                case IDENTIFIER:
+                case COLON:
+                case COMMA:
+                    peek++;
+                    break;
+                case ARROW:
+                    hasArrow = true;
+                default:
+                    break lookAhead;
+            }
+        }
 
-            do {
-                String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
+        if (hasArrow) {
+            if (!parser.match(TokenType.ARROW)) {
+                Set<String> paramNames = new HashSet<>();
 
-                if (paramNames.contains(parameterName)) {
-                    throw new SyntaxException("Duplicate parameter names", parser.getLast().getPosition());
-                } else {
-                    paramNames.add(parameterName);
-                }
+                do {
+                    String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
 
-                Expr parameterType = new ValueAtom(parser.peek(0).getPosition(), Obj.TYPE);
-
-                if (parser.match(TokenType.COLON)) {
-                    Token typeToken = parser.eat(TokenType.IDENTIFIER);
-                    parameterType = new Identifier(typeToken.getPosition(), typeToken.getString());
-                    while (parser.match(TokenType.DOT)) {
-                        parameterType = new Identifier(typeToken.getPosition(), parameterType, parser.eat(TokenType.IDENTIFIER).getString());
+                    if (paramNames.contains(parameterName)) {
+                        throw new SyntaxException("Duplicate parameter names", parser.getLast().getPosition());
+                    } else {
+                        paramNames.add(parameterName);
                     }
-                }
 
-                ParameterData parameter = new ParameterData(parameterName, parameterType);
-                parameters.add(parameter);
-            } while (parser.match(TokenType.COMMA));
+                    Expr parameterType = new ValueAtom(parser.peek(0).getPosition(), Obj.TYPE);
 
-            parser.eat(TokenType.ARROW);
+                    if (parser.match(TokenType.COLON)) {
+                        Token typeToken = parser.eat(TokenType.IDENTIFIER);
+                        parameterType = new Identifier(typeToken.getPosition(), typeToken.getString());
+                        while (parser.match(TokenType.DOT)) {
+                            parameterType = new Identifier(typeToken.getPosition(),
+                                    parameterType,
+                                    parser.eat(TokenType.IDENTIFIER).getString());
+                        }
+                    }
+
+                    ParameterData parameter = new ParameterData(parameterName, parameterType);
+                    parameters.add(parameter);
+                } while (parser.match(TokenType.COMMA));
+
+                parser.eat(TokenType.ARROW);
+            }
+        } else {
+            parameters.add(new ParameterData("it"));
         }
 
         Expr expr = parser.parseStatements();

@@ -16,7 +16,7 @@
 package xyz.avarel.aje.runtime;
 
 import xyz.avarel.aje.runtime.collections.Vector;
-import xyz.avarel.aje.runtime.functions.NativeFunction;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public class Text implements Obj<String> {
     }
 
     @Override
-    public String toNative() {
+    public String toJava() {
         return value();
     }
 
@@ -234,26 +234,26 @@ public class Text implements Obj<String> {
     public static class TextType extends Type<Text> {
         public TextType() {
             super("String");
-            
-            getScope().declare("contains", new NativeFunction(this, this) {
+
+            getScope().declare("contains", new NativeFunc(this, this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).contains((Text) arguments.get(0));
                 }
             });
-            getScope().declare("indexOf", new NativeFunction(this, this) {
+            getScope().declare("indexOf", new NativeFunc(this, this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).indexOf((Text) arguments.get(0));
                 }
             });
-            getScope().declare("split", new NativeFunction(this, this) {
+            getScope().declare("split", new NativeFunc(this, this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).split((Text) arguments.get(0));
                 }
             });
-            getScope().declare("substring", new NativeFunction(this, Int.TYPE) {
+            getScope().declare("substring", new NativeFunc(this, Int.TYPE) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     if (arguments.size() >= 2) {
@@ -266,25 +266,25 @@ public class Text implements Obj<String> {
                     }
                 }
             });
-            getScope().declare("toVector", new NativeFunction(this) {
+            getScope().declare("toVector", new NativeFunc(this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).toVector();
                 }
             });
-            getScope().declare("toLowerCase", new NativeFunction(this) {
+            getScope().declare("toLowerCase", new NativeFunc(this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).toLowerCase();
                 }
             });
-            getScope().declare("toUpperCase", new NativeFunction(this) {
+            getScope().declare("toUpperCase", new NativeFunc(this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).toUpperCase();
                 }
             });
-            getScope().declare("trim", new NativeFunction(this) {
+            getScope().declare("trim", new NativeFunc(this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return ((Text) receiver).trim();

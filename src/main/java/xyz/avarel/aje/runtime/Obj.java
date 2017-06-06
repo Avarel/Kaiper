@@ -15,7 +15,7 @@
 
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.runtime.functions.NativeFunction;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
 
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * An interface containing all natively implemented operations.
  */
-public interface Obj<NATIVE> {
+public interface Obj<JAVA> {
     Type<Obj> TYPE = new ObjType();
 
     /**
@@ -34,9 +34,9 @@ public interface Obj<NATIVE> {
     Type getType();
 
     /**
-     * @return  The native object representation of this object or {@code null}.
+     * @return The {@link JAVA java} object representation of this AJE object or {@code null}.
      */
-    default NATIVE toNative() {
+    default JAVA toJava() {
         return null;
     }
 
@@ -315,20 +315,27 @@ public interface Obj<NATIVE> {
         public ObjType() {
             super("Object");
 
-            getScope().declare("toString", new NativeFunction(this) {
+            getScope().declare("toString", new NativeFunc(this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return Text.of(receiver.toString());
                 }
             });
 
-            getScope().declare("get", new NativeFunction(this, this) {
+//            getScope().declare("plus", new NativeFunction(this, this) {
+//                @Override
+//                protected Obj eval(Obj receiver, List<Obj> arguments) {
+//                    return receiver.plus(arguments.get(0));
+//                }
+//            });
+
+            getScope().declare("get", new NativeFunc(this, this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return receiver.get(arguments.get(0));
                 }
             });
-            getScope().declare("set", new NativeFunction(this, this, this) {
+            getScope().declare("set", new NativeFunc(this, this, this) {
                 @Override
                 protected Obj eval(Obj receiver, List<Obj> arguments) {
                     return receiver.set(arguments.get(0), arguments.get(1));

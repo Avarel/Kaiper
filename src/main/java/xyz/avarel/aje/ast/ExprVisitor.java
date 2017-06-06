@@ -33,8 +33,8 @@ import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
 import xyz.avarel.aje.runtime.collections.Vector;
-import xyz.avarel.aje.runtime.functions.AJEFunction;
-import xyz.avarel.aje.runtime.functions.CompiledFunction;
+import xyz.avarel.aje.runtime.functions.CompiledFunc;
+import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.scope.Scope;
@@ -68,7 +68,7 @@ public class ExprVisitor {
             parameters.add(new Parameter(data.getName(), (Type) obj_type, data.getDefault()));
         }
 
-        AJEFunction func = new CompiledFunction(Obj.TYPE, parameters, expr.getExpr(), scope.subPool());
+        Func func = new CompiledFunc(Obj.TYPE, parameters, expr.getExpr(), scope.subPool());
         if (expr.getName() != null) scope.declare(expr.getName(), func);
         return func;
     }

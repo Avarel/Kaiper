@@ -66,9 +66,13 @@ public class Parameter {
         }
 
         if (name != null) {
-            sb.append(": ");
+            if (type != Obj.TYPE) {
+                sb.append(": ");
+                sb.append(type);
+            }
+        } else {
+            sb.append(type);
         }
-        sb.append(type);
 
         if (defaultExpr != null) {
             sb.append(" = ").append(defaultExpr);

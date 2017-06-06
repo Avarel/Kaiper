@@ -19,6 +19,7 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class Decimal implements Obj<Double> {
     }
 
     @Override
-    public Double toNative() {
+    public Double toJava() {
         return value();
     }
 
@@ -230,6 +231,25 @@ public class Decimal implements Obj<Double> {
 
         public DecimalType() {
             super(Complex.TYPE, "Decimal");
+
+            getScope().declare("toInt", new NativeFunc(this) {
+                @Override
+                protected Obj eval(Obj receiver, List<Obj> arguments) {
+                    return Int.of((int) ((Decimal) receiver).value());
+                }
+            });
+            getScope().declare("toDecimal", new NativeFunc(this) {
+                @Override
+                protected Obj eval(Obj receiver, List<Obj> arguments) {
+                    return receiver;
+                }
+            });
+            getScope().declare("toComplex", new NativeFunc(this) {
+                @Override
+                protected Obj eval(Obj receiver, List<Obj> arguments) {
+                    return Complex.of(((Decimal) receiver).value());
+                }
+            });
         }
     }
 }

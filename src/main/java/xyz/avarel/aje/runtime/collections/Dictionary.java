@@ -25,30 +25,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * AJE wrapper class for a one dimensional vector.
+ * AJE wrapper class for a map.
  */
 public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Object>> {
     public static final Type<Dictionary> TYPE = new DictionaryType();
 
     /**
-     * Creates an empty vector.
+     * Creates an empty dictionary.
      */
     public Dictionary() {
         super();
     }
 
     /**
-     * Returns an unmodifiable representation of the vector. Note that the map's contents are all converted to
+     * Returns an unmodifiable representation of the map. Note that the map's contents are all converted to
      * their native representation or {@code null} if unable to.
      *
-     * @return An unmodifiable representation of the vector.
+     * @return An unmodifiable representation of the map.
      */
     @Override
-    public Map<Object, Object> toNative() {
+    public Map<Object, Object> toJava() {
         Map<Object, Object> map = new HashMap<>();
 
         for (Entry<Obj, Obj> entry : this.entrySet()) {
-            map.put(entry.getKey().toNative(), entry.getValue().toNative());
+            map.put(entry.getKey().toJava(), entry.getValue().toJava());
         }
 
         return Collections.unmodifiableMap(map);

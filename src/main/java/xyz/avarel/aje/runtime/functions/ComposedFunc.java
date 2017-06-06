@@ -17,6 +17,7 @@ package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
@@ -25,13 +26,17 @@ import java.util.List;
  * Every operation results in the same
  * instance, NOTHING.
  */
-public class ComposedFunction extends AJEFunction {
-    private final AJEFunction left;
-    private final AJEFunction right;
+public class ComposedFunc extends Func {
+    private final Func left;
+    private final Func right;
 
-    public ComposedFunction(AJEFunction left, AJEFunction right) {
+    public ComposedFunc(Func left, Func right) {
         this.left = left;
         this.right = right;
+
+        if (left.getReceiverType() != Undefined.TYPE && right.getReceiverType() != Undefined.TYPE) {
+            throw new ComputeException("Combined functions can not have receiver types.");
+        }
 
         if (left.getParameters().size() != 1) {
             throw new ComputeException("Composed functions require the outer function to be arity-1.");
@@ -39,13 +44,18 @@ public class ComposedFunction extends AJEFunction {
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        return right.getParameters();
+    public int getArity() {
+        return right.getArity();
     }
 
     @Override
-    public int getArity() {
-        return right.getArity();
+    public Type<?> getReceiverType() {
+        return Undefined.TYPE;
+    }
+
+    @Override
+    public List<Parameter> getParameters() {
+        return right.getParameters();
     }
 
     @Override

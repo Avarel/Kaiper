@@ -44,7 +44,7 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
     }
 
     @Override
-    public List<Integer> toNative() {
+    public List<Integer> toJava() {
         List<Integer> list = new ArrayList<>();
         for (Int i : this) {
             list.add(i.value());
@@ -103,8 +103,18 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
                 return Int.of(size());
             case "lastIndex":
                 return Int.of(size() - 1);
+            case "start":
+                return Int.of(start);
+            case "end":
+                return Int.of(end);
         }
-        return TYPE.getAttr(name);
+        return Obj.super.getAttr(name);
+    }
+
+    public static class RangeType extends Type<Range> {
+        public RangeType() {
+            super("Range");
+        }
     }
 
     private final class RangeIterator implements Iterator<Int> {
@@ -122,12 +132,6 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
         @Override
         public Int next() {
             return Int.of(cursor++);
-        }
-    }
-
-    public static class RangeType extends Type<Range> {
-        public RangeType() {
-            super("Range");
         }
     }
 }

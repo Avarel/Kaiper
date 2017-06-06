@@ -30,14 +30,14 @@ import java.util.stream.Collectors;
  * Every operation results in the same
  * instance, NOTHING.
  */
-public class CompiledFunction extends AJEFunction {
+public class CompiledFunc extends Func {
     private final Type receiverType;
 
     private final List<Parameter> parameters;
     private final Expr expr;
     private final Scope scope;
 
-    public CompiledFunction(Type<?> receiverType, List<Parameter> parameters, Expr expr, Scope scope) {
+    public CompiledFunc(Type<?> receiverType, List<Parameter> parameters, Expr expr, Scope scope) {
         this.receiverType = receiverType;
         this.parameters = parameters;
         this.expr = expr;
@@ -47,6 +47,10 @@ public class CompiledFunction extends AJEFunction {
     @Override
     public int getArity() {
         return parameters.size();
+    }
+
+    public Type getReceiverType() {
+        return receiverType;
     }
 
     public List<Parameter> getParameters() {

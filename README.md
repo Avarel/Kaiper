@@ -137,7 +137,7 @@ repositories {
 ```java
 import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.functions.NativeFunction;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.runtime.numbers.Numeric;
 

@@ -56,7 +56,7 @@ class AJETest {
 
         // Get the native representation of the object.
         // Each AJE object is mapped to a native object.
-        Object obj = result.toNative();
+        Object obj = result.toJava();
 
         // Prints the result.
         System.out.println(result);

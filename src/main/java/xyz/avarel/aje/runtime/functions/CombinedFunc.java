@@ -17,6 +17,7 @@ package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
@@ -26,15 +27,19 @@ import java.util.function.BinaryOperator;
  * Every operation results in the same
  * instance, NOTHING.
  */
-public class CombinedFunction extends AJEFunction {
-    private final AJEFunction left;
-    private final AJEFunction right;
+public class CombinedFunc extends Func {
+    private final Func left;
+    private final Func right;
     private final BinaryOperator<Obj> operator;
 
-    public CombinedFunction(AJEFunction left, AJEFunction right, BinaryOperator<Obj> operator) {
+    public CombinedFunc(Func left, Func right, BinaryOperator<Obj> operator) {
         this.left = left;
         this.right = right;
         this.operator = operator;
+
+        if (left.getReceiverType() != Undefined.TYPE && right.getReceiverType() != Undefined.TYPE) {
+            throw new ComputeException("Combined functions can not have receiver types.");
+        }
 
         if (left.getParameters().size() != right.getParameters().size()) {
             throw new ComputeException("Combined functions require both functions to have the same arity.");
@@ -50,6 +55,11 @@ public class CombinedFunction extends AJEFunction {
     @Override
     public int getArity() {
         return left.getArity();
+    }
+
+    @Override
+    public Type<?> getReceiverType() {
+        return Undefined.TYPE;
     }
 
     @Override

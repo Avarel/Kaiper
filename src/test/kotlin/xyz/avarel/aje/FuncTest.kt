@@ -22,7 +22,7 @@ package xyz.avarel.aje
 import org.junit.Assert
 import org.junit.Test
 
-class FunctionTest {
+class FuncTest {
     val evaluator = Evaluator().apply {
         eval("func isEven0(x) { x % 2 == 0 }")
         eval("func isEven1(x) = { x % 2 == 0 }")

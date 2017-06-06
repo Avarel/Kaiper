@@ -20,11 +20,9 @@ import xyz.avarel.aje.scope.Scope;
 @SuppressWarnings("unused")
 public class Type<T> implements Obj<Type> {
     public static final Type<Type> TYPE = new Type<>("type");
-
-    private Scope scope;
-
     private final Type parent;
     private final String name;
+    private Scope scope;
 
     public Type(String name) {
         this(Obj.TYPE, name);
@@ -60,7 +58,7 @@ public class Type<T> implements Obj<Type> {
     }
 
     @Override
-    public Type toNative() {
+    public Type toJava() {
         return this;
     }
 

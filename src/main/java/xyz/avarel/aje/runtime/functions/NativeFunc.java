@@ -24,18 +24,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class NativeFunction extends AJEFunction {
+public abstract class NativeFunc extends Func {
     private final Type receiverType;
     private final List<Parameter> parameters;
     private final boolean varargs;
 
-    public NativeFunction(Type receiverType, Type... parameterTypes) {
+    public NativeFunc(Type receiverType, Type... parameterTypes) {
         this.receiverType = receiverType;
         this.parameters = Arrays.stream(parameterTypes).map(Parameter::new).collect(Collectors.toList());
         this.varargs = false;
     }
 
-    public NativeFunction(Type receiverType, boolean varargs, Type parameterTypes) {
+    public NativeFunc(Type receiverType, boolean varargs, Type parameterTypes) {
         this.receiverType = receiverType;
         this.parameters = Collections.singletonList(new Parameter(parameterTypes));
         this.varargs = varargs;
@@ -43,13 +43,17 @@ public abstract class NativeFunction extends AJEFunction {
 
     protected abstract Obj eval(Obj receiver, List<Obj> arguments);
 
-    public List<Parameter> getParameters() {
-        return parameters;
-    }
-
     @Override
     public int getArity() {
         return parameters.size();
+    }
+
+    public Type getReceiverType() {
+        return receiverType;
+    }
+
+    public List<Parameter> getParameters() {
+        return parameters;
     }
 
     @Override

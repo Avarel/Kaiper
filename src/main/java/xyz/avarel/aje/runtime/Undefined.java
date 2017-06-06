@@ -30,7 +30,7 @@ public enum Undefined implements Obj<Undefined> {
     }
 
     @Override
-    public Undefined toNative() {
+    public Undefined toJava() {
         return this;
     }
 

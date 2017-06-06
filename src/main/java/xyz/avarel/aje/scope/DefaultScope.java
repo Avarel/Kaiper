@@ -22,7 +22,7 @@ import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
 import xyz.avarel.aje.runtime.collections.Vector;
-import xyz.avarel.aje.runtime.functions.AJEFunction;
+import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -88,7 +88,7 @@ public class DefaultScope extends Scope {
         declare("Range", Range.TYPE);
         declare("Dictionary", Dictionary.TYPE);
         declare("String", Text.TYPE);
-        declare("Function", AJEFunction.TYPE);
+        declare("Function", Func.TYPE);
         declare("Undefined", Undefined.TYPE);
     }
 
