@@ -419,21 +419,23 @@ public enum DefaultFunctions {
     FACTORIAL(new NativeFunction(Decimal.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
-            int number = Numeric.convert(arguments.get(0), Int.TYPE).toNative();
-            int endNumber = number;
-            for(int i = number-1;  i > 0; i--) {
-                endNumber*=i;
+            int arg = Numeric.convert(arguments.get(0), Int.TYPE).toNative();
+            int result = arg;
+            
+            for(int i = arg - 1; i > 0; i--) {
+                result *= i;
             }
 
-            return Decimal.of(endNumber);
+            return Decimal.of(result);
         }
     }),
-    RANDOM(new NativeFunction(Int.TYPE) {
+    RANDOM(new NativeFunction() {
         @Override
         protected Obj eval(List<Obj> arguments) {
-            return Decimal.of(new Random().nextInt(Numeric.convert(arguments.get(0), Int.TYPE).toNative()));
+            return Decimal.of(Math.random());
         }
     });
+    
     private final NativeFunction function;
 
     DefaultFunctions(NativeFunction function) {
