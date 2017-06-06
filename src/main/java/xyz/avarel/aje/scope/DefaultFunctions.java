@@ -419,13 +419,9 @@ public enum DefaultFunctions {
         @Override
         protected Obj eval(List<Obj> arguments) {
             int number = Numeric.convert(arguments.get(0), Int.TYPE).toNative();
-            int endNumber = 0;
-            for(int i = number;  i > 0; i--) {
-                if(endNumber == 0) {
-                    endNumber = i;
-                } else {
-                    endNumber *= i;
-                }
+            int endNumber = number;
+            for(int i = number-1;  i > 0; i--) {
+                endNumber*=i;
             }
 
             return Decimal.of(endNumber);
