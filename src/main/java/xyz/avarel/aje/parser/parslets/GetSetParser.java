@@ -50,6 +50,7 @@ public class GetSetParser extends BinaryParser {
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
+        // SET
         if (parser.match(TokenType.ASSIGN)) {
             Expr value = parser.parseExpr();
             return new SetOperation(token.getPosition(), left, key, value);
@@ -57,7 +58,6 @@ public class GetSetParser extends BinaryParser {
             Expr value = parser.parseExpr();
 
             Expr getOp = new GetOperation(token.getPosition(), left, key);
-
             return new ConditionalExpr(token.getPosition(),
                     new BinaryOperation(token.getPosition(),
                             getOp,

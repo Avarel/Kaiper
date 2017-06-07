@@ -90,21 +90,9 @@ public class ExprVisitor {
     }
 
     public Obj visit(Invocation expr, Scope scope) {
-        Obj receiver = null;
-        Obj target;
-
-        if (expr.getLeft() instanceof Identifier && ((Identifier) expr.getLeft()).getParent() != null) {
-            receiver = ((Identifier) expr.getLeft()).getParent().accept(this, scope);
-            target = receiver.getAttr(((Identifier) expr.getLeft()).getName());
-        } else {
-            target = expr.getLeft().accept(this, scope);
-        }
+        Obj target = expr.getLeft().accept(this, scope);
 
         List<Obj> arguments = new ArrayList<>();
-
-        if (receiver != null && !(receiver instanceof Type)) {
-            arguments.add(receiver);
-        }
 
         for (Expr arg : expr.getArguments()) {
             arguments.add(arg.accept(this, scope));

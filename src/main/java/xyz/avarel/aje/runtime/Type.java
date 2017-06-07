@@ -38,7 +38,7 @@ public class Type<T> implements Obj<Type> {
     public boolean is(Type type) {
         Type t = this;
         do {
-            if (t == type) return true;
+            if (t.equals(type)) return true;
             t = t.parent;
         } while (t != null);
         return false;
@@ -55,7 +55,7 @@ public class Type<T> implements Obj<Type> {
 
     @Override
     public Type getType() {
-        return TYPE;
+        return this;
     }
 
     @Override

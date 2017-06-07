@@ -34,9 +34,7 @@ public class NameParser implements PrefixParser {
         if (parser.match(TokenType.ASSIGN)) {
             return new AssignmentExpr(token.getPosition(), null, token.getString(), parser.parseExpr(), false);
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
-
             Expr getOp = new Identifier(token.getPosition(), token.getString());
-
             return new ConditionalExpr(token.getPosition(),
                     new BinaryOperation(token.getPosition(),
                             getOp,
