@@ -31,14 +31,11 @@ import java.util.stream.Collectors;
  * instance, NOTHING.
  */
 public class CompiledFunc extends Func {
-    private final Type receiverType;
-
     private final List<Parameter> parameters;
     private final Expr expr;
     private final Scope scope;
 
-    public CompiledFunc(Type<?> receiverType, List<Parameter> parameters, Expr expr, Scope scope) {
-        this.receiverType = receiverType;
+    public CompiledFunc(List<Parameter> parameters, Expr expr, Scope scope) {
         this.parameters = parameters;
         this.expr = expr;
         this.scope = scope;
@@ -47,10 +44,6 @@ public class CompiledFunc extends Func {
     @Override
     public int getArity() {
         return parameters.size();
-    }
-
-    public Type getReceiverType() {
-        return receiverType;
     }
 
     public List<Parameter> getParameters() {
@@ -63,11 +56,7 @@ public class CompiledFunc extends Func {
     }
 
     @Override
-    public Obj invoke(Obj receiver, List<Obj> arguments) {
-        if (!receiver.getType().is(receiverType)) {
-            return Undefined.VALUE;
-        }
-
+    public Obj invoke(List<Obj> arguments) {
         Scope scope = this.scope.subPool();
         for (int i = 0; i < getArity(); i++) {
             Parameter parameter = parameters.get(i);

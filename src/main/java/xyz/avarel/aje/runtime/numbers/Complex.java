@@ -301,33 +301,33 @@ public class Complex implements Obj<Double> {
     }
 
     @Override
-    public Obj invoke(Obj receiver, List<Obj> arguments) {
-        if (receiver == Undefined.VALUE && arguments.size() == 1) {
+    public Obj invoke(List<Obj> arguments) {
+        if (arguments.size() == 1) {
             return times(arguments.get(0));
         }
         return Undefined.VALUE;
     }
 
-    public static class ComplexType extends Type<Complex> {
+    private static class ComplexType extends Type<Complex> {
         public ComplexType() {
             super(Numeric.TYPE, "Complex");
 
             getScope().declare("toInt", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return Int.of((int) ((Complex) receiver).re);
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of((int) ((Complex) arguments.get(0)).re);
                 }
             });
             getScope().declare("toDecimal", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return Decimal.of(((Complex) receiver).re);
+                protected Obj eval(List<Obj> arguments) {
+                    return Decimal.of(((Complex) arguments.get(0)).re);
                 }
             });
             getScope().declare("toComplex", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return receiver;
+                protected Obj eval(List<Obj> arguments) {
+                    return arguments.get(0);
                 }
             });
         }

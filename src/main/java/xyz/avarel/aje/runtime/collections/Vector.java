@@ -342,25 +342,25 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
         return Obj.super.getAttr(name);
     }
 
-    public static class VectorType extends Type<Vector> {
+    private static class VectorType extends Type<Vector> {
         public VectorType() {
             super("Vector");
 
-            getScope().declare("append", new NativeFunc(this, true, Obj.TYPE) {
+            getScope().declare("append", new NativeFunc(true, Obj.TYPE) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    ((Vector) receiver).addAll(arguments);
-                    return receiver;
+                protected Obj eval(List<Obj> arguments) {
+                    ((Vector) arguments.get(0)).addAll(arguments);
+                    return arguments.get(0);
                 }
             });
 
             getScope().declare("each", new NativeFunc(this, Func.TYPE) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    Func action = (Func) arguments.get(0);
+                protected Obj eval(List<Obj> arguments) {
+                    Func action = (Func) arguments.get(1);
 
-                    for (Obj obj : (Vector) receiver) {
-                        action.invoke(Undefined.VALUE, Collections.singletonList(obj));
+                    for (Obj obj : (Vector) arguments.get(0)) {
+                        action.invoke(Collections.singletonList(obj));
                     }
                     return Undefined.VALUE;
                 }
@@ -368,12 +368,12 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
 
             getScope().declare("map", new NativeFunc(this, Func.TYPE) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    Func transform = (Func) arguments.get(0);
+                protected Obj eval(List<Obj> arguments) {
+                    Func transform = (Func) arguments.get(1);
 
                     Vector vector = new Vector();
-                    for (Obj obj : (Vector) receiver) {
-                        vector.add(transform.invoke(Undefined.VALUE, Collections.singletonList(obj)));
+                    for (Obj obj : (Vector) arguments.get(0)) {
+                        vector.add(transform.invoke(Collections.singletonList(obj)));
                     }
                     return vector;
                 }
@@ -381,12 +381,12 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
 
             getScope().declare("filter", new NativeFunc(this, Func.TYPE) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    Func predicate = (Func) arguments.get(0);
+                protected Obj eval(List<Obj> arguments) {
+                    Func predicate = (Func) arguments.get(1);
 
                     Vector vector = new Vector();
-                    for (Obj obj : (Vector) receiver) {
-                        Bool condition = (Bool) predicate.invoke(Undefined.VALUE, Collections.singletonList(obj));
+                    for (Obj obj : (Vector) arguments.get(0)) {
+                        Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
                         if (condition == Bool.TRUE) vector.add(obj);
                     }
                     return vector;
@@ -395,12 +395,12 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
 
             getScope().declare("fold", new NativeFunc(this, Obj.TYPE, Func.TYPE) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    Obj accumulator = arguments.get(0);
-                    Func operation = (Func) arguments.get(1);
+                protected Obj eval(List<Obj> arguments) {
+                    Obj accumulator = arguments.get(1);
+                    Func operation = (Func) arguments.get(2);
 
-                    for (Obj obj : (Vector) receiver) {
-                        accumulator = operation.invoke(Undefined.VALUE, accumulator, obj);
+                    for (Obj obj : (Vector) arguments.get(0)) {
+                        accumulator = operation.invoke(accumulator, obj);
                     }
                     return accumulator;
                 }

@@ -19,7 +19,8 @@ import xyz.avarel.aje.scope.Scope;
 
 @SuppressWarnings("unused")
 public class Type<T> implements Obj<Type> {
-    public static final Type<Type> TYPE = new Type<>("type");
+    public static final Type<Type> TYPE = new Type<>("Type");
+
     private final Type parent;
     private final String name;
     private Scope scope;

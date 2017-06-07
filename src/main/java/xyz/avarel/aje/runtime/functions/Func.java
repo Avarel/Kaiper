@@ -21,14 +21,12 @@ import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.List;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
-public abstract class Func implements Obj<BiFunction<Obj, List<Obj>, Obj>> {
+public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
     public static final Type<Func> TYPE = new FunctionType();
 
     public abstract int getArity();
-
-    public abstract Type<?> getReceiverType();
 
     public abstract List<Parameter> getParameters();
 
@@ -38,12 +36,12 @@ public abstract class Func implements Obj<BiFunction<Obj, List<Obj>, Obj>> {
     }
 
     @Override
-    public BiFunction<Obj, List<Obj>, Obj> toJava() {
+    public Function<List<Obj>, Obj> toJava() {
         return this::invoke;
     }
 
     @Override
-    public abstract Obj invoke(Obj receiver, List<Obj> arguments);
+    public abstract Obj invoke(List<Obj> arguments);
 
     @Override
     public Obj plus(Obj other) {

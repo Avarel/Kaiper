@@ -19,37 +19,40 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class NativeFunc extends Func {
-    private final Type receiverType;
+    //    private final Type receiverType;
     private final List<Parameter> parameters;
     private final boolean varargs;
 
-    public NativeFunc(Type receiverType, Type... parameterTypes) {
-        this.receiverType = receiverType;
-        this.parameters = Arrays.stream(parameterTypes).map(Parameter::new).collect(Collectors.toList());
+    public NativeFunc(Type... parameterTypes) {
+        this.parameters = new ArrayList<>();
+
+        for (Type type : parameterTypes) {
+            parameters.add(new Parameter(type));
+        }
+
+//        this.receiverType = receiverType;
+//        this.parameters = Arrays.stream(parameterTypes).map(Parameter::new).collect(Collectors.toList());
         this.varargs = false;
     }
 
-    public NativeFunc(Type receiverType, boolean varargs, Type parameterTypes) {
-        this.receiverType = receiverType;
+    public NativeFunc(boolean varargs, Type parameterTypes) {
+        //this.parameters = new ArrayList<>();
+
         this.parameters = Collections.singletonList(new Parameter(parameterTypes));
         this.varargs = varargs;
     }
 
-    protected abstract Obj eval(Obj receiver, List<Obj> arguments);
+    protected abstract Obj eval(List<Obj> arguments);
 
     @Override
     public int getArity() {
         return parameters.size();
-    }
-
-    public Type getReceiverType() {
-        return receiverType;
     }
 
     public List<Parameter> getParameters() {
@@ -57,18 +60,12 @@ public abstract class NativeFunc extends Func {
     }
 
     @Override
-    public Obj invoke(Obj receiver, List<Obj> arguments) {
-        if (receiver == receiverType) {
-            if (arguments.size() == 0) {
-                return Undefined.VALUE;
-            }
-            receiver = arguments.remove(0);
-        }
+    public String toString() {
+        return "native-func(" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
+    }
 
-        if (!receiver.getType().is(receiverType)) {
-            return Undefined.VALUE;
-        }
-
+    @Override
+    public Obj invoke(List<Obj> arguments) {
         if (!varargs && arguments.size() < getArity()) {
             return Undefined.VALUE;
         }
@@ -87,12 +84,7 @@ public abstract class NativeFunc extends Func {
             }
         }
 
-        Obj result = eval(receiver, arguments);
+        Obj result = eval(arguments);
         return result != null ? result : Undefined.VALUE;
-    }
-
-    @Override
-    public String toString() {
-        return "native function(" + parameters.stream().map(Object::toString).collect(Collectors.joining(",")) + ")";
     }
 }

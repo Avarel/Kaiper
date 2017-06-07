@@ -17,7 +17,6 @@ package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
@@ -37,10 +36,6 @@ public class CombinedFunc extends Func {
         this.right = right;
         this.operator = operator;
 
-        if (left.getReceiverType() != Undefined.TYPE && right.getReceiverType() != Undefined.TYPE) {
-            throw new ComputeException("Combined functions can not have receiver types.");
-        }
-
         if (left.getParameters().size() != right.getParameters().size()) {
             throw new ComputeException("Combined functions require both functions to have the same arity.");
         } else {
@@ -58,11 +53,6 @@ public class CombinedFunc extends Func {
     }
 
     @Override
-    public Type<?> getReceiverType() {
-        return Undefined.TYPE;
-    }
-
-    @Override
     public List<Parameter> getParameters() {
         return left.getParameters();
     }
@@ -73,11 +63,11 @@ public class CombinedFunc extends Func {
     }
 
     @Override
-    public Obj invoke(Obj receiver, List<Obj> arguments) {
+    public Obj invoke(List<Obj> arguments) {
         if (arguments.size() != getArity()) {
             return Undefined.VALUE;
         }
 
-        return operator.apply(left.invoke(Undefined.VALUE, arguments), right.invoke(Undefined.VALUE, arguments));
+        return operator.apply(left.invoke(arguments), right.invoke(arguments));
     }
 }

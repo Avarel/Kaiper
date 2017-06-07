@@ -31,9 +31,9 @@ import java.util.Collections;
 import java.util.List;
 
 public enum DefaultFunctions {
-    SQUARE_ROOT(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    SQUARE_ROOT(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 double value = Numeric.convert(a, Decimal.TYPE).toJava();
@@ -49,9 +49,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    CUBE_ROOT(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    CUBE_ROOT(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.cbrt(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -61,9 +61,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    EXPONENTIAL(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    EXPONENTIAL(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.exp(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -73,9 +73,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    LOG10(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    LOG10(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.log10(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -85,9 +85,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    LOG_NATURAL(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    LOG_NATURAL(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.log(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -97,9 +97,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    ROUND(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    ROUND(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.round(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -109,9 +109,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    FLOOR(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    FLOOR(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.floor(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -121,9 +121,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    CEILING(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    CEILING(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.ceil(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -134,9 +134,9 @@ public enum DefaultFunctions {
         }
     }),
 
-    SUM(new NativeFunc(Undefined.TYPE, true, Numeric.TYPE) {
+    SUM(new NativeFunc(true, Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             if (arguments.isEmpty()) return Int.of(0);
             Obj accumulator = arguments.get(0);
             for (int i = 1; i < arguments.size(); i++) {
@@ -146,9 +146,9 @@ public enum DefaultFunctions {
         }
     }),
 
-    PRODUCT(new NativeFunc(Undefined.TYPE, true, Numeric.TYPE) {
+    PRODUCT(new NativeFunc(true, Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             if (arguments.isEmpty()) return Int.of(0);
             Obj accumulator = arguments.get(0);
             for (int i = 1; i < arguments.size(); i++) {
@@ -158,16 +158,16 @@ public enum DefaultFunctions {
         }
     }),
 
-    COMPOSE(new NativeFunc(Undefined.TYPE, Func.TYPE, Func.TYPE) {
+    COMPOSE(new NativeFunc(Func.TYPE, Func.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             return new ComposedFunc((Func) arguments.get(0), (Func) arguments.get(1));
         }
     }),
 
-    SINE(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    SINE(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.sin(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -177,9 +177,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    COSINE(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    COSINE(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.cos(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -189,9 +189,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    TANGENT(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    TANGENT(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.tan(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -201,9 +201,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    COSECANT(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    COSECANT(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(1).divide((Decimal) SINE.get().invoke(Numeric.convert(a, Decimal.TYPE)));
@@ -213,9 +213,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    SECANT(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    SECANT(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(1).divide((Decimal) COSINE.get().invoke(Numeric.convert(a, Decimal.TYPE)));
@@ -225,9 +225,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    COTANGENT(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    COTANGENT(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(1).divide((Decimal) TANGENT.get().invoke(Numeric.convert(a, Decimal.TYPE)));
@@ -237,9 +237,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    HYPERBOLIC_SINE(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    HYPERBOLIC_SINE(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.sinh(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -249,9 +249,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    HYPERBOLIC_COSINE(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    HYPERBOLIC_COSINE(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.cosh(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -261,9 +261,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    HYPERBOLIC_TANGENT(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    HYPERBOLIC_TANGENT(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(Math.tanh(Numeric.convert(a, Decimal.TYPE).toJava()));
@@ -273,9 +273,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    HYPERBOLIC_COSECANT(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    HYPERBOLIC_COSECANT(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(1).divide((Decimal) HYPERBOLIC_SINE.get().invoke(Numeric.convert(a, Decimal.TYPE)));
@@ -285,9 +285,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    HYPERBOLIC_SECANT(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    HYPERBOLIC_SECANT(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(1).divide((Decimal) HYPERBOLIC_COSINE.get().invoke(Numeric.convert(a, Decimal.TYPE)));
@@ -297,9 +297,9 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    HYPERBOLIC_COTANGENT(new NativeFunc(Undefined.TYPE, Numeric.TYPE) {
+    HYPERBOLIC_COTANGENT(new NativeFunc(Numeric.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             if (a instanceof Int || a instanceof Decimal) {
                 return Decimal.of(1)
@@ -310,51 +310,51 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    ARCSINE(new NativeFunc(Undefined.TYPE, Decimal.TYPE) {
+    ARCSINE(new NativeFunc(Decimal.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return Decimal.of(Math.asin(Numeric.convert(a, Decimal.TYPE).toJava()));
         }
     }),
-    ARCCOSINE(new NativeFunc(Undefined.TYPE, Decimal.TYPE) {
+    ARCCOSINE(new NativeFunc(Decimal.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return Decimal.of(Math.acos(Numeric.convert(a, Decimal.TYPE).toJava()));
         }
     }),
-    ARCTANGENT(new NativeFunc(Undefined.TYPE, Decimal.TYPE) {
+    ARCTANGENT(new NativeFunc(Decimal.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return Decimal.of(Math.atan(Numeric.convert(a, Decimal.TYPE).toJava()));
         }
     }),
-    ARCCOSECANT(new NativeFunc(Undefined.TYPE, Decimal.TYPE) {
+    ARCCOSECANT(new NativeFunc(Decimal.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return ARCSINE.get().invoke(Decimal.of(1).divide(Numeric.convert(a, Decimal.TYPE)));
         }
     }),
-    ARCSECANT(new NativeFunc(Undefined.TYPE, Decimal.TYPE) {
+    ARCSECANT(new NativeFunc(Decimal.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return ARCCOSINE.get().invoke(Decimal.of(1).divide(Numeric.convert(a, Decimal.TYPE)));
         }
     }),
-    ARCCOTANGENT(new NativeFunc(Undefined.TYPE, Decimal.TYPE) {
+    ARCCOTANGENT(new NativeFunc(Decimal.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             return ARCTANGENT.get().invoke(Decimal.of(1).divide(Numeric.convert(a, Decimal.TYPE)));
         }
     }),
-    ARCTANGENT2(new NativeFunc(Undefined.TYPE, Decimal.TYPE, Decimal.TYPE) {
+    ARCTANGENT2(new NativeFunc(Decimal.TYPE, Decimal.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Obj a = arguments.get(0);
             Obj b = arguments.get(1);
             return Decimal.of(Math.atan2(
@@ -363,54 +363,54 @@ public enum DefaultFunctions {
         }
     }),
 
-    FOREACH(new NativeFunc(Undefined.TYPE, Vector.TYPE, Func.TYPE) {
+    FOREACH(new NativeFunc(Vector.TYPE, Func.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Vector arg = (Vector) arguments.get(0);
             Func action = (Func) arguments.get(1);
 
             for (Obj obj : arg) {
-                action.invoke(Undefined.VALUE, Collections.singletonList(obj));
+                action.invoke(Collections.singletonList(obj));
             }
             return Undefined.VALUE;
         }
     }),
-    MAP(new NativeFunc(Undefined.TYPE, Vector.TYPE, Func.TYPE) {
+    MAP(new NativeFunc(Vector.TYPE, Func.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Vector arg = (Vector) arguments.get(0);
             Func transform = (Func) arguments.get(1);
 
             Vector vector = new Vector();
             for (Obj obj : arg) {
-                vector.add(transform.invoke(Undefined.VALUE, Collections.singletonList(obj)));
+                vector.add(transform.invoke(Collections.singletonList(obj)));
             }
             return vector;
         }
     }),
-    FILTER(new NativeFunc(Undefined.TYPE, Vector.TYPE, Func.TYPE) {
+    FILTER(new NativeFunc(Vector.TYPE, Func.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Vector arg = (Vector) arguments.get(0);
             Func predicate = (Func) arguments.get(1);
 
             Vector vector = new Vector();
             for (Obj obj : arg) {
-                Bool condition = (Bool) predicate.invoke(Undefined.VALUE, Collections.singletonList(obj));
+                Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
                 if (condition == Bool.TRUE) vector.add(obj);
             }
             return vector;
         }
     }),
-    FOLD(new NativeFunc(Undefined.TYPE, Vector.TYPE, Obj.TYPE, Func.TYPE) {
+    FOLD(new NativeFunc(Vector.TYPE, Obj.TYPE, Func.TYPE) {
         @Override
-        protected Obj eval(Obj receiver, List<Obj> arguments) {
+        protected Obj eval(List<Obj> arguments) {
             Vector arg = (Vector) arguments.get(0);
             Obj accumulator = arguments.get(1);
             Func operation = (Func) arguments.get(2);
 
             for (Obj obj : arg) {
-                accumulator = operation.invoke(Undefined.VALUE, accumulator, obj);
+                accumulator = operation.invoke(accumulator, obj);
             }
             return accumulator;
         }

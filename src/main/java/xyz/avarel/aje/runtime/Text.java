@@ -162,7 +162,7 @@ public class Text implements Obj<String> {
             case "type":
                 return TYPE;
         }
-        return TYPE.getAttr(name);
+        return Obj.super.getAttr(name);
     }
 
     public Bool contains(Text text) {
@@ -231,63 +231,63 @@ public class Text implements Obj<String> {
         return value().hashCode();
     }
 
-    public static class TextType extends Type<Text> {
+    private static class TextType extends Type<Text> {
         public TextType() {
             super("String");
 
             getScope().declare("contains", new NativeFunc(this, this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return ((Text) receiver).contains((Text) arguments.get(0));
+                protected Obj eval(List<Obj> arguments) {
+                    return ((Text) arguments.get(0)).contains((Text) arguments.get(1));
                 }
             });
             getScope().declare("indexOf", new NativeFunc(this, this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return ((Text) receiver).indexOf((Text) arguments.get(0));
+                protected Obj eval(List<Obj> arguments) {
+                    return ((Text) arguments.get(0)).indexOf((Text) arguments.get(1));
                 }
             });
             getScope().declare("split", new NativeFunc(this, this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return ((Text) receiver).split((Text) arguments.get(0));
+                protected Obj eval(List<Obj> arguments) {
+                    return ((Text) arguments.get(0)).split((Text) arguments.get(1));
                 }
             });
             getScope().declare("substring", new NativeFunc(this, Int.TYPE) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
+                protected Obj eval(List<Obj> arguments) {
                     if (arguments.size() >= 2) {
                         if (arguments.get(1) instanceof Int) {
-                            return ((Text) receiver).substring((Int) arguments.get(0), (Int) arguments.get(1));
+                            return ((Text) arguments.get(0)).substring((Int) arguments.get(1), (Int) arguments.get(2));
                         }
                         return Undefined.VALUE;
                     } else {
-                        return ((Text) receiver).substring((Int) arguments.get(0));
+                        return ((Text) arguments.get(0)).substring((Int) arguments.get(1));
                     }
                 }
             });
             getScope().declare("toVector", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return ((Text) receiver).toVector();
+                protected Obj eval(List<Obj> arguments) {
+                    return ((Text) arguments.get(0)).toVector();
                 }
             });
             getScope().declare("toLowerCase", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return ((Text) receiver).toLowerCase();
+                protected Obj eval(List<Obj> arguments) {
+                    return ((Text) arguments.get(0)).toLowerCase();
                 }
             });
             getScope().declare("toUpperCase", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return ((Text) receiver).toUpperCase();
+                protected Obj eval(List<Obj> arguments) {
+                    return ((Text) arguments.get(0)).toUpperCase();
                 }
             });
             getScope().declare("trim", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return ((Text) receiver).trim();
+                protected Obj eval(List<Obj> arguments) {
+                    return ((Text) arguments.get(0)).trim();
                 }
             });
         }

@@ -111,7 +111,7 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
         return Obj.super.getAttr(name);
     }
 
-    public static class RangeType extends Type<Range> {
+    private static class RangeType extends Type<Range> {
         public RangeType() {
             super("Range");
         }

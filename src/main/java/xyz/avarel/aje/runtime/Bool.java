@@ -105,14 +105,14 @@ public enum Bool implements Obj<Boolean> {
         return getType().getAttr(name);
     }
 
-    public static class BoolType extends Type<Bool> {
+    private static class BoolType extends Type<Bool> {
         public BoolType() {
             super("Boolean");
 
             getScope().declare("toInt", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return Int.of(((Bool) receiver).value ? 1 : 0);
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Bool) arguments.get(0)).value ? 1 : 0);
                 }
             });
         }

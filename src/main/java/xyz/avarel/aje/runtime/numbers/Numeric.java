@@ -56,7 +56,7 @@ public abstract class Numeric extends Number implements Obj {
         return TYPE;
     }
 
-    public static class NumericType extends Type<Numeric> {
+    private static class NumericType extends Type<Numeric> {
         public NumericType() {
             super("Number");
         }

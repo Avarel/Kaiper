@@ -225,8 +225,8 @@ public class Int implements Obj<Integer> {
     }
 
     @Override
-    public Obj invoke(Obj receiver, List<Obj> arguments) {
-        if (receiver == Undefined.VALUE && arguments.size() == 1) {
+    public Obj invoke(List<Obj> arguments) {
+        if (arguments.size() == 1) {
             return times(arguments.get(0));
         }
         return Undefined.VALUE;
@@ -248,26 +248,29 @@ public class Int implements Obj<Integer> {
         private IntCache() {}
     }
 
-    public static class IntType extends Type<Int> {
+    private static class IntType extends Type<Int> {
         public IntType() {
             super(Decimal.TYPE, "Int");
 
+            getScope().declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
+            getScope().declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
+
             getScope().declare("toInt", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return receiver;
+                protected Obj eval(List<Obj> arguments) {
+                    return arguments.get(0);
                 }
             });
             getScope().declare("toDecimal", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return Decimal.of(((Int) receiver).value());
+                protected Obj eval(List<Obj> arguments) {
+                    return Decimal.of(((Int) arguments.get(0)).value());
                 }
             });
             getScope().declare("toComplex", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return Complex.of(((Int) receiver).value());
+                protected Obj eval(List<Obj> arguments) {
+                    return Complex.of(((Int) arguments.get(0)).value());
                 }
             });
         }

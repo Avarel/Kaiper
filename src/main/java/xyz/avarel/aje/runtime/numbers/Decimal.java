@@ -219,14 +219,14 @@ public class Decimal implements Obj<Double> {
     }
 
     @Override
-    public Obj invoke(Obj receiver, List<Obj> arguments) {
-        if (receiver == Undefined.VALUE && arguments.size() == 1) {
+    public Obj invoke(List<Obj> arguments) {
+        if (arguments.size() == 1) {
             return times(arguments.get(0));
         }
         return Undefined.VALUE;
     }
 
-    public static class DecimalType extends Type<Decimal> {
+    private static class DecimalType extends Type<Decimal> {
         private Scope scope = new Scope();
 
         public DecimalType() {
@@ -234,20 +234,20 @@ public class Decimal implements Obj<Double> {
 
             getScope().declare("toInt", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return Int.of((int) ((Decimal) receiver).value());
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of((int) ((Decimal) arguments.get(0)).value());
                 }
             });
             getScope().declare("toDecimal", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return receiver;
+                protected Obj eval(List<Obj> arguments) {
+                    return arguments.get(0);
                 }
             });
             getScope().declare("toComplex", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return Complex.of(((Decimal) receiver).value());
+                protected Obj eval(List<Obj> arguments) {
+                    return Complex.of(((Decimal) arguments.get(0)).value());
                 }
             });
         }

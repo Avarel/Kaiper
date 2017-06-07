@@ -81,7 +81,7 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
         return Obj.super.getAttr(name);
     }
 
-    public static class DictionaryType extends Type<Dictionary> {
+    private static class DictionaryType extends Type<Dictionary> {
         public DictionaryType() {
             super("Dictionary");
         }

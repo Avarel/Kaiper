@@ -199,7 +199,7 @@ public interface Obj<JAVA> {
      *          List of {@link Obj} arguments.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj invoke(Obj receiver, List<Obj> arguments) {
+    default Obj invoke(List<Obj> arguments) {
         return Undefined.VALUE;
     }
 
@@ -211,8 +211,8 @@ public interface Obj<JAVA> {
      *          Array of {@link Obj} arguments.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj invoke(Obj receiver, Obj... arguments) {
-        return invoke(receiver, Arrays.asList(arguments));
+    default Obj invoke(Obj... arguments) {
+        return invoke(Arrays.asList(arguments));
     }
 
     default Obj slice(Obj start, Obj end, Obj step) {
@@ -317,28 +317,28 @@ public interface Obj<JAVA> {
 
             getScope().declare("toString", new NativeFunc(this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return Text.of(receiver.toString());
+                protected Obj eval(List<Obj> arguments) {
+                    return Text.of(arguments.get(0).toString());
                 }
             });
 
 //            getScope().declare("plus", new NativeFunction(this, this) {
 //                @Override
-//                protected Obj eval(Obj receiver, List<Obj> arguments) {
+//                protected Obj eval(List<Obj> arguments) {
 //                    return receiver.plus(arguments.get(0));
 //                }
 //            });
 
             getScope().declare("get", new NativeFunc(this, this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return receiver.get(arguments.get(0));
+                protected Obj eval(List<Obj> arguments) {
+                    return arguments.get(0).get(arguments.get(1));
                 }
             });
             getScope().declare("set", new NativeFunc(this, this, this) {
                 @Override
-                protected Obj eval(Obj receiver, List<Obj> arguments) {
-                    return receiver.set(arguments.get(0), arguments.get(1));
+                protected Obj eval(List<Obj> arguments) {
+                    return arguments.get(0).set(arguments.get(1), arguments.get(2));
                 }
             });
         }
