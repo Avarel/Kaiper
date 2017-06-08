@@ -22,7 +22,6 @@ import xyz.avarel.aje.runtime.Undefined;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class NativeFunc extends Func {
     //    private final Type receiverType;
@@ -61,7 +60,7 @@ public abstract class NativeFunc extends Func {
 
     @Override
     public String toString() {
-        return "native-func(" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
+        return "native$" + super.toString();
     }
 
     @Override

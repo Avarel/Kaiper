@@ -15,7 +15,9 @@
 
 package xyz.avarel.aje.runtime;
 
+import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.ReferenceFunc;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
 
@@ -251,6 +253,12 @@ public interface Obj<JAVA> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj getAttr(String name) {
+        Obj obj = getType().getAttr(name);
+
+        if (obj instanceof Func) {
+            return new ReferenceFunc(this, (Func) obj);
+        }
+
         return Undefined.VALUE;
     }
 

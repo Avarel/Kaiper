@@ -212,7 +212,10 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                     ? make(TokenType.OR)
                     : make(TokenType.BACKSLASH);
 
-            case ':': return make(TokenType.COLON);
+            case ':':
+                return Character.isLetter(peek())
+                        ? nextAtom(c)
+                        : make(TokenType.COLON);
 
             case '=': return match('=')
                     ? make(TokenType.EQUALS)
@@ -312,6 +315,26 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
     private Token nextName(char init) {
         return nextName(String.valueOf(init));
+    }
+
+    private Token nextAtom(char init) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(init);
+
+        char c;
+        while (true) {
+            c = advance();
+
+            if (Character.isLetterOrDigit(c) || c == '_') {
+                sb.append(c);
+            } else {
+                break;
+            }
+        }
+
+        back();
+
+        return make(TokenType.ATOM, sb.toString());
     }
 
     private Token nextName(String init) {

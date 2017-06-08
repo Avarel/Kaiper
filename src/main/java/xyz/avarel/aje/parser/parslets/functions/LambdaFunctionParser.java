@@ -16,8 +16,8 @@
 package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
-import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.ValueNode;
+import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -34,9 +34,9 @@ public class LambdaFunctionParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         if (parser.match(TokenType.RIGHT_BRACE)) {
-            return new FunctionAtom(token.getPosition(),
+            return new FunctionNode(token.getPosition(),
                     Collections.emptyList(),
-                    new ValueAtom(token.getPosition(), Undefined.VALUE));
+                    new ValueNode(token.getPosition(), Undefined.VALUE));
         }
 
         List<ParameterData> parameters = new ArrayList<>();
@@ -73,7 +73,7 @@ public class LambdaFunctionParser implements PrefixParser {
                         paramNames.add(parameterName);
                     }
 
-                    Expr parameterType = new ValueAtom(parser.peek(0).getPosition(), Obj.TYPE);
+                    Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.TYPE);
 
                     if (parser.match(TokenType.COLON)) {
                         Token typeToken = parser.eat(TokenType.IDENTIFIER);
@@ -99,6 +99,6 @@ public class LambdaFunctionParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACE);
 
-        return new FunctionAtom(token.getPosition(), parameters, expr);
+        return new FunctionNode(token.getPosition(), parameters, expr);
     }
 }

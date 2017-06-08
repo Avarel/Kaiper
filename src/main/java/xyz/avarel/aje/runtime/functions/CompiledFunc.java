@@ -24,7 +24,6 @@ import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Every operation results in the same
@@ -48,11 +47,6 @@ public class CompiledFunc extends Func {
 
     public List<Parameter> getParameters() {
         return parameters;
-    }
-
-    @Override
-    public String toString() {
-        return "func(" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
     }
 
     @Override

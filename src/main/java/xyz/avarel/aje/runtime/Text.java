@@ -250,7 +250,7 @@ public class Text implements Obj<String> {
             getScope().declare("substring", new NativeFunc(this, Int.TYPE) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    if (arguments.size() >= 2) {
+                    if (arguments.size() >= 3) {
                         if (arguments.get(1) instanceof Int) {
                             return ((Text) arguments.get(0)).substring((Int) arguments.get(1), (Int) arguments.get(2));
                         }

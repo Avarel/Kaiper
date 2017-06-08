@@ -13,26 +13,18 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.atoms;
+package xyz.avarel.aje.parser.parslets.nodes;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
-import xyz.avarel.aje.exceptions.SyntaxException;
+import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.runtime.Bool;
+import xyz.avarel.aje.runtime.Text;
 
-public class BoolParser implements PrefixParser {
+public class TextParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        switch (token.getString()) {
-            case "true":
-                return new ValueAtom(token.getPosition(), Bool.TRUE);
-            case "false":
-                return new ValueAtom(token.getPosition(), Bool.FALSE);
-            default:
-                throw new SyntaxException("Bool atom not of expected value", token.getPosition());
-        }
+        return new ValueNode(token.getPosition(), Text.of(token.getString()));
     }
 }

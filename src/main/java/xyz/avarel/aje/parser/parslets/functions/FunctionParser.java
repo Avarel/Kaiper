@@ -16,8 +16,8 @@
 package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
-import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.ValueNode;
+import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -57,7 +57,7 @@ public class FunctionParser implements PrefixParser {
                     paramNames.add(parameterName);
                 }
 
-                Expr parameterType = new ValueAtom(parser.peek(0).getPosition(), Obj.TYPE);
+                Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.TYPE);
                 Expr parameterDefault = null;
 
                 if (parser.match(TokenType.COLON)) {
@@ -85,7 +85,7 @@ public class FunctionParser implements PrefixParser {
         if (parser.match(TokenType.ASSIGN)) {
             if (parser.match(TokenType.LEFT_BRACE)) {
                 if (parser.match(TokenType.RIGHT_BRACE)) {
-                    expr = new ValueAtom(parser.getLast().getPosition(), Undefined.VALUE);
+                    expr = new ValueNode(parser.getLast().getPosition(), Undefined.VALUE);
                 } else {
                     expr = parser.parseStatements();
                     parser.eat(TokenType.RIGHT_BRACE);
@@ -95,7 +95,7 @@ public class FunctionParser implements PrefixParser {
             }
         } else if (parser.match(TokenType.LEFT_BRACE)) {
             if (parser.match(TokenType.RIGHT_BRACE)) {
-                expr = new ValueAtom(parser.getLast().getPosition(), Undefined.VALUE);
+                expr = new ValueNode(parser.getLast().getPosition(), Undefined.VALUE);
             } else {
                 expr = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);
@@ -104,6 +104,6 @@ public class FunctionParser implements PrefixParser {
             throw new SyntaxException("Expected LEFT_BRACE", parser.eat().getPosition());
         }
 
-        return new FunctionAtom(token.getPosition(), name, parameters, expr);
+        return new FunctionNode(token.getPosition(), name, parameters, expr);
     }
 }

@@ -13,11 +13,11 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.atoms;
+package xyz.avarel.aje.parser.parslets.nodes;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
+import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
@@ -35,10 +35,10 @@ public class NumberParser implements PrefixParser {
 
         if (token.getType() == TokenType.INT) {
             String str = token.getString();
-            value = new ValueAtom(token.getPosition(), Int.of(Integer.parseInt(str)));
+            value = new ValueNode(token.getPosition(), Int.of(Integer.parseInt(str)));
         } else if (token.getType() == TokenType.DECIMAL) {
             String str = token.getString();
-            value = new ValueAtom(token.getPosition(), Decimal.of(Double.parseDouble(str)));
+            value = new ValueNode(token.getPosition(), Decimal.of(Double.parseDouble(str)));
         }
 
         if (parser.nextIs(TokenType.IDENTIFIER)) {
@@ -46,6 +46,6 @@ public class NumberParser implements PrefixParser {
             return new BinaryOperation(right.getPosition(), value, right, Obj::times);
         }
 
-        return value != null ? value : new ValueAtom(token.getPosition(), Undefined.VALUE);
+        return value != null ? value : new ValueNode(token.getPosition(), Undefined.VALUE);
     }
 }

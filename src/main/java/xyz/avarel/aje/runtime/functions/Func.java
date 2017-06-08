@@ -21,6 +21,7 @@ import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
     public static final Type<Func> TYPE = new FunctionType();
@@ -88,6 +89,11 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
 
     private Func divide(Func right) {
         return new CombinedFunc(this, right, Obj::divide);
+    }
+
+    @Override
+    public String toString() {
+        return "func(" + getParameters().stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
     }
 
     public static class FunctionType extends Type<Func> {

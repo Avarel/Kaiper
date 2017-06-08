@@ -17,7 +17,7 @@ package xyz.avarel.aje.parser.parslets.variables;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
+import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
@@ -46,7 +46,7 @@ public class AttributeParser extends BinaryParser {
             return new ConditionalExpr(token.getPosition(),
                     new BinaryOperation(token.getPosition(),
                             getOp,
-                            new ValueAtom(token.getPosition(), Undefined.VALUE),
+                            new ValueNode(token.getPosition(), Undefined.VALUE),
                             Obj::isEqualTo),
                     new AssignmentExpr(token.getPosition(), left, name.getString(), parser.parseExpr(), false),
                     getOp);

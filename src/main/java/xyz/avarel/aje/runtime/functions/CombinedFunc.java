@@ -59,7 +59,7 @@ public class CombinedFunc extends Func {
 
     @Override
     public String toString() {
-        return "combine(" + left + ", " + right + ")";
+        return "combined$" + super.toString();
     }
 
     @Override

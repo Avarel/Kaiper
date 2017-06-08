@@ -16,7 +16,7 @@
 package xyz.avarel.aje.ast.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
+import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 
@@ -26,11 +26,11 @@ public class ParameterData {
     private final Expr defaultExpr;
 
     public ParameterData(String name) {
-        this(name, new ValueAtom(null, Obj.TYPE), null);
+        this(name, new ValueNode(null, Obj.TYPE), null);
     }
 
     public ParameterData(Type type) {
-        this(null, new ValueAtom(null, type), null);
+        this(null, new ValueNode(null, type), null);
     }
 
     public ParameterData(String name, Expr type) {

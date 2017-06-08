@@ -13,18 +13,18 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.atoms;
+package xyz.avarel.aje.parser.parslets.nodes;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
+import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.runtime.Text;
+import xyz.avarel.aje.runtime.Undefined;
 
-public class TextParser implements PrefixParser {
+public class UndefinedParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        return new ValueAtom(token.getPosition(), Text.of(token.getString()));
+        return new ValueNode(token.getPosition(), Undefined.VALUE);
     }
 }

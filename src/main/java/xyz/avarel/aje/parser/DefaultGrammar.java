@@ -20,11 +20,11 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.ElvisParser;
 import xyz.avarel.aje.parser.parslets.GetSetParser;
 import xyz.avarel.aje.parser.parslets.GroupParser;
-import xyz.avarel.aje.parser.parslets.atoms.*;
 import xyz.avarel.aje.parser.parslets.flow.ForEachParser;
 import xyz.avarel.aje.parser.parslets.flow.IfElseParser;
 import xyz.avarel.aje.parser.parslets.flow.ReturnParser;
 import xyz.avarel.aje.parser.parslets.functions.*;
+import xyz.avarel.aje.parser.parslets.nodes.*;
 import xyz.avarel.aje.parser.parslets.operators.BinaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.operators.RangeOperatorParser;
 import xyz.avarel.aje.parser.parslets.operators.UnaryOperatorParser;
@@ -47,7 +47,7 @@ public class DefaultGrammar extends Grammar {
         prefix(TokenType.RETURN, new ReturnParser());
         infix(TokenType.ELVIS, new ElvisParser());
 
-        // ATOMS
+        // NODES
         prefix(TokenType.INT, new NumberParser());
         prefix(TokenType.DECIMAL, new NumberParser());
         prefix(TokenType.BOOLEAN, new BoolParser());

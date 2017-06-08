@@ -17,7 +17,7 @@ package xyz.avarel.aje.ast;
 
 import xyz.avarel.aje.ast.collections.*;
 import xyz.avarel.aje.ast.flow.*;
-import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
@@ -55,7 +55,7 @@ public class ExprVisitor {
     }
 
     // func print(str: String, n: Int) { for (x in 0..n) { print(str) } }
-    public Obj visit(FunctionAtom expr, Scope scope) {
+    public Obj visit(FunctionNode expr, Scope scope) {
         List<Parameter> parameters = new ArrayList<>();
 
         for (ParameterData data : expr.getParameterExprs()) {
@@ -85,7 +85,7 @@ public class ExprVisitor {
         throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
     }
 
-    public Obj visit(ValueAtom expr, Scope scope) {
+    public Obj visit(ValueNode expr, Scope scope) {
         return expr.getValue();
     }
 
@@ -114,7 +114,7 @@ public class ExprVisitor {
         return expr.getOperator().apply(operand);
     }
 
-    public Obj visit(RangeAtom expr, Scope scope) {
+    public Obj visit(RangeNode expr, Scope scope) {
         Obj startObj = expr.getLeft().accept(this, scope);
         Obj endObj = expr.getRight().accept(this, scope);
 
@@ -129,7 +129,7 @@ public class ExprVisitor {
         //throw new ComputeException("Start and end of range must be integers", expr.getPosition());
     }
 
-    public Obj visit(VectorAtom expr, Scope scope) {
+    public Obj visit(VectorNode expr, Scope scope) {
         Vector vector = new Vector();
 
         for (Expr itemExpr : expr.getItems()) {
@@ -232,7 +232,7 @@ public class ExprVisitor {
         return Undefined.VALUE;
     }
 
-    public Obj visit(DictionaryAtom expr, Scope scope) {
+    public Obj visit(DictionaryNode expr, Scope scope) {
         Map<Expr, Expr> map = expr.getMap();
 
         Dictionary dict = new Dictionary();

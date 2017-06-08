@@ -17,48 +17,47 @@ package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Every operation results in the same
- * instance, NOTHING.
- */
-public class ComposedFunc extends Func {
-    private final Func left;
-    private final Func right;
+public class ReferenceFunc extends Func {
+    private final Obj receiver;
+    private final Func func;
 
-    public ComposedFunc(Func left, Func right) {
-        this.left = left;
-        this.right = right;
+    public ReferenceFunc(Obj receiver, Func func) {
+        this.receiver = receiver;
+        this.func = func;
 
-        if (left.getParameters().size() != 1) {
-            throw new ComputeException("Composed functions require the outer function to be arity-1.");
+        if (func.getParameters().isEmpty()) {
+            throw new ComputeException("Function does not take receivers.");
+        }
+        if (!receiver.getType().is(func.getParameters().get(0).getType())) {
+            throw new ComputeException("Object is not function receiver's type.");
         }
     }
 
     @Override
     public int getArity() {
-        return right.getArity();
+        return func.getArity() - 1;
     }
 
     @Override
     public List<Parameter> getParameters() {
-        return right.getParameters();
+        return func.getParameters().subList(1, func.getParameters().size());
     }
 
     @Override
     public String toString() {
-        return "composed$" + super.toString();
+        return "ref$" + super.toString();
     }
 
     @Override
     public Obj invoke(List<Obj> arguments) {
-        if (arguments.size() != getArity()) {
-            return Undefined.VALUE;
-        }
+        List<Obj> args = new ArrayList<>();
+        args.add(receiver);
+        args.addAll(arguments);
 
-        return left.invoke(right.invoke(arguments));
+        return func.invoke(args);
     }
 }
