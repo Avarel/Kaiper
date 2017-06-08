@@ -152,19 +152,6 @@ public class Text implements Obj<String> {
         }
     }
 
-    @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "length":
-                return Int.of(length());
-            case "lastIndex":
-                return Int.of(length() - 1);
-            case "type":
-                return TYPE;
-        }
-        return Obj.super.getAttr(name);
-    }
-
     public Bool contains(Text text) {
         return Bool.of(value.contains(text.value));
     }
@@ -234,6 +221,13 @@ public class Text implements Obj<String> {
     private static class TextType extends Type<Text> {
         public TextType() {
             super("String");
+
+            getScope().declare("length", new NativeFunc(this) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Text) arguments.get(0)).length());
+                }
+            });
 
             getScope().declare("contains", new NativeFunc(this, this) {
                 @Override

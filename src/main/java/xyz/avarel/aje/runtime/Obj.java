@@ -251,7 +251,7 @@ public interface Obj<JAVA> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj getAttr(String name) {
-        return getType().getAttr(name);
+        return Undefined.VALUE;
     }
 
     /**

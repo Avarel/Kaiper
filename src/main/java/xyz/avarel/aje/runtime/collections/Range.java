@@ -18,6 +18,7 @@ package xyz.avarel.aje.runtime.collections;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.ArrayList;
@@ -94,26 +95,23 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
         return end - start + 1;
     }
 
-    @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "size":
-                return Int.of(size());
-            case "length":
-                return Int.of(size());
-            case "lastIndex":
-                return Int.of(size() - 1);
-            case "start":
-                return Int.of(start);
-            case "end":
-                return Int.of(end);
-        }
-        return Obj.super.getAttr(name);
-    }
-
     private static class RangeType extends Type<Range> {
         public RangeType() {
             super("Range");
+
+            getScope().declare("length", new NativeFunc(this) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Range) arguments.get(0)).size());
+                }
+            });
+
+            getScope().declare("lastIndex", new NativeFunc(this) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Range) arguments.get(0)).size() - 1);
+                }
+            });
         }
     }
 

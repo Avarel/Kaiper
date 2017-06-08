@@ -80,14 +80,16 @@ public class AJEParser extends Parser {
     }
 
     public Expr parseInfix(int precedence, Expr left) {
-        while (precedence < getPrecedence()) { // ex plus is 6, next is mult which is 7, parse it\
+        while (precedence < getPrecedence()) {
             Token token = eat();
 
             InfixParser infix = getInfixParsers().get(token.getType());
 
-            if (infix == null) throw new SyntaxException("Unexpected " + token, token.getPosition());
-
-            left = infix.parse(this, left, token);
+            if (infix == null) {
+                throw new SyntaxException("Unexpected " + token, token.getPosition());
+            } else {
+                left = infix.parse(this, left, token);
+            }
         }
         return left;
     }

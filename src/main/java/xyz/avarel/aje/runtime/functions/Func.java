@@ -18,7 +18,6 @@ package xyz.avarel.aje.runtime.functions;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.List;
 import java.util.function.Function;
@@ -89,15 +88,6 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
 
     private Func divide(Func right) {
         return new CombinedFunc(this, right, Obj::divide);
-    }
-
-    @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "arity":
-                return Int.of(getArity());
-        }
-        return Obj.super.getAttr(name);
     }
 
     public static class FunctionType extends Type<Func> {

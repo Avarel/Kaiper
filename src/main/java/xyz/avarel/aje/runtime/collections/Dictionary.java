@@ -18,10 +18,12 @@ package xyz.avarel.aje.runtime.collections;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -70,20 +72,16 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
         return value;
     }
 
-    @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "size":
-                return Int.of(size());
-            case "length":
-                return Int.of(size());
-        }
-        return Obj.super.getAttr(name);
-    }
-
     private static class DictionaryType extends Type<Dictionary> {
         public DictionaryType() {
             super("Dictionary");
+
+            getScope().declare("size", new NativeFunc(this) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Dictionary) arguments.get(0)).size());
+                }
+            });
         }
     }
 }

@@ -38,63 +38,66 @@ public class DefaultGrammar extends Grammar {
 
     private DefaultGrammar() {
         // BLOCKS
-        register(TokenType.LEFT_BRACKET, new CollectionsParser());
-        register(TokenType.LEFT_PAREN, new GroupParser());
+        prefix(TokenType.LEFT_BRACKET, new CollectionsParser());
+        prefix(TokenType.LEFT_PAREN, new GroupParser());
 
         // FLOW CONTROL
-        register(TokenType.IF, new IfElseParser());
-        register(TokenType.FOR, new ForEachParser());
-        register(TokenType.RETURN, new ReturnParser());
-        register(TokenType.ELVIS, new ElvisParser());
+        prefix(TokenType.IF, new IfElseParser());
+        prefix(TokenType.FOR, new ForEachParser());
+        prefix(TokenType.RETURN, new ReturnParser());
+        infix(TokenType.ELVIS, new ElvisParser());
 
         // ATOMS
-        register(TokenType.INT, new NumberParser());
-        register(TokenType.DECIMAL, new NumberParser());
-        register(TokenType.BOOLEAN, new BoolParser());
-        register(TokenType.TEXT, new TextParser());
-        register(TokenType.UNDEFINED, new UndefinedParser());
+        prefix(TokenType.INT, new NumberParser());
+        prefix(TokenType.DECIMAL, new NumberParser());
+        prefix(TokenType.BOOLEAN, new BoolParser());
+        prefix(TokenType.TEXT, new TextParser());
+        prefix(TokenType.UNDEFINED, new UndefinedParser());
 
 
-        register(TokenType.FUNCTION, new FunctionParser());
-        register(TokenType.UNDERSCORE, new ImplicitFunctionParser());
-        register(TokenType.LEFT_BRACE, new LambdaFunctionParser());
+        prefix(TokenType.FUNCTION, new FunctionParser());
+        prefix(TokenType.UNDERSCORE, new ImplicitFunctionParser());
+        prefix(TokenType.LEFT_BRACE, new LambdaFunctionParser());
 
 
-        register(TokenType.IDENTIFIER, new NameParser());
-        register(TokenType.VAR, new DeclarationParser());
+        prefix(TokenType.IDENTIFIER, new NameParser());
+        prefix(TokenType.VAR, new DeclarationParser());
 
         // Numeric
-        register(TokenType.MINUS, new UnaryOperatorParser(Obj::negative));
-        register(TokenType.PLUS, new UnaryOperatorParser(Obj::identity));
-        register(TokenType.PLUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, Obj::plus));
-        register(TokenType.MINUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, Obj::minus));
-        register(TokenType.ASTERISK, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Obj::times));
-        register(TokenType.SLASH, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Obj::divide));
-        register(TokenType.PERCENT, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Obj::mod));
-        register(TokenType.CARET, new BinaryOperatorParser(Precedence.EXPONENTIAL, false, Obj::pow));
+        prefix(TokenType.MINUS, new UnaryOperatorParser(Obj::negative));
+        prefix(TokenType.PLUS, new UnaryOperatorParser(Obj::identity));
+        infix(TokenType.PLUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, Obj::plus));
+        infix(TokenType.MINUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, Obj::minus));
+        infix(TokenType.ASTERISK, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Obj::times));
+        infix(TokenType.SLASH, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Obj::divide));
+        infix(TokenType.PERCENT, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Obj::mod));
+        infix(TokenType.CARET, new BinaryOperatorParser(Precedence.EXPONENTIAL, false, Obj::pow));
 
         // RELATIONAL
-        register(TokenType.EQUALS, new BinaryOperatorParser(Precedence.EQUALITY, true, Obj::isEqualTo));
-        register(TokenType.NOT_EQUAL, new BinaryOperatorParser(Precedence.EQUALITY, true, (a, b) -> a.isEqualTo(b).negate()));
-        register(TokenType.GT, new BinaryOperatorParser(Precedence.COMPARISON, true, Obj::greaterThan));
-        register(TokenType.LT, new BinaryOperatorParser(Precedence.COMPARISON, true, Obj::lessThan));
-        register(TokenType.GTE, new BinaryOperatorParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.greaterThan(b))));
-        register(TokenType.LTE, new BinaryOperatorParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.lessThan(b))));
+        infix(TokenType.EQUALS, new BinaryOperatorParser(Precedence.EQUALITY, true, Obj::isEqualTo));
+        infix(TokenType.NOT_EQUAL,
+                new BinaryOperatorParser(Precedence.EQUALITY, true, (a, b) -> a.isEqualTo(b).negate()));
+        infix(TokenType.GT, new BinaryOperatorParser(Precedence.COMPARISON, true, Obj::greaterThan));
+        infix(TokenType.LT, new BinaryOperatorParser(Precedence.COMPARISON, true, Obj::lessThan));
+        infix(TokenType.GTE,
+                new BinaryOperatorParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.greaterThan(b))));
+        infix(TokenType.LTE,
+                new BinaryOperatorParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.lessThan(b))));
 
         // Truth
-        register(TokenType.BANG, new UnaryOperatorParser(Obj::negate));
-        register(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, Obj::and));
-        register(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, Obj::or));
+        prefix(TokenType.BANG, new UnaryOperatorParser(Obj::negate));
+        infix(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, Obj::and));
+        infix(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, Obj::or));
 
-        register(TokenType.RANGE_TO, new RangeOperatorParser());
+        infix(TokenType.RANGE_TO, new RangeOperatorParser());
 
         // Functional
-        register(TokenType.LEFT_PAREN, new InvocationParser());
-        register(TokenType.LEFT_BRACE, new BlockParameterParser());
+        infix(TokenType.LEFT_PAREN, new InvocationParser());
+        infix(TokenType.LEFT_BRACE, new BlockParameterParser());
 
-        register(TokenType.LEFT_BRACKET, new GetSetParser());
-        register(TokenType.DOT, new AttributeParser());
+        infix(TokenType.LEFT_BRACKET, new GetSetParser());
+        infix(TokenType.DOT, new AttributeParser());
         //register(TokenType.ASSIGN, new AssignmentParser());
-        register(TokenType.PIPE_FORWARD, new PipeForwardParser());
+        infix(TokenType.PIPE_FORWARD, new PipeForwardParser());
     }
 }

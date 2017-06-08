@@ -329,22 +329,23 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
         return super.get(index);
     }
 
-    @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "size":
-                return Int.of(size());
-            case "length":
-                return Int.of(size());
-            case "lastIndex":
-                return Int.of(size() - 1);
-        }
-        return Obj.super.getAttr(name);
-    }
-
     private static class VectorType extends Type<Vector> {
         public VectorType() {
             super("Vector");
+
+            getScope().declare("length", new NativeFunc(this) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Vector) arguments.get(0)).size());
+                }
+            });
+
+            getScope().declare("lastIndex", new NativeFunc(this) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Vector) arguments.get(0)).size() - 1);
+                }
+            });
 
             getScope().declare("append", new NativeFunc(true, Obj.TYPE) {
                 @Override
