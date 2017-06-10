@@ -29,6 +29,11 @@ public abstract class NativeFunc extends Func {
     private final List<Parameter> parameters;
     private final boolean varargs;
 
+    public NativeFunc() {
+        this.parameters = Collections.emptyList();
+        this.varargs = false;
+    }
+
     public NativeFunc(Parameter... parameters) {
         this.parameters = new ArrayList<>();
         this.parameters.addAll(Arrays.asList(parameters));

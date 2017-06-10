@@ -415,10 +415,10 @@ public enum DefaultFunctions {
             return accumulator;
         }
     }),
-    FACTORIAL(new NativeFunc(Decimal.TYPE) {
+    FACTORIAL(new NativeFunc(Decimal.CLS) {
         @Override
         protected Obj eval(List<Obj> arguments) {
-            int arg = Numeric.convert(arguments.get(0), Int.TYPE).toNative();
+            int arg = Numeric.convert(arguments.get(0), Int.CLS).toJava();
             int result = arg;
 
             for(int i = arg - 1; i > 0; i--) {
