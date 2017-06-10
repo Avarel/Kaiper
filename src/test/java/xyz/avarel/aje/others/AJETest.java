@@ -25,7 +25,7 @@ import xyz.avarel.aje.runtime.Obj;
 class AJETest {
     public static void main(String[] args) {
         // Base expression.
-        Expression exp = new Expression("sum(tau,2,i)");
+        Expression exp = new Expression("random(20)");
 
         // Add a constant.
         exp.add("tau", new Expression("2 * pi"));
