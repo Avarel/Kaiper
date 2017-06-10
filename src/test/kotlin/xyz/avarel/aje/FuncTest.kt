@@ -69,12 +69,12 @@ class FuncTest {
 
     @Test
     fun `pipe forward`() {
-        Assert.assertEquals(evaluator.eval("[[1, 2, 3], [1, 5, 8, 9, 10], [1..50]] |> map(_.size)"), eval("[3, 5, 50]"))
+        Assert.assertEquals(evaluator.eval("[[1, 2, 3], [1, 5, 8, 9, 10], [1..50]] |> Vector.map(_.size)"), eval("[3, 5, 50]"))
     }
 
     @Test
     fun `higher order map`() {
-        Assert.assertEquals(evaluator.eval("map([1..10], _ ^ 2)"), eval("[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]"))
+        Assert.assertEquals(evaluator.eval("Vector.map([1..10], _ ^ 2)"), eval("[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]"))
     }
 
     @Test

@@ -73,6 +73,16 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
         return value;
     }
 
+    @Override
+    public Obj getAttr(String name) {
+        switch (name) {
+            case "size":
+                return Int.of(size());
+            default:
+                return Obj.super.getAttr(name);
+        }
+    }
+
     private static class DictionaryCls extends Cls<Dictionary> {
         public DictionaryCls() {
             super("Dictionary");

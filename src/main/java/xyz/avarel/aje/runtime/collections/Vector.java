@@ -330,6 +330,20 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
         return super.get(index);
     }
 
+    @Override
+    public Obj getAttr(String name) {
+        switch (name) {
+            case "size":
+                return Int.of(size());
+            case "length":
+                return Int.of(size());
+            case "lastIndex":
+                return Int.of(size() - 1);
+            default:
+                return Obj.super.getAttr(name);
+        }
+    }
+
     private static class VectorCls extends Cls<Vector> {
         public VectorCls() {
             super("Vector");
@@ -340,6 +354,8 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                     return Int.of(((Vector) arguments.get(0)).size());
                 }
             });
+
+            getScope().declare("size", getScope().lookup("length"));
 
             getScope().declare("lastIndex", new NativeFunc(Parameter.of("self")) {
                 @Override

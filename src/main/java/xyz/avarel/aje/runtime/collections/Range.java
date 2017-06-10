@@ -96,6 +96,20 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
         return end - start + 1;
     }
 
+    @Override
+    public Obj getAttr(String name) {
+        switch (name) {
+            case "size":
+                return Int.of(size());
+            case "length":
+                return Int.of(size());
+            case "lastIndex":
+                return Int.of(size() - 1);
+            default:
+                return Obj.super.getAttr(name);
+        }
+    }
+
     private static class RangeCls extends Cls<Range> {
         public RangeCls() {
             super("Range");

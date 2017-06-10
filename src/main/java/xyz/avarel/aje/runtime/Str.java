@@ -219,6 +219,20 @@ public class Str implements Obj<String> {
         return value().hashCode();
     }
 
+    @Override
+    public Obj getAttr(String name) {
+        switch (name) {
+            case "size":
+                return Int.of(length());
+            case "length":
+                return Int.of(length());
+            case "lastIndex":
+                return Int.of(length() - 1);
+            default:
+                return Obj.super.getAttr(name);
+        }
+    }
+
     private static class TextCls extends Cls<Str> {
         public TextCls() {
             super("String");
