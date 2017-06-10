@@ -15,8 +15,8 @@
 
 package xyz.avarel.aje.runtime.functions;
 
+import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
@@ -24,15 +24,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
-    public static final Type<Func> TYPE = new FunctionType();
+    public static final Cls<Func> CLS = new FunctionCls();
 
     public abstract int getArity();
 
     public abstract List<Parameter> getParameters();
 
     @Override
-    public Type<Func> getType() {
-        return TYPE;
+    public Cls<Func> getType() {
+        return CLS;
     }
 
     @Override
@@ -96,8 +96,8 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
         return "func(" + getParameters().stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
     }
 
-    public static class FunctionType extends Type<Func> {
-        public FunctionType() {
+    public static class FunctionCls extends Cls<Func> {
+        public FunctionCls() {
             super("Function");
         }
     }

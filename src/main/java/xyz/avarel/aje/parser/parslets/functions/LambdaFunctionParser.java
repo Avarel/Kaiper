@@ -73,7 +73,7 @@ public class LambdaFunctionParser implements PrefixParser {
                         paramNames.add(parameterName);
                     }
 
-                    Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.TYPE);
+                    Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.CLS);
 
                     if (parser.match(TokenType.COLON)) {
                         Token typeToken = parser.eat(TokenType.IDENTIFIER);

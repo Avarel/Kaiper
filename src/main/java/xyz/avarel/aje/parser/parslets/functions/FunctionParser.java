@@ -57,7 +57,7 @@ public class FunctionParser implements PrefixParser {
                     paramNames.add(parameterName);
                 }
 
-                Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.TYPE);
+                Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.CLS);
                 Expr parameterDefault = null;
 
                 if (parser.match(TokenType.COLON)) {
@@ -67,6 +67,7 @@ public class FunctionParser implements PrefixParser {
                         parameterType = new Identifier(typeToken.getPosition(), parameterType, parser.eat(TokenType.IDENTIFIER).getString());
                     }
                 }
+
                 if (parser.match(TokenType.ASSIGN)) {
                     parameterDefault = parser.parseExpr();
                     requireDef = true;

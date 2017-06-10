@@ -20,11 +20,11 @@ import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.runtime.Text;
+import xyz.avarel.aje.runtime.Str;
 
 public class TextParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        return new ValueNode(token.getPosition(), Text.of(token.getString()));
+        return new ValueNode(token.getPosition(), Str.of(token.getString()));
     }
 }

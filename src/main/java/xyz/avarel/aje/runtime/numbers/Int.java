@@ -16,15 +16,16 @@
 package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Bool;
+import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.util.List;
 
 public class Int implements Obj<Integer> {
-    public static final Type<Int> TYPE = new IntType();
+    public static final Cls<Int> CLS = new IntCls();
 
     private final int value;
 
@@ -49,8 +50,8 @@ public class Int implements Obj<Integer> {
     }
 
     @Override
-    public Type<Int> getType() {
-        return TYPE;
+    public Cls<Int> getType() {
+        return CLS;
     }
 
     @Override
@@ -248,26 +249,26 @@ public class Int implements Obj<Integer> {
         private IntCache() {}
     }
 
-    private static class IntType extends Type<Int> {
-        public IntType() {
-            super(Decimal.TYPE, "Int");
+    private static class IntCls extends Cls<Int> {
+        public IntCls() {
+            super(Decimal.CLS, "Int");
 
             getScope().declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
             getScope().declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
 
-            getScope().declare("toInt", new NativeFunc(this) {
+            getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return arguments.get(0);
                 }
             });
-            getScope().declare("toDecimal", new NativeFunc(this) {
+            getScope().declare("toDecimal", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Decimal.of(((Int) arguments.get(0)).value());
                 }
             });
-            getScope().declare("toComplex", new NativeFunc(this) {
+            getScope().declare("toComplex", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Complex.of(((Int) arguments.get(0)).value());

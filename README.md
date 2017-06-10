@@ -87,6 +87,9 @@ Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xy
 
 ▶ [1..10] |> fold(1, _ * __)
 ◀ 3628800 : integer
+
+▶ ["h", "e", "l", "l", "o"].map("hello".indexOf)
+◀ [0, 1, 2, 2, 4] : Vector
 ```
 
 ### Download [![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg)](https://bintray.com/avarel/maven/AJE/_latestVersion)
@@ -212,7 +215,7 @@ class AJETest {
 |`<=`|Less than or equal to|`a <= b`|
 
 ###### List and Ranges Operators `vector`
-Though ranges are of a different type, `range`, it is recommended that 
+Though ranges are of a different cls, `range`, it is recommended that 
     ranges are wrapped into a vector using `[range]` syntax. 
 
 |Symbol|Description|Example|
@@ -297,8 +300,8 @@ func f(x) = x + 2; f(2) == 4
 func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
 ```
 ###### Parameter Types and Defaults
-Functions can declare parameters with runtime type checking by appending the 
-    type name to the parameter name. Parameters can also specify default 
+Functions can declare parameters with runtime cls checking by appending the 
+    cls name to the parameter name. Parameters can also specify default 
     expressions that are evaluated at invocation.
 ```
 func f(x = 0, y: Int = 2) {

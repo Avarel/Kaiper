@@ -16,17 +16,18 @@
 package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Bool;
+import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
 public class Complex implements Obj<Double> {
-    public static final Type<Complex> TYPE = new ComplexType();
+    public static final Cls<Complex> CLS = new ComplexCls();
 
     private final double re;
     private final double im;
@@ -54,8 +55,8 @@ public class Complex implements Obj<Double> {
     }
 
     @Override
-    public Type<Complex> getType() {
-        return TYPE;
+    public Cls<Complex> getType() {
+        return CLS;
     }
 
     @Override
@@ -308,23 +309,23 @@ public class Complex implements Obj<Double> {
         return Undefined.VALUE;
     }
 
-    private static class ComplexType extends Type<Complex> {
-        public ComplexType() {
-            super(Numeric.TYPE, "Complex");
+    private static class ComplexCls extends Cls<Complex> {
+        public ComplexCls() {
+            super(Numeric.CLS, "Complex");
 
-            getScope().declare("toInt", new NativeFunc(this) {
+            getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of((int) ((Complex) arguments.get(0)).re);
                 }
             });
-            getScope().declare("toDecimal", new NativeFunc(this) {
+            getScope().declare("toDecimal", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Decimal.of(((Complex) arguments.get(0)).re);
                 }
             });
-            getScope().declare("toComplex", new NativeFunc(this) {
+            getScope().declare("toComplex", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return arguments.get(0);

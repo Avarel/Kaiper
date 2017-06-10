@@ -15,10 +15,11 @@
 
 package xyz.avarel.aje.runtime.collections;
 
+import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.Collections;
@@ -30,7 +31,7 @@ import java.util.Map;
  * AJE wrapper class for a map.
  */
 public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Object>> {
-    public static final Type<Dictionary> TYPE = new DictionaryType();
+    public static final Cls<Dictionary> CLS = new DictionaryCls();
 
     /**
      * Creates an empty dictionary.
@@ -57,8 +58,8 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
     }
 
     @Override
-    public Type getType() {
-        return TYPE;
+    public Cls getType() {
+        return CLS;
     }
 
     @Override
@@ -72,11 +73,11 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
         return value;
     }
 
-    private static class DictionaryType extends Type<Dictionary> {
-        public DictionaryType() {
+    private static class DictionaryCls extends Cls<Dictionary> {
+        public DictionaryCls() {
             super("Dictionary");
 
-            getScope().declare("size", new NativeFunc(this) {
+            getScope().declare("size", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of(((Dictionary) arguments.get(0)).size());

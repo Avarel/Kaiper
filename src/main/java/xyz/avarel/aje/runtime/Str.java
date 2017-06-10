@@ -17,21 +17,22 @@ package xyz.avarel.aje.runtime;
 
 import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.List;
 
-public class Text implements Obj<String> {
-    public static final Type<Text> TYPE = new TextType();
+public class Str implements Obj<String> {
+    public static final Cls<Str> CLS = new TextCls();
 
     private final String value;
 
-    private Text(String value) {
+    private Str(String value) {
         this.value = value;
     }
 
-    public static Text of(String value) {
-        return new Text(value);
+    public static Str of(String value) {
+        return new Str(value);
     }
 
     public String value() {
@@ -44,8 +45,8 @@ public class Text implements Obj<String> {
     }
 
     @Override
-    public Type getType() {
-        return TYPE;
+    public Cls getType() {
+        return CLS;
     }
 
     @Override
@@ -59,7 +60,7 @@ public class Text implements Obj<String> {
 
     @Override
     public Obj plus(Obj other) {
-        return Text.of(value() + other.toString());
+        return Str.of(value() + other.toString());
     }
 
     @Override
@@ -78,7 +79,7 @@ public class Text implements Obj<String> {
         if (i < 0 || i >= length()) {
             return Undefined.VALUE;
         }
-        return Text.of(value().substring(i, i + 1));
+        return Str.of(value().substring(i, i + 1));
     }
 
     public char get(int i) {
@@ -128,7 +129,7 @@ public class Text implements Obj<String> {
         }
 
         if (step == 1) {
-            return Text.of(value().substring(start, end));
+            return Str.of(value().substring(start, end));
         } else {
             if (step > 0) {
                 StringBuilder buffer = new StringBuilder();
@@ -137,7 +138,7 @@ public class Text implements Obj<String> {
                     buffer.append(get(i));
                 }
 
-                return Text.of(buffer.toString());
+                return Str.of(buffer.toString());
             } else if (step < 0) {
                 StringBuilder buffer = new StringBuilder();
 
@@ -145,47 +146,47 @@ public class Text implements Obj<String> {
                     buffer.append(get(i));
                 }
 
-                return Text.of(buffer.toString());
+                return Str.of(buffer.toString());
             } else { // step == 0
                 return Undefined.VALUE;
             }
         }
     }
 
-    public Bool contains(Text text) {
-        return Bool.of(value.contains(text.value));
+    public Bool contains(Str str) {
+        return Bool.of(value.contains(str.value));
     }
 
-    public Int indexOf(Text text) {
-        return Int.of(value.indexOf(text.value));
+    public Int indexOf(Str str) {
+        return Int.of(value.indexOf(str.value));
     }
 
-    public Vector split(Text text) {
+    public Vector split(Str str) {
         Vector vector = new Vector();
-        for (String part : value.split(text.value)) {
-            vector.add(Text.of(part));
+        for (String part : value.split(str.value)) {
+            vector.add(Str.of(part));
         }
         return vector;
     }
 
-    public Bool startsWith(Text text) {
-        return Bool.of(value.startsWith(text.value));
+    public Bool startsWith(Str str) {
+        return Bool.of(value.startsWith(str.value));
     }
 
-    public Text substring(Int start) {
-        return Text.of(value.substring(start.value()));
+    public Str substring(Int start) {
+        return Str.of(value.substring(start.value()));
     }
 
-    public Text substring(int start) {
-        return Text.of(value.substring(start));
+    public Str substring(int start) {
+        return Str.of(value.substring(start));
     }
 
-    public Text substring(Int start, Int end) {
-        return Text.of(value.substring(start.value(), end.value()));
+    public Str substring(Int start, Int end) {
+        return Str.of(value.substring(start.value(), end.value()));
     }
 
-    public Text substring(int start, int end) {
-        return Text.of(value.substring(start, end));
+    public Str substring(int start, int end) {
+        return Str.of(value.substring(start, end));
     }
 
     public Vector toVector() {
@@ -196,21 +197,21 @@ public class Text implements Obj<String> {
         return vector;
     }
 
-    public Text toLowerCase() {
-        return Text.of(value.toLowerCase());
+    public Str toLowerCase() {
+        return Str.of(value.toLowerCase());
     }
 
-    public Text toUpperCase() {
-        return Text.of(value.toUpperCase());
+    public Str toUpperCase() {
+        return Str.of(value.toUpperCase());
     }
 
-    public Text trim() {
-        return Text.of(value.trim());
+    public Str trim() {
+        return Str.of(value.trim());
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Text && value().equals(((Text) obj).value());
+        return obj instanceof Str && value().equals(((Str) obj).value());
     }
 
     @Override
@@ -218,70 +219,70 @@ public class Text implements Obj<String> {
         return value().hashCode();
     }
 
-    private static class TextType extends Type<Text> {
-        public TextType() {
+    private static class TextCls extends Cls<Str> {
+        public TextCls() {
             super("String");
 
-            getScope().declare("length", new NativeFunc(this) {
+            getScope().declare("length", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return Int.of(((Text) arguments.get(0)).length());
+                    return Int.of(((Str) arguments.get(0)).length());
                 }
             });
 
-            getScope().declare("contains", new NativeFunc(this, this) {
+            getScope().declare("contains", new NativeFunc(Parameter.of("self"), Parameter.of(this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Text) arguments.get(0)).contains((Text) arguments.get(1));
+                    return ((Str) arguments.get(0)).contains((Str) arguments.get(1));
                 }
             });
-            getScope().declare("indexOf", new NativeFunc(this, this) {
+            getScope().declare("indexOf", new NativeFunc(Parameter.of("self"), Parameter.of(this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Text) arguments.get(0)).indexOf((Text) arguments.get(1));
+                    return ((Str) arguments.get(0)).indexOf((Str) arguments.get(1));
                 }
             });
-            getScope().declare("split", new NativeFunc(this, this) {
+            getScope().declare("split", new NativeFunc(Parameter.of("self"), Parameter.of(this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Text) arguments.get(0)).split((Text) arguments.get(1));
+                    return ((Str) arguments.get(0)).split((Str) arguments.get(1));
                 }
             });
-            getScope().declare("substring", new NativeFunc(this, Int.TYPE) {
+            getScope().declare("substring", new NativeFunc(Parameter.of("self"), Parameter.of(Int.CLS)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     if (arguments.size() >= 3) {
                         if (arguments.get(1) instanceof Int) {
-                            return ((Text) arguments.get(0)).substring((Int) arguments.get(1), (Int) arguments.get(2));
+                            return ((Str) arguments.get(0)).substring((Int) arguments.get(1), (Int) arguments.get(2));
                         }
                         return Undefined.VALUE;
                     } else {
-                        return ((Text) arguments.get(0)).substring((Int) arguments.get(1));
+                        return ((Str) arguments.get(0)).substring((Int) arguments.get(1));
                     }
                 }
             });
-            getScope().declare("toVector", new NativeFunc(this) {
+            getScope().declare("toVector", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Text) arguments.get(0)).toVector();
+                    return ((Str) arguments.get(0)).toVector();
                 }
             });
-            getScope().declare("toLowerCase", new NativeFunc(this) {
+            getScope().declare("toLowerCase", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Text) arguments.get(0)).toLowerCase();
+                    return ((Str) arguments.get(0)).toLowerCase();
                 }
             });
-            getScope().declare("toUpperCase", new NativeFunc(this) {
+            getScope().declare("toUpperCase", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Text) arguments.get(0)).toUpperCase();
+                    return ((Str) arguments.get(0)).toUpperCase();
                 }
             });
-            getScope().declare("trim", new NativeFunc(this) {
+            getScope().declare("trim", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Text) arguments.get(0)).trim();
+                    return ((Str) arguments.get(0)).trim();
                 }
             });
         }

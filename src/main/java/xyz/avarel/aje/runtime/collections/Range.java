@@ -15,10 +15,11 @@
 
 package xyz.avarel.aje.runtime.collections;
 
+import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Range implements Obj<List<Integer>>, Iterable<Int> {
-    public static final Type<Range> TYPE = new RangeType();
+    public static final Cls<Range> CLS = new RangeCls();
     
     private final int start;
     private final int end;
@@ -54,8 +55,8 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
     }
 
     @Override
-    public Type getType() {
-        return TYPE;
+    public Cls getType() {
+        return CLS;
     }
 
     public Vector toVector() {
@@ -95,18 +96,18 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
         return end - start + 1;
     }
 
-    private static class RangeType extends Type<Range> {
-        public RangeType() {
+    private static class RangeCls extends Cls<Range> {
+        public RangeCls() {
             super("Range");
 
-            getScope().declare("length", new NativeFunc(this) {
+            getScope().declare("length", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of(((Range) arguments.get(0)).size());
                 }
             });
 
-            getScope().declare("lastIndex", new NativeFunc(this) {
+            getScope().declare("lastIndex", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of(((Range) arguments.get(0)).size() - 1);

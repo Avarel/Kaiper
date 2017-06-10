@@ -16,6 +16,7 @@
 package xyz.avarel.aje.runtime;
 
 import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public enum Bool implements Obj<Boolean> {
     TRUE(true),
     FALSE(false);
 
-    public static final Type<Bool> TYPE = new BoolType();
+    public static final Cls<Bool> CLS = new BoolCls();
 
     private final boolean value;
 
@@ -47,8 +48,8 @@ public enum Bool implements Obj<Boolean> {
     }
 
     @Override
-    public Type getType() {
-        return TYPE;
+    public Cls getType() {
+        return CLS;
     }
 
     @Override
@@ -105,11 +106,11 @@ public enum Bool implements Obj<Boolean> {
         return getType().getAttr(name);
     }
 
-    private static class BoolType extends Type<Bool> {
-        public BoolType() {
+    private static class BoolCls extends Cls<Bool> {
+        public BoolCls() {
             super("Boolean");
 
-            getScope().declare("toInt", new NativeFunc(this) {
+            getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of(((Bool) arguments.get(0)).value ? 1 : 0);

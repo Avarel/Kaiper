@@ -24,7 +24,7 @@ import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Text;
+import xyz.avarel.aje.runtime.Str;
 
 import java.util.*;
 
@@ -69,7 +69,7 @@ public class CollectionsParser implements PrefixParser {
         Map<Expr, Expr> map = new HashMap<>();
 
         if (initKey instanceof Identifier) {
-            initKey = new ValueNode(initKey.getPosition(), Text.of(((Identifier) initKey).getName()));
+            initKey = new ValueNode(initKey.getPosition(), Str.of(((Identifier) initKey).getName()));
         }
 
         map.put(initKey, parser.parseExpr());

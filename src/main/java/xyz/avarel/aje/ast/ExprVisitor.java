@@ -27,8 +27,8 @@ import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
+import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
@@ -61,11 +61,11 @@ public class ExprVisitor {
         for (ParameterData data : expr.getParameterExprs()) {
             Obj obj_type = data.getTypeExpr().accept(this, scope);
 
-            if (!(obj_type instanceof Type)) {
+            if (!(obj_type instanceof Cls)) {
                 throw new ComputeException(obj_type + " is not a valid parameter type", data.getTypeExpr().getPosition());
             }
 
-            parameters.add(new Parameter(data.getName(), (Type) obj_type, data.getDefault()));
+            parameters.add(Parameter.of(data.getName(), (Cls) obj_type, data.getDefault()));
         }
 
         Func func = new CompiledFunc(parameters, expr.getExpr(), scope.subPool());

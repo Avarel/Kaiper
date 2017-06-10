@@ -29,12 +29,11 @@ public class ReferenceFunc extends Func {
         this.receiver = receiver;
         this.func = func;
 
-        if (func.getParameters().isEmpty()) {
+        if (func.getParameters().isEmpty()
+                || func.getParameters().get(0).getName() == null
+                || !func.getParameters().get(0).getName().equals("self")) {
             throw new ComputeException("Function does not take receivers.");
-        }
-        if (!receiver.getType().is(func.getParameters().get(0).getType())) {
-            throw new ComputeException("Object is not function receiver's type.");
-        }
+        } // TODO stuff
     }
 
     @Override

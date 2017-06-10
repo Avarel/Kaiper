@@ -18,25 +18,25 @@ package xyz.avarel.aje.runtime;
 import xyz.avarel.aje.scope.Scope;
 
 @SuppressWarnings("unused")
-public class Type<T> implements Obj<Type> {
-    private final Type parent;
+public class Cls<T> implements Obj<Cls> {
+    private final Cls parent;
     private final String name;
     private Scope scope;
 
-    public Type(String name) {
-        this(Obj.TYPE, name);
+    public Cls(String name) {
+        this(Obj.CLS, name);
     }
 
-    public Type(Type parent, String name) {
+    public Cls(Cls parent, String name) {
         this.scope = parent != null ? parent.scope.subPool() : new Scope();
         this.parent = parent;
         this.name = name;
     }
 
-    public boolean is(Type type) {
-        Type t = this;
+    public boolean is(Cls cls) {
+        Cls t = this;
         do {
-            if (t.equals(type)) return true;
+            if (t.equals(cls)) return true;
             t = t.parent;
         } while (t != null);
         return false;
@@ -52,16 +52,16 @@ public class Type<T> implements Obj<Type> {
     }
 
     @Override
-    public Type getType() {
-        return Obj.TYPE;
-    }
-
-    @Override
-    public Type toJava() {
+    public Cls getType() {
         return this;
     }
 
-    public Type getParent() {
+    @Override
+    public Cls toJava() {
+        return this;
+    }
+
+    public Cls getParent() {
 
         return parent;
     }
