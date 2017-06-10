@@ -20,6 +20,7 @@ import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
@@ -232,19 +233,19 @@ public class Decimal implements Obj<Double> {
         public DecimalCls() {
             super(Complex.CLS, "Decimal");
 
-            getScope().declare("toInt", new NativeFunc(this) {
+            getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of((int) ((Decimal) arguments.get(0)).value());
                 }
             });
-            getScope().declare("toDecimal", new NativeFunc(this) {
+            getScope().declare("toDecimal", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return arguments.get(0);
                 }
             });
-            getScope().declare("toComplex", new NativeFunc(this) {
+            getScope().declare("toComplex", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Complex.of(((Decimal) arguments.get(0)).value());

@@ -103,7 +103,12 @@ public enum Bool implements Obj<Boolean> {
 
     @Override
     public Obj getAttr(String name) {
-        return getType().getAttr(name);
+        switch (name) {
+            case "int":
+                return value ? Int.of(1) : Int.of(0);
+            default:
+                return Obj.super.getAttr(name);
+        }
     }
 
     private static class BoolCls extends Cls<Bool> {

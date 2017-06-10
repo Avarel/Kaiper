@@ -28,9 +28,13 @@ public class Cls<T> implements Obj<Cls> {
     }
 
     public Cls(Cls parent, String name) {
-        this.scope = parent != null ? parent.scope.subPool() : new Scope();
+        this(parent, name, parent != null ? parent.scope.subPool() : new Scope());
+    }
+
+    public Cls(Cls parent, String name, Scope scope) {
         this.parent = parent;
         this.name = name;
+        this.scope = scope;
     }
 
     public boolean is(Cls cls) {
