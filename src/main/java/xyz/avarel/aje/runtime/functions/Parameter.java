@@ -16,38 +16,43 @@
 package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 
 public class Parameter {
     private final String name;
-    private final Type type;
+    private final Cls cls;
     private final Expr defaultExpr;
 
-    public Parameter(String name) {
-        this(name, Obj.TYPE, null);
-    }
-
-    public Parameter(Type type) {
-        this(null, type, null);
-    }
-
-    public Parameter(String name, Type type) {
-        this(name, type, null);
-    }
-
-    public Parameter(String name, Type type, Expr defaultExpr) {
+    private Parameter(String name, Cls cls, Expr defaultExpr) {
         this.name = name;
-        this.type = type;
+        this.cls = cls;
         this.defaultExpr = defaultExpr;
     }
+
+    public static Parameter of(String name) {
+        return new Parameter(name, Obj.CLS, null);
+    }
+
+    public static Parameter of(Cls cls) {
+        return new Parameter(null, cls, null);
+    }
+
+    public static Parameter of(String name, Cls type) {
+        return new Parameter(name, type, null);
+    }
+
+    public static Parameter of(String name, Cls cls, Expr defaultExpr) {
+        return new Parameter(name, cls, defaultExpr);
+    }
+
 
     public String getName() {
         return name;
     }
 
-    public Type getType() {
-        return type;
+    public Cls getCls() {
+        return cls;
     }
 
     public boolean hasDefault() {
@@ -64,11 +69,14 @@ public class Parameter {
         if (name != null) {
             sb.append(name);
         }
-        if (type != Obj.TYPE) {
-            if (name != null) {
+
+        if (name != null) {
+            if (cls != Obj.CLS) {
                 sb.append(": ");
+                sb.append(cls);
             }
-            sb.append(type);
+        } else {
+            sb.append(cls);
         }
 
         if (defaultExpr != null) {

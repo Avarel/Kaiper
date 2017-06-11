@@ -33,15 +33,15 @@ public class InvocationParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
-        List<Expr> list = new ArrayList<>();
+        List<Expr> arguments = new ArrayList<>();
 
         if (!parser.match(TokenType.RIGHT_PAREN)) {
             do {
-                list.add(parser.parseExpr());
+                arguments.add(parser.parseExpr());
             } while (parser.match(TokenType.COMMA));
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return new Invocation(token.getPosition(), left, list);
+        return new Invocation(token.getPosition(), left, arguments);
     }
 }

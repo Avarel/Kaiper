@@ -16,7 +16,7 @@
 package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
+import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -46,7 +46,7 @@ public class AJEParser extends Parser {
     }
 
     public Expr parseStatements() {
-        if (match(TokenType.EOF)) return new ValueAtom(getLast().getPosition(), Undefined.VALUE);
+        if (match(TokenType.EOF)) return new ValueNode(getLast().getPosition(), Undefined.VALUE);
 
         Expr any = parseExpr();
 
@@ -80,14 +80,16 @@ public class AJEParser extends Parser {
     }
 
     public Expr parseInfix(int precedence, Expr left) {
-        while (precedence < getPrecedence()) { // ex plus is 6, next is mult which is 7, parse it\
+        while (precedence < getPrecedence()) {
             Token token = eat();
 
             InfixParser infix = getInfixParsers().get(token.getType());
 
-            if (infix == null) throw new SyntaxException("Unexpected " + token, token.getPosition());
-
-            left = infix.parse(this, left, token);
+            if (infix == null) {
+                throw new SyntaxException("Unexpected " + token, token.getPosition());
+            } else {
+                left = infix.parse(this, left, token);
+            }
         }
         return left;
     }

@@ -25,81 +25,81 @@ import org.junit.Test
 class IntTest {
     @Test
     fun `addition`() {
-        Assert.assertEquals(30, eval("10 + 20").toNative())
+        Assert.assertEquals(30, eval("10 + 20").toJava())
     }
 
     @Test
     fun `subtraction`() {
-        Assert.assertEquals(-10, eval("10 - 20").toNative())
+        Assert.assertEquals(-10, eval("10 - 20").toJava())
     }
 
     @Test
     fun `multiplication`() {
-        Assert.assertEquals(200, eval("10 * 20").toNative())
+        Assert.assertEquals(200, eval("10 * 20").toJava())
     }
 
     @Test
     fun `implicit multiplication`() {
-        Assert.assertEquals(2 * Math.PI, eval("2pi").toNative())
+        Assert.assertEquals(2 * Math.PI, eval("2pi").toJava())
     }
 
     @Test
     fun `division`() {
-        Assert.assertEquals(2, eval("20 / 10").toNative())
+        Assert.assertEquals(2, eval("20 / 10").toJava())
     }
 
     @Test
     fun `integer division by larger number`() {
-        Assert.assertEquals(0, eval("10 / 20").toNative())
+        Assert.assertEquals(0, eval("10 / 20").toJava())
     }
 
     @Test
     fun `division by zero`() {
-        Assert.assertEquals(java.lang.Double.POSITIVE_INFINITY, eval("1 / 0").toNative())
+        Assert.assertEquals(java.lang.Double.POSITIVE_INFINITY, eval("1 / 0").toJava())
     }
 
     @Test
     fun `exponentiation`() {
-        Assert.assertEquals(121, eval("11^2").toNative())
+        Assert.assertEquals(121, eval("11^2").toJava())
     }
 
     @Test
     fun `mod`() {
-        Assert.assertEquals(8, eval("-2%10").toNative())
+        Assert.assertEquals(8, eval("-2%10").toJava())
     }
 
     @Test
     fun `negative modulus`() {
-        Assert.assertEquals(2, eval("12%10").toNative())
+        Assert.assertEquals(2, eval("12%10").toJava())
     }
 
     @Test
     fun `negative operation`() {
-        Assert.assertEquals(-12, eval("-12").toNative())
+        Assert.assertEquals(-12, eval("-12").toJava())
     }
 
     @Test
     fun `equality`() {
-        Assert.assertEquals(true, eval("2^4 == 4^2").toNative())
+        Assert.assertEquals(true, eval("2^4 == 4^2").toJava())
     }
 
     @Test
     fun `greater than`() {
-        Assert.assertEquals(false, eval("60 > 60").toNative())
+        Assert.assertEquals(false, eval("60 > 60").toJava())
     }
 
     @Test
     fun `less than`() {
-        Assert.assertEquals(true, eval("59 < 60").toNative())
+        Assert.assertEquals(true, eval("59 < 60").toJava())
     }
 
     @Test
     fun `greater than or equal to`() {
-        Assert.assertEquals(true, eval("60 >= 60").toNative())
+        Assert.assertEquals(true, eval("60 >= 60").toJava())
     }
 
     @Test
     fun `less than or equal to`() {
-        Assert.assertEquals(true, eval("2 <= 3").toNative())
+        Assert.assertEquals(true, eval("2 <= 3").toJava())
     }
 }

@@ -17,7 +17,7 @@ package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -39,7 +39,7 @@ public class BlockParameterParser extends BinaryParser {
 
         if (left instanceof Invocation) {
             ((Invocation) left).getArguments().add(block);
-        } else if (left instanceof FunctionAtom || left instanceof Identifier) {
+        } else if (left instanceof FunctionNode || left instanceof Identifier) {
             List<Expr> args = new ArrayList<>();
             args.add(block);
             return new Invocation(token.getPosition(), left, args);

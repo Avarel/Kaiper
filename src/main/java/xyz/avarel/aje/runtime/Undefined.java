@@ -22,7 +22,7 @@ package xyz.avarel.aje.runtime;
 public enum Undefined implements Obj<Undefined> {
     VALUE;
 
-    public static final Type<Undefined> TYPE = new Type<>("undefined");
+    public static final Cls<Undefined> CLS = new Cls<>("undefined");
 
     @Override
     public String toString() {
@@ -30,12 +30,12 @@ public enum Undefined implements Obj<Undefined> {
     }
 
     @Override
-    public Undefined toNative() {
+    public Undefined toJava() {
         return this;
     }
 
     @Override
-    public Type getType() {
-        return TYPE;
+    public Cls getType() {
+        return CLS;
     }
 }

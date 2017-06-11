@@ -38,10 +38,10 @@ import xyz.avarel.aje.scope.Scope;
 
 import java.util.Map;
 
-public class DictionaryAtom extends Expr {
+public class DictionaryNode extends Expr {
     private final Map<Expr, Expr> map;
 
-    public DictionaryAtom(Position position, Map<Expr, Expr> map) {
+    public DictionaryNode(Position position, Map<Expr, Expr> map) {
         super(position);
         this.map = map;
     }
