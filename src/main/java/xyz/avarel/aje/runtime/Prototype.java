@@ -18,29 +18,29 @@ package xyz.avarel.aje.runtime;
 import xyz.avarel.aje.scope.Scope;
 
 @SuppressWarnings("unused")
-public class Cls<T> implements Obj<Cls> {
-    private final Cls parent;
+public class Prototype<T> implements Obj<Prototype> {
+    private final Prototype parent;
     private final String name;
     private Scope scope;
 
-    public Cls(String name) {
-        this(Obj.CLS, name);
+    public Prototype(String name) {
+        this(Obj.PROTOTYPE, name);
     }
 
-    public Cls(Cls parent, String name) {
+    public Prototype(Prototype parent, String name) {
         this(parent, name, parent != null ? parent.scope.subPool() : new Scope());
     }
 
-    public Cls(Cls parent, String name, Scope scope) {
+    public Prototype(Prototype parent, String name, Scope scope) {
         this.parent = parent;
         this.name = name;
         this.scope = scope;
     }
 
-    public boolean is(Cls cls) {
-        Cls t = this;
+    public boolean is(Prototype prototype) {
+        Prototype t = this;
         do {
-            if (t.equals(cls)) return true;
+            if (t.equals(prototype)) return true;
             t = t.parent;
         } while (t != null);
         return false;
@@ -56,17 +56,16 @@ public class Cls<T> implements Obj<Cls> {
     }
 
     @Override
-    public Cls getType() {
+    public Prototype getType() {
         return this;
     }
 
     @Override
-    public Cls toJava() {
+    public Prototype toJava() {
         return this;
     }
 
-    public Cls getParent() {
-
+    public Prototype getParent() {
         return parent;
     }
 

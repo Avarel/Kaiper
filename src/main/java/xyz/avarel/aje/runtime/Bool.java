@@ -25,7 +25,7 @@ public enum Bool implements Obj<Boolean> {
     TRUE(true),
     FALSE(false);
 
-    public static final Cls<Bool> CLS = new BoolCls();
+    public static final Prototype<Bool> PROTOTYPE = new BoolPrototype();
 
     private final boolean value;
 
@@ -48,8 +48,8 @@ public enum Bool implements Obj<Boolean> {
     }
 
     @Override
-    public Cls getType() {
-        return CLS;
+    public Prototype getType() {
+        return PROTOTYPE;
     }
 
     @Override
@@ -111,8 +111,8 @@ public enum Bool implements Obj<Boolean> {
         }
     }
 
-    private static class BoolCls extends Cls<Bool> {
-        public BoolCls() {
+    private static class BoolPrototype extends Prototype<Bool> {
+        public BoolPrototype() {
             super("Boolean");
 
             getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {

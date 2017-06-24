@@ -15,8 +15,8 @@
 
 package xyz.avarel.aje.runtime.collections;
 
-import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
@@ -31,7 +31,7 @@ import java.util.Map;
  * AJE wrapper class for a map.
  */
 public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Object>> {
-    public static final Cls<Dictionary> CLS = new DictionaryCls();
+    public static final Prototype<Dictionary> PROTOTYPE = new DictionaryPrototype();
 
     /**
      * Creates an empty dictionary.
@@ -58,8 +58,8 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
     }
 
     @Override
-    public Cls getType() {
-        return CLS;
+    public Prototype getType() {
+        return PROTOTYPE;
     }
 
     @Override
@@ -83,8 +83,8 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
         }
     }
 
-    private static class DictionaryCls extends Cls<Dictionary> {
-        public DictionaryCls() {
+    private static class DictionaryPrototype extends Prototype<Dictionary> {
+        public DictionaryPrototype() {
             super("Dictionary");
 
             getScope().declare("size", new NativeFunc(Parameter.of("self")) {

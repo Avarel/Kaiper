@@ -18,8 +18,8 @@ package xyz.avarel.aje.runtime.functions;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.ast.flow.ReturnException;
-import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.scope.Scope;
 
@@ -55,19 +55,19 @@ public class CompiledFunc extends Func {
         for (int i = 0; i < getArity(); i++) {
             Parameter parameter = parameters.get(i);
 
-            Cls cls = parameter.getCls();
+            Prototype prototype = parameter.getPrototype();
 
             if (i < arguments.size()) {
-                if (arguments.get(i).getType().is(cls)) {
+                if (arguments.get(i).getType().is(prototype)) {
                     scope.declare(parameter.getName(), arguments.get(i));
-                } else if (cls == Obj.CLS) {
+                } else if (prototype == Obj.PROTOTYPE) {
                     scope.declare(parameter.getName(), Undefined.VALUE);
                 } else {
                     return Undefined.VALUE;
                 }
             } else if (parameter.hasDefault()) {
                 scope.declare(parameter.getName(), parameter.getDefault().accept(new ExprVisitor(), scope));
-            } else if (cls == Obj.CLS) {
+            } else if (prototype == Obj.PROTOTYPE) {
                 scope.declare(parameter.getName(), Undefined.VALUE);
             } else {
                 return Undefined.VALUE;

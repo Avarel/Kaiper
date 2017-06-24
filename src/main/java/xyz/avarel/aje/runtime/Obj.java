@@ -27,19 +27,21 @@ import java.util.List;
 
 /**
  * An interface containing all natively implemented operations.
+ *
+ * @param <J> Java representation of the object.
  */
-public interface Obj<JAVA> {
-    Cls<Obj> CLS = new ObjCls();
+public interface Obj<J> {
+    Prototype<Obj> PROTOTYPE = new ObjPrototype();
 
     /**
-     * @return The {@link Cls} of the object.
+     * @return The {@link Prototype} of the object.
      */
-    Cls getType();
+    Prototype getType();
 
     /**
-     * @return The {@link JAVA java} object representation of this AJE object or {@code null}.
+     * @return The {@link J java} object representation of this AJE object or {@code null}.
      */
-    default JAVA toJava() {
+    default J toJava() {
         return null;
     }
 
@@ -320,8 +322,8 @@ public interface Obj<JAVA> {
         return pow(Decimal.of(other));
     }
 
-    class ObjCls extends Cls<Obj> {
-        public ObjCls() {
+    class ObjPrototype extends Prototype<Obj> {
+        public ObjPrototype() {
             super("Object");
 
             getScope().declare("toString", new NativeFunc(Parameter.of("self")) {

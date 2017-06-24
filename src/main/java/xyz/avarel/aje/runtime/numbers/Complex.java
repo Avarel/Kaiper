@@ -16,8 +16,8 @@
 package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Bool;
-import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Complex implements Obj<Double> {
-    public static final Cls<Complex> CLS = new ComplexCls();
+    public static final Prototype<Complex> PROTOTYPE = new ComplexPrototype();
 
     private final double re;
     private final double im;
@@ -55,8 +55,8 @@ public class Complex implements Obj<Double> {
     }
 
     @Override
-    public Cls<Complex> getType() {
-        return CLS;
+    public Prototype<Complex> getType() {
+        return PROTOTYPE;
     }
 
     @Override
@@ -309,9 +309,9 @@ public class Complex implements Obj<Double> {
         return Undefined.VALUE;
     }
 
-    private static class ComplexCls extends Cls<Complex> {
-        public ComplexCls() {
-            super(Numeric.CLS, "Complex");
+    private static class ComplexPrototype extends Prototype<Complex> {
+        public ComplexPrototype() {
+            super(Numeric.PROTOTYPE, "Complex");
 
             getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
                 @Override

@@ -16,8 +16,8 @@
 package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Bool;
-import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
@@ -25,7 +25,7 @@ import xyz.avarel.aje.runtime.functions.Parameter;
 import java.util.List;
 
 public class Int implements Obj<Integer> {
-    public static final Cls<Int> CLS = new IntCls();
+    public static final Prototype<Int> PROTOTYPE = new IntPrototype();
 
     private final int value;
 
@@ -50,8 +50,8 @@ public class Int implements Obj<Integer> {
     }
 
     @Override
-    public Cls<Int> getType() {
-        return CLS;
+    public Prototype<Int> getType() {
+        return PROTOTYPE;
     }
 
     @Override
@@ -249,9 +249,9 @@ public class Int implements Obj<Integer> {
         private IntCache() {}
     }
 
-    private static class IntCls extends Cls<Int> {
-        public IntCls() {
-            super(Decimal.CLS, "Int");
+    private static class IntPrototype extends Prototype<Int> {
+        public IntPrototype() {
+            super(Decimal.PROTOTYPE, "Int");
 
             getScope().declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
             getScope().declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));

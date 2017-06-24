@@ -16,34 +16,34 @@
 package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Prototype;
 
 public class Parameter {
     private final String name;
-    private final Cls cls;
+    private final Prototype prototype;
     private final Expr defaultExpr;
 
-    private Parameter(String name, Cls cls, Expr defaultExpr) {
+    private Parameter(String name, Prototype prototype, Expr defaultExpr) {
         this.name = name;
-        this.cls = cls;
+        this.prototype = prototype;
         this.defaultExpr = defaultExpr;
     }
 
     public static Parameter of(String name) {
-        return new Parameter(name, Obj.CLS, null);
+        return new Parameter(name, Obj.PROTOTYPE, null);
     }
 
-    public static Parameter of(Cls cls) {
-        return new Parameter(null, cls, null);
+    public static Parameter of(Prototype prototype) {
+        return new Parameter(null, prototype, null);
     }
 
-    public static Parameter of(String name, Cls type) {
+    public static Parameter of(String name, Prototype type) {
         return new Parameter(name, type, null);
     }
 
-    public static Parameter of(String name, Cls cls, Expr defaultExpr) {
-        return new Parameter(name, cls, defaultExpr);
+    public static Parameter of(String name, Prototype prototype, Expr defaultExpr) {
+        return new Parameter(name, prototype, defaultExpr);
     }
 
 
@@ -51,8 +51,8 @@ public class Parameter {
         return name;
     }
 
-    public Cls getCls() {
-        return cls;
+    public Prototype getPrototype() {
+        return prototype;
     }
 
     public boolean hasDefault() {
@@ -71,12 +71,12 @@ public class Parameter {
         }
 
         if (name != null) {
-            if (cls != Obj.CLS) {
+            if (prototype != Obj.PROTOTYPE) {
                 sb.append(": ");
-                sb.append(cls);
+                sb.append(prototype);
             }
         } else {
-            sb.append(cls);
+            sb.append(prototype);
         }
 
         if (defaultExpr != null) {

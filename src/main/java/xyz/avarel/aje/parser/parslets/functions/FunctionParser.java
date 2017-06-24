@@ -61,7 +61,7 @@ public class FunctionParser implements PrefixParser {
                     paramNames.add(parameterName);
                 }
 
-                Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.CLS);
+                Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.PROTOTYPE);
                 Expr parameterDefault = null;
 
                 if (parser.match(TokenType.COLON)) {

@@ -40,7 +40,7 @@ public class CombinedFunc extends Func {
             throw new ComputeException("Combined functions require both functions to have the same arity.");
         } else {
             for (int i = 0; i < left.getParameters().size(); i++) {
-                if (left.getParameters().get(i).getCls() != right.getParameters().get(i).getCls()) {
+                if (left.getParameters().get(i).getPrototype() != right.getParameters().get(i).getPrototype()) {
                     throw new ComputeException("Combined functions require both functions to have the same parameters.");
                 }
             }

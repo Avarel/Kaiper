@@ -16,8 +16,8 @@
 package xyz.avarel.aje.runtime.collections;
 
 import xyz.avarel.aje.runtime.Bool;
-import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
@@ -32,7 +32,7 @@ import java.util.function.UnaryOperator;
  * AJE wrapper class for a one dimensional vector.
  */
 public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterable<Obj> {
-    public static final Cls<Vector> CLS = new VectorCls();
+    public static final Prototype<Vector> PROTOTYPE = new VectorPrototype();
 
     /**
      * Creates an empty vector.
@@ -85,8 +85,8 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
     }
 
     @Override
-    public Cls getType() {
-        return CLS;
+    public Prototype getType() {
+        return PROTOTYPE;
     }
 
     @Override
@@ -344,8 +344,8 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
         }
     }
 
-    private static class VectorCls extends Cls<Vector> {
-        public VectorCls() {
+    private static class VectorPrototype extends Prototype<Vector> {
+        public VectorPrototype() {
             super("Vector");
 
             getScope().declare("length", new NativeFunc(Parameter.of("self")) {
@@ -364,7 +364,7 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 }
             });
 
-            getScope().declare("append", new NativeFunc(true, Obj.CLS) {
+            getScope().declare("append", new NativeFunc(true, Obj.PROTOTYPE) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     ((Vector) arguments.get(0)).addAll(arguments);
@@ -372,7 +372,7 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 }
             });
 
-            getScope().declare("each", new NativeFunc(Parameter.of("self"), Parameter.of(Func.CLS)) {
+            getScope().declare("each", new NativeFunc(Parameter.of("self"), Parameter.of(Func.PROTOTYPE)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Func action = (Func) arguments.get(1);
@@ -384,7 +384,7 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 }
             });
 
-            getScope().declare("map", new NativeFunc(Parameter.of("self"), Parameter.of(Func.CLS)) {
+            getScope().declare("map", new NativeFunc(Parameter.of("self"), Parameter.of(Func.PROTOTYPE)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Func transform = (Func) arguments.get(1);
@@ -397,7 +397,7 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 }
             });
 
-            getScope().declare("filter", new NativeFunc(Parameter.of("self"), Parameter.of(Func.CLS)) {
+            getScope().declare("filter", new NativeFunc(Parameter.of("self"), Parameter.of(Func.PROTOTYPE)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Func predicate = (Func) arguments.get(1);
@@ -412,7 +412,7 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
             });
 
             getScope().declare("fold",
-                    new NativeFunc(Parameter.of("self"), Parameter.of(Obj.CLS), Parameter.of(Func.CLS)) {
+                    new NativeFunc(Parameter.of("self"), Parameter.of(Obj.PROTOTYPE), Parameter.of(Func.PROTOTYPE)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Obj accumulator = arguments.get(1);

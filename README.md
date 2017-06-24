@@ -215,7 +215,7 @@ class AJETest {
 |`<=`|Less than or equal to|`a <= b`|
 
 ###### List and Ranges Operators `vector`
-Though ranges are of a different cls, `range`, it is recommended that 
+Though ranges are of a different prototype, `range`, it is recommended that 
     ranges are wrapped into a vector using `[range]` syntax. 
 
 |Symbol|Description|Example|
@@ -300,8 +300,8 @@ func f(x) = x + 2; f(2) == 4
 func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
 ```
 ###### Parameter Types and Defaults
-Functions can declare parameters with runtime cls checking by appending the 
-    cls name to the parameter name. Parameters can also specify default 
+Functions can declare parameters with runtime prototype checking by appending the 
+    prototype name to the parameter name. Parameters can also specify default 
     expressions that are evaluated at invocation.
 ```
 func f(x = 0, y: Int = 2) {

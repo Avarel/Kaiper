@@ -23,7 +23,7 @@ import xyz.avarel.aje.runtime.numbers.Int;
 import java.util.List;
 
 public class Str implements Obj<String> {
-    public static final Cls<Str> CLS = new TextCls();
+    public static final Prototype<Str> PROTOTYPE = new TextPrototype();
 
     private final String value;
 
@@ -45,8 +45,8 @@ public class Str implements Obj<String> {
     }
 
     @Override
-    public Cls getType() {
-        return CLS;
+    public Prototype getType() {
+        return PROTOTYPE;
     }
 
     @Override
@@ -233,8 +233,8 @@ public class Str implements Obj<String> {
         }
     }
 
-    private static class TextCls extends Cls<Str> {
-        public TextCls() {
+    private static class TextPrototype extends Prototype<Str> {
+        public TextPrototype() {
             super("String");
 
             getScope().declare("length", new NativeFunc(Parameter.of("self")) {
@@ -262,7 +262,7 @@ public class Str implements Obj<String> {
                     return ((Str) arguments.get(0)).split((Str) arguments.get(1));
                 }
             });
-            getScope().declare("substring", new NativeFunc(Parameter.of("self"), Parameter.of(Int.CLS)) {
+            getScope().declare("substring", new NativeFunc(Parameter.of("self"), Parameter.of(Int.PROTOTYPE)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     if (arguments.size() >= 3) {

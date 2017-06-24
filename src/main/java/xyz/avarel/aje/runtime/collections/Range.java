@@ -15,8 +15,8 @@
 
 package xyz.avarel.aje.runtime.collections;
 
-import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Range implements Obj<List<Integer>>, Iterable<Int> {
-    public static final Cls<Range> CLS = new RangeCls();
+    public static final Prototype<Range> PROTOTYPE = new RangePrototype();
     
     private final int start;
     private final int end;
@@ -55,8 +55,8 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
     }
 
     @Override
-    public Cls getType() {
-        return CLS;
+    public Prototype getType() {
+        return PROTOTYPE;
     }
 
     public Vector toVector() {
@@ -110,8 +110,8 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
         }
     }
 
-    private static class RangeCls extends Cls<Range> {
-        public RangeCls() {
+    private static class RangePrototype extends Prototype<Range> {
+        public RangePrototype() {
             super("Range");
 
             getScope().declare("length", new NativeFunc(Parameter.of("self")) {
