@@ -15,6 +15,7 @@
 
 package xyz.avarel.aje.parser;
 
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.parser.lexer.TokenType;
 
 import java.util.HashMap;
@@ -33,11 +34,17 @@ public class Grammar {
         this.infixParsers = new HashMap<>(infixParsers);
     }
 
-    public void register(TokenType token, PrefixParser parselet) {
+    public void prefix(TokenType token, PrefixParser parselet) {
+        if (prefixParsers.containsKey(token)) {
+            throw new ComputeException("INTERNAL: attempting to override existing " + token + " parser");
+        }
         prefixParsers.put(token, parselet);
     }
 
-    public void register(TokenType token, InfixParser parselet) {
+    public void infix(TokenType token, InfixParser parselet) {
+        if (infixParsers.containsKey(token)) {
+            throw new ComputeException("INTERNAL: attempting to override existing " + token + " parser");
+        }
         infixParsers.put(token, parselet);
     }
 

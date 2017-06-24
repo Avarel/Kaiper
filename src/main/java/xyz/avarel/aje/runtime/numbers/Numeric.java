@@ -15,36 +15,36 @@
 
 package xyz.avarel.aje.runtime.numbers;
 
+import xyz.avarel.aje.runtime.Cls;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 
 public abstract class Numeric extends Number implements Obj {
-    public static final Type<Numeric> TYPE = new Type<>("number");
+    public static final Cls<Numeric> CLS = new NumericCls();
 
     @SuppressWarnings("unchecked")
-    public static <T> T convert(Obj a, Type<T> type) {
+    public static <T> T convert(Obj a, Cls<T> cls) {
         if (a instanceof Int) {
-            if (type == Int.TYPE) {
+            if (cls == Int.CLS) {
                 return (T) a;
-            } else if (type == Decimal.TYPE) {
+            } else if (cls == Decimal.CLS) {
                 return (T) Decimal.of(((Int) a).value());
-            } else if (type == Complex.TYPE) {
+            } else if (cls == Complex.CLS) {
                 return (T) Complex.of(((Int) a).value());
             }
         } else if (a instanceof Decimal) {
-            if (type == Int.TYPE) {
+            if (cls == Int.CLS) {
                 return (T) Int.of((int) ((Decimal) a).value());
-            } else if (type == Decimal.TYPE) {
+            } else if (cls == Decimal.CLS) {
                 return (T) a;
-            } else if (type == Complex.TYPE) {
+            } else if (cls == Complex.CLS) {
                 return (T) Complex.of(((Decimal) a).value());
             }
         } else if (a instanceof Complex) {
-            if (type == Int.TYPE) {
+            if (cls == Int.CLS) {
                 return (T) Int.of((int) ((Complex) a).real());
-            } else if (type == Decimal.TYPE) {
+            } else if (cls == Decimal.CLS) {
                 return (T) Decimal.of(((Complex) a).real());
-            } else if (type == Complex.TYPE) {
+            } else if (cls == Complex.CLS) {
                 return (T) a;
             }
         }
@@ -52,7 +52,13 @@ public abstract class Numeric extends Number implements Obj {
         return (T) a;
     }
 
-    public Type<Numeric> getType() {
-        return TYPE;
+    public Cls<Numeric> getType() {
+        return CLS;
+    }
+
+    private static class NumericCls extends Cls<Numeric> {
+        public NumericCls() {
+            super("Number");
+        }
     }
 }

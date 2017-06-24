@@ -17,11 +17,12 @@ package xyz.avarel.aje.scope;
 
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Text;
+import xyz.avarel.aje.runtime.Str;
+import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
 import xyz.avarel.aje.runtime.collections.Vector;
-import xyz.avarel.aje.runtime.functions.AJEFunction;
+import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -47,6 +48,8 @@ public class DefaultScope extends Scope {
         declare("ceil", DefaultFunctions.CEILING.get());
         declare("sum", DefaultFunctions.SUM.get());
         declare("product", DefaultFunctions.PRODUCT.get());
+        declare("factorial", DefaultFunctions.FACTORIAL.get());
+        declare("random", DefaultFunctions.RANDOM.get());
 
         declare("sin", DefaultFunctions.SINE.get());
         declare("cos", DefaultFunctions.COSINE.get());
@@ -77,17 +80,18 @@ public class DefaultScope extends Scope {
         declare("fold", DefaultFunctions.FOLD.get());
 
         // Types
-        declare("Int", Int.TYPE);
-        declare("Decimal", Decimal.TYPE);
-        declare("Complex", Complex.TYPE);
-        declare("Number", Numeric.TYPE);
-        declare("Object", Obj.TYPE);
-        declare("Boolean", Bool.TYPE);
-        declare("Vector", Vector.TYPE);
-        declare("Range", Range.TYPE);
-        declare("Dictionary", Dictionary.TYPE);
-        declare("String", Text.TYPE);
-        declare("Function", AJEFunction.TYPE);
+        declare("Int", Int.CLS);
+        declare("Decimal", Decimal.CLS);
+        declare("Complex", Complex.CLS);
+        declare("Number", Numeric.CLS);
+        declare("Object", Obj.CLS);
+        declare("Boolean", Bool.CLS);
+        declare("Vector", Vector.CLS);
+        declare("Range", Range.CLS);
+        declare("Dictionary", Dictionary.CLS);
+        declare("String", Str.CLS);
+        declare("Function", Func.CLS);
+        declare("Undefined", Undefined.CLS);
     }
 
     @Deprecated

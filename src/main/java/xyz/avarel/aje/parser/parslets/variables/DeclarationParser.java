@@ -16,7 +16,7 @@
 package xyz.avarel.aje.parser.parslets.variables;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
+import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
@@ -34,6 +34,6 @@ public class DeclarationParser implements PrefixParser {
         }
 
         return new AssignmentExpr(token.getPosition(), null, name.getString(),
-                new ValueAtom(token.getPosition(), Undefined.VALUE), true);
+                new ValueNode(token.getPosition(), Undefined.VALUE), true);
     }
 }

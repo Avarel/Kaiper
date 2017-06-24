@@ -17,7 +17,7 @@ package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -39,7 +39,7 @@ public class PipeForwardParser extends BinaryParser {
         if (right instanceof Invocation) {
             ((Invocation) right).getArguments().add(0, left);
             return right;
-        } else if (right instanceof FunctionAtom || right instanceof Identifier) {
+        } else if (right instanceof FunctionNode || right instanceof Identifier) {
             return new Invocation(token.getPosition(), right, Collections.singletonList(left));
         }
 

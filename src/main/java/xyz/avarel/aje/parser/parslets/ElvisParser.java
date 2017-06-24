@@ -17,7 +17,7 @@ package xyz.avarel.aje.parser.parslets;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
+import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.parser.AJEParser;
@@ -36,7 +36,7 @@ public class ElvisParser extends BinaryParser {
         return new ConditionalExpr(token.getPosition(),
                 new BinaryOperation(token.getPosition(),
                     left,
-                    new ValueAtom(token.getPosition(), Undefined.VALUE),
+                        new ValueNode(token.getPosition(), Undefined.VALUE),
                     Obj::isEqualTo),
                 parser.parseExpr(),
                 left);

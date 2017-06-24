@@ -16,7 +16,7 @@
 package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -44,7 +44,7 @@ public class ImplicitFunctionParser implements PrefixParser {
             list.add(new ParameterData(param));
         }
 
-        return new FunctionAtom(token.getPosition(), list, expr);
+        return new FunctionNode(token.getPosition(), list, expr);
     }
 
     private static final class ParserProxy extends AJEParser {

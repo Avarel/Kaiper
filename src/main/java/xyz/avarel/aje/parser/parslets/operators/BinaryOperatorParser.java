@@ -41,7 +41,6 @@ public class BinaryOperatorParser extends BinaryParser {
         if (left instanceof Identifier) {
             if (parser.match(TokenType.ASSIGN)) {
                 if (parser.getLast().getPosition().getIndex() - token.getPosition().getIndex() != 2) {
-                    System.out.println(parser.getLast().getPosition().getIndex() - token.getPosition().getIndex());
                     throw new SyntaxException("Compound assignment requires assign token directly next to operator",
                             parser.getLast().getPosition());
                 }
