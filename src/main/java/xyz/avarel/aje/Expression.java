@@ -167,7 +167,7 @@ public class Expression {
      * @return The parser flags, which controls what features of AJE are enabled for this expression.
      */
     public ParserFlags getParserFlag() {
-        return parser.getFlags();
+        return parser.getParserFlags();
     }
 
     private class ExpressionExpr extends Expr {
