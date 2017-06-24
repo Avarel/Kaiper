@@ -15,11 +15,17 @@
 
 package xyz.avarel.aje.runtime;
 
+import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
+import xyz.avarel.aje.runtime.numbers.Int;
+
+import java.util.List;
+
 public enum Bool implements Obj<Boolean> {
     TRUE(true),
     FALSE(false);
 
-    public static final Type<Bool> TYPE = new Type<>("boolean");
+    public static final Cls<Bool> CLS = new BoolCls();
 
     private final boolean value;
 
@@ -37,13 +43,13 @@ public enum Bool implements Obj<Boolean> {
     }
 
     @Override
-    public Boolean toNative() {
+    public Boolean toJava() {
         return value;
     }
 
     @Override
-    public Type getType() {
-        return TYPE;
+    public Cls getType() {
+        return CLS;
     }
 
     @Override
@@ -55,9 +61,7 @@ public enum Bool implements Obj<Boolean> {
     }
 
     public Bool or(Bool other) {
-        if (value) return TRUE;
-        if (other.value) return TRUE;
-        return FALSE;
+        return Bool.of(value || other.value);
     }
 
     @Override
@@ -69,21 +73,54 @@ public enum Bool implements Obj<Boolean> {
     }
 
     public Bool and(Bool other) {
-        if (!value) return FALSE;
-        if (!other.value) return FALSE;
-        return TRUE;
+        return Bool.of(value && other.value);
     }
 
     @Override
     public Bool negate() {
-        return value ? FALSE : TRUE;
+        return Bool.of(!value);
+    }
+
+    @Override
+    public Obj pow(Obj other) {
+        if (other instanceof Bool) {
+            return pow((Bool) other);
+        }
+        return Undefined.VALUE;
+    }
+
+    public Bool pow(Bool other) {
+        return Bool.of(value ^ other.value);
     }
 
     @Override
     public Bool isEqualTo(Obj other) {
         if (other instanceof Bool) {
-            return value == ((Bool) other).value ? TRUE : FALSE;
+            return Bool.of(value == ((Bool) other).value);
         }
         return FALSE;
+    }
+
+    @Override
+    public Obj getAttr(String name) {
+        switch (name) {
+            case "int":
+                return value ? Int.of(1) : Int.of(0);
+            default:
+                return Obj.super.getAttr(name);
+        }
+    }
+
+    private static class BoolCls extends Cls<Bool> {
+        public BoolCls() {
+            super("Boolean");
+
+            getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Bool) arguments.get(0)).value ? 1 : 0);
+                }
+            });
+        }
     }
 }
