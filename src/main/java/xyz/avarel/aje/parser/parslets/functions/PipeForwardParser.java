@@ -34,6 +34,10 @@ public class PipeForwardParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!parser.getParserFlags().allowInvocation()) {
+            throw new SyntaxException("Function creation are disabled");
+        }
+
         Expr right = parser.parseExpr(getPrecedence());
 
         if (right instanceof Invocation) {

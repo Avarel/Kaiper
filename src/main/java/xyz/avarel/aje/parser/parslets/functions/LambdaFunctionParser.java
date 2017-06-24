@@ -33,6 +33,10 @@ import java.util.*;
 public class LambdaFunctionParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
+        if (!parser.getParserFlags().allowFunctionCreation()) {
+            throw new SyntaxException("Function creation are disabled");
+        }
+
         if (parser.match(TokenType.RIGHT_BRACE)) {
             return new FunctionNode(token.getPosition(),
                     Collections.emptyList(),

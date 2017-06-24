@@ -20,6 +20,7 @@ import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.collections.DictionaryNode;
 import xyz.avarel.aje.ast.collections.VectorNode;
 import xyz.avarel.aje.ast.variables.Identifier;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -31,6 +32,9 @@ import java.util.*;
 public class CollectionsParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
+        if (!parser.getParserFlags().allowCollections()) {
+            throw new SyntaxException("Collections are disabled");
+        }
 
         // EMPTY DICTIONARY
         if (parser.match(TokenType.COLON)) {

@@ -17,6 +17,7 @@ package xyz.avarel.aje.parser.parslets.flow;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -25,6 +26,9 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 public class IfElseParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
+        if (!parser.getParserFlags().allowControlFlows()) {
+            throw new SyntaxException("Control flows are disabled");
+        }
 
         parser.eat(TokenType.LEFT_PAREN);
         Expr condition = parser.parseExpr();

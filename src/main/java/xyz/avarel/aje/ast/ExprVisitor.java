@@ -197,10 +197,8 @@ public class ExprVisitor {
     public Obj visit(ConditionalExpr expr, Scope scope) {
         Obj condition = expr.getCondition().accept(this, scope.subPool());
 
-        if (condition instanceof Bool) {
-            if (condition == Bool.TRUE) {
-                return expr.getIfBranch().accept(this, scope.subPool());
-            }
+        if (condition instanceof Bool && condition == Bool.TRUE) {
+            return expr.getIfBranch().accept(this, scope.subPool());
         }
         if (expr.getElseBranch() != null) {
             return expr.getElseBranch().accept(this, scope.subPool());

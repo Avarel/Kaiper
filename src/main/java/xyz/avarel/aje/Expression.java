@@ -23,6 +23,7 @@ import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.ParserFlags;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.DefaultScope;
@@ -157,6 +158,16 @@ public class Expression {
      */
     public Obj compute() {
         return compile().compute();
+    }
+
+    /**
+     * Returns the parser flags, which controls what features of AJE are enabled for this expression.
+     * Useful for limiting end-user's abilities to ensure that performance-expensive features are not abused.
+     *
+     * @return The parser flags, which controls what features of AJE are enabled for this expression.
+     */
+    public ParserFlags getParserFlag() {
+        return parser.getFlags();
     }
 
     private class ExpressionExpr extends Expr {

@@ -35,6 +35,10 @@ public class BlockParameterParser extends BinaryParser {
 
     @Override // [1..10] |> fold(0) { a, b -> a + b }
     public Expr parse(AJEParser parser, Expr left, Token token) { // [1..10] |> filter { it -> it % 2 == 0 }
+        if (!parser.getParserFlags().allowFunctionCreation()) {
+            throw new SyntaxException("Function creation are disabled");
+        }
+
         Expr block = parser.getPrefixParsers().get(token.getType()).parse(parser, token);
 
         if (left instanceof Invocation) {

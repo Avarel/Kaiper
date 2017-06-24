@@ -25,7 +25,7 @@ import org.junit.Test
 class FuncTest {
     val evaluator = Evaluator().apply {
         eval("func isEven0(x) { x % 2 == 0 }")
-        eval("func isEven1(x) = { x % 2 == 0 }")
+        eval("func isEven1(x) { x % 2 == 0 }")
         eval("func isEven2(x) = x % 2 == 0")
         eval("var isEven3 = { x -> x % 2 == 0 }")
         eval("var isEven4 = _ % 2 == 0")

@@ -36,6 +36,10 @@ import java.util.Set;
 public class FunctionParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
+        if (!parser.getParserFlags().allowFunctionCreation()) {
+            throw new SyntaxException("Function creation are disabled");
+        }
+
         List<ParameterData> parameters = new ArrayList<>();
 
         String name = null;
@@ -84,25 +88,15 @@ public class FunctionParser implements PrefixParser {
         Expr expr;
 
         if (parser.match(TokenType.ASSIGN)) {
-            if (parser.match(TokenType.LEFT_BRACE)) {
-                if (parser.match(TokenType.RIGHT_BRACE)) {
-                    expr = new ValueNode(parser.getLast().getPosition(), Undefined.VALUE);
-                } else {
-                    expr = parser.parseStatements();
-                    parser.eat(TokenType.RIGHT_BRACE);
-                }
-            } else {
-                expr = parser.parseExpr();
-            }
-        } else if (parser.match(TokenType.LEFT_BRACE)) {
+            expr = parser.parseExpr();
+        } else {
+            parser.eat(TokenType.LEFT_BRACE);
             if (parser.match(TokenType.RIGHT_BRACE)) {
                 expr = new ValueNode(parser.getLast().getPosition(), Undefined.VALUE);
             } else {
                 expr = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);
             }
-        } else {
-            throw new SyntaxException("Expected LEFT_BRACE", parser.eat().getPosition());
         }
 
         return new FunctionNode(token.getPosition(), name, parameters, expr);

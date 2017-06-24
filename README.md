@@ -133,7 +133,7 @@ repositories {
 |Vectors|`vector`|`List<Obj>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
 |Dictionaries|`dictionary`|`Map<Object, Object>`|`[:]` `["hello":"there"]`|
 |Strings|`string`|`String`|`"Hello there!`|
-|Functions (first-class)|`function`| |`func(x) = { x + 2 }` `{ x, y -> x ^ y }`|
+|Functions (first-class)|`function`| |`func(x) { x + 2 }` `{ x, y -> x ^ y }`|
 |Flow control| | |`if (true) { 1 } else { 2 }`<br>`return 2`|
 
 ### Usage 
@@ -293,7 +293,7 @@ Traditional functions can be declared with the syntax shown below.
     available to used as an invocable variable with that name. If the 
     name field is not present, the function be an anonymous function expression.
 ```
-func [name]([param,...]) [=] { [statements] }
+func [name]([param,...]) { [statements] }
 func [name]([param,...]) = expression
 
 func f(x) = x + 2; f(2) == 4

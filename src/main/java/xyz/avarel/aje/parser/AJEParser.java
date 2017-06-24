@@ -24,12 +24,18 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.Undefined;
 
 public class AJEParser extends Parser {
+    private final ParserFlags parserFlags = new ParserFlags();
+
     public AJEParser(AJELexer tokens) {
         super(tokens, DefaultGrammar.INSTANCE);
     }
 
     public AJEParser(AJEParser proxy) {
         super(proxy);
+    }
+
+    public ParserFlags getParserFlags() {
+        return parserFlags;
     }
 
     public Expr compile() {
