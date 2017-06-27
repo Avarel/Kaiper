@@ -16,27 +16,27 @@
 package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public abstract class AJEFunction implements Obj<Function<List<Obj>, Obj>> {
-    public static final Type<AJEFunction> TYPE = new Type<>("function");
+public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
+    public static final Prototype<Func> PROTOTYPE = new FunctionPrototype();
 
     public abstract int getArity();
 
     public abstract List<Parameter> getParameters();
 
     @Override
-    public Type<AJEFunction> getType() {
-        return TYPE;
+    public Prototype<Func> getType() {
+        return PROTOTYPE;
     }
 
     @Override
-    public Function<List<Obj>, Obj> toNative() {
+    public Function<List<Obj>, Obj> toJava() {
         return this::invoke;
     }
 
@@ -45,58 +45,60 @@ public abstract class AJEFunction implements Obj<Function<List<Obj>, Obj>> {
 
     @Override
     public Obj plus(Obj other) {
-        if (other instanceof AJEFunction) {
-            return plus((AJEFunction) other);
+        if (other instanceof Func) {
+            return plus((Func) other);
         }
         return Undefined.VALUE;
     }
 
-    private AJEFunction plus(AJEFunction right) {
-        return new CombinedFunction(this, right, Obj::plus);
+    private Func plus(Func right) {
+        return new CombinedFunc(this, right, Obj::plus);
     }
 
     @Override
     public Obj minus(Obj other) {
-        if (other instanceof AJEFunction) {
-            return minus((AJEFunction) other);
+        if (other instanceof Func) {
+            return minus((Func) other);
         }
         return Undefined.VALUE;
     }
 
-    private AJEFunction minus(AJEFunction right) {
-        return new CombinedFunction(this, right, Obj::minus);
+    private Func minus(Func right) {
+        return new CombinedFunc(this, right, Obj::minus);
     }
 
     @Override
     public Obj times(Obj other) {
-        if (other instanceof AJEFunction) {
-            return times((AJEFunction) other);
+        if (other instanceof Func) {
+            return times((Func) other);
         }
         return Undefined.VALUE;
     }
 
-    private AJEFunction times(AJEFunction right) {
-        return new CombinedFunction(this, right, Obj::times);
+    private Func times(Func right) {
+        return new CombinedFunc(this, right, Obj::times);
     }
 
     @Override
     public Obj divide(Obj other) {
-        if (other instanceof AJEFunction) {
-            return divide((AJEFunction) other);
+        if (other instanceof Func) {
+            return divide((Func) other);
         }
         return Undefined.VALUE;
     }
 
-    private AJEFunction divide(AJEFunction right) {
-        return new CombinedFunction(this, right, Obj::divide);
+    private Func divide(Func right) {
+        return new CombinedFunc(this, right, Obj::divide);
     }
 
     @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "arity":
-                return Int.of(getArity());
+    public String toString() {
+        return "func(" + getParameters().stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
+    }
+
+    public static class FunctionPrototype extends Prototype<Func> {
+        public FunctionPrototype() {
+            super("Function");
         }
-        return Obj.super.getAttr(name);
     }
 }

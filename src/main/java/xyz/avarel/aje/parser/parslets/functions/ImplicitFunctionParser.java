@@ -16,7 +16,7 @@
 package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -34,6 +34,10 @@ import java.util.Set;
 public class ImplicitFunctionParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
+        if (!parser.getParserFlags().allowFunctionCreation()) {
+            throw new SyntaxException("Function creation are disabled");
+        }
+
         ParserProxy ip = new ParserProxy(parser, token);
 
         Expr expr = ip.parseInfix(0, new Identifier(token.getPosition(), token.getString()));
@@ -44,7 +48,7 @@ public class ImplicitFunctionParser implements PrefixParser {
             list.add(new ParameterData(param));
         }
 
-        return new FunctionAtom(token.getPosition(), list, expr);
+        return new FunctionNode(token.getPosition(), list, expr);
     }
 
     private static final class ParserProxy extends AJEParser {

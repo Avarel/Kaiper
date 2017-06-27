@@ -60,6 +60,6 @@ class VectorTest {
 
     @Test
     fun `equality`() {
-        Assert.assertEquals(true, eval("[1..3] == [1,2,3]").toNative())
+        Assert.assertEquals(true, eval("[1..3] == [1,2,3]").toJava())
     }
 }

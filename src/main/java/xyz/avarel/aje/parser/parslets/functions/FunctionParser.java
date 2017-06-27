@@ -16,8 +16,8 @@
 package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
-import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.ValueNode;
+import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -26,6 +26,7 @@ import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,6 +36,10 @@ import java.util.Set;
 public class FunctionParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
+        if (!parser.getParserFlags().allowFunctionCreation()) {
+            throw new SyntaxException("Function creation are disabled");
+        }
+
         List<ParameterData> parameters = new ArrayList<>();
 
         String name = null;
@@ -56,7 +61,7 @@ public class FunctionParser implements PrefixParser {
                     paramNames.add(parameterName);
                 }
 
-                Expr parameterType = new ValueAtom(parser.peek(0).getPosition(), Obj.TYPE);
+                Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.PROTOTYPE);
                 Expr parameterDefault = null;
 
                 if (parser.match(TokenType.COLON)) {
@@ -66,6 +71,7 @@ public class FunctionParser implements PrefixParser {
                         parameterType = new Identifier(typeToken.getPosition(), parameterType, parser.eat(TokenType.IDENTIFIER).getString());
                     }
                 }
+
                 if (parser.match(TokenType.ASSIGN)) {
                     parameterDefault = parser.parseExpr();
                     requireDef = true;
@@ -82,19 +88,17 @@ public class FunctionParser implements PrefixParser {
         Expr expr;
 
         if (parser.match(TokenType.ASSIGN)) {
-            if (parser.match(TokenType.LEFT_BRACE)) {
+            expr = parser.parseExpr();
+        } else {
+            parser.eat(TokenType.LEFT_BRACE);
+            if (parser.match(TokenType.RIGHT_BRACE)) {
+                expr = new ValueNode(parser.getLast().getPosition(), Undefined.VALUE);
+            } else {
                 expr = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);
-            } else {
-                expr = parser.parseExpr();
             }
-        } else if (parser.match(TokenType.LEFT_BRACE)) {
-            expr = parser.parseStatements();
-            parser.eat(TokenType.RIGHT_BRACE);
-        } else {
-            expr = parser.parseStatements();
         }
 
-        return new FunctionAtom(token.getPosition(), name, parameters, expr);
+        return new FunctionNode(token.getPosition(), name, parameters, expr);
     }
 }

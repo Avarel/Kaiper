@@ -17,13 +17,15 @@ package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.util.List;
 
 public class Int implements Obj<Integer> {
-    public static final Type<Int> TYPE = new Type<>(Decimal.TYPE, "integer");
+    public static final Prototype<Int> PROTOTYPE = new IntPrototype();
 
     private final int value;
 
@@ -43,13 +45,13 @@ public class Int implements Obj<Integer> {
     }
 
     @Override
-    public Integer toNative() {
+    public Integer toJava() {
         return value();
     }
 
     @Override
-    public Type<Int> getType() {
-        return TYPE;
+    public Prototype<Int> getType() {
+        return PROTOTYPE;
     }
 
     @Override
@@ -231,19 +233,6 @@ public class Int implements Obj<Integer> {
         return Undefined.VALUE;
     }
 
-    @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "toInteger":
-                return this;
-            case "toDecimal":
-                return Decimal.of(value);
-            case "toComplex":
-                return Complex.of(value);
-        }
-        return Obj.super.getAttr(name);
-    }
-
     private static class IntCache {
         private static final int LOW = -128;
         private static final int HIGH = 127;
@@ -258,5 +247,33 @@ public class Int implements Obj<Integer> {
         }
 
         private IntCache() {}
+    }
+
+    private static class IntPrototype extends Prototype<Int> {
+        public IntPrototype() {
+            super(Decimal.PROTOTYPE, "Int");
+
+            getScope().declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
+            getScope().declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
+
+            getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return arguments.get(0);
+                }
+            });
+            getScope().declare("toDecimal", new NativeFunc(Parameter.of("self")) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Decimal.of(((Int) arguments.get(0)).value());
+                }
+            });
+            getScope().declare("toComplex", new NativeFunc(Parameter.of("self")) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Complex.of(((Int) arguments.get(0)).value());
+                }
+            });
+        }
     }
 }

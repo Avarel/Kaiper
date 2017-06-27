@@ -17,9 +17,11 @@ package xyz.avarel.aje.runtime.collections;
 
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.functions.NativeFunction;
+import xyz.avarel.aje.runtime.functions.Func;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.*;
@@ -30,7 +32,7 @@ import java.util.function.UnaryOperator;
  * AJE wrapper class for a one dimensional vector.
  */
 public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterable<Obj> {
-    public static final Type<Vector> TYPE = new Type<>("vector");
+    public static final Prototype<Vector> PROTOTYPE = new VectorPrototype();
 
     /**
      * Creates an empty vector.
@@ -72,19 +74,19 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
      * @return An unmodifiable representation of the vector.
      */
     @Override
-    public List<Object> toNative() {
+    public List<Object> toJava() {
         List<Object> objects = new ArrayList<>();
 
         for (Obj obj : this) {
-            objects.add(obj.toNative());
+            objects.add(obj.toJava());
         }
 
         return Collections.unmodifiableList(objects);
     }
 
     @Override
-    public Type getType() {
-        return TYPE;
+    public Prototype getType() {
+        return PROTOTYPE;
     }
 
     @Override
@@ -337,23 +339,91 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 return Int.of(size());
             case "lastIndex":
                 return Int.of(size() - 1);
-            case "append":
-                return new NativeFunction(true, Obj.TYPE) {
-                    @Override
-                    protected Obj eval(List<Obj> arguments) {
-                        Vector.this.addAll(arguments);
-                        return Vector.this;
-                    }
-                };
-            case "extend":
-                return new NativeFunction(Vector.TYPE) {
-                    @Override
-                    protected Obj eval(List<Obj> arguments) {
-                        Vector.this.addAll(arguments);
-                        return Vector.this;
-                    }
-                };
+            default:
+                return Obj.super.getAttr(name);
         }
-        return Obj.super.getAttr(name);
+    }
+
+    private static class VectorPrototype extends Prototype<Vector> {
+        public VectorPrototype() {
+            super("Vector");
+
+            getScope().declare("length", new NativeFunc(Parameter.of("self")) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Vector) arguments.get(0)).size());
+                }
+            });
+
+            getScope().declare("size", getScope().lookup("length"));
+
+            getScope().declare("lastIndex", new NativeFunc(Parameter.of("self")) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Vector) arguments.get(0)).size() - 1);
+                }
+            });
+
+            getScope().declare("append", new NativeFunc(true, Obj.PROTOTYPE) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    ((Vector) arguments.get(0)).addAll(arguments);
+                    return arguments.get(0);
+                }
+            });
+
+            getScope().declare("each", new NativeFunc(Parameter.of("self"), Parameter.of(Func.PROTOTYPE)) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    Func action = (Func) arguments.get(1);
+
+                    for (Obj obj : (Vector) arguments.get(0)) {
+                        action.invoke(Collections.singletonList(obj));
+                    }
+                    return Undefined.VALUE;
+                }
+            });
+
+            getScope().declare("map", new NativeFunc(Parameter.of("self"), Parameter.of(Func.PROTOTYPE)) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    Func transform = (Func) arguments.get(1);
+
+                    Vector vector = new Vector();
+                    for (Obj obj : (Vector) arguments.get(0)) {
+                        vector.add(transform.invoke(Collections.singletonList(obj)));
+                    }
+                    return vector;
+                }
+            });
+
+            getScope().declare("filter", new NativeFunc(Parameter.of("self"), Parameter.of(Func.PROTOTYPE)) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    Func predicate = (Func) arguments.get(1);
+
+                    Vector vector = new Vector();
+                    for (Obj obj : (Vector) arguments.get(0)) {
+                        Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
+                        if (condition == Bool.TRUE) vector.add(obj);
+                    }
+                    return vector;
+                }
+            });
+
+            getScope().declare("fold",
+                    new NativeFunc(Parameter.of("self"), Parameter.of(Obj.PROTOTYPE), Parameter.of(Func.PROTOTYPE)) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    Obj accumulator = arguments.get(1);
+                    Func operation = (Func) arguments.get(2);
+
+                    for (Obj obj : (Vector) arguments.get(0)) {
+                        accumulator = operation.invoke(accumulator, obj);
+                    }
+                    return accumulator;
+                }
+            });
+        }
     }
 }

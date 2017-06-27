@@ -20,46 +20,37 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
-import java.util.function.BinaryOperator;
 
 /**
  * Every operation results in the same
  * instance, NOTHING.
  */
-public class CombinedFunction extends AJEFunction {
-    private final AJEFunction left;
-    private final AJEFunction right;
-    private final BinaryOperator<Obj> operator;
+public class ComposedFunc extends Func {
+    private final Func left;
+    private final Func right;
 
-    public CombinedFunction(AJEFunction left, AJEFunction right, BinaryOperator<Obj> operator) {
+    public ComposedFunc(Func left, Func right) {
         this.left = left;
         this.right = right;
-        this.operator = operator;
 
-        if (left.getParameters().size() != right.getParameters().size()) {
-            throw new ComputeException("Combined functions require both functions to have the same arity.");
-        } else {
-            for (int i = 0; i < left.getParameters().size(); i++) {
-                if (left.getParameters().get(i).getType() != right.getParameters().get(i).getType()) {
-                    throw new ComputeException("Combined functions require both functions to have the same parameters.");
-                }
-            }
+        if (left.getParameters().size() != 1) {
+            throw new ComputeException("Composed functions require the outer function to be arity-1.");
         }
     }
 
     @Override
     public int getArity() {
-        return left.getArity();
+        return right.getArity();
     }
 
     @Override
     public List<Parameter> getParameters() {
-        return left.getParameters();
+        return right.getParameters();
     }
 
     @Override
     public String toString() {
-        return "combine(" + left + ", " + right + ")";
+        return "composed$" + super.toString();
     }
 
     @Override
@@ -68,6 +59,6 @@ public class CombinedFunction extends AJEFunction {
             return Undefined.VALUE;
         }
 
-        return operator.apply(left.invoke(arguments), right.invoke(arguments));
+        return left.invoke(right.invoke(arguments));
     }
 }

@@ -19,23 +19,22 @@ import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Every operation results in the same
  * instance, NOTHING.
  */
-public class CompiledFunction extends AJEFunction {
+public class CompiledFunc extends Func {
     private final List<Parameter> parameters;
     private final Expr expr;
     private final Scope scope;
 
-    public CompiledFunction(List<Parameter> parameters, Expr expr, Scope scope) {
+    public CompiledFunc(List<Parameter> parameters, Expr expr, Scope scope) {
         this.parameters = parameters;
         this.expr = expr;
         this.scope = scope;
@@ -51,34 +50,31 @@ public class CompiledFunction extends AJEFunction {
     }
 
     @Override
-    public String toString() {
-        return "func(" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
-    }
-
-    @Override
     public Obj invoke(List<Obj> arguments) {
         Scope scope = this.scope.subPool();
         for (int i = 0; i < getArity(); i++) {
             Parameter parameter = parameters.get(i);
 
-            Type type = parameter.getType();
+            Prototype prototype = parameter.getPrototype();
 
             if (i < arguments.size()) {
-                if (arguments.get(i).getType().is(type)) {
+                if (arguments.get(i).getType().is(prototype)) {
                     scope.declare(parameter.getName(), arguments.get(i));
-                } else if (type == Obj.TYPE) {
+                } else if (prototype == Obj.PROTOTYPE) {
                     scope.declare(parameter.getName(), Undefined.VALUE);
                 } else {
                     return Undefined.VALUE;
                 }
             } else if (parameter.hasDefault()) {
                 scope.declare(parameter.getName(), parameter.getDefault().accept(new ExprVisitor(), scope));
-            } else if (type == Obj.TYPE) {
+            } else if (prototype == Obj.PROTOTYPE) {
                 scope.declare(parameter.getName(), Undefined.VALUE);
             } else {
                 return Undefined.VALUE;
             }
         }
+
+        // TODO scope.declare("self", target);
 
         try {
             return expr.accept(new ExprVisitor(), scope);

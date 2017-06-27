@@ -24,16 +24,16 @@ import xyz.avarel.aje.scope.Scope;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FunctionAtom extends Expr {
+public class FunctionNode extends Expr {
     private final String name;
     private final List<ParameterData> parameters;
     private final Expr expr;
 
-    public FunctionAtom(Position position, List<ParameterData> parameters, Expr expr) {
+    public FunctionNode(Position position, List<ParameterData> parameters, Expr expr) {
         this(position, null, parameters, expr);
     }
 
-    public FunctionAtom(Position position, String name, List<ParameterData> parameters, Expr expr) {
+    public FunctionNode(Position position, String name, List<ParameterData> parameters, Expr expr) {
         super(position);
         this.name = name;
         this.parameters = parameters;

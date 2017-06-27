@@ -16,35 +16,35 @@
 package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Prototype;
 
 public abstract class Numeric extends Number implements Obj {
-    public static final Type<Numeric> TYPE = new Type<>("number");
+    public static final Prototype<Numeric> PROTOTYPE = new NumericPrototype();
 
     @SuppressWarnings("unchecked")
-    public static <T> T convert(Obj a, Type<T> type) {
+    public static <T> T convert(Obj a, Prototype<T> prototype) {
         if (a instanceof Int) {
-            if (type == Int.TYPE) {
+            if (prototype == Int.PROTOTYPE) {
                 return (T) a;
-            } else if (type == Decimal.TYPE) {
+            } else if (prototype == Decimal.PROTOTYPE) {
                 return (T) Decimal.of(((Int) a).value());
-            } else if (type == Complex.TYPE) {
+            } else if (prototype == Complex.PROTOTYPE) {
                 return (T) Complex.of(((Int) a).value());
             }
         } else if (a instanceof Decimal) {
-            if (type == Int.TYPE) {
+            if (prototype == Int.PROTOTYPE) {
                 return (T) Int.of((int) ((Decimal) a).value());
-            } else if (type == Decimal.TYPE) {
+            } else if (prototype == Decimal.PROTOTYPE) {
                 return (T) a;
-            } else if (type == Complex.TYPE) {
+            } else if (prototype == Complex.PROTOTYPE) {
                 return (T) Complex.of(((Decimal) a).value());
             }
         } else if (a instanceof Complex) {
-            if (type == Int.TYPE) {
+            if (prototype == Int.PROTOTYPE) {
                 return (T) Int.of((int) ((Complex) a).real());
-            } else if (type == Decimal.TYPE) {
+            } else if (prototype == Decimal.PROTOTYPE) {
                 return (T) Decimal.of(((Complex) a).real());
-            } else if (type == Complex.TYPE) {
+            } else if (prototype == Complex.PROTOTYPE) {
                 return (T) a;
             }
         }
@@ -52,7 +52,13 @@ public abstract class Numeric extends Number implements Obj {
         return (T) a;
     }
 
-    public Type<Numeric> getType() {
-        return TYPE;
+    public Prototype<Numeric> getType() {
+        return PROTOTYPE;
+    }
+
+    private static class NumericPrototype extends Prototype<Numeric> {
+        public NumericPrototype() {
+            super("Number");
+        }
     }
 }

@@ -38,6 +38,7 @@ public enum TokenType {
     BOOLEAN,
     FUNCTION,
     TEXT,
+    ATOM,
 
     // ARITHMETIC
     PLUS,

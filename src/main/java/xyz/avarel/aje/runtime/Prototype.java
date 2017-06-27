@@ -15,42 +15,57 @@
 
 package xyz.avarel.aje.runtime;
 
+import xyz.avarel.aje.scope.Scope;
+
 @SuppressWarnings("unused")
-public class Type<T> implements Obj<Type> {
-    private static final Type<Type> TYPE = new Type<>("type");
-
-    private final Type parent;
+public class Prototype<T> implements Obj<Prototype> {
+    private final Prototype parent;
     private final String name;
+    private Scope scope;
 
-    public Type(String name) {
-        this(Obj.TYPE, name);
+    public Prototype(String name) {
+        this(Obj.PROTOTYPE, name);
     }
 
-    public Type(Type parent, String name) {
+    public Prototype(Prototype parent, String name) {
+        this(parent, name, parent != null ? parent.scope.subPool() : new Scope());
+    }
+
+    public Prototype(Prototype parent, String name, Scope scope) {
         this.parent = parent;
         this.name = name;
+        this.scope = scope;
     }
 
-    public boolean is(Type type) {
-        Type t = this;
+    public boolean is(Prototype prototype) {
+        Prototype t = this;
         do {
-            if (t == type) return true;
+            if (t.equals(prototype)) return true;
             t = t.parent;
         } while (t != null);
         return false;
     }
 
-    @Override
-    public Type getType() {
-        return TYPE;
+    public Scope getScope() {
+        return scope;
     }
 
     @Override
-    public Type toNative() {
+    public Obj getAttr(String name) {
+        return scope.lookup(name);
+    }
+
+    @Override
+    public Prototype getType() {
         return this;
     }
 
-    public Type getParent() {
+    @Override
+    public Prototype toJava() {
+        return this;
+    }
+
+    public Prototype getParent() {
         return parent;
     }
 

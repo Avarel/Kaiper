@@ -66,6 +66,6 @@ class ComplexTest {
 
     @Test
     fun `equality`() {
-        Assert.assertEquals(true, eval("(5i + 6) == (6 + 5i)").toNative())
+        Assert.assertEquals(true, eval("(5i + 6) == (6 + 5i)").toJava())
     }
 }

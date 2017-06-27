@@ -17,7 +17,7 @@ package xyz.avarel.aje.ast;
 
 import xyz.avarel.aje.ast.collections.*;
 import xyz.avarel.aje.ast.flow.*;
-import xyz.avarel.aje.ast.functions.FunctionAtom;
+import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
@@ -28,13 +28,13 @@ import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
 import xyz.avarel.aje.runtime.collections.Vector;
-import xyz.avarel.aje.runtime.functions.AJEFunction;
-import xyz.avarel.aje.runtime.functions.CompiledFunction;
+import xyz.avarel.aje.runtime.functions.CompiledFunc;
+import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.scope.Scope;
@@ -55,20 +55,20 @@ public class ExprVisitor {
     }
 
     // func print(str: String, n: Int) { for (x in 0..n) { print(str) } }
-    public Obj visit(FunctionAtom expr, Scope scope) {
+    public Obj visit(FunctionNode expr, Scope scope) {
         List<Parameter> parameters = new ArrayList<>();
 
         for (ParameterData data : expr.getParameterExprs()) {
             Obj obj_type = data.getTypeExpr().accept(this, scope);
 
-            if (!(obj_type instanceof Type)) {
+            if (!(obj_type instanceof Prototype)) {
                 throw new ComputeException(obj_type + " is not a valid parameter type", data.getTypeExpr().getPosition());
             }
 
-            parameters.add(new Parameter(data.getName(), (Type) obj_type, data.getDefault()));
+            parameters.add(Parameter.of(data.getName(), (Prototype) obj_type, data.getDefault()));
         }
 
-        AJEFunction func = new CompiledFunction(parameters, expr.getExpr(), scope.subPool());
+        Func func = new CompiledFunc(parameters, expr.getExpr(), scope.subPool());
         if (expr.getName() != null) scope.declare(expr.getName(), func);
         return func;
     }
@@ -85,12 +85,13 @@ public class ExprVisitor {
         throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
     }
 
-    public Obj visit(ValueAtom expr, Scope scope) {
+    public Obj visit(ValueNode expr, Scope scope) {
         return expr.getValue();
     }
 
     public Obj visit(Invocation expr, Scope scope) {
         Obj target = expr.getLeft().accept(this, scope);
+
         List<Obj> arguments = new ArrayList<>();
 
         for (Expr arg : expr.getArguments()) {
@@ -113,7 +114,7 @@ public class ExprVisitor {
         return expr.getOperator().apply(operand);
     }
 
-    public Obj visit(RangeAtom expr, Scope scope) {
+    public Obj visit(RangeNode expr, Scope scope) {
         Obj startObj = expr.getLeft().accept(this, scope);
         Obj endObj = expr.getRight().accept(this, scope);
 
@@ -128,7 +129,7 @@ public class ExprVisitor {
         //throw new ComputeException("Start and end of range must be integers", expr.getPosition());
     }
 
-    public Obj visit(VectorAtom expr, Scope scope) {
+    public Obj visit(VectorNode expr, Scope scope) {
         Vector vector = new Vector();
 
         for (Expr itemExpr : expr.getItems()) {
@@ -196,10 +197,8 @@ public class ExprVisitor {
     public Obj visit(ConditionalExpr expr, Scope scope) {
         Obj condition = expr.getCondition().accept(this, scope.subPool());
 
-        if (condition instanceof Bool) {
-            if (condition == Bool.TRUE) {
-                return expr.getIfBranch().accept(this, scope.subPool());
-            }
+        if (condition instanceof Bool && condition == Bool.TRUE) {
+            return expr.getIfBranch().accept(this, scope.subPool());
         }
         if (expr.getElseBranch() != null) {
             return expr.getElseBranch().accept(this, scope.subPool());
@@ -231,7 +230,7 @@ public class ExprVisitor {
         return Undefined.VALUE;
     }
 
-    public Obj visit(DictionaryAtom expr, Scope scope) {
+    public Obj visit(DictionaryNode expr, Scope scope) {
         Map<Expr, Expr> map = expr.getMap();
 
         Dictionary dict = new Dictionary();

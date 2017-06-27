@@ -16,8 +16,10 @@
 package xyz.avarel.aje.runtime.collections;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Range implements Obj<List<Integer>>, Iterable<Int> {
-    public static final Type<Range> TYPE = new Type<>("range");
+    public static final Prototype<Range> PROTOTYPE = new RangePrototype();
     
     private final int start;
     private final int end;
@@ -44,7 +46,7 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
     }
 
     @Override
-    public List<Integer> toNative() {
+    public List<Integer> toJava() {
         List<Integer> list = new ArrayList<>();
         for (Int i : this) {
             list.add(i.value());
@@ -53,8 +55,8 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
     }
 
     @Override
-    public Type getType() {
-        return TYPE;
+    public Prototype getType() {
+        return PROTOTYPE;
     }
 
     public Vector toVector() {
@@ -103,8 +105,29 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
                 return Int.of(size());
             case "lastIndex":
                 return Int.of(size() - 1);
+            default:
+                return Obj.super.getAttr(name);
         }
-        return Obj.super.getAttr(name);
+    }
+
+    private static class RangePrototype extends Prototype<Range> {
+        public RangePrototype() {
+            super("Range");
+
+            getScope().declare("length", new NativeFunc(Parameter.of("self")) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Range) arguments.get(0)).size());
+                }
+            });
+
+            getScope().declare("lastIndex", new NativeFunc(Parameter.of("self")) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Range) arguments.get(0)).size() - 1);
+                }
+            });
+        }
     }
 
     private final class RangeIterator implements Iterator<Int> {

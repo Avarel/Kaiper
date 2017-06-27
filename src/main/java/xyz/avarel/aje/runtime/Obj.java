@@ -15,7 +15,10 @@
 
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.runtime.functions.NativeFunction;
+import xyz.avarel.aje.runtime.functions.Func;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
+import xyz.avarel.aje.runtime.functions.ReferenceFunc;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
 
@@ -24,19 +27,21 @@ import java.util.List;
 
 /**
  * An interface containing all natively implemented operations.
+ *
+ * @param <J> Java representation of the object.
  */
-public interface Obj<JAVA> {
-    Type<Obj> TYPE = new Type<>("Object");
+public interface Obj<J> {
+    Prototype<Obj> PROTOTYPE = new ObjPrototype();
 
     /**
-     * @return The {@link Type} of the object.
+     * @return The {@link Prototype} of the object.
      */
-    Type getType();
+    Prototype getType();
 
     /**
-     * @return  The native object representation of this object or {@code null}.
+     * @return The {@link J java} object representation of this AJE object or {@code null}.
      */
-    default JAVA toNative() {
+    default J toJava() {
         return null;
     }
 
@@ -251,23 +256,10 @@ public interface Obj<JAVA> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj getAttr(String name) {
-        switch (name) {
-            case "type":
-                return getType();
-            case "get":
-                return new NativeFunction(Obj.TYPE) {
-                    @Override
-                    protected Obj eval(List<Obj> arguments) {
-                        return Obj.this.get(arguments.get(0));
-                    }
-                };
-            case "set":
-                return new NativeFunction(Obj.TYPE, Obj.TYPE) {
-                    @Override
-                    protected Obj eval(List<Obj> arguments) {
-                        return Obj.this.set(arguments.get(0), arguments.get(1));
-                    }
-                };
+        Obj obj = getType().getAttr(name);
+
+        if (obj instanceof Func) {
+            return new ReferenceFunc(this, (Func) obj);
         }
 
         return Undefined.VALUE;
@@ -328,5 +320,38 @@ public interface Obj<JAVA> {
     }
     default Obj pow(double other) {
         return pow(Decimal.of(other));
+    }
+
+    class ObjPrototype extends Prototype<Obj> {
+        public ObjPrototype() {
+            super("Object");
+
+            getScope().declare("toString", new NativeFunc(Parameter.of("self")) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Str.of(arguments.get(0).toString());
+                }
+            });
+
+//            getScope().declare("plus", new NativeFunction(this, this) {
+//                @Override
+//                protected Obj eval(List<Obj> arguments) {
+//                    return receiver.plus(arguments.get(0));
+//                }
+//            });
+
+            getScope().declare("get", new NativeFunc(Parameter.of("self"), Parameter.of(this)) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return arguments.get(0).get(arguments.get(1));
+                }
+            });
+            getScope().declare("set", new NativeFunc(Parameter.of("self"), Parameter.of(this), Parameter.of(this)) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return arguments.get(0).set(arguments.get(1), arguments.get(2));
+                }
+            });
+        }
     }
 }

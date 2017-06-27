@@ -13,33 +13,37 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.atoms;
+package xyz.avarel.aje.parser.parslets.nodes;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
-import xyz.avarel.aje.ast.collections.DictionaryAtom;
-import xyz.avarel.aje.ast.collections.VectorAtom;
+import xyz.avarel.aje.ast.ValueNode;
+import xyz.avarel.aje.ast.collections.DictionaryNode;
+import xyz.avarel.aje.ast.collections.VectorNode;
 import xyz.avarel.aje.ast.variables.Identifier;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Text;
+import xyz.avarel.aje.runtime.Str;
 
 import java.util.*;
 
 public class CollectionsParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
+        if (!parser.getParserFlags().allowCollections()) {
+            throw new SyntaxException("Collections are disabled");
+        }
 
         // EMPTY DICTIONARY
         if (parser.match(TokenType.COLON)) {
             parser.eat(TokenType.RIGHT_BRACKET);
-            return new DictionaryAtom(token.getPosition(), Collections.emptyMap());
+            return new DictionaryNode(token.getPosition(), Collections.emptyMap());
         }
 
         if (parser.match(TokenType.RIGHT_BRACKET)) {
-            return new VectorAtom(token.getPosition(), Collections.emptyList());
+            return new VectorNode(token.getPosition(), Collections.emptyList());
         }
 
         Expr expr = parser.parseExpr();
@@ -62,14 +66,14 @@ public class CollectionsParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
-        return new VectorAtom(token.getPosition(), items);
+        return new VectorNode(token.getPosition(), items);
     }
 
     private Expr parseDictionary(AJEParser parser, Token token, Expr initKey) {
         Map<Expr, Expr> map = new HashMap<>();
 
         if (initKey instanceof Identifier) {
-            initKey = new ValueAtom(initKey.getPosition(), Text.of(((Identifier) initKey).getName()));
+            initKey = new ValueNode(initKey.getPosition(), Str.of(((Identifier) initKey).getName()));
         }
 
         map.put(initKey, parser.parseExpr());
@@ -84,6 +88,6 @@ public class CollectionsParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
-        return new DictionaryAtom(token.getPosition(), map);
+        return new DictionaryNode(token.getPosition(), map);
     }
 }

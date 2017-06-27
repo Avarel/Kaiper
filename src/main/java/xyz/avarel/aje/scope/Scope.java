@@ -61,6 +61,10 @@ public class Scope {
         }
     }
 
+    public Map<String, Obj> getMap() {
+        return map;
+    }
+
     public boolean contains(String key) {
         return map.containsKey(key) || parent != null && parent.contains(key);
     }

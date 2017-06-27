@@ -16,8 +16,9 @@
 package xyz.avarel.aje.parser.parslets.flow;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueAtom;
+import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.flow.ReturnExpr;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
@@ -27,9 +28,13 @@ import xyz.avarel.aje.runtime.Undefined;
 public class ReturnParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
+        if (!parser.getParserFlags().allowControlFlows()) {
+            throw new SyntaxException("Control flows are disabled");
+        }
+
         Expr expr;
         if (parser.peekAny(TokenType.LINE, TokenType.SEMICOLON, TokenType.RIGHT_BRACE)) {
-            expr = new ValueAtom(token.getPosition(), Undefined.VALUE);
+            expr = new ValueNode(token.getPosition(), Undefined.VALUE);
         } else {
             expr = parser.parseExpr();
         }

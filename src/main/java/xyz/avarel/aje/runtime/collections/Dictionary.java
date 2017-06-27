@@ -16,47 +16,50 @@
 package xyz.avarel.aje.runtime.collections;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * AJE wrapper class for a one dimensional vector.
+ * AJE wrapper class for a map.
  */
 public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Object>> {
-    public static final Type<Dictionary> TYPE = new Type<>("dictionary");
+    public static final Prototype<Dictionary> PROTOTYPE = new DictionaryPrototype();
 
     /**
-     * Creates an empty vector.
+     * Creates an empty dictionary.
      */
     public Dictionary() {
         super();
     }
 
     /**
-     * Returns an unmodifiable representation of the vector. Note that the map's contents are all converted to
+     * Returns an unmodifiable representation of the map. Note that the map's contents are all converted to
      * their native representation or {@code null} if unable to.
      *
-     * @return An unmodifiable representation of the vector.
+     * @return An unmodifiable representation of the map.
      */
     @Override
-    public Map<Object, Object> toNative() {
+    public Map<Object, Object> toJava() {
         Map<Object, Object> map = new HashMap<>();
 
         for (Entry<Obj, Obj> entry : this.entrySet()) {
-            map.put(entry.getKey().toNative(), entry.getValue().toNative());
+            map.put(entry.getKey().toJava(), entry.getValue().toJava());
         }
 
         return Collections.unmodifiableMap(map);
     }
 
     @Override
-    public Type getType() {
-        return TYPE;
+    public Prototype getType() {
+        return PROTOTYPE;
     }
 
     @Override
@@ -75,9 +78,21 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
         switch (name) {
             case "size":
                 return Int.of(size());
-            case "length":
-                return Int.of(size());
+            default:
+                return Obj.super.getAttr(name);
         }
-        return Obj.super.getAttr(name);
+    }
+
+    private static class DictionaryPrototype extends Prototype<Dictionary> {
+        public DictionaryPrototype() {
+            super("Dictionary");
+
+            getScope().declare("size", new NativeFunc(Parameter.of("self")) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return Int.of(((Dictionary) arguments.get(0)).size());
+                }
+            });
+        }
     }
 }
