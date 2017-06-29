@@ -68,11 +68,11 @@ public class JavaObject implements Obj<Object> {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof JavaField) {
-            return object == ((JavaField) obj).getField();
+            return object.equals(((JavaField) obj).getField());
         } else if (obj instanceof JavaObject) {
-            return object == ((JavaObject) obj).getObject();
+            return object.equals(((JavaObject) obj).getObject());
         }
-        return object == obj;
+        return object.equals(obj);
     }
 
     @Override

@@ -124,14 +124,9 @@ public class JavaField extends JavaObject implements Obj<Object> {
             } catch (IllegalAccessException | InvocationTargetException ignore) {}
         }
 
-        if (parent instanceof JavaField) {
-            if (result == ((JavaField) parent).getField()) {
-                return parent;
-            }
-        } else if (parent != null) {
-            if (result == parent.getObject()) {
-                return parent;
-            }
+        if (parent instanceof JavaField && result == ((JavaField) parent).getField()
+                || parent != null && result == parent.getObject()) {
+            return parent;
         }
 
         return JavaUtils.mapJavaToAJEType(result);
