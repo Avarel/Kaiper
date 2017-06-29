@@ -16,7 +16,7 @@
 package xyz.avarel.aje.runtime.java;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.lang.reflect.Field;
@@ -26,10 +26,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JavaField extends JavaObject implements Obj<Object> {
+    private final JavaObject parent;
     private final String name;
 
-    public JavaField(Object object, String name) {
-        super(object);
+    public JavaField(JavaObject parent, String name) {
+        super(parent.getObject());
+        this.parent = parent;
+        this.name = name;
+    }
+
+    public JavaField(JavaField parent, String name) {
+        super(parent.getField());
+        this.parent = parent;
         this.name = name;
     }
 
@@ -46,20 +54,20 @@ public class JavaField extends JavaObject implements Obj<Object> {
     }
 
     @Override
-    public Type getType() {
+    public Prototype getType() {
         Object field = getField();
-        if (JavaUtils.isAJEType(field)) {
-            return JavaUtils.mapToAJE(field).getType();
+        if (JavaUtils.hasAJETypeEquivalent(field)) {
+            return JavaUtils.mapJavaToAJEType(field).getType();
         }
 
-        return new Type("java/" + getField().getClass().getSimpleName());
+        return prototype;
     }
 
     @Override
-    public Object toNative() {
+    public Object toJava() {
         Object field = getField();
-        if (JavaUtils.isAJEType(field)) {
-            return JavaUtils.mapToAJE(field).toNative();
+        if (JavaUtils.hasAJETypeEquivalent(field)) {
+            return JavaUtils.mapJavaToAJEType(field).toJava();
         }
 
         return getField();
@@ -70,7 +78,7 @@ public class JavaField extends JavaObject implements Obj<Object> {
         if (name != null) {
             try {
                 Field field = getField().getClass().getField(name);
-                Object val = value.toNative();
+                Object val = value.toJava();
                 field.set(getField(), val);
                 return value;
             } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -82,7 +90,7 @@ public class JavaField extends JavaObject implements Obj<Object> {
 
     @Override
     public Obj getAttr(String name) {
-        return new JavaField(getField(), name);
+        return new JavaField(this, name);
     }
 
     @Override
@@ -90,7 +98,7 @@ public class JavaField extends JavaObject implements Obj<Object> {
         if (name == null) return Undefined.VALUE;
 
         List<Object> nativeArgs = arguments.stream()
-                .map(Obj::toNative)
+                .map(Obj::toJava)
                 .collect(Collectors.toList());
 
         List<Class<?>> classes = nativeArgs.stream()
@@ -116,14 +124,31 @@ public class JavaField extends JavaObject implements Obj<Object> {
             } catch (IllegalAccessException | InvocationTargetException ignore) {}
         }
 
-        return JavaUtils.mapToAJE(result);
+        if (parent instanceof JavaField) {
+            if (result == ((JavaField) parent).getField()) {
+                return parent;
+            }
+        } else if (parent != null) {
+            if (result == parent.getObject()) {
+                return parent;
+            }
+        }
+
+        return JavaUtils.mapJavaToAJEType(result);
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (obj instanceof JavaField) {
+            return getField() == ((JavaField) obj).getField();
+        } else if (obj instanceof JavaObject) {
+            return getField() == ((JavaObject) obj).getObject();
+        }
+
         Object field = getField();
-        if (JavaUtils.isAJEType(field)) {
-            return JavaUtils.mapToAJE(field).equals(obj);
+
+        if (JavaUtils.hasAJETypeEquivalent(field)) {
+            return JavaUtils.mapJavaToAJEType(field).equals(obj);
         }
 
         return getObject() == obj;
@@ -132,8 +157,8 @@ public class JavaField extends JavaObject implements Obj<Object> {
     @Override
     public String toString() {
         Object field = getField();
-        if (JavaUtils.isAJEType(field)) {
-            return JavaUtils.mapToAJE(field).toString();
+        if (JavaUtils.hasAJETypeEquivalent(field)) {
+            return JavaUtils.mapJavaToAJEType(field).toString();
         }
 
         return getField().toString();
@@ -142,8 +167,8 @@ public class JavaField extends JavaObject implements Obj<Object> {
     @Override
     public int hashCode() {
         Object field = getField();
-        if (JavaUtils.isAJEType(field)) {
-            return JavaUtils.mapToAJE(field).hashCode();
+        if (JavaUtils.hasAJETypeEquivalent(field)) {
+            return JavaUtils.mapJavaToAJEType(field).hashCode();
         }
 
         return getField().hashCode();

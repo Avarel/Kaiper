@@ -15,10 +15,7 @@
 
 package xyz.avarel.aje.runtime.java;
 
-import xyz.avarel.aje.runtime.Bool;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Text;
-import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.*;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.numbers.Decimal;
@@ -27,10 +24,14 @@ import xyz.avarel.aje.runtime.numbers.Int;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 public class JavaUtils {
-
+    /* Apache common langs */
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>();
+    public static Map<Class<?>, Prototype<?>> JAVA_PROTOTYPES = new WeakHashMap<>();
+
     static {
         primitiveWrapperMap.put(Boolean.TYPE, Boolean.class);
         primitiveWrapperMap.put(Byte.TYPE, Byte.class);
@@ -43,7 +44,6 @@ public class JavaUtils {
         primitiveWrapperMap.put(Void.TYPE, Void.TYPE);
     }
 
-    private static final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>();
     static {
         for (final Map.Entry<Class<?>, Class<?>> entry : primitiveWrapperMap.entrySet()) {
             final Class<?> primitiveClass = entry.getKey();
@@ -54,7 +54,7 @@ public class JavaUtils {
         }
     }
 
-    public static Class<?> primitiveToWrapper(final Class<?> cls) {
+    static Class<?> primitiveToWrapper(final Class<?> cls) {
         Class<?> convertedClass = cls;
         if (cls != null && cls.isPrimitive()) {
             convertedClass = primitiveWrapperMap.get(cls);
@@ -62,11 +62,11 @@ public class JavaUtils {
         return convertedClass;
     }
 
-    public static Class<?> wrapperToPrimitive(final Class<?> cls) {
+    static Class<?> wrapperToPrimitive(final Class<?> cls) {
         return wrapperPrimitiveMap.get(cls);
     }
 
-    public static boolean isAssignable(Class<?> cls, final Class<?> toClass) {
+    static boolean isAssignable(Class<?> cls, final Class<?> toClass) {
         if (toClass == null) {
             return false;
         }
@@ -137,7 +137,7 @@ public class JavaUtils {
         return toClass.isAssignableFrom(cls);
     }
 
-    public static boolean isAJEType(Object result) {
+    static boolean hasAJETypeEquivalent(Object result) {
         return result == null
                 || result instanceof Integer
                 || result instanceof Double
@@ -148,7 +148,7 @@ public class JavaUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static Obj mapToAJE(Object result) {
+    static Obj mapJavaToAJEType(Object result) {
         if (result == null) {
             return Undefined.VALUE;
         } else if (result instanceof Obj) {
@@ -160,17 +160,20 @@ public class JavaUtils {
         } else if (result instanceof Boolean) {
             return (Boolean) result ? Bool.TRUE : Bool.FALSE;
         } else if (result instanceof String) {
-            return Text.of((String) result);
+            return Str.of((String) result);
         } else if (result instanceof List) {
             Vector vector = new Vector();
-
-            ((List<Object>) result).forEach(o -> vector.add(mapToAJE(o)));
-
+            for (Object o : ((List<Object>) result)) {
+                vector.add(mapJavaToAJEType(o));
+            }
             return vector;
         } else if (result instanceof Map) {
             Dictionary dict = new Dictionary();
 
-            ((Map<Object, Object>) result).forEach((key, value) -> dict.put(mapToAJE(key), mapToAJE(value)));
+            Map<Object, Object> map = (Map<Object, Object>) result;
+            for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                dict.put(mapJavaToAJEType(entry.getKey()), mapJavaToAJEType(entry.getValue()));
+            }
 
             return dict;
         } else {

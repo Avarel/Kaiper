@@ -16,16 +16,19 @@
 package xyz.avarel.aje.runtime.java;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.lang.reflect.Field;
 
 public class JavaObject implements Obj<Object> {
+    protected final Prototype<?> prototype;
     private final Object object;
 
     public JavaObject(Object object) {
         this.object = object;
+        this.prototype = JavaUtils.JAVA_PROTOTYPES.computeIfAbsent(object.getClass(),
+                cls -> new Prototype(cls.getSimpleName()));
     }
 
     public Object getObject() {
@@ -33,12 +36,12 @@ public class JavaObject implements Obj<Object> {
     }
 
     @Override
-    public Type getType() {
-        return new Type("java/" + object.getClass().getSimpleName());
+    public Prototype getType() {
+        return prototype;
     }
 
     @Override
-    public Object toNative() {
+    public Object toJava() {
         return object;
     }
 
@@ -47,7 +50,7 @@ public class JavaObject implements Obj<Object> {
         if (name != null) {
             try {
                 Field field = getObject().getClass().getField(name);
-                Object val = value.toNative();
+                Object val = value.toJava();
                 field.set(object, val);
                 return value;
             } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -59,11 +62,16 @@ public class JavaObject implements Obj<Object> {
 
     @Override
     public Obj getAttr(String name) {
-        return new JavaField(object, name);
+        return new JavaField(this, name);
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (obj instanceof JavaField) {
+            return object == ((JavaField) obj).getField();
+        } else if (obj instanceof JavaObject) {
+            return object == ((JavaObject) obj).getObject();
+        }
         return object == obj;
     }
 
