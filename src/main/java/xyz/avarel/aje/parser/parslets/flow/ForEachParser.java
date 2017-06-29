@@ -16,12 +16,14 @@
 package xyz.avarel.aje.parser.parslets.flow;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.flow.ForEachExpr;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.runtime.Undefined;
 
 public class ForEachParser implements PrefixParser {
     @Override
@@ -45,8 +47,12 @@ public class ForEachParser implements PrefixParser {
         Expr expr;
 
         if (parser.match(TokenType.LEFT_BRACE)) {
-            expr = parser.parseStatements();
-            parser.eat(TokenType.RIGHT_BRACE);
+            if (!parser.match(TokenType.RIGHT_BRACE)) {
+                expr = parser.parseStatements();
+                parser.eat(TokenType.RIGHT_BRACE);
+            } else {
+                expr = new ValueNode(parser.getLast().getPosition(), Undefined.VALUE);
+            }
         } else {
             expr = parser.parseExpr();
         }

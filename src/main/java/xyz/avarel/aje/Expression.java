@@ -161,13 +161,14 @@ public class Expression {
     }
 
     /**
-     * Returns the parser flags, which controls what features of AJE are enabled for this expression.
+     * Sets the parser flags, which controls what features of AJE are enabled for this expression.
      * Useful for limiting end-user's abilities to ensure that performance-expensive features are not abused.
      *
+     * @see ParserFlags
      * @return The parser flags, which controls what features of AJE are enabled for this expression.
      */
-    public ParserFlags getParserFlag() {
-        return parser.getParserFlags();
+    public void setParserFlags(int flags) {
+        parser.setParserFlags(new ParserFlags(flags));
     }
 
     private class ExpressionExpr extends Expr {

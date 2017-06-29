@@ -16,67 +16,48 @@
 package xyz.avarel.aje.parser;
 
 public class ParserFlags {
-    private boolean allowRanges = true;
-    private boolean allowCollections = true;
-    private boolean allowVariables = true;
-    private boolean allowControlFlow = true;
-    private boolean allowFunctionCreation = true;
-    private boolean allowInvocation = true;
-    private boolean allowLoops = true;
+    public static final int RANGES = 1;
+    public static final int COLLECTIONS = 1 << 1;
+    public static final int VARIABLES = 1 << 2;
+    public static final int CONTROL_FLOW = 1 << 3;
+    public static final int FUNCTION_CREATION = 1 << 4;
+    public static final int INVOCATION = 1 << 5;
+    public static final int LOOPS = 1 << 6;
+    public static final int ALL_OPTS = 0b1111111;
 
-    public boolean allowRanges() {
-        return allowRanges;
+    public static final ParserFlags ALL_FLAGS = new ParserFlags(ALL_OPTS);
+
+    private final int flags;
+
+    public ParserFlags(int flags) {
+        this.flags = flags;
     }
 
-    public void setAllowRanges(boolean flag) {
-        this.allowRanges = flag;
+    public boolean allowRanges() {
+        return (flags & RANGES) == RANGES;
     }
 
     public boolean allowCollections() {
-        return allowCollections;
-    }
-
-    public void setAllowCollections(boolean flag) {
-        this.allowCollections = flag;
+        return (flags & COLLECTIONS) == COLLECTIONS;
     }
 
     public boolean allowVariables() {
-        return allowVariables;
-    }
-
-    public void setAllowVariables(boolean flag) {
-        this.allowVariables = flag;
+        return (flags & VARIABLES) == VARIABLES;
     }
 
     public boolean allowFunctionCreation() {
-        return allowFunctionCreation;
-    }
-
-    public void setAllowFunctionCreation(boolean flag) {
-        this.allowFunctionCreation = flag;
+        return (flags & FUNCTION_CREATION) == FUNCTION_CREATION;
     }
 
     public boolean allowInvocation() {
-        return allowInvocation;
-    }
-
-    public void setAllowInvocation(boolean flag) {
-        this.allowInvocation = flag;
+        return (flags & INVOCATION) == INVOCATION;
     }
 
     public boolean allowControlFlows() {
-        return allowControlFlow;
-    }
-
-    public void setAllowControlFlows(boolean flag) {
-        this.allowControlFlow = flag;
+        return (flags & CONTROL_FLOW) == CONTROL_FLOW;
     }
 
     public boolean allowLoops() {
-        return allowLoops;
-    }
-
-    public void setAllowLoops(boolean flag) {
-        this.allowLoops = flag;
+        return (flags & LOOPS) == LOOPS;
     }
 }

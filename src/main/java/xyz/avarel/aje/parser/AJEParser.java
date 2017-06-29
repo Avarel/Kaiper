@@ -24,7 +24,7 @@ import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.runtime.Undefined;
 
 public class AJEParser extends Parser {
-    private final ParserFlags parserFlags = new ParserFlags();
+    private ParserFlags parserFlags = ParserFlags.ALL_FLAGS;
 
     public AJEParser(AJELexer tokens) {
         super(tokens, DefaultGrammar.INSTANCE);
@@ -36,6 +36,10 @@ public class AJEParser extends Parser {
 
     public ParserFlags getParserFlags() {
         return parserFlags;
+    }
+
+    public void setParserFlags(ParserFlags parserFlags) {
+        this.parserFlags = parserFlags;
     }
 
     public Expr compile() {
@@ -52,13 +56,16 @@ public class AJEParser extends Parser {
     }
 
     public Expr parseStatements() {
+        checkTimeout();
         if (match(TokenType.EOF)) return new ValueNode(getLast().getPosition(), Undefined.VALUE);
 
+        checkTimeout();
         Expr any = parseExpr();
 
         while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
             if (match(TokenType.EOF)) break;
 
+            checkTimeout();
             any = any.andThen(parseExpr());
         }
 
@@ -72,8 +79,10 @@ public class AJEParser extends Parser {
     public Expr parseExpr(int precedence) {
         Token token = eat();
 
+        checkTimeout();
         Expr expr = parsePrefix(token);
 
+        checkTimeout();
         return parseInfix(precedence, expr);
     }
 
@@ -82,6 +91,7 @@ public class AJEParser extends Parser {
 
         if (prefix == null) throw new SyntaxException("Unexpected " + token, token.getPosition());
 
+        checkTimeout();
         return prefix.parse(this, token);
     }
 
@@ -94,9 +104,16 @@ public class AJEParser extends Parser {
             if (infix == null) {
                 throw new SyntaxException("Unexpected " + token, token.getPosition());
             } else {
+                checkTimeout();
                 left = infix.parse(this, left, token);
             }
         }
         return left;
+    }
+
+    private void checkTimeout() {
+        if (Thread.interrupted()) {
+            throw new SyntaxException("Parsing phase interrupted");
+        }
     }
 }
