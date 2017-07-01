@@ -35,19 +35,19 @@ Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xy
 ◀ 2 : integer
 
 ▶ [1..3] + 2
-◀ [3, 4, 5] : vector
+◀ [3, 4, 5] : array
 
 ▶ var x = [50..60]; x[::-1]
-◀ [60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50] : vector
+◀ [60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50] : array
 
 ▶ var x = [100..200]; x[25:30]
-◀ [125, 126, 127, 128, 129] : vector
+◀ [125, 126, 127, 128, 129] : array
 
 ▶ [1..10][2:8]
-◀ [3, 4, 5, 6, 7, 8] : vector
+◀ [3, 4, 5, 6, 7, 8] : array
 
 ▶ [1..10][2:8:-2]
-◀ [8, 6, 4] : vector
+◀ [8, 6, 4] : array
 ```
 
 #### Flow Control
@@ -77,13 +77,13 @@ Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xy
 #### First Class Functions
 ```
 ▶ [1..10] |> map(_ ^ 2)
-◀ [1, 4, 9, 16, 25, 36, 49, 64, 81, 100] : vector
+◀ [1, 4, 9, 16, 25, 36, 49, 64, 81, 100] : array
 
 ▶ var add = { x, y -> x + y }; [1..10] |> fold(0, add)
 ◀ 55 : integer
 
 ▶ func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
-◀ [2, 4, 6, 8, 10, 12, 14, 16, 18, 20] : vector
+◀ [2, 4, 6, 8, 10, 12, 14, 16, 18, 20] : array
 
 ▶ [1..10] |> fold(1, _ * __)
 ◀ 3628800 : integer
@@ -130,7 +130,7 @@ repositories {
 |Complex numbers|`complex`| |`i^2` `3i` `(8+2i)(5i+3)`|
 |Boolean logic|`truth`|`Boolean`|`3 >= 2` `true && false`|
 |Ranges|`range`|`List<Integer>`|`1..10` `10..<1`|
-|Vectors|`vector`|`List<Obj>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
+|Vectors|`array`|`List<Obj>`|`[1,2,3] == [1..3]` `[1,2,3] + [1]`|
 |Dictionaries|`dictionary`|`Map<Object, Object>`|`[:]` `["hello":"there"]`|
 |Strings|`string`|`String`|`"Hello there!`|
 |Functions (first-class)|`function`| |`func(x) { x + 2 }` `{ x, y -> x ^ y }`|
@@ -214,9 +214,9 @@ class AJETest {
 |`>=`|Greater than or equal to|`a >= b`|
 |`<=`|Less than or equal to|`a <= b`|
 
-###### List and Ranges Operators `vector`
+###### List and Ranges Operators `array`
 Though ranges are of a different prototype, `range`, it is recommended that 
-    ranges are wrapped into a vector using `[range]` syntax. 
+    ranges are wrapped into a array using `[range]` syntax. 
 
 |Symbol|Description|Example|
 |---|---|---:|

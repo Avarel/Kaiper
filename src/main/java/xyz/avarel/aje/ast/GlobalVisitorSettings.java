@@ -13,29 +13,10 @@
  * under the License.
  */
 
-package xyz.avarel.aje.runtime;
+package xyz.avarel.aje.ast;
 
-/**
- * Every operation results in the same
- * instance, NOTHING.
- */
-public enum Undefined implements Obj<Undefined> {
-    VALUE;
-
-    public static final Prototype<Undefined> PROTOTYPE = new Prototype<>("Undefined");
-
-    @Override
-    public String toString() {
-        return "undefined";
-    }
-
-    @Override
-    public Undefined toJava() {
-        return this;
-    }
-
-    @Override
-    public Prototype getType() {
-        return PROTOTYPE;
-    }
+public class GlobalVisitorSettings {
+    public static int ITERATION_LIMIT = 100;
+    public static int SIZE_LIMIT = 100;
+    public static long MILLISECONDS_LIMIT = 10;
 }

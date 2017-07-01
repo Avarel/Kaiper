@@ -16,8 +16,8 @@
 package xyz.avarel.aje.runtime.java;
 
 import xyz.avarel.aje.runtime.*;
+import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
-import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
 
@@ -162,11 +162,11 @@ public class JavaUtils {
         } else if (result instanceof String) {
             return Str.of((String) result);
         } else if (result instanceof List) {
-            Vector vector = new Vector();
+            Array array = new Array();
             for (Object o : ((List<Object>) result)) {
-                vector.add(mapJavaToAJEType(o));
+                array.add(mapJavaToAJEType(o));
             }
-            return vector;
+            return array;
         } else if (result instanceof Map) {
             Dictionary dict = new Dictionary();
 

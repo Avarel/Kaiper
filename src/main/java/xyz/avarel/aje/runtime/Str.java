@@ -15,7 +15,7 @@
 
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.runtime.collections.Vector;
+import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -129,7 +129,7 @@ public class Str implements Obj<String> {
         }
 
         if (step == 1) {
-            return Str.of(value().substring(start, end));
+            return Str.of(value.substring(Math.max(0, start), Math.min(length(), end)));
         } else {
             if (step > 0) {
                 StringBuilder buffer = new StringBuilder();
@@ -161,12 +161,12 @@ public class Str implements Obj<String> {
         return Int.of(value.indexOf(str.value));
     }
 
-    public Vector split(Str str) {
-        Vector vector = new Vector();
+    public Array split(Str str) {
+        Array array = new Array();
         for (String part : value.split(str.value)) {
-            vector.add(Str.of(part));
+            array.add(Str.of(part));
         }
-        return vector;
+        return array;
     }
 
     public Bool startsWith(Str str) {
@@ -189,12 +189,12 @@ public class Str implements Obj<String> {
         return Str.of(value.substring(start, end));
     }
 
-    public Vector toVector() {
-        Vector vector = new Vector();
+    public Array toVector() {
+        Array array = new Array();
         for (int i = 0; i < length(); i++) {
-            vector.add(substring(i, i + 1));
+            array.add(substring(i, i + 1));
         }
-        return vector;
+        return array;
     }
 
     public Str toLowerCase() {

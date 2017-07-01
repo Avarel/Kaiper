@@ -29,42 +29,42 @@ import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
 /**
- * AJE wrapper class for a one dimensional vector.
+ * AJE wrapper class for a one dimensional list.
  */
-public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterable<Obj> {
-    public static final Prototype<Vector> PROTOTYPE = new VectorPrototype();
+public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable<Obj> {
+    public static final Prototype<Array> PROTOTYPE = new ArrayPrototype();
 
     /**
-     * Creates an empty vector.
+     * Creates an empty array.
      */
-    public Vector() {
+    public Array() {
         super();
     }
 
     /**
-     * Creates a vector of items.
+     * Creates an array of items.
      *
      * @param   items
      *          {@link Obj} items to put into the list.
-     * @return  The created {@link Vector}.
+     * @return The created {@link Array}.
      */
-    public static Vector of(Obj... items) {
-        Vector vector = new Vector();
-        vector.addAll(Arrays.asList(items));
-        return vector;
+    public static Array of(Obj... items) {
+        Array array = new Array();
+        array.addAll(Arrays.asList(items));
+        return array;
     }
 
     /**
-     * Creates a vector of items from a native {@link Collection collection}.
+     * Creates an array of items from a native {@link Collection collection}.
      *
      * @param   collection
      *          Native {@link Collection collection} of {@link Obj AJE objects}.
-     * @return  The created {@link Vector}.
+     * @return The created {@link Array}.
      */
-    public static Vector ofList(Collection<Obj> collection) {
-        Vector vector = new Vector();
-        vector.addAll(collection);
-        return vector;
+    public static Array ofList(Collection<Obj> collection) {
+        Array array = new Array();
+        array.addAll(collection);
+        return array;
     }
 
     /**
@@ -91,86 +91,86 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
 
     @Override
     public Obj plus(Obj other) {
-        if (other instanceof Vector) {
-            return plus((Vector) other);
+        if (other instanceof Array) {
+            return plus((Array) other);
         }
-        return plus(Vector.of(other));
+        return plus(Array.of(other));
     }
 
-    private Vector plus(Vector other) {
+    private Array plus(Array other) {
         return listOperation(other, Obj::plus);
     }
 
     @Override
     public Obj minus(Obj other) {
-        if (other instanceof Vector) {
-            return minus((Vector) other);
+        if (other instanceof Array) {
+            return minus((Array) other);
         }
-        return minus(Vector.of(other));
+        return minus(Array.of(other));
     }
 
-    private Vector minus(Vector other) {
+    private Array minus(Array other) {
         return listOperation(other, Obj::minus);
     }
 
     @Override
     public Obj times(Obj other) {
-        if (other instanceof Vector) {
-            return times((Vector) other);
+        if (other instanceof Array) {
+            return times((Array) other);
         }
-        return times(Vector.of(other));
+        return times(Array.of(other));
     }
 
-    private Vector times(Vector other) {
+    private Array times(Array other) {
         return listOperation(other, Obj::times);
     }
 
     @Override
     public Obj divide(Obj other) {
-        if (other instanceof Vector) {
-            return divide((Vector) other);
+        if (other instanceof Array) {
+            return divide((Array) other);
         }
-        return divide(Vector.of(other));
+        return divide(Array.of(other));
     }
 
-    private Vector divide(Vector other) {
+    private Array divide(Array other) {
         return listOperation(other, Obj::divide);
     }
 
     @Override
     public Obj pow(Obj other) {
-        if (other instanceof Vector) {
-            return pow((Vector) other);
+        if (other instanceof Array) {
+            return pow((Array) other);
         }
-        return pow(Vector.of(other));
+        return pow(Array.of(other));
     }
 
-    private Vector pow(Vector other) {
+    private Array pow(Array other) {
         return listOperation(other, Obj::pow);
     }
 
     @Override
-    public Vector negative() {
+    public Array negative() {
         return listOperation(Obj::negative);
     }
 
     @Override
     public Bool isEqualTo(Obj other) {
-        if (other instanceof Vector) {
-            return isEqualTo((Vector) other);
+        if (other instanceof Array) {
+            return isEqualTo((Array) other);
         }
         return Bool.FALSE;
     }
 
-    public Bool isEqualTo(Vector other) {
+    public Bool isEqualTo(Array other) {
         if (this == other) {
             return Bool.TRUE;
         } else if (size() != other.size()) {
             return Bool.FALSE;
         }
 
-        Vector vector = listOperation(other, Obj::isEqualTo);
-        for (Obj o : vector) {
+        Array array = listOperation(other, Obj::isEqualTo);
+        for (Obj o : array) {
             if (!(o instanceof Bool)) {
                 if (o == Bool.FALSE) {
                     return Bool.FALSE;
@@ -181,23 +181,23 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
         return Bool.TRUE;
     }
 
-    private Vector listOperation(Vector other, BinaryOperator<Obj> operator) {
+    private Array listOperation(Array other, BinaryOperator<Obj> operator) {
         int len = size() == 1 ? other.size()
                 : other.size() == 1 ? size()
                 : Math.min(size(), other.size());
-        Vector vector = Vector.of();
+        Array array = Array.of();
         for (int i = 0; i < len; i++) {
-            vector.add(operator.apply(get(i % size()), other.get(i % other.size())));
+            array.add(operator.apply(get(i % size()), other.get(i % other.size())));
         }
-        return vector;
+        return array;
     }
 
-    private Vector listOperation(UnaryOperator<Obj> operator) {
-        Vector vector = Vector.of();
+    private Array listOperation(UnaryOperator<Obj> operator) {
+        Array array = Array.of();
         for (int i = 0; i < size(); i++) {
-            vector.add(operator.apply(get(i % size())));
+            array.add(operator.apply(get(i % size())));
         }
-        return vector;
+        return array;
     }
 
     @Override
@@ -243,24 +243,24 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
         }
 
         if (step == 1) {
-            return Vector.ofList(subList(start, end));
+            return Array.ofList(subList(Math.max(0, start), Math.min(size(), end)));
         } else {
             if (step > 0) {
-                Vector newVector = new Vector();
+                Array newArray = new Array();
 
                 for (int i = start; i < end; i += step) {
-                    newVector.add(get(i));
+                    newArray.add(get(i));
                 }
 
-                return newVector;
+                return newArray;
             } else if (step < 0) {
-                Vector newVector = new Vector();
+                Array newArray = new Array();
 
                 for (int i = end - 1; i >= start; i += step) {
-                    newVector.add(get(i));
+                    newArray.add(get(i));
                 }
 
-                return newVector;
+                return newArray;
             } else { // step == 0
                 return Undefined.VALUE;
             }
@@ -341,14 +341,14 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
         }
     }
 
-    private static class VectorPrototype extends Prototype<Vector> {
-        public VectorPrototype() {
-            super("Vector");
+    private static class ArrayPrototype extends Prototype<Array> {
+        public ArrayPrototype() {
+            super("Array");
 
             getScope().declare("length", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return Int.of(((Vector) arguments.get(0)).size());
+                    return Int.of(((Array) arguments.get(0)).size());
                 }
             });
 
@@ -357,14 +357,14 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
             getScope().declare("lastIndex", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return Int.of(((Vector) arguments.get(0)).size() - 1);
+                    return Int.of(((Array) arguments.get(0)).size() - 1);
                 }
             });
 
             getScope().declare("append", new NativeFunc(true, Obj.PROTOTYPE) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    ((Vector) arguments.get(0)).addAll(arguments);
+                    ((Array) arguments.get(0)).addAll(arguments);
                     return arguments.get(0);
                 }
             });
@@ -374,7 +374,7 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 protected Obj eval(List<Obj> arguments) {
                     Func action = (Func) arguments.get(1);
 
-                    for (Obj obj : (Vector) arguments.get(0)) {
+                    for (Obj obj : (Array) arguments.get(0)) {
                         action.invoke(Collections.singletonList(obj));
                     }
                     return Undefined.VALUE;
@@ -386,11 +386,11 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 protected Obj eval(List<Obj> arguments) {
                     Func transform = (Func) arguments.get(1);
 
-                    Vector vector = new Vector();
-                    for (Obj obj : (Vector) arguments.get(0)) {
-                        vector.add(transform.invoke(Collections.singletonList(obj)));
+                    Array array = new Array();
+                    for (Obj obj : (Array) arguments.get(0)) {
+                        array.add(transform.invoke(Collections.singletonList(obj)));
                     }
-                    return vector;
+                    return array;
                 }
             });
 
@@ -399,12 +399,12 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                 protected Obj eval(List<Obj> arguments) {
                     Func predicate = (Func) arguments.get(1);
 
-                    Vector vector = new Vector();
-                    for (Obj obj : (Vector) arguments.get(0)) {
+                    Array array = new Array();
+                    for (Obj obj : (Array) arguments.get(0)) {
                         Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
-                        if (condition == Bool.TRUE) vector.add(obj);
+                        if (condition == Bool.TRUE) array.add(obj);
                     }
-                    return vector;
+                    return array;
                 }
             });
 
@@ -415,7 +415,7 @@ public class Vector extends ArrayList<Obj> implements Obj<List<Object>>, Iterabl
                     Obj accumulator = arguments.get(1);
                     Func operation = (Func) arguments.get(2);
 
-                    for (Obj obj : (Vector) arguments.get(0)) {
+                    for (Obj obj : (Array) arguments.get(0)) {
                         accumulator = operation.invoke(accumulator, obj);
                     }
                     return accumulator;

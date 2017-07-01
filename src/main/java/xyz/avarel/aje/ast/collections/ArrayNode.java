@@ -38,10 +38,10 @@ import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 
-public class VectorNode extends Expr {
+public class ArrayNode extends Expr {
     private final List<Expr> items;
 
-    public VectorNode(Position position, List<Expr> items) {
+    public ArrayNode(Position position, List<Expr> items) {
         super(position);
         this.items = items;
     }

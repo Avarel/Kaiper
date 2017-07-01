@@ -17,8 +17,8 @@ package xyz.avarel.aje.parser.parslets.nodes;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ValueNode;
+import xyz.avarel.aje.ast.collections.ArrayNode;
 import xyz.avarel.aje.ast.collections.DictionaryNode;
-import xyz.avarel.aje.ast.collections.VectorNode;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
@@ -32,25 +32,33 @@ import java.util.*;
 public class CollectionsParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        if (!parser.getParserFlags().allowCollections()) {
-            throw new SyntaxException("Collections are disabled");
-        }
-
         // EMPTY DICTIONARY
         if (parser.match(TokenType.COLON)) {
+            if (!parser.getParserFlags().allowDictionary()) {
+                throw new SyntaxException("Dictionaries are disabled");
+            }
             parser.eat(TokenType.RIGHT_BRACKET);
             return new DictionaryNode(token.getPosition(), Collections.emptyMap());
         }
 
         if (parser.match(TokenType.RIGHT_BRACKET)) {
-            return new VectorNode(token.getPosition(), Collections.emptyList());
+            if (!parser.getParserFlags().allowVectors()) {
+                throw new SyntaxException("Collections are disabled");
+            }
+            return new ArrayNode(token.getPosition(), Collections.emptyList());
         }
 
         Expr expr = parser.parseExpr();
 
         if (parser.match(TokenType.COLON)) {
+            if (!parser.getParserFlags().allowDictionary()) {
+                throw new SyntaxException("Collections are disabled");
+            }
             return parseDictionary(parser, token, expr);
         } else {
+            if (!parser.getParserFlags().allowVectors()) {
+                throw new SyntaxException("Collections are disabled");
+            }
             return parseVector(parser, token, expr);
         }
     }
@@ -66,7 +74,7 @@ public class CollectionsParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
-        return new VectorNode(token.getPosition(), items);
+        return new ArrayNode(token.getPosition(), items);
     }
 
     private Expr parseDictionary(AJEParser parser, Token token, Expr initKey) {

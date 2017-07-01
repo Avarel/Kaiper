@@ -30,9 +30,9 @@ import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Prototype;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
-import xyz.avarel.aje.runtime.collections.Vector;
 import xyz.avarel.aje.runtime.functions.CompiledFunc;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.Parameter;
@@ -44,8 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ExprVisitor {
-    private final VisitorFlags flags = new VisitorFlags();
-    private final long timeout = System.currentTimeMillis() + flags.getTimeLimitMS();
+    private final long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
 
     public Obj visit(Statements statements, Scope scope) {
         List<Expr> exprs = statements.getExprs();
@@ -138,7 +137,7 @@ public class ExprVisitor {
             int start = ((Int) startObj).value();
             int end = ((Int) endObj).value();
 
-            if (Math.abs(end - start) > flags.getSizeLimit()) {
+            if (Math.abs(end - start) > GlobalVisitorSettings.SIZE_LIMIT) {
                 throw new ComputeException("Size of range too large");
             }
 
@@ -150,8 +149,8 @@ public class ExprVisitor {
         //throw new ComputeException("Start and end of range must be integers", expr.getPosition());
     }
 
-    public Obj visit(VectorNode expr, Scope scope) {
-        Vector vector = new Vector();
+    public Obj visit(ArrayNode expr, Scope scope) {
+        Array array = new Array();
 
         for (Expr itemExpr : expr.getItems()) {
             checkTimeout();
@@ -159,24 +158,24 @@ public class ExprVisitor {
 
             if (item instanceof Range) {
                 for (Int i : (Range) item) {
-                    if (vector.size() > flags.getSizeLimit()) {
+                    if (array.size() > GlobalVisitorSettings.SIZE_LIMIT) {
                         throw new ComputeException("Size of vector too large");
                     }
 
                     checkTimeout();
-                    vector.add(i);
+                    array.add(i);
                 }
                 continue;
             }
 
-            if (vector.size() > flags.getSizeLimit()) {
+            if (array.size() > GlobalVisitorSettings.SIZE_LIMIT) {
                 throw new ComputeException("Size of range too large");
             }
 
-            vector.add(item);
+            array.add(item);
         }
 
-        return vector;
+        return array;
     }
 
     public Obj visit(SliceOperation expr, Scope scope) {
@@ -271,9 +270,9 @@ public class ExprVisitor {
             String variant = expr.getVariant();
             Expr loopExpr = expr.getAction();
 
-            int iter = 0;
+            int iteration = 0;
             for (Object var : iterable) {
-                if (iter > flags.getSizeLimit()) {
+                if (iteration > GlobalVisitorSettings.ITERATION_LIMIT) {
                     throw new ComputeException("Size of range too large");
                 }
 
@@ -282,7 +281,7 @@ public class ExprVisitor {
                     copy.declare(variant, (Obj) var);
                     checkTimeout();
                     loopExpr.accept(this, copy);
-                    iter++;
+                    iteration++;
                 } else {
                     throw new ComputeException("Items in iterable do not implement Obj interface", expr.getIterable().getPosition());
                 }
@@ -312,8 +311,6 @@ public class ExprVisitor {
     private void checkTimeout() {
         if (System.currentTimeMillis() >= timeout) {
             throw new ComputeException("Computation timeout");
-        } else if (Thread.interrupted()) {
-            throw new ComputeException("Computation phase interrupted");
         }
     }
 }

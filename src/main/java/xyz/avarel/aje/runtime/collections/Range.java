@@ -59,12 +59,12 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
         return PROTOTYPE;
     }
 
-    public Vector toVector() {
-        Vector vector = new Vector();
+    public Array toVector() {
+        Array array = new Array();
         for (Int i : this) {
-            vector.add(i);
+            array.add(i);
         }
-        return vector;
+        return array;
     }
 
     @Override

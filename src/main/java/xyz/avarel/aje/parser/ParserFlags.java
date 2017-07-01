@@ -16,14 +16,16 @@
 package xyz.avarel.aje.parser;
 
 public class ParserFlags {
-    public static final int RANGES = 1;
-    public static final int COLLECTIONS = 1 << 1;
-    public static final int VARIABLES = 1 << 2;
-    public static final int CONTROL_FLOW = 1 << 3;
-    public static final int FUNCTION_CREATION = 1 << 4;
-    public static final int INVOCATION = 1 << 5;
-    public static final int LOOPS = 1 << 6;
-    public static final int ALL_OPTS = 0b1111111;
+    public static final int VARIABLES = 1;
+    public static final int CONTROL_FLOW = 1 << 1;
+    public static final int FUNCTION_CREATION = 1 << 2;
+    public static final int INVOCATION = 1 << 3;
+    public static final int LOOPS = 1 << 4;
+    public static final int VECTORS = 1 << 5;
+    public static final int RANGES = 1 << 6;
+    public static final int DICTIONARY = 1 << 7;
+    public static final int COLLECTIONS = VECTORS | RANGES | DICTIONARY;
+    public static final int ALL_OPTS = VARIABLES | CONTROL_FLOW | FUNCTION_CREATION | INVOCATION | LOOPS | COLLECTIONS;
 
     public static final ParserFlags ALL_FLAGS = new ParserFlags(ALL_OPTS);
 
@@ -33,12 +35,16 @@ public class ParserFlags {
         this.flags = flags;
     }
 
+    public boolean allowVectors() {
+        return (flags & VECTORS) == VECTORS;
+    }
+
     public boolean allowRanges() {
         return (flags & RANGES) == RANGES;
     }
 
-    public boolean allowCollections() {
-        return (flags & COLLECTIONS) == COLLECTIONS;
+    public boolean allowDictionary() {
+        return (flags & DICTIONARY) == DICTIONARY;
     }
 
     public boolean allowVariables() {

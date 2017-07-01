@@ -18,7 +18,7 @@ package xyz.avarel.aje.scope;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.collections.Vector;
+import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.functions.ComposedFunc;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
@@ -367,10 +367,10 @@ public enum DefaultFunctions {
         }
     }),
 
-    FOREACH(new NativeFunc(Vector.PROTOTYPE, Func.PROTOTYPE) {
+    FOREACH(new NativeFunc(Array.PROTOTYPE, Func.PROTOTYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
-            Vector arg = (Vector) arguments.get(0);
+            Array arg = (Array) arguments.get(0);
             Func action = (Func) arguments.get(1);
 
             for (Obj obj : arg) {
@@ -379,37 +379,37 @@ public enum DefaultFunctions {
             return Undefined.VALUE;
         }
     }),
-    MAP(new NativeFunc(Vector.PROTOTYPE, Func.PROTOTYPE) {
+    MAP(new NativeFunc(Array.PROTOTYPE, Func.PROTOTYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
-            Vector arg = (Vector) arguments.get(0);
+            Array arg = (Array) arguments.get(0);
             Func transform = (Func) arguments.get(1);
 
-            Vector vector = new Vector();
+            Array array = new Array();
             for (Obj obj : arg) {
-                vector.add(transform.invoke(Collections.singletonList(obj)));
+                array.add(transform.invoke(Collections.singletonList(obj)));
             }
-            return vector;
+            return array;
         }
     }),
-    FILTER(new NativeFunc(Vector.PROTOTYPE, Func.PROTOTYPE) {
+    FILTER(new NativeFunc(Array.PROTOTYPE, Func.PROTOTYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
-            Vector arg = (Vector) arguments.get(0);
+            Array arg = (Array) arguments.get(0);
             Func predicate = (Func) arguments.get(1);
 
-            Vector vector = new Vector();
+            Array array = new Array();
             for (Obj obj : arg) {
                 Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
-                if (condition == Bool.TRUE) vector.add(obj);
+                if (condition == Bool.TRUE) array.add(obj);
             }
-            return vector;
+            return array;
         }
     }),
-    FOLD(new NativeFunc(Vector.PROTOTYPE, Obj.PROTOTYPE, Func.PROTOTYPE) {
+    FOLD(new NativeFunc(Array.PROTOTYPE, Obj.PROTOTYPE, Func.PROTOTYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {
-            Vector arg = (Vector) arguments.get(0);
+            Array arg = (Array) arguments.get(0);
             Obj accumulator = arguments.get(1);
             Func operation = (Func) arguments.get(2);
 

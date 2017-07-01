@@ -22,7 +22,7 @@ package xyz.avarel.aje
 import org.junit.Assert
 import org.junit.Test
 
-class VectorTest {
+class ArrayTest {
     @Test
     fun `declare`() {
         Assert.assertEquals(eval("[1, 2, 3]"), eval("[1,2,3]"))
