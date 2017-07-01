@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5549252b44484f4fa7cf892db272c5da)](https://www.codacy.com/app/Avarel/AJE?utm_source=github.com&utm_medium=referral&utm_content=Avarel/AJE&utm_campaign=badger)
 AJE [![Download](https://api.bintray.com/packages/avarel/maven/AJE/images/download.svg)](https://bintray.com/avarel/maven/AJE/_latestVersion) [![Build Status](https://travis-ci.org/Avarel/AJE.svg?branch=master)](https://travis-ci.org/Avarel/AJE)
 ===
 **What is AJE?** AJE is an easy powerful mathematical evaluator for the Java programming language. It has built-in
