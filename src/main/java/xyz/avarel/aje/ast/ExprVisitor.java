@@ -28,7 +28,7 @@ import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Prototype;
+import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
@@ -66,11 +66,11 @@ public class ExprVisitor {
             checkTimeout();
             Obj obj_type = data.getTypeExpr().accept(this, scope);
 
-            if (!(obj_type instanceof Prototype)) {
+            if (!(obj_type instanceof Type)) {
                 throw new ComputeException(obj_type + " is not a valid parameter type", data.getTypeExpr().getPosition());
             }
 
-            parameters.add(Parameter.of(data.getName(), (Prototype) obj_type, data.getDefault()));
+            parameters.add(Parameter.of(data.getName(), (Type) obj_type, data.getDefault()));
         }
 
         checkTimeout();

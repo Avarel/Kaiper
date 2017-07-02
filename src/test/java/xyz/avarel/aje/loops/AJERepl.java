@@ -22,7 +22,9 @@ package xyz.avarel.aje.loops;
 import xyz.avarel.aje.Evaluator;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
@@ -33,6 +35,14 @@ public class AJERepl {
         boolean running = true;
 
         Evaluator evaluator = new Evaluator();
+
+        evaluator.getScope().declare("print", new NativeFunc(Obj.TYPE) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                System.out.println(arguments.get(0));
+                return Undefined.VALUE;
+            }
+        });
 
         while (running) {
             try {

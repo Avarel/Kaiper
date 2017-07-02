@@ -31,12 +31,12 @@ import java.util.List;
  * @param <J> Java representation of the object.
  */
 public interface Obj<J> {
-    Prototype<Obj> PROTOTYPE = new ObjPrototype();
+    Type<Obj> TYPE = new ObjType();
 
     /**
-     * @return The {@link Prototype} of the object.
+     * @return The {@link Type} of the object.
      */
-    Prototype getType();
+    Type getType();
 
     /**
      * @return The {@link J java} object representation of this AJE object or {@code null}.
@@ -322,8 +322,8 @@ public interface Obj<J> {
         return pow(Decimal.of(other));
     }
 
-    class ObjPrototype extends Prototype<Obj> {
-        public ObjPrototype() {
+    class ObjType extends Type<Obj> {
+        public ObjType() {
             super("Object");
 
             getScope().declare("toString", new NativeFunc(Parameter.of("self")) {

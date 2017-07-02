@@ -16,19 +16,19 @@
 package xyz.avarel.aje.runtime.java;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Prototype;
+import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.lang.reflect.Field;
 
 public class JavaObject implements Obj<Object> {
-    protected final Prototype<?> prototype;
+    protected final Type<?> type;
     private final Object object;
 
     public JavaObject(Object object) {
         this.object = object;
-        this.prototype = JavaUtils.JAVA_PROTOTYPES.computeIfAbsent(object.getClass(),
-                cls -> new Prototype(cls.getSimpleName()));
+        this.type = JavaUtils.JAVA_PROTOTYPES.computeIfAbsent(object.getClass(),
+                cls -> new Type(cls.getSimpleName()));
     }
 
     public Object getObject() {
@@ -36,8 +36,8 @@ public class JavaObject implements Obj<Object> {
     }
 
     @Override
-    public Prototype getType() {
-        return prototype;
+    public Type getType() {
+        return type;
     }
 
     @Override

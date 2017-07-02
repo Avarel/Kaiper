@@ -16,7 +16,7 @@
 package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Prototype;
+import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
@@ -24,15 +24,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
-    public static final Prototype<Func> PROTOTYPE = new FunctionPrototype();
+    public static final Type<Func> TYPE = new FunctionType();
 
     public abstract int getArity();
 
     public abstract List<Parameter> getParameters();
 
     @Override
-    public Prototype<Func> getType() {
-        return PROTOTYPE;
+    public Type<Func> getType() {
+        return TYPE;
     }
 
     @Override
@@ -96,8 +96,8 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
         return "func(" + getParameters().stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
     }
 
-    public static class FunctionPrototype extends Prototype<Func> {
-        public FunctionPrototype() {
+    public static class FunctionType extends Type<Func> {
+        public FunctionType() {
             super("Function");
         }
     }

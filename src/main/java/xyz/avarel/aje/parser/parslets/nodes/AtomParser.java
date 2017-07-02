@@ -13,29 +13,18 @@
  * under the License.
  */
 
-package xyz.avarel.aje.runtime;
+package xyz.avarel.aje.parser.parslets.nodes;
 
-/**
- * Every operation results in the same
- * instance, NOTHING.
- */
-public enum Undefined implements Obj<Undefined> {
-    VALUE;
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.ValueNode;
+import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.PrefixParser;
+import xyz.avarel.aje.parser.lexer.Token;
+import xyz.avarel.aje.runtime.Atom;
 
-    public static final Type<Undefined> TYPE = new Type<>("Undefined");
-
+public class AtomParser implements PrefixParser {
     @Override
-    public String toString() {
-        return "undefined";
-    }
-
-    @Override
-    public Undefined toJava() {
-        return this;
-    }
-
-    @Override
-    public Type getType() {
-        return TYPE;
+    public Expr parse(AJEParser parser, Token token) {
+        return new ValueNode(token.getPosition(), Atom.of(token.getString()));
     }
 }

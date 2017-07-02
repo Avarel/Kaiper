@@ -16,7 +16,7 @@
 package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Prototype;
+import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.ArrayList;
@@ -40,17 +40,17 @@ public abstract class NativeFunc extends Func {
         this.varargs = false;
     }
 
-    public NativeFunc(Prototype... classes) {
+    public NativeFunc(Type... classes) {
         this.parameters = new ArrayList<>();
 
-        for (Prototype prototype : classes) {
-            this.parameters.add(Parameter.of(prototype));
+        for (Type type : classes) {
+            this.parameters.add(Parameter.of(type));
         }
 
         this.varargs = false;
     }
 
-    public NativeFunc(boolean varargs, Prototype parameter) { // a : Int...
+    public NativeFunc(boolean varargs, Type parameter) { // a : Int...
         //this.parameters = new ArrayList<>();
 
         this.parameters = Collections.singletonList(Parameter.of(parameter));
@@ -81,13 +81,13 @@ public abstract class NativeFunc extends Func {
 
         if (!varargs) {
             for (int i = 0; i < parameters.size(); i++) {
-                if (!arguments.get(i).getType().is(parameters.get(i).getPrototype())) {
+                if (!arguments.get(i).getType().is(parameters.get(i).getType())) {
                     return Undefined.VALUE;
                 }
             }
         } else {
             for (Obj argument : arguments) { // all varargs should be the same size
-                if (!argument.getType().is(parameters.get(0).getPrototype())) {
+                if (!argument.getType().is(parameters.get(0).getType())) {
                     return Undefined.VALUE;
                 }
             }

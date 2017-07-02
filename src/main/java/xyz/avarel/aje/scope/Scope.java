@@ -15,6 +15,7 @@
 
 package xyz.avarel.aje.scope;
 
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 
@@ -57,8 +58,10 @@ public class Scope {
         } else if (parent != null) {
             if (parent.contains(key)) {
                 parent.assign(key, value);
+                return;
             }
         }
+        throw new ComputeException(key + " is not defined, it must be declared using Scope#declare first");
     }
 
     public Map<String, Obj> getMap() {

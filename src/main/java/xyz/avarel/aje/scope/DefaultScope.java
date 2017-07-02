@@ -80,18 +80,18 @@ public class DefaultScope extends Scope {
         declare("fold", DefaultFunctions.FOLD.get());
 
         // Types
-        declare("Int", Int.PROTOTYPE);
-        declare("Decimal", Decimal.PROTOTYPE);
-        declare("Complex", Complex.PROTOTYPE);
-        declare("Number", Numeric.PROTOTYPE);
-        declare("Object", Obj.PROTOTYPE);
-        declare("Boolean", Bool.PROTOTYPE);
-        declare("Array", Array.PROTOTYPE);
-        declare("Range", Range.PROTOTYPE);
-        declare("Dictionary", Dictionary.PROTOTYPE);
-        declare("String", Str.PROTOTYPE);
-        declare("Function", Func.PROTOTYPE);
-        declare("Undefined", Undefined.PROTOTYPE);
+        declare("Int", Int.TYPE);
+        declare("Decimal", Decimal.TYPE);
+        declare("Complex", Complex.TYPE);
+        declare("Number", Numeric.TYPE);
+        declare("Object", Obj.TYPE);
+        declare("Boolean", Bool.TYPE);
+        declare("Array", Array.TYPE);
+        declare("Range", Range.TYPE);
+        declare("Dictionary", Dictionary.TYPE);
+        declare("String", Str.TYPE);
+        declare("Function", Func.TYPE);
+        declare("Undefined", Undefined.TYPE);
     }
 
     @Deprecated

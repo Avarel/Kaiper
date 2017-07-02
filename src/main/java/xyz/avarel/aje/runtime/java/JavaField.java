@@ -16,7 +16,7 @@
 package xyz.avarel.aje.runtime.java;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Prototype;
+import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.lang.reflect.Field;
@@ -54,13 +54,13 @@ public class JavaField extends JavaObject implements Obj<Object> {
     }
 
     @Override
-    public Prototype getType() {
+    public Type getType() {
         Object field = getField();
         if (JavaUtils.hasAJETypeEquivalent(field)) {
             return JavaUtils.mapJavaToAJEType(field).getType();
         }
 
-        return prototype;
+        return type;
     }
 
     @Override

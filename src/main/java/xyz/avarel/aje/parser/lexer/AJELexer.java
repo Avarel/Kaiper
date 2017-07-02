@@ -214,26 +214,37 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
             case ':':
                 return Character.isLetter(peek())
-                        ? nextAtom(c)
+                        ? nextAtom()
                         : make(TokenType.COLON);
 
-            case '=': return match('=')
+            case '=':
+                return match('=') // ==
                     ? make(TokenType.EQUALS)
-                    : make(TokenType.ASSIGN);
-            case '>': return match('=')
+                        : make(TokenType.ASSIGN); // >
+            case '>':
+                return match('=') // >=
                     ? make(TokenType.GTE)
-                    : make(TokenType.GT);
-            case '<': return match('=')
+                        : match('>') // >>
+                        ? make(TokenType.FORWARD_COMPOSITION)
+                        : make(TokenType.GT); // >
+            case '<':
+                return match('=') // <=
                     ? make(TokenType.LTE)
-                    : make(TokenType.LT);
-            case '|': return match('|')
+                        : match('|') // <|
+                        ? make(TokenType.PIPE_BACKWARD)
+                        : match('<') // <<
+                        ? make(TokenType.BACKWARD_COMPOSITION)
+                        : make(TokenType.LT); // <
+            case '|':
+                return match('|') // ||
                     ? make(TokenType.OR)
-                    : match('>')
+                        : match('>') // |>
                     ? make(TokenType.PIPE_FORWARD)
-                    : make(TokenType.VERTICAL_BAR);
-            case '&': return match('&')
+                        : make(TokenType.VERTICAL_BAR); // |
+            case '&':
+                return match('&') // &&
                     ? make(TokenType.AND)
-                    : make(TokenType.AMPERSAND);
+                        : make(TokenType.AMPERSAND); // &
 
             case ';':
                 match('\r');
@@ -317,9 +328,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         return nextName(String.valueOf(init));
     }
 
-    private Token nextAtom(char init) {
+    private Token nextAtom() {
         StringBuilder sb = new StringBuilder();
-        sb.append(init);
 
         char c;
         while (true) {

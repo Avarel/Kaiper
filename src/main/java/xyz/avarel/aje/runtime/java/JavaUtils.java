@@ -30,7 +30,7 @@ public class JavaUtils {
     /* Apache common langs */
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>();
     private static final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>();
-    public static Map<Class<?>, Prototype<?>> JAVA_PROTOTYPES = new WeakHashMap<>();
+    public static Map<Class<?>, Type<?>> JAVA_PROTOTYPES = new WeakHashMap<>();
 
     static {
         primitiveWrapperMap.put(Boolean.TYPE, Boolean.class);

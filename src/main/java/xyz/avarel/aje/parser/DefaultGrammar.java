@@ -23,6 +23,7 @@ import xyz.avarel.aje.parser.parslets.GroupParser;
 import xyz.avarel.aje.parser.parslets.flow.ForEachParser;
 import xyz.avarel.aje.parser.parslets.flow.IfElseParser;
 import xyz.avarel.aje.parser.parslets.flow.ReturnParser;
+import xyz.avarel.aje.parser.parslets.functional.PipeParser;
 import xyz.avarel.aje.parser.parslets.functions.*;
 import xyz.avarel.aje.parser.parslets.nodes.*;
 import xyz.avarel.aje.parser.parslets.operators.BinaryOperatorParser;
@@ -53,7 +54,7 @@ public class DefaultGrammar extends Grammar {
         prefix(TokenType.BOOLEAN, new BoolParser());
         prefix(TokenType.TEXT, new TextParser());
         prefix(TokenType.UNDEFINED, new UndefinedParser());
-
+        prefix(TokenType.ATOM, new AtomParser());
 
         prefix(TokenType.FUNCTION, new FunctionParser());
         prefix(TokenType.UNDERSCORE, new ImplicitFunctionParser());
@@ -79,10 +80,10 @@ public class DefaultGrammar extends Grammar {
                 new BinaryOperatorParser(Precedence.EQUALITY, true, (a, b) -> a.isEqualTo(b).negate()));
         infix(TokenType.GT, new BinaryOperatorParser(Precedence.COMPARISON, true, Obj::greaterThan));
         infix(TokenType.LT, new BinaryOperatorParser(Precedence.COMPARISON, true, Obj::lessThan));
-        infix(TokenType.GTE,
-                new BinaryOperatorParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.greaterThan(b))));
-        infix(TokenType.LTE,
-                new BinaryOperatorParser(Precedence.COMPARISON, true, (a, b) -> a.isEqualTo(b).or(a.lessThan(b))));
+        infix(TokenType.GTE, new BinaryOperatorParser(Precedence.COMPARISON, true,
+                (a, b) -> a.isEqualTo(b).or(a.greaterThan(b))));
+        infix(TokenType.LTE, new BinaryOperatorParser(Precedence.COMPARISON, true,
+                (a, b) -> a.isEqualTo(b).or(a.lessThan(b))));
 
         // Truth
         prefix(TokenType.BANG, new UnaryOperatorParser(Obj::negate));
@@ -98,6 +99,8 @@ public class DefaultGrammar extends Grammar {
         infix(TokenType.LEFT_BRACKET, new GetSetParser());
         infix(TokenType.DOT, new AttributeParser());
         //register(TokenType.ASSIGN, new AssignmentParser());
-        infix(TokenType.PIPE_FORWARD, new PipeForwardParser());
+        PipeParser pipeParser = new PipeParser();
+        infix(TokenType.PIPE_BACKWARD, pipeParser);
+        infix(TokenType.PIPE_FORWARD, pipeParser);
     }
 }

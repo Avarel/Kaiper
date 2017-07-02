@@ -17,33 +17,33 @@ package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Prototype;
+import xyz.avarel.aje.runtime.Type;
 
 public class Parameter {
     private final String name;
-    private final Prototype prototype;
+    private final Type type;
     private final Expr defaultExpr;
 
-    private Parameter(String name, Prototype prototype, Expr defaultExpr) {
+    private Parameter(String name, Type type, Expr defaultExpr) {
         this.name = name;
-        this.prototype = prototype;
+        this.type = type;
         this.defaultExpr = defaultExpr;
     }
 
     public static Parameter of(String name) {
-        return new Parameter(name, Obj.PROTOTYPE, null);
+        return new Parameter(name, Obj.TYPE, null);
     }
 
-    public static Parameter of(Prototype prototype) {
-        return new Parameter(null, prototype, null);
+    public static Parameter of(Type type) {
+        return new Parameter(null, type, null);
     }
 
-    public static Parameter of(String name, Prototype type) {
+    public static Parameter of(String name, Type type) {
         return new Parameter(name, type, null);
     }
 
-    public static Parameter of(String name, Prototype prototype, Expr defaultExpr) {
-        return new Parameter(name, prototype, defaultExpr);
+    public static Parameter of(String name, Type type, Expr defaultExpr) {
+        return new Parameter(name, type, defaultExpr);
     }
 
 
@@ -51,8 +51,8 @@ public class Parameter {
         return name;
     }
 
-    public Prototype getPrototype() {
-        return prototype;
+    public Type getType() {
+        return type;
     }
 
     public boolean hasDefault() {
@@ -71,12 +71,12 @@ public class Parameter {
         }
 
         if (name != null) {
-            if (prototype != Obj.PROTOTYPE) {
+            if (type != Obj.TYPE) {
                 sb.append(": ");
-                sb.append(prototype);
+                sb.append(type);
             }
         } else {
-            sb.append(prototype);
+            sb.append(type);
         }
 
         if (defaultExpr != null) {

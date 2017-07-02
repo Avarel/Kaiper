@@ -15,27 +15,36 @@
 
 package xyz.avarel.aje.runtime;
 
-/**
- * Every operation results in the same
- * instance, NOTHING.
- */
-public enum Undefined implements Obj<Undefined> {
-    VALUE;
+public class Atom implements Obj<Atom> {
+    public static final Type<Atom> TYPE = new Type<>("Atom");
 
-    public static final Type<Undefined> TYPE = new Type<>("Undefined");
+    private final String name;
 
-    @Override
-    public String toString() {
-        return "undefined";
+    private Atom(String name) {
+        this.name = name;
+    }
+
+    public static Obj of(String name) {
+        return new Atom(name);
     }
 
     @Override
-    public Undefined toJava() {
+    public String toString() {
+        return ":" + name;
+    }
+
+    @Override
+    public Atom toJava() {
         return this;
     }
 
     @Override
     public Type getType() {
         return TYPE;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Atom && name.equals(((Atom) obj).name);
     }
 }

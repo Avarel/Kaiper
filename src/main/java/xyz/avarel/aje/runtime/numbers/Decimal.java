@@ -17,7 +17,7 @@ package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Prototype;
+import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
@@ -26,7 +26,7 @@ import xyz.avarel.aje.scope.Scope;
 import java.util.List;
 
 public class Decimal implements Obj<Double> {
-    public static final Prototype<Decimal> PROTOTYPE = new DecimalPrototype();
+    public static final Type<Decimal> TYPE = new DecimalType();
 
     private final double value;
 
@@ -48,8 +48,8 @@ public class Decimal implements Obj<Double> {
     }
 
     @Override
-    public Prototype<Decimal> getType() {
-        return PROTOTYPE;
+    public Type<Decimal> getType() {
+        return TYPE;
     }
 
     @Override
@@ -227,11 +227,11 @@ public class Decimal implements Obj<Double> {
         return Undefined.VALUE;
     }
 
-    private static class DecimalPrototype extends Prototype<Decimal> {
+    private static class DecimalType extends Type<Decimal> {
         private Scope scope = new Scope();
 
-        public DecimalPrototype() {
-            super(Complex.PROTOTYPE, "Decimal");
+        public DecimalType() {
+            super(Complex.TYPE, "Decimal");
 
             getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
                 @Override
