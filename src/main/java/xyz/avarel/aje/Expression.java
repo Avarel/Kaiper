@@ -165,7 +165,6 @@ public class Expression {
      * Useful for limiting end-user's abilities to ensure that performance-expensive features are not abused.
      *
      * @see ParserFlags
-     * @return The parser flags, which controls what features of AJE are enabled for this expression.
      */
     public void setParserFlags(int flags) {
         parser.setParserFlags(new ParserFlags(flags));
