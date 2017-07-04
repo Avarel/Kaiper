@@ -15,19 +15,14 @@
 
 package xyz.avarel.aje.scope;
 
-import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.collections.Array;
-import xyz.avarel.aje.runtime.functions.ComposedFunc;
-import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.runtime.numbers.Numeric;
 
-import java.util.Collections;
 import java.util.List;
 
 public enum DefaultFunctions {
@@ -155,13 +150,6 @@ public enum DefaultFunctions {
                 accumulator = accumulator.times(arguments.get(i));
             }
             return accumulator;
-        }
-    }),
-
-    COMPOSE(new NativeFunc(Func.TYPE, Func.TYPE) {
-        @Override
-        protected Obj eval(List<Obj> arguments) {
-            return new ComposedFunc((Func) arguments.get(0), (Func) arguments.get(1));
         }
     }),
 
@@ -367,58 +355,6 @@ public enum DefaultFunctions {
         }
     }),
 
-    FOREACH(new NativeFunc(Array.TYPE, Func.TYPE) {
-        @Override
-        protected Obj eval(List<Obj> arguments) {
-            Array arg = (Array) arguments.get(0);
-            Func action = (Func) arguments.get(1);
-
-            for (Obj obj : arg) {
-                action.invoke(Collections.singletonList(obj));
-            }
-            return Undefined.VALUE;
-        }
-    }),
-    MAP(new NativeFunc(Array.TYPE, Func.TYPE) {
-        @Override
-        protected Obj eval(List<Obj> arguments) {
-            Array arg = (Array) arguments.get(0);
-            Func transform = (Func) arguments.get(1);
-
-            Array array = new Array();
-            for (Obj obj : arg) {
-                array.add(transform.invoke(Collections.singletonList(obj)));
-            }
-            return array;
-        }
-    }),
-    FILTER(new NativeFunc(Array.TYPE, Func.TYPE) {
-        @Override
-        protected Obj eval(List<Obj> arguments) {
-            Array arg = (Array) arguments.get(0);
-            Func predicate = (Func) arguments.get(1);
-
-            Array array = new Array();
-            for (Obj obj : arg) {
-                Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
-                if (condition == Bool.TRUE) array.add(obj);
-            }
-            return array;
-        }
-    }),
-    FOLD(new NativeFunc(Array.TYPE, Obj.TYPE, Func.TYPE) {
-        @Override
-        protected Obj eval(List<Obj> arguments) {
-            Array arg = (Array) arguments.get(0);
-            Obj accumulator = arguments.get(1);
-            Func operation = (Func) arguments.get(2);
-
-            for (Obj obj : arg) {
-                accumulator = operation.invoke(accumulator, obj);
-            }
-            return accumulator;
-        }
-    }),
     FACTORIAL(new NativeFunc(Decimal.TYPE) {
         @Override
         protected Obj eval(List<Obj> arguments) {

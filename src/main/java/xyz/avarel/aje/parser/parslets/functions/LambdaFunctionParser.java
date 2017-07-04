@@ -38,9 +38,7 @@ public class LambdaFunctionParser implements PrefixParser {
         }
 
         if (parser.match(TokenType.RIGHT_BRACE)) {
-            return new FunctionNode(token.getPosition(),
-                    Collections.emptyList(),
-                    new ValueNode(token.getPosition(), Undefined.VALUE));
+            return new FunctionNode(Collections.emptyList(), new ValueNode(Undefined.VALUE));
         }
 
         List<ParameterData> parameters = new ArrayList<>();
@@ -77,15 +75,13 @@ public class LambdaFunctionParser implements PrefixParser {
                         paramNames.add(parameterName);
                     }
 
-                    Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.TYPE);
+                    Expr parameterType = new ValueNode(Obj.TYPE);
 
                     if (parser.match(TokenType.COLON)) {
                         Token typeToken = parser.eat(TokenType.IDENTIFIER);
-                        parameterType = new Identifier(typeToken.getPosition(), typeToken.getString());
+                        parameterType = new Identifier(typeToken.getString());
                         while (parser.match(TokenType.DOT)) {
-                            parameterType = new Identifier(typeToken.getPosition(),
-                                    parameterType,
-                                    parser.eat(TokenType.IDENTIFIER).getString());
+                            parameterType = new Identifier(parameterType, parser.eat(TokenType.IDENTIFIER).getString());
                         }
                     }
 
@@ -103,6 +99,6 @@ public class LambdaFunctionParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACE);
 
-        return new FunctionNode(token.getPosition(), parameters, expr);
+        return new FunctionNode(parameters, expr);
     }
 }

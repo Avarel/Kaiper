@@ -53,28 +53,28 @@ public class GetSetParser extends BinaryParser {
         // SET
         if (parser.match(TokenType.ASSIGN)) {
             Expr value = parser.parseExpr();
-            return new SetOperation(token.getPosition(), left, key, value);
+            return new SetOperation(left, key, value);
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
             Expr value = parser.parseExpr();
 
-            Expr getOp = new GetOperation(token.getPosition(), left, key);
-            return new ConditionalExpr(token.getPosition(),
-                    new BinaryOperation(token.getPosition(),
+            Expr getOp = new GetOperation(left, key);
+            return new ConditionalExpr(
+                    new BinaryOperation(
                             getOp,
-                            new ValueNode(token.getPosition(), Undefined.VALUE),
+                            new ValueNode(Undefined.VALUE),
                             Obj::isEqualTo),
-                    new SetOperation(token.getPosition(), left, key, value),
+                    new SetOperation(left, key, value),
                     getOp);
         }
 
-        return new GetOperation(token.getPosition(), left, key);
+        return new GetOperation(left, key);
     }
 
     public Expr parseEnd(AJEParser parser, Position position, Expr left, Expr start) {
         if (parser.match(TokenType.COLON)) {
             return parseStep(parser, position, left, start, null);
         } else if (parser.match(TokenType.RIGHT_BRACKET)) {
-            return new SliceOperation(position, left, start, null, null);
+            return new SliceOperation(left, start, null, null);
         }
 
         Expr end = parser.parseExpr();
@@ -84,17 +84,17 @@ public class GetSetParser extends BinaryParser {
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
-        return new SliceOperation(position, left, start, end, null);
+        return new SliceOperation(left, start, end, null);
     }
 
     public Expr parseStep(AJEParser parser, Position position, Expr left, Expr start, Expr end) {
         if (parser.match(TokenType.RIGHT_BRACKET)) {
-            return new SliceOperation(position, left, start, end, null);
+            return new SliceOperation(left, start, end, null);
         }
 
         Expr step = parser.parseExpr();
 
         parser.eat(TokenType.RIGHT_BRACKET);
-        return new SliceOperation(position, left, start, end, step);
+        return new SliceOperation(left, start, end, step);
     }
 }

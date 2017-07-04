@@ -15,6 +15,7 @@
 
 package xyz.avarel.aje.runtime;
 
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
@@ -54,7 +55,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj plus(Obj other) {
-        return Undefined.VALUE;
+        throw unimplemented("plus");
     }
     
     /**
@@ -66,7 +67,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj minus(Obj other) {
-        return Undefined.VALUE;
+        throw unimplemented("minus");
     }
     
     /**
@@ -78,7 +79,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj times(Obj other) {
-        return Undefined.VALUE;
+        throw unimplemented("multiplication");
     }
     
     /**
@@ -90,7 +91,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj divide(Obj other) {
-        return Undefined.VALUE;
+        throw unimplemented("division");
     }
     
     /**
@@ -102,7 +103,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj mod(Obj other) {
-        return Undefined.VALUE;
+        throw unimplemented("modulus");
     }
     
     /**
@@ -114,7 +115,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj pow(Obj other) {
-        return Undefined.VALUE;
+        throw unimplemented("exponentiation");
     }
     
     /**
@@ -123,16 +124,16 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj negative() {
-        return Undefined.VALUE;
+        throw unimplemented("numeric negation");
     }
-    
+
     /**
      * Negation operator in AJE. Default symbol is {@code !}.
      *
      * @return  The {@link Obj} result of the operation.
      */
     default Obj negate() {
-        return Undefined.VALUE;
+        throw unimplemented("boolean negation");
     }
 
     /**
@@ -157,7 +158,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj greaterThan(Obj other) {
-        return Undefined.VALUE;
+        throw unimplemented("greater than");
     }
 
     /**
@@ -169,7 +170,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj lessThan(Obj other) {
-        return Undefined.VALUE;
+        throw unimplemented("less than");
     }
 
     /**
@@ -181,7 +182,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj or(Obj other) {
-        return Undefined.VALUE;
+        throw unimplemented("or");
     }
 
     /**
@@ -193,7 +194,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj and(Obj other) {
-        return Undefined.VALUE;
+        throw unimplemented("and");
     }
 
     /**
@@ -205,7 +206,11 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj invoke(List<Obj> arguments) {
-        return Undefined.VALUE;
+        throw unimplemented("invocation");
+    }
+
+    default ComputeException unimplemented(String string) {
+        return new ComputeException(getType() + " does not support " + string + " operator");
     }
 
     /**
@@ -231,10 +236,6 @@ public interface Obj<J> {
         return this;
     }
 
-    default Obj set(Obj key, Obj value) {
-        return Undefined.VALUE;
-    }
-
     /**
      * Get operator in AJE. Default symbol is {@code a[b]}.
      * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
@@ -244,7 +245,11 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj get(Obj key) {
-        return Undefined.VALUE;
+        throw unimplemented("get");
+    }
+
+    default Obj set(Obj key, Obj value) {
+        throw unimplemented("set");
     }
 
     /**
@@ -325,7 +330,9 @@ public interface Obj<J> {
     class ObjType extends Type<Obj> {
         public ObjType() {
             super("Object");
+        }
 
+        public void initialize() {
             getScope().declare("toString", new NativeFunc(Parameter.of("self")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
@@ -333,12 +340,12 @@ public interface Obj<J> {
                 }
             });
 
-//            getScope().declare("plus", new NativeFunction(this, this) {
-//                @Override
-//                protected Obj eval(List<Obj> arguments) {
-//                    return receiver.plus(arguments.get(0));
-//                }
-//            });
+            getScope().declare("getType", new NativeFunc(Parameter.of(this)) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return arguments.get(0).getType();
+                }
+            });
 
             getScope().declare("get", new NativeFunc(Parameter.of("self"), Parameter.of(this)) {
                 @Override

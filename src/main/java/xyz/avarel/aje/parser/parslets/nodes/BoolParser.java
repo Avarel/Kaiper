@@ -28,9 +28,9 @@ public class BoolParser implements PrefixParser {
     public Expr parse(AJEParser parser, Token token) {
         switch (token.getString()) {
             case "true":
-                return new ValueNode(token.getPosition(), Bool.TRUE);
+                return new ValueNode(Bool.TRUE);
             case "false":
-                return new ValueNode(token.getPosition(), Bool.FALSE);
+                return new ValueNode(Bool.FALSE);
             default:
                 throw new SyntaxException("Bool atom not of expected value", token.getPosition());
         }

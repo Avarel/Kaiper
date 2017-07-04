@@ -34,10 +34,10 @@ public class ReturnParser implements PrefixParser {
 
         Expr expr;
         if (parser.peekAny(TokenType.LINE, TokenType.SEMICOLON, TokenType.RIGHT_BRACE)) {
-            expr = new ValueNode(token.getPosition(), Undefined.VALUE);
+            expr = new ValueNode(Undefined.VALUE);
         } else {
             expr = parser.parseExpr();
         }
-        return new ReturnExpr(token.getPosition(), expr);
+        return new ReturnExpr(expr);
     }
 }

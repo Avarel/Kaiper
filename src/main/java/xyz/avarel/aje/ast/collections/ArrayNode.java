@@ -32,17 +32,15 @@ package xyz.avarel.aje.ast.collections;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 
-public class ArrayNode extends Expr {
+public class ArrayNode implements Expr {
     private final List<Expr> items;
 
-    public ArrayNode(Position position, List<Expr> items) {
-        super(position);
+    public ArrayNode(List<Expr> items) {
         this.items = items;
     }
 
@@ -66,10 +64,5 @@ public class ArrayNode extends Expr {
             builder.append('\n');
             items.get(items.size() - 1).ast(builder, indent + (isTail ? "    " : "│   "), true);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "vector";
     }
 }

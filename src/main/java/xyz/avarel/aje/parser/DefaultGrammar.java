@@ -23,6 +23,7 @@ import xyz.avarel.aje.parser.parslets.GroupParser;
 import xyz.avarel.aje.parser.parslets.flow.ForEachParser;
 import xyz.avarel.aje.parser.parslets.flow.IfElseParser;
 import xyz.avarel.aje.parser.parslets.flow.ReturnParser;
+import xyz.avarel.aje.parser.parslets.functional.CompositionParser;
 import xyz.avarel.aje.parser.parslets.functional.PipeParser;
 import xyz.avarel.aje.parser.parslets.functions.*;
 import xyz.avarel.aje.parser.parslets.nodes.*;
@@ -62,7 +63,7 @@ public class DefaultGrammar extends Grammar {
 
 
         prefix(TokenType.IDENTIFIER, new NameParser());
-        prefix(TokenType.VAR, new DeclarationParser());
+        prefix(TokenType.LET, new DeclarationParser());
 
         // Numeric
         prefix(TokenType.MINUS, new UnaryOperatorParser(Obj::negative));
@@ -102,5 +103,9 @@ public class DefaultGrammar extends Grammar {
         PipeParser pipeParser = new PipeParser();
         infix(TokenType.PIPE_BACKWARD, pipeParser);
         infix(TokenType.PIPE_FORWARD, pipeParser);
+
+        CompositionParser compositionParser = new CompositionParser();
+        infix(TokenType.BACKWARD_COMPOSITION, compositionParser);
+        infix(TokenType.FORWARD_COMPOSITION, compositionParser);
     }
 }

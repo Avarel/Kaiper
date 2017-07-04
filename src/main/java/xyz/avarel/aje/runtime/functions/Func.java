@@ -99,6 +99,13 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
     public static class FunctionType extends Type<Func> {
         public FunctionType() {
             super("Function");
+
+            getScope().declare("compose", new NativeFunc(Parameter.of("self"), Parameter.of(this)) {
+                @Override
+                protected Obj eval(List<Obj> arguments) {
+                    return new ComposedFunc((Func) arguments.get(0), (Func) arguments.get(1));
+                }
+            });
         }
     }
 }

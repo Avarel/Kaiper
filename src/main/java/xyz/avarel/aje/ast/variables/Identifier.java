@@ -17,20 +17,18 @@ package xyz.avarel.aje.ast.variables;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class Identifier extends Expr {
+public class Identifier implements Expr {
     private final Expr parent;
     private final String name;
 
-    public Identifier(Position position, String name) {
-        this(position, null, name);
+    public Identifier(String name) {
+        this(null, name);
     }
 
-    public Identifier(Position position, Expr parent, String name) {
-        super(position);
+    public Identifier(Expr parent, String name) {
         this.parent = parent;
         this.name = name;
     }
@@ -64,7 +62,7 @@ public class Identifier extends Expr {
             builder.append('\n');
             builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append(name);
         } else {
-            super.ast(builder, indent, isTail);
+            Expr.super.ast(builder, indent, isTail);
         }
     }
 }

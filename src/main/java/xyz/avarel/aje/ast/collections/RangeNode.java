@@ -17,16 +17,14 @@ package xyz.avarel.aje.ast.collections;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class RangeNode extends Expr {
+public class RangeNode implements Expr {
     private final Expr left;
     private final Expr right;
 
-    public RangeNode(Position position, Expr left, Expr right) {
-        super(position);
+    public RangeNode(Expr left, Expr right) {
         this.left = left;
         this.right = right;
     }
@@ -53,10 +51,5 @@ public class RangeNode extends Expr {
 
         builder.append('\n');
         right.ast("end", builder, indent + (isTail ? "    " : "│   "), true);
-    }
-
-    @Override
-    public String toString() {
-        return "range";
     }
 }

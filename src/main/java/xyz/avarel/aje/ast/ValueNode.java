@@ -30,15 +30,13 @@
 
 package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class ValueNode extends Expr {
+public class ValueNode implements Expr {
     private final Obj value;
 
-    public ValueNode(Position position, Obj value) {
-        super(position);
+    public ValueNode(Obj value) {
         this.value = value;
     }
 

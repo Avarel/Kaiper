@@ -52,7 +52,7 @@ public class Scope {
         map.put(key, value);
     }
 
-    public void assign(String key, Obj value) { // var x = 0; [0..<9] |> each(func(it) { x += it }); x
+    public void assign(String key, Obj value) {
         if (map.containsKey(key)) {
             map.put(key, value);
         } else if (parent != null) {

@@ -170,11 +170,10 @@ public class Expression {
         parser.setParserFlags(new ParserFlags(flags));
     }
 
-    private class ExpressionExpr extends Expr {
+    private class ExpressionExpr implements Expr {
         private final Expr expr;
 
         public ExpressionExpr(Expr expr) {
-            super(expr.getPosition());
             this.expr = expr;
         }
 

@@ -19,6 +19,8 @@ import xyz.avarel.aje.scope.Scope;
 
 @SuppressWarnings("unused")
 public class Type<T> implements Obj<Type> {
+    public static final Type<Type> TYPE = new TypeObj();
+
     private final Type parent;
     private final String name;
     private Scope scope;
@@ -41,7 +43,7 @@ public class Type<T> implements Obj<Type> {
         Type t = this;
         do {
             if (t.equals(type)) return true;
-            t = t.parent;
+            t = t.getParent();
         } while (t != null);
         return false;
     }
@@ -57,7 +59,7 @@ public class Type<T> implements Obj<Type> {
 
     @Override
     public Type getType() {
-        return this;
+        return TYPE;
     }
 
     @Override
@@ -83,6 +85,17 @@ public class Type<T> implements Obj<Type> {
             return name + ": " + parent;
         } else {
             return name;
+        }
+    }
+
+    private static class TypeObj extends Type<Type> {
+        public TypeObj() {
+            super("Type");
+        }
+
+        @Override
+        public Type getParent() {
+            return Obj.TYPE;
         }
     }
 }

@@ -25,6 +25,6 @@ import xyz.avarel.aje.runtime.Str;
 public class TextParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        return new ValueNode(token.getPosition(), Str.of(token.getString()));
+        return new ValueNode(Str.of(token.getString()));
     }
 }

@@ -17,19 +17,17 @@ package xyz.avarel.aje.ast.operations;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.function.BinaryOperator;
 
-public class BinaryOperation extends Expr {
+public class BinaryOperation implements Expr {
     private final Expr left;
     private final Expr right;
     private final BinaryOperator<Obj> operator;
 
-    public BinaryOperation(Position position, Expr left, Expr right, BinaryOperator<Obj> operator) {
-        super(position);
+    public BinaryOperation(Expr left, Expr right, BinaryOperator<Obj> operator) {
         this.left = left;
         this.right = right;
         this.operator = operator;
@@ -61,10 +59,5 @@ public class BinaryOperation extends Expr {
 
         builder.append('\n');
         right.ast(builder, indent + (isTail ? "    " : "│   "), true);
-    }
-
-    @Override
-    public String toString() {
-        return "binary operation";
     }
 }

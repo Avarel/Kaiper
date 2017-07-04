@@ -46,7 +46,7 @@ public class BlockParameterParser extends BinaryParser {
         } else if (left instanceof FunctionNode || left instanceof Identifier) {
             List<Expr> args = new ArrayList<>();
             args.add(block);
-            return new Invocation(token.getPosition(), left, args);
+            return new Invocation(left, args);
         }
 
         throw new SyntaxException("Block parameters incompatible with " + left.getClass().getSimpleName(), token.getPosition());

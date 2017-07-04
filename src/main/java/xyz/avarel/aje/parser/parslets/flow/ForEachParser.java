@@ -51,13 +51,13 @@ public class ForEachParser implements PrefixParser {
                 expr = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);
             } else {
-                expr = new ValueNode(parser.getLast().getPosition(), Undefined.VALUE);
+                expr = new ValueNode(Undefined.VALUE);
             }
         } else {
             expr = parser.parseExpr();
         }
 
 
-        return new ForEachExpr(token.getPosition(), variant, iterable, expr);
+        return new ForEachExpr(variant, iterable, expr);
     }
 }

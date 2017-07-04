@@ -24,12 +24,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Statements extends Expr implements Iterable<Expr> {
+public class Statements implements Expr, Iterable<Expr> {
     private final List<Expr> statements;
 
     public Statements(Expr before, Expr after) {
-        super(before.getPosition());
-
         this.statements = new ArrayList<>();
         statements.add(before);
         statements.add(after);
@@ -59,11 +57,6 @@ public class Statements extends Expr implements Iterable<Expr> {
         if (statements.size() >= 1) {
             statements.get(statements.size() - 1).ast(builder, indent, true);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "statements";
     }
 
     @Override

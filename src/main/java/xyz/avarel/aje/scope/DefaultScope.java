@@ -15,10 +15,7 @@
 
 package xyz.avarel.aje.scope;
 
-import xyz.avarel.aje.runtime.Bool;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Str;
-import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.*;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
@@ -35,8 +32,6 @@ public class DefaultScope extends Scope {
         declare("pi", Decimal.of(Math.PI));
         declare("e", Decimal.of(Math.E));
         declare("i", Complex.of(0, 1));
-
-        declare("compose", DefaultFunctions.COMPOSE.get());
 
         declare("sqrt", DefaultFunctions.SQUARE_ROOT.get());
         declare("cbrt", DefaultFunctions.CUBE_ROOT.get());
@@ -73,18 +68,19 @@ public class DefaultScope extends Scope {
         declare("acot", DefaultFunctions.ARCCOTANGENT.get());
         declare("atan2", DefaultFunctions.ARCTANGENT2.get());
 
-        declare("forEach", DefaultFunctions.FOREACH.get());
-        declare("each", DefaultFunctions.FOREACH.get());
-        declare("map", DefaultFunctions.MAP.get());
-        declare("filter", DefaultFunctions.FILTER.get());
-        declare("fold", DefaultFunctions.FOLD.get());
-
         // Types
+
+        // Hack: it works
+        // Explanation, so class loader would load all of
+        // the classes and not treat Obj.TYPE as null :(
+        ((Obj.ObjType) Obj.TYPE).initialize();
+
+        declare("Object", Obj.TYPE);
+        declare("Type", Type.TYPE);
         declare("Int", Int.TYPE);
         declare("Decimal", Decimal.TYPE);
         declare("Complex", Complex.TYPE);
         declare("Number", Numeric.TYPE);
-        declare("Object", Obj.TYPE);
         declare("Boolean", Bool.TYPE);
         declare("Array", Array.TYPE);
         declare("Range", Range.TYPE);

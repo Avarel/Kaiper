@@ -46,13 +46,13 @@ public class BinaryOperatorParser extends BinaryParser {
                 }
 
                 Expr right = parser.parseExpr(0);
-                return new AssignmentExpr(token.getPosition(), null, ((Identifier) left).getName(),
-                        new BinaryOperation(token.getPosition(), left, right, operator),
+                return new AssignmentExpr(null, ((Identifier) left).getName(),
+                        new BinaryOperation(left, right, operator),
                         false);
             }
         }
 
         Expr right = parser.parseExpr(getPrecedence() - (isLeftAssoc() ? 0 : 1));
-        return new BinaryOperation(token.getPosition(), left, right, operator);
+        return new BinaryOperation(left, right, operator);
     }
 }

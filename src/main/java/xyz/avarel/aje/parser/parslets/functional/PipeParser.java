@@ -34,19 +34,19 @@ public class PipeParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!parser.getParserFlags().allowInvocation()) {
+            throw new SyntaxException("Function invocation are disabled");
+        }
+
         switch (token.getType()) {
             case PIPE_FORWARD: {
-                if (!parser.getParserFlags().allowInvocation()) {
-                    throw new SyntaxException("Function creation are disabled");
-                }
-
                 Expr right = parser.parseExpr(getPrecedence());
 
                 if (right instanceof Invocation) {
                     ((Invocation) right).getArguments().add(0, left);
                     return right;
                 } else if (right instanceof FunctionNode || right instanceof Identifier) {
-                    return new Invocation(token.getPosition(), right, Collections.singletonList(left));
+                    return new Invocation(right, Collections.singletonList(left));
                 }
 
                 throw new SyntaxException(
@@ -54,17 +54,13 @@ public class PipeParser extends BinaryParser {
                         token.getPosition());
             }
             case PIPE_BACKWARD: {
-                if (!parser.getParserFlags().allowInvocation()) {
-                    throw new SyntaxException("Function creation are disabled");
-                }
-
-                Expr right = parser.parseExpr(getPrecedence());
+                Expr right = parser.parseExpr(getPrecedence() - 1);
 
                 if (left instanceof Invocation) {
                     ((Invocation) left).getArguments().add(0, left);
                     return left;
                 } else if (left instanceof FunctionNode || left instanceof Identifier) {
-                    return new Invocation(token.getPosition(), left, Collections.singletonList(right));
+                    return new Invocation(left, Collections.singletonList(right));
                 }
 
                 throw new SyntaxException(

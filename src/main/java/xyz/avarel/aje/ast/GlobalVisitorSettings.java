@@ -15,8 +15,22 @@
 
 package xyz.avarel.aje.ast;
 
+import xyz.avarel.aje.exceptions.ComputeException;
+
 public class GlobalVisitorSettings {
     public static int ITERATION_LIMIT = 100;
     public static int SIZE_LIMIT = 100;
     public static long MILLISECONDS_LIMIT = 10;
+
+    public static void checkIterationLimit(int iter) {
+        if (iter > GlobalVisitorSettings.ITERATION_LIMIT) {
+            throw new ComputeException("Iteration limit");
+        }
+    }
+
+    public static void checkSizeLimit(int size) {
+        if (size > GlobalVisitorSettings.SIZE_LIMIT) {
+            throw new ComputeException("Size limit");
+        }
+    }
 }

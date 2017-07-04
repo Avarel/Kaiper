@@ -19,13 +19,11 @@ import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
-import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.ArrayList;
@@ -61,15 +59,11 @@ public class FunctionParser implements PrefixParser {
                     paramNames.add(parameterName);
                 }
 
-                Expr parameterType = new ValueNode(parser.peek(0).getPosition(), Obj.TYPE);
                 Expr parameterDefault = null;
 
+                // Type hint
                 if (parser.match(TokenType.COLON)) {
-                    Token typeToken = parser.eat(TokenType.IDENTIFIER);
-                    parameterType = new Identifier(typeToken.getPosition(), typeToken.getString());
-                    while (parser.match(TokenType.DOT)) {
-                        parameterType = new Identifier(typeToken.getPosition(), parameterType, parser.eat(TokenType.IDENTIFIER).getString());
-                    }
+                    parser.eat(TokenType.IDENTIFIER);
                 }
 
                 if (parser.match(TokenType.ASSIGN)) {
@@ -79,7 +73,7 @@ public class FunctionParser implements PrefixParser {
                     throw new SyntaxException("All parameters after the first default requires a default", parser.peek(0).getPosition());
                 }
 
-                ParameterData parameter = new ParameterData(parameterName, parameterType, parameterDefault);
+                ParameterData parameter = new ParameterData(parameterName, parameterDefault);
                 parameters.add(parameter);
             } while (parser.match(TokenType.COMMA));
             parser.match(TokenType.RIGHT_PAREN);
@@ -92,13 +86,13 @@ public class FunctionParser implements PrefixParser {
         } else {
             parser.eat(TokenType.LEFT_BRACE);
             if (parser.match(TokenType.RIGHT_BRACE)) {
-                expr = new ValueNode(parser.getLast().getPosition(), Undefined.VALUE);
+                expr = new ValueNode(Undefined.VALUE);
             } else {
                 expr = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);
             }
         }
 
-        return new FunctionNode(token.getPosition(), name, parameters, expr);
+        return new FunctionNode(name, parameters, expr);
     }
 }

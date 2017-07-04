@@ -39,19 +39,19 @@ public class AttributeParser extends BinaryParser {
         Token name = parser.eat(TokenType.IDENTIFIER);
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(token.getPosition(), left, name.getString(), parser.parseExpr(), false);
+            return new AssignmentExpr(left, name.getString(), parser.parseExpr(), false);
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
-            Expr getOp = new Identifier(token.getPosition(), left, token.getString());
+            Expr getOp = new Identifier(left, token.getString());
 
-            return new ConditionalExpr(token.getPosition(),
-                    new BinaryOperation(token.getPosition(),
+            return new ConditionalExpr(
+                    new BinaryOperation(
                             getOp,
-                            new ValueNode(token.getPosition(), Undefined.VALUE),
+                            new ValueNode(Undefined.VALUE),
                             Obj::isEqualTo),
-                    new AssignmentExpr(token.getPosition(), left, name.getString(), parser.parseExpr(), false),
+                    new AssignmentExpr(left, name.getString(), parser.parseExpr(), false),
                     getOp);
         }
 
-        return new Identifier(token.getPosition(), left, name.getString());
+        return new Identifier(left, name.getString());
     }
 }

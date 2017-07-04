@@ -40,7 +40,7 @@ public class ImplicitFunctionParser implements PrefixParser {
 
         ParserProxy ip = new ParserProxy(parser, token);
 
-        Expr expr = ip.parseInfix(0, new Identifier(token.getPosition(), token.getString()));
+        Expr expr = ip.parseInfix(0, new Identifier(token.getString()));
 
         List<ParameterData> list = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class ImplicitFunctionParser implements PrefixParser {
             list.add(new ParameterData(param));
         }
 
-        return new FunctionNode(token.getPosition(), list, expr);
+        return new FunctionNode(list, expr);
     }
 
     private static final class ParserProxy extends AJEParser {

@@ -33,11 +33,11 @@ public class ElvisParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
-        return new ConditionalExpr(token.getPosition(),
-                new BinaryOperation(token.getPosition(),
-                    left,
-                        new ValueNode(token.getPosition(), Undefined.VALUE),
-                    Obj::isEqualTo),
+        return new ConditionalExpr(
+                new BinaryOperation(
+                        left,
+                        new ValueNode(Undefined.VALUE),
+                        Obj::isEqualTo),
                 parser.parseExpr(),
                 left);
     }

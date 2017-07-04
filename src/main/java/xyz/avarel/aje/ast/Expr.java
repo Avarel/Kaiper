@@ -19,29 +19,18 @@ import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
-import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.DefaultScope;
 import xyz.avarel.aje.scope.Scope;
 
-public abstract class Expr {
-    private final Position position;
+public interface Expr {
+    Obj accept(ExprVisitor visitor, Scope scope);
 
-    protected Expr(Position position) {
-        this.position = position;
-    }
-
-    public Position getPosition() {
-        return position;
-    }
-
-    public abstract Obj accept(ExprVisitor visitor, Scope scope);
-
-    public Expr andThen(Expr after) {
+    default Expr andThen(Expr after) {
         return new Statements(this, after);
     }
 
-    public Obj compute() {
+    default Obj compute() {
         try {
             return accept(new ExprVisitor(), DefaultScope.INSTANCE.copy());
         } catch (ReturnException re) {
@@ -53,11 +42,11 @@ public abstract class Expr {
         }
     }
 
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
+    default void ast(StringBuilder builder, String indent, boolean isTail) {
         builder.append(indent).append(isTail ? "└── " : "├── ").append(toString());
     }
 
-    public void ast(String label, StringBuilder builder, String indent, boolean tail) {
+    default void ast(String label, StringBuilder builder, String indent, boolean tail) {
         builder.append(indent).append(tail ? "└── " : "├── ").append(label).append(':');
 
         builder.append('\n');

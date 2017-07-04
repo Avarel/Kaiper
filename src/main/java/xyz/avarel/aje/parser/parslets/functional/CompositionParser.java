@@ -13,23 +13,22 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.functions;
+package xyz.avarel.aje.parser.parslets.functional;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.invocation.Invocation;
+import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.parser.lexer.TokenType;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-public class InvocationParser extends BinaryParser {
-    public InvocationParser() {
-        super(Precedence.INVOCATION);
+public class CompositionParser extends BinaryParser {
+    public CompositionParser() {
+        super(Precedence.PIPE_FORWARD);
     }
 
     @Override
@@ -38,15 +37,19 @@ public class InvocationParser extends BinaryParser {
             throw new SyntaxException("Function creation are disabled");
         }
 
-        List<Expr> arguments = new ArrayList<>();
+        Expr identifier = new Identifier(new Identifier("Function"), "compose");
 
-        if (!parser.match(TokenType.RIGHT_PAREN)) {
-            do {
-                arguments.add(parser.parseExpr());
-            } while (parser.match(TokenType.COMMA));
-            parser.eat(TokenType.RIGHT_PAREN);
+        switch (token.getType()) { // Compiles down to Function.compose(f1, f2)
+            case FORWARD_COMPOSITION: {
+                Expr right = parser.parseExpr(getPrecedence());
+                return new Invocation(identifier, Arrays.asList(right, left));
+            }
+            case BACKWARD_COMPOSITION: {
+                Expr right = parser.parseExpr(getPrecedence() - 1);
+                return new Invocation(identifier, Arrays.asList(left, right));
+            }
+            default:
+                throw new SyntaxException("Illegal token passed into composition parser");
         }
-
-        return new Invocation(left, arguments);
     }
 }

@@ -25,6 +25,6 @@ import xyz.avarel.aje.runtime.Atom;
 public class AtomParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        return new ValueNode(token.getPosition(), Atom.of(token.getString()));
+        return new ValueNode(Atom.of(token.getString()));
     }
 }

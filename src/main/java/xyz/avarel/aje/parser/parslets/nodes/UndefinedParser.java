@@ -25,6 +25,6 @@ import xyz.avarel.aje.runtime.Undefined;
 public class UndefinedParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        return new ValueNode(token.getPosition(), Undefined.VALUE);
+        return new ValueNode(Undefined.VALUE);
     }
 }

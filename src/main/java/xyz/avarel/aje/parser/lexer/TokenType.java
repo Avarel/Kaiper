@@ -82,7 +82,7 @@ public enum TokenType {
     // SCRIPT
     IDENTIFIER,
     UNDEFINED,
-    VAR,
+    LET,
     RETURN,
     IF,
     ELSE,

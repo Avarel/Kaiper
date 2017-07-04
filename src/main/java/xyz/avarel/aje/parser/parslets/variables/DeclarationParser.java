@@ -35,10 +35,10 @@ public class DeclarationParser implements PrefixParser {
         Token name = parser.eat(TokenType.IDENTIFIER);
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(token.getPosition(), null, name.getString(), parser.parseExpr(), true);
+            return new AssignmentExpr(null, name.getString(), parser.parseExpr(), true);
         }
 
-        return new AssignmentExpr(token.getPosition(), null, name.getString(),
-                new ValueNode(token.getPosition(), Undefined.VALUE), true);
+        return new AssignmentExpr(null, name.getString(),
+                new ValueNode(Undefined.VALUE), true);
     }
 }

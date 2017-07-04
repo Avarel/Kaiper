@@ -26,11 +26,11 @@ public class ParameterData {
     private final Expr defaultExpr;
 
     public ParameterData(String name) {
-        this(name, new ValueNode(null, Obj.TYPE), null);
+        this(name, new ValueNode(Obj.TYPE), null);
     }
 
     public ParameterData(Type type) {
-        this(null, new ValueNode(null, type), null);
+        this(null, new ValueNode(type), null);
     }
 
     public ParameterData(String name, Expr type) {

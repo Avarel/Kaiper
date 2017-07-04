@@ -17,7 +17,6 @@ package xyz.avarel.aje.ast.collections;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
@@ -26,8 +25,8 @@ public class SetOperation extends GetOperation {
     private final Expr key;
     private final Expr expr;
 
-    public SetOperation(Position position, Expr left, Expr key, Expr expr) {
-        super(position, left, key);
+    public SetOperation(Expr left, Expr key, Expr expr) {
+        super(left, key);
         this.left = left;
         this.key = key;
         this.expr = expr;
@@ -62,10 +61,5 @@ public class SetOperation extends GetOperation {
 
         builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
-    }
-
-    @Override
-    public String toString() {
-        return "set";
     }
 }

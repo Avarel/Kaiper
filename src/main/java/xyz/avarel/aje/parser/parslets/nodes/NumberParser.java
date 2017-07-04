@@ -35,17 +35,17 @@ public class NumberParser implements PrefixParser {
 
         if (token.getType() == TokenType.INT) {
             String str = token.getString();
-            value = new ValueNode(token.getPosition(), Int.of(Integer.parseInt(str)));
+            value = new ValueNode(Int.of(Integer.parseInt(str)));
         } else if (token.getType() == TokenType.DECIMAL) {
             String str = token.getString();
-            value = new ValueNode(token.getPosition(), Decimal.of(Double.parseDouble(str)));
+            value = new ValueNode(Decimal.of(Double.parseDouble(str)));
         }
 
         if (parser.nextIs(TokenType.IDENTIFIER)) {
             Expr right = parser.parseExpr(Precedence.MULTIPLICATIVE);
-            return new BinaryOperation(right.getPosition(), value, right, Obj::times);
+            return new BinaryOperation(value, right, Obj::times);
         }
 
-        return value != null ? value : new ValueNode(token.getPosition(), Undefined.VALUE);
+        return value != null ? value : new ValueNode(Undefined.VALUE);
     }
 }

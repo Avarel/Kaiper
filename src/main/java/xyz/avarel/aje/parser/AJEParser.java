@@ -57,7 +57,7 @@ public class AJEParser extends Parser {
 
     public Expr parseStatements() {
         checkTimeout();
-        if (match(TokenType.EOF)) return new ValueNode(getLast().getPosition(), Undefined.VALUE);
+        if (match(TokenType.EOF)) return new ValueNode(Undefined.VALUE);
 
         checkTimeout();
         Expr any = parseExpr();

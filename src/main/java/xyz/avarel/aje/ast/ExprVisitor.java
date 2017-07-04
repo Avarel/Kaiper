@@ -67,7 +67,7 @@ public class ExprVisitor {
             Obj obj_type = data.getTypeExpr().accept(this, scope);
 
             if (!(obj_type instanceof Type)) {
-                throw new ComputeException(obj_type + " is not a valid parameter type", data.getTypeExpr().getPosition());
+                throw new ComputeException(obj_type + " is not a valid parameter type");
             }
 
             parameters.add(Parameter.of(data.getName(), (Type) obj_type, data.getDefault()));
@@ -89,7 +89,7 @@ public class ExprVisitor {
             return scope.lookup(expr.getName());
         }
 
-        throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
+        throw new ComputeException(expr.getName() + " is not defined");
     }
 
     public Obj visit(ValueNode expr, Scope scope) {
@@ -137,9 +137,7 @@ public class ExprVisitor {
             int start = ((Int) startObj).value();
             int end = ((Int) endObj).value();
 
-            if (Math.abs(end - start) > GlobalVisitorSettings.SIZE_LIMIT) {
-                throw new ComputeException("Size of range too large");
-            }
+            GlobalVisitorSettings.checkSizeLimit(Math.abs(end - start));
 
             checkTimeout();
             return new Range(start, end);
@@ -158,9 +156,7 @@ public class ExprVisitor {
 
             if (item instanceof Range) {
                 for (Int i : (Range) item) {
-                    if (array.size() > GlobalVisitorSettings.SIZE_LIMIT) {
-                        throw new ComputeException("Size of vector too large");
-                    }
+                    GlobalVisitorSettings.checkSizeLimit(array.size());
 
                     checkTimeout();
                     array.add(i);
@@ -168,9 +164,7 @@ public class ExprVisitor {
                 continue;
             }
 
-            if (array.size() > GlobalVisitorSettings.SIZE_LIMIT) {
-                throw new ComputeException("Size of range too large");
-            }
+            GlobalVisitorSettings.checkSizeLimit(array.size());
 
             array.add(item);
         }
@@ -213,7 +207,7 @@ public class ExprVisitor {
             scope.assign(attr, value);
             return value;
         } else {
-            throw new ComputeException(expr.getName() + " is not defined", expr.getPosition());
+            throw new ComputeException(expr.getName() + " is not defined");
         }
     }
 
@@ -241,7 +235,7 @@ public class ExprVisitor {
         checkTimeout();
         Obj obj = expr.getExpr().accept(this, scope);
 
-        throw new ReturnException(expr.getPosition(), obj);
+        throw new ReturnException(obj);
     }
 
     public Obj visit(ConditionalExpr expr, Scope scope) {
@@ -270,20 +264,18 @@ public class ExprVisitor {
             String variant = expr.getVariant();
             Expr loopExpr = expr.getAction();
 
-            int iteration = 0;
+            int iter = 0;
             for (Object var : iterable) {
-                if (iteration > GlobalVisitorSettings.ITERATION_LIMIT) {
-                    throw new ComputeException("Size of range too large");
-                }
+                GlobalVisitorSettings.checkIterationLimit(iter);
 
                 if (var instanceof Obj) {
                     Scope copy = scope.subPool();
                     copy.declare(variant, (Obj) var);
                     checkTimeout();
                     loopExpr.accept(this, copy);
-                    iteration++;
+                    iter++;
                 } else {
-                    throw new ComputeException("Items in iterable do not implement Obj interface", expr.getIterable().getPosition());
+                    throw new ComputeException("Items in iterable do not implement Obj interface");
                 }
             }
         }

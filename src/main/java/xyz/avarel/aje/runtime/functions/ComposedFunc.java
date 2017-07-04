@@ -26,26 +26,26 @@ import java.util.List;
  * instance, NOTHING.
  */
 public class ComposedFunc extends Func {
-    private final Func left;
-    private final Func right;
+    private final Func outer;
+    private final Func inner;
 
-    public ComposedFunc(Func left, Func right) {
-        this.left = left;
-        this.right = right;
+    public ComposedFunc(Func outer, Func inner) {
+        this.outer = outer;
+        this.inner = inner;
 
-        if (left.getParameters().size() != 1) {
+        if (inner.getParameters().size() != 1) {
             throw new ComputeException("Composed functions require the outer function to be arity-1.");
         }
     }
 
     @Override
     public int getArity() {
-        return right.getArity();
+        return inner.getArity();
     }
 
     @Override
     public List<Parameter> getParameters() {
-        return right.getParameters();
+        return inner.getParameters();
     }
 
     @Override
@@ -59,6 +59,6 @@ public class ComposedFunc extends Func {
             return Undefined.VALUE;
         }
 
-        return left.invoke(right.invoke(arguments));
+        return outer.invoke(inner.invoke(arguments));
     }
 }

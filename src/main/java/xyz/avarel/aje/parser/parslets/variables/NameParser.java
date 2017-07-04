@@ -32,18 +32,18 @@ public class NameParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(token.getPosition(), null, token.getString(), parser.parseExpr(), false);
+            return new AssignmentExpr(null, token.getString(), parser.parseExpr(), false);
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
-            Expr getOp = new Identifier(token.getPosition(), token.getString());
-            return new ConditionalExpr(token.getPosition(),
-                    new BinaryOperation(token.getPosition(),
+            Expr getOp = new Identifier(token.getString());
+            return new ConditionalExpr(
+                    new BinaryOperation(
                             getOp,
-                            new ValueNode(token.getPosition(), Undefined.VALUE),
+                            new ValueNode(Undefined.VALUE),
                             Obj::isEqualTo),
-                    new AssignmentExpr(token.getPosition(), null, token.getString(), parser.parseExpr(), false),
+                    new AssignmentExpr(null, token.getString(), parser.parseExpr(), false),
                     getOp);
         }
 
-        return new Identifier(token.getPosition(), token.getString());
+        return new Identifier(token.getString());
     }
 }

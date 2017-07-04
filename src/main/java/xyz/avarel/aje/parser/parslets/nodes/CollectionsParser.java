@@ -38,14 +38,14 @@ public class CollectionsParser implements PrefixParser {
                 throw new SyntaxException("Dictionaries are disabled");
             }
             parser.eat(TokenType.RIGHT_BRACKET);
-            return new DictionaryNode(token.getPosition(), Collections.emptyMap());
+            return new DictionaryNode(Collections.emptyMap());
         }
 
         if (parser.match(TokenType.RIGHT_BRACKET)) {
             if (!parser.getParserFlags().allowVectors()) {
                 throw new SyntaxException("Collections are disabled");
             }
-            return new ArrayNode(token.getPosition(), Collections.emptyList());
+            return new ArrayNode(Collections.emptyList());
         }
 
         Expr expr = parser.parseExpr();
@@ -74,14 +74,14 @@ public class CollectionsParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
-        return new ArrayNode(token.getPosition(), items);
+        return new ArrayNode(items);
     }
 
     private Expr parseDictionary(AJEParser parser, Token token, Expr initKey) {
         Map<Expr, Expr> map = new HashMap<>();
 
         if (initKey instanceof Identifier) {
-            initKey = new ValueNode(initKey.getPosition(), Str.of(((Identifier) initKey).getName()));
+            initKey = new ValueNode(Str.of(((Identifier) initKey).getName()));
         }
 
         map.put(initKey, parser.parseExpr());
@@ -96,6 +96,6 @@ public class CollectionsParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
-        return new DictionaryNode(token.getPosition(), map);
+        return new DictionaryNode(map);
     }
 }

@@ -15,14 +15,12 @@
 
 package xyz.avarel.aje.runtime.functions;
 
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public abstract class NativeFunc extends Func {
     //    private final Type receiverType;
@@ -82,7 +80,13 @@ public abstract class NativeFunc extends Func {
         if (!varargs) {
             for (int i = 0; i < parameters.size(); i++) {
                 if (!arguments.get(i).getType().is(parameters.get(i).getType())) {
-                    return Undefined.VALUE;
+                    StringJoiner argType = new StringJoiner(", ", "(", ")");
+                    for (Obj obj : arguments) argType.add(obj.getType().getName());
+
+                    StringJoiner funcType = new StringJoiner(", ", "(", ")");
+                    for (Parameter param : parameters) funcType.add(param.getType().getName());
+
+                    throw new ComputeException(argType + " can not apply to " + funcType);
                 }
             }
         } else {

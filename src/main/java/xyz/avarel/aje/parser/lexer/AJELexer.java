@@ -32,7 +32,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     
     private boolean init;
     private boolean eof;
-
     private long lineIndex;
     private long index;
     private long line;
@@ -91,8 +90,11 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     private void lexTokens() {
         Token prev = null;
 
+        // Do some post processing on the tokens to clean up unnecessary ones
         do {
             Token next = readToken();
+
+            if (next == null) continue;
 
             if (tokens.size() == 0) {
                 switch (next.getType()) {
@@ -134,15 +136,14 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 }
             }
 
-            switch (next.getType()) {
-                case SKIP:
-                    continue;
-            }
-
             tokens.add(next);
 
             prev = next;
         } while (hasNext());
+
+        if (tokens.get(tokens.size() - 1).getType() != TokenType.EOF) {
+            tokens.add(new Token(getPosition(), TokenType.EOF));
+        }
 
         try {
             reader.close();
@@ -153,7 +154,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
     private Token readToken() {
-
         char c = advance();
 
         while (Character.isSpaceChar(c)) c = advance();
@@ -217,16 +217,19 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                         ? nextAtom()
                         : make(TokenType.COLON);
 
+
             case '=':
                 return match('=') // ==
                     ? make(TokenType.EQUALS)
                         : make(TokenType.ASSIGN); // >
+
             case '>':
                 return match('=') // >=
                     ? make(TokenType.GTE)
                         : match('>') // >>
                         ? make(TokenType.FORWARD_COMPOSITION)
                         : make(TokenType.GT); // >
+
             case '<':
                 return match('=') // <=
                     ? make(TokenType.LTE)
@@ -235,12 +238,14 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                         : match('<') // <<
                         ? make(TokenType.BACKWARD_COMPOSITION)
                         : make(TokenType.LT); // <
+
             case '|':
                 return match('|') // ||
                     ? make(TokenType.OR)
                         : match('>') // |>
                     ? make(TokenType.PIPE_FORWARD)
                         : make(TokenType.VERTICAL_BAR); // |
+
             case '&':
                 return match('&') // &&
                     ? make(TokenType.AND)
@@ -274,10 +279,10 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
     private Token nextComment() {
-        while (peek() != '\n') {
+        while (hasNext() && peek() != '\n') {
             advance();
         }
-        return make(TokenType.SKIP);
+        return null;
     }
 
     private Token nextNumber(char init) {
@@ -368,13 +373,18 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case "if": return make(TokenType.IF, "if");
             case "else": return make(TokenType.ELSE, "else");
             case "return": return make(TokenType.RETURN, "return");
-            case "var": return make(TokenType.VAR, "var");
+            case "let":
+                return make(TokenType.LET, "let");
             case "in": return make(TokenType.IN, "in");
             case "for": return make(TokenType.FOR, "for");
             case "undefined": return make(TokenType.UNDEFINED, "undefined");
 
-            case "fun": return make(TokenType.FUNCTION, "fun");
-            case "func": return make(TokenType.FUNCTION, "func");
+            case "fn":
+                return make(TokenType.FUNCTION);
+            case "func":
+                return make(TokenType.FUNCTION);
+            case "function":
+                return make(TokenType.FUNCTION);
 
             case "true": return make(TokenType.BOOLEAN, "true");
             case "false": return make(TokenType.BOOLEAN, "false");

@@ -17,17 +17,15 @@ package xyz.avarel.aje.ast.flow;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
-public class ForEachExpr extends Expr {
+public class ForEachExpr implements Expr {
     private final String variant;
     private final Expr iterable;
     private final Expr action;
 
-    public ForEachExpr(Position position, String variant, Expr iterable, Expr action) {
-        super(position);
+    public ForEachExpr(String variant, Expr iterable, Expr action) {
         this.variant = variant;
         this.iterable = iterable;
         this.action = action;
