@@ -17,6 +17,7 @@ package xyz.avarel.aje.scope;
 
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
@@ -372,6 +373,18 @@ public enum DefaultFunctions {
         @Override
         protected Obj eval(List<Obj> arguments) {
             return Decimal.of(Math.random());
+        }
+    }),
+
+    NOT(new NativeFunc(Func.TYPE) {
+        @Override
+        protected Obj eval(List<Obj> arguments) {
+            return new NativeFunc() {
+                @Override
+                protected Obj eval(List<Obj> arguments0) {
+                    return arguments.get(0).invoke(arguments0).negate();
+                }
+            };
         }
     });
 

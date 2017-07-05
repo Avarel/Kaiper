@@ -35,6 +35,7 @@ import java.io.*;
  * {@link #scope} field.
  */
 public class Evaluator {
+    private final ExprVisitor visitor;
     private final Scope scope;
     private Obj answer;
 
@@ -53,6 +54,7 @@ public class Evaluator {
      */
     public Evaluator(Scope scope) {
         this.scope = scope;
+        this.visitor = new ExprVisitor();
         this.answer = Undefined.VALUE;
     }
 
@@ -137,7 +139,8 @@ public class Evaluator {
      */
     public Obj eval(AJELexer lexer) {
         try {
-            return answer = new AJEParser(lexer).compile().accept(new ExprVisitor(), scope);
+            visitor.resetTimeout();
+            return answer = new AJEParser(lexer).compile().accept(visitor, scope);
         } catch (ReturnException re) {
             return answer = re.getValue();
         } catch (AJEException re) {

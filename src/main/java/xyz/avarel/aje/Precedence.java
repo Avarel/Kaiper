@@ -19,17 +19,8 @@ package xyz.avarel.aje;
  * Default precedence table for the AJE parser.
  */
 public class Precedence {
-    /* a(b, c...) */
-    public static final int INVOCATION = 14;
-
     /* a.b */
-    public static final int ATTRIBUTE = 13;
-
-    /* a |> b */
-    public static final int PIPE_FORWARD = 12;
-
-    /* Unused */
-    public static final int POSTFIX = 11;
+    public static final int POSTFIX = 12;
 
     /* a ^ b */
     public static final int EXPONENTIAL = 10;

@@ -29,7 +29,7 @@ import java.util.List;
 
 public class InvocationParser extends BinaryParser {
     public InvocationParser() {
-        super(Precedence.INVOCATION);
+        super(Precedence.POSTFIX);
     }
 
     @Override

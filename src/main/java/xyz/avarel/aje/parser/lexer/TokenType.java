@@ -87,7 +87,6 @@ public enum TokenType {
     IF,
     ELSE,
     FOR,
-    IN,
 
     SKIP,
     SEMICOLON,

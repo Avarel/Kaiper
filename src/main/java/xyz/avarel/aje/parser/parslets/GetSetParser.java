@@ -33,7 +33,7 @@ import xyz.avarel.aje.runtime.Undefined;
 
 public class GetSetParser extends BinaryParser {
     public GetSetParser() {
-        super(Precedence.ATTRIBUTE);
+        super(Precedence.POSTFIX);
     }
 
     @Override

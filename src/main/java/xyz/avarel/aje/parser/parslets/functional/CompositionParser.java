@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 public class CompositionParser extends BinaryParser {
     public CompositionParser() {
-        super(Precedence.PIPE_FORWARD);
+        super(Precedence.INFIX);
     }
 
     @Override

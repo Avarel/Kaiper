@@ -15,6 +15,7 @@
 
 package xyz.avarel.aje.parser.parslets.functions;
 
+import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.functions.FunctionNode;
@@ -24,6 +25,7 @@ import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.ArrayList;
@@ -59,11 +61,11 @@ public class FunctionParser implements PrefixParser {
                     paramNames.add(parameterName);
                 }
 
+                Expr parameterType = new ValueNode(Obj.TYPE);
                 Expr parameterDefault = null;
 
-                // Type hint
                 if (parser.match(TokenType.COLON)) {
-                    parser.eat(TokenType.IDENTIFIER);
+                    parameterType = parser.parseExpr(Precedence.POSTFIX - 1);
                 }
 
                 if (parser.match(TokenType.ASSIGN)) {
@@ -73,7 +75,7 @@ public class FunctionParser implements PrefixParser {
                     throw new SyntaxException("All parameters after the first default requires a default", parser.peek(0).getPosition());
                 }
 
-                ParameterData parameter = new ParameterData(parameterName, parameterDefault);
+                ParameterData parameter = new ParameterData(parameterName, parameterType, parameterDefault);
                 parameters.add(parameter);
             } while (parser.match(TokenType.COMMA));
             parser.match(TokenType.RIGHT_PAREN);

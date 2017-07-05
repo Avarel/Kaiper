@@ -30,7 +30,7 @@ import java.util.List;
 
 public class BlockParameterParser extends BinaryParser {
     public BlockParameterParser() {
-        super(Precedence.INVOCATION);
+        super(Precedence.POSTFIX);
     }
 
     @Override // [1..10] |> fold(0) { a, b -> a + b }

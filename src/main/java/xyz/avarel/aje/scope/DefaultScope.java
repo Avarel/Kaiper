@@ -33,6 +33,8 @@ public class DefaultScope extends Scope {
         declare("e", Decimal.of(Math.E));
         declare("i", Complex.of(0, 1));
 
+        declare("not", DefaultFunctions.NOT.get());
+
         declare("sqrt", DefaultFunctions.SQUARE_ROOT.get());
         declare("cbrt", DefaultFunctions.CUBE_ROOT.get());
         declare("exp", DefaultFunctions.EXPONENTIAL.get());

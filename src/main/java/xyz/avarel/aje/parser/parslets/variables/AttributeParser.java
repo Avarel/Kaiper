@@ -31,7 +31,7 @@ import xyz.avarel.aje.runtime.Undefined;
 
 public class AttributeParser extends BinaryParser {
     public AttributeParser() {
-        super(Precedence.ATTRIBUTE);
+        super(Precedence.POSTFIX);
     }
 
     @Override

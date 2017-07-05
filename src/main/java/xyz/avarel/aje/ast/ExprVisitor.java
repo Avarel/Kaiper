@@ -44,7 +44,11 @@ import java.util.List;
 import java.util.Map;
 
 public class ExprVisitor {
-    private final long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
+    private long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
+
+    public void resetTimeout() {
+        timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
+    }
 
     public Obj visit(Statements statements, Scope scope) {
         List<Expr> exprs = statements.getExprs();
@@ -74,7 +78,7 @@ public class ExprVisitor {
         }
 
         checkTimeout();
-        Func func = new CompiledFunc(parameters, expr.getExpr(), scope.subPool());
+        Func func = new CompiledFunc(parameters, expr.getExpr(), this, scope.subPool());
         if (expr.getName() != null) scope.declare(expr.getName(), func);
         return func;
     }
@@ -301,8 +305,6 @@ public class ExprVisitor {
     }
 
     private void checkTimeout() {
-        if (System.currentTimeMillis() >= timeout) {
-            throw new ComputeException("Computation timeout");
-        }
+        GlobalVisitorSettings.checkTimeout(timeout);
     }
 }

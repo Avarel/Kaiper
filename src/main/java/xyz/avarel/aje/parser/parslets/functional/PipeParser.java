@@ -29,7 +29,7 @@ import java.util.Collections;
 
 public class PipeParser extends BinaryParser {
     public PipeParser() {
-        super(Precedence.PIPE_FORWARD);
+        super(Precedence.INFIX);
     }
 
     @Override

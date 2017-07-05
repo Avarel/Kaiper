@@ -38,7 +38,9 @@ public class ForEachParser implements PrefixParser {
 
         String variant = parser.eat(TokenType.IDENTIFIER).getString();
 
-        parser.eat(TokenType.IN);
+        if (!parser.eat().getString().equals("in")) {
+            throw new SyntaxException("Expected IN but found " + token.getType(), token.getPosition());
+        }
 
         Expr iterable = parser.parseExpr();
 

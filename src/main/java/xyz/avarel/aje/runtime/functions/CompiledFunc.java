@@ -33,11 +33,13 @@ public class CompiledFunc extends Func {
     private final List<Parameter> parameters;
     private final Expr expr;
     private final Scope scope;
+    private final ExprVisitor visitor;
 
-    public CompiledFunc(List<Parameter> parameters, Expr expr, Scope scope) {
+    public CompiledFunc(List<Parameter> parameters, Expr expr, ExprVisitor visitor, Scope scope) {
         this.parameters = parameters;
         this.expr = expr;
         this.scope = scope;
+        this.visitor = visitor;
     }
 
     @Override
@@ -66,7 +68,7 @@ public class CompiledFunc extends Func {
                     return Undefined.VALUE;
                 }
             } else if (parameter.hasDefault()) {
-                scope.declare(parameter.getName(), parameter.getDefault().accept(new ExprVisitor(), scope));
+                scope.declare(parameter.getName(), parameter.getDefault().accept(visitor, scope));
             } else if (type == Obj.TYPE) {
                 scope.declare(parameter.getName(), Undefined.VALUE);
             } else {
@@ -74,10 +76,8 @@ public class CompiledFunc extends Func {
             }
         }
 
-        // TODO scope.declare("self", target);
-
         try {
-            return expr.accept(new ExprVisitor(), scope);
+            return expr.accept(visitor, scope);
         } catch (ReturnException re) {
             return re.getValue();
         }

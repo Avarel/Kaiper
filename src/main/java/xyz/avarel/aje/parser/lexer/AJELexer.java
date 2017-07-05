@@ -375,7 +375,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case "return": return make(TokenType.RETURN, "return");
             case "let":
                 return make(TokenType.LET, "let");
-            case "in": return make(TokenType.IN, "in");
             case "for": return make(TokenType.FOR, "for");
             case "undefined": return make(TokenType.UNDEFINED, "undefined");
 
@@ -388,8 +387,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
             case "true": return make(TokenType.BOOLEAN, "true");
             case "false": return make(TokenType.BOOLEAN, "false");
-            case "and": return make(TokenType.AND, "and");
-            case "or": return make(TokenType.OR, "or");
             default: return make(TokenType.IDENTIFIER, value);
         }
     }
