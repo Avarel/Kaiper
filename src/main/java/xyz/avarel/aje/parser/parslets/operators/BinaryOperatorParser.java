@@ -17,6 +17,7 @@ package xyz.avarel.aje.parser.parslets.operators;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
+import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -24,14 +25,11 @@ import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Obj;
-
-import java.util.function.BinaryOperator;
 
 public class BinaryOperatorParser extends BinaryParser {
-    private final BinaryOperator<Obj> operator;
+    private final BinaryOperatorType operator;
 
-    public BinaryOperatorParser(int precedence, boolean leftAssoc, BinaryOperator<Obj> operator) {
+    public BinaryOperatorParser(int precedence, boolean leftAssoc, BinaryOperatorType operator) {
         super(precedence, leftAssoc);
         this.operator = operator;
     }

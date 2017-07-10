@@ -92,7 +92,7 @@ public class Str implements Obj<String> {
         int end;
         int step;
 
-        if (startObj == null) {
+        if (startObj == Undefined.VALUE) {
             start = 0;
         } else {
             if (startObj instanceof Int) {
@@ -105,7 +105,7 @@ public class Str implements Obj<String> {
             }
         }
 
-        if (endObj == null) {
+        if (endObj == Undefined.VALUE) {
             end = length();
         } else {
             if (endObj instanceof Int) {
@@ -118,7 +118,7 @@ public class Str implements Obj<String> {
             }
         }
 
-        if (stepObj == null) {
+        if (stepObj == Undefined.VALUE) {
             step = 1;
         } else {
             if (stepObj instanceof Int) {

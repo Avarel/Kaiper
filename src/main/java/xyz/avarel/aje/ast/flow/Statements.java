@@ -17,8 +17,6 @@ package xyz.avarel.aje.ast.flow;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.scope.Scope;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,7 +42,7 @@ public class Statements implements Expr, Iterable<Expr> {
     }
 
     @Override
-    public Obj accept(ExprVisitor visitor, Scope scope) {
+    public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
     }
 

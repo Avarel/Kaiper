@@ -15,11 +15,11 @@
 
 package xyz.avarel.aje;
 
-import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.exceptions.SyntaxException;
+import xyz.avarel.aje.interpreter.ExprInterpreter;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.runtime.Obj;
@@ -35,7 +35,7 @@ import java.io.*;
  * {@link #scope} field.
  */
 public class Evaluator {
-    private final ExprVisitor visitor;
+    private final ExprInterpreter visitor;
     private final Scope scope;
     private Obj answer;
 
@@ -54,7 +54,7 @@ public class Evaluator {
      */
     public Evaluator(Scope scope) {
         this.scope = scope;
-        this.visitor = new ExprVisitor();
+        this.visitor = new ExprInterpreter();
         this.answer = Undefined.VALUE;
     }
 

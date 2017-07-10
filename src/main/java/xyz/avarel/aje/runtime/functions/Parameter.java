@@ -23,27 +23,33 @@ public class Parameter {
     private final String name;
     private final Type type;
     private final Expr defaultExpr;
+    private final boolean rest;
 
-    private Parameter(String name, Type type, Expr defaultExpr) {
+    private Parameter(String name, Type type, Expr defaultExpr, boolean rest) {
         this.name = name;
         this.type = type;
         this.defaultExpr = defaultExpr;
+        this.rest = rest;
     }
 
     public static Parameter of(String name) {
-        return new Parameter(name, Obj.TYPE, null);
+        return Parameter.of(name, Obj.TYPE, null, false);
     }
 
     public static Parameter of(Type type) {
-        return new Parameter(null, type, null);
+        return Parameter.of(type, false);
+    }
+
+    public static Parameter of(Type type, boolean rest) {
+        return new Parameter(null, type, null, rest);
     }
 
     public static Parameter of(String name, Type type) {
-        return new Parameter(name, type, null);
+        return Parameter.of(name, type, null, false);
     }
 
-    public static Parameter of(String name, Type type, Expr defaultExpr) {
-        return new Parameter(name, type, defaultExpr);
+    public static Parameter of(String name, Type type, Expr defaultExpr, boolean rest) {
+        return new Parameter(name, type, defaultExpr, rest);
     }
 
 
@@ -63,9 +69,22 @@ public class Parameter {
         return defaultExpr;
     }
 
+    public boolean isRest() {
+        return rest;
+    }
+
+    public String typeString() {
+        return isRest() ? "..." + getType().getName() : getType().getName();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+
+        if (rest) {
+            sb.append("...");
+        }
+
         if (name != null) {
             sb.append(name);
         }

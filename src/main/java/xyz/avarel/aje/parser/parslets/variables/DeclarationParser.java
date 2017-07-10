@@ -16,14 +16,13 @@
 package xyz.avarel.aje.parser.parslets.variables;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Undefined;
 
 public class DeclarationParser implements PrefixParser {
     @Override
@@ -38,7 +37,6 @@ public class DeclarationParser implements PrefixParser {
             return new AssignmentExpr(null, name.getString(), parser.parseExpr(), true);
         }
 
-        return new AssignmentExpr(null, name.getString(),
-                new ValueNode(Undefined.VALUE), true);
+        return new AssignmentExpr(null, name.getString(), UndefinedNode.VALUE, true);
     }
 }

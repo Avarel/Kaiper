@@ -17,17 +17,16 @@ package xyz.avarel.aje.parser.parslets.variables;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
+import xyz.avarel.aje.ast.operations.BinaryOperatorType;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
 
 public class AttributeParser extends BinaryParser {
     public AttributeParser() {
@@ -46,8 +45,8 @@ public class AttributeParser extends BinaryParser {
             return new ConditionalExpr(
                     new BinaryOperation(
                             getOp,
-                            new ValueNode(Undefined.VALUE),
-                            Obj::isEqualTo),
+                            UndefinedNode.VALUE,
+                            BinaryOperatorType.EQUALS),
                     new AssignmentExpr(left, name.getString(), parser.parseExpr(), false),
                     getOp);
         }

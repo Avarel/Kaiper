@@ -17,16 +17,15 @@ package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
+import xyz.avarel.aje.ast.value.UndefinedNode;
+import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,6 +52,8 @@ public class FunctionParser implements PrefixParser {
             boolean requireDef = false;
 
             do {
+                boolean rest = parser.match(TokenType.REST);
+
                 String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
 
                 if (paramNames.contains(parameterName)) {
@@ -61,7 +62,7 @@ public class FunctionParser implements PrefixParser {
                     paramNames.add(parameterName);
                 }
 
-                Expr parameterType = new ValueNode(Obj.TYPE);
+                Expr parameterType = new Identifier("Object");
                 Expr parameterDefault = null;
 
                 if (parser.match(TokenType.COLON)) {
@@ -75,8 +76,13 @@ public class FunctionParser implements PrefixParser {
                     throw new SyntaxException("All parameters after the first default requires a default", parser.peek(0).getPosition());
                 }
 
-                ParameterData parameter = new ParameterData(parameterName, parameterType, parameterDefault);
+                ParameterData parameter = new ParameterData(parameterName, parameterType, parameterDefault, rest);
                 parameters.add(parameter);
+
+                if (rest && parser.match(TokenType.COMMA)) {
+                    throw new SyntaxException("Rest parameters must be the last parameter",
+                            parser.peek(0).getPosition());
+                }
             } while (parser.match(TokenType.COMMA));
             parser.match(TokenType.RIGHT_PAREN);
         }
@@ -88,7 +94,7 @@ public class FunctionParser implements PrefixParser {
         } else {
             parser.eat(TokenType.LEFT_BRACE);
             if (parser.match(TokenType.RIGHT_BRACE)) {
-                expr = new ValueNode(Undefined.VALUE);
+                expr = UndefinedNode.VALUE;
             } else {
                 expr = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);

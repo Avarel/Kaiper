@@ -27,10 +27,10 @@ class FuncTest {
         eval("func isEven0(x) { x % 2 == 0 }")
         eval("func isEven1(x) { x % 2 == 0 }")
         eval("func isEven2(x) = x % 2 == 0")
-        eval("var isEven3 = { x -> x % 2 == 0 }")
-        eval("var isEven4 = _ % 2 == 0")
+        eval("let isEven3 = { x -> x % 2 == 0 }")
+        eval("let isEven4 = _ % 2 == 0")
 
-        eval("var add = { x, y -> x + y }")
+        eval("let add = { x, y -> x + y }")
     }
 
     @Test
@@ -79,11 +79,11 @@ class FuncTest {
 
     @Test
     fun `higher order filter` () {
-        Assert.assertEquals(evaluator.eval("[1..10] |> filter(_ % 2 == 0)"), eval("[2,4,6,8,10]"))
+        Assert.assertEquals(evaluator.eval("[1..10] |> Array.filter(_ % 2 == 0)"), eval("[2,4,6,8,10]"))
     }
 
     @Test
     fun `higher order fold`() {
-        Assert.assertEquals(evaluator.eval("[1..10] |> fold(0, add)"), eval("55"))
+        Assert.assertEquals(evaluator.eval("[1..10] |> Array.fold(0, add)"), eval("55"))
     }
 }

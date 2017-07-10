@@ -16,11 +16,12 @@
 package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.ast.flow.ReturnException;
+import xyz.avarel.aje.interpreter.ExprInterpreter;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
@@ -33,9 +34,9 @@ public class CompiledFunc extends Func {
     private final List<Parameter> parameters;
     private final Expr expr;
     private final Scope scope;
-    private final ExprVisitor visitor;
+    private final ExprInterpreter visitor;
 
-    public CompiledFunc(List<Parameter> parameters, Expr expr, ExprVisitor visitor, Scope scope) {
+    public CompiledFunc(List<Parameter> parameters, Expr expr, ExprInterpreter visitor, Scope scope) {
         this.parameters = parameters;
         this.expr = expr;
         this.scope = scope;
@@ -44,7 +45,7 @@ public class CompiledFunc extends Func {
 
     @Override
     public int getArity() {
-        return parameters.size();
+        return parameters.get(parameters.size() - 1).isRest() ? parameters.size() - 1 : parameters.size();
     }
 
     public List<Parameter> getParameters() {
@@ -65,14 +66,36 @@ public class CompiledFunc extends Func {
                 } else if (type == Obj.TYPE) {
                     scope.declare(parameter.getName(), Undefined.VALUE);
                 } else {
-                    return Undefined.VALUE;
+                    throw typeError(parameters, arguments);
                 }
             } else if (parameter.hasDefault()) {
                 scope.declare(parameter.getName(), parameter.getDefault().accept(visitor, scope));
             } else if (type == Obj.TYPE) {
                 scope.declare(parameter.getName(), Undefined.VALUE);
             } else {
-                return Undefined.VALUE;
+                throw typeError(parameters, arguments);
+            }
+        }
+
+        Parameter lastParam = parameters.get(parameters.size() - 1);
+
+        if (lastParam.isRest()) {
+            if (arguments.size() > getArity()) {
+                Type type = lastParam.getType();
+                List<Obj> sublist = arguments.subList(parameters.size() - 1, arguments.size());
+                Array array = new Array();
+
+                for (Obj obj : sublist) {
+                    if (obj.getType().is(type)) {
+                        array.add(obj);
+                    } else if (type != Obj.TYPE) {
+                        throw typeError(parameters, arguments);
+                    }
+                }
+
+                scope.declare(lastParam.getName(), array);
+            } else {
+                scope.declare(lastParam.getName(), new Array());
             }
         }
 

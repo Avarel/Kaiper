@@ -22,6 +22,7 @@ import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.exceptions.SyntaxException;
+import xyz.avarel.aje.interpreter.ExprInterpreter;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.ParserFlags;
 import xyz.avarel.aje.parser.lexer.AJELexer;
@@ -187,11 +188,12 @@ public class Expression {
         }
 
         @Override
-        public Obj accept(ExprVisitor visitor, Scope scope) {
+        public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
             try {
-                return expr.accept(new ExprVisitor(), scope.copy());
+                return expr.accept(visitor, scope);
             } catch (ReturnException re) {
-                return re.getValue();
+                // hope for the best
+                return (R) re.getValue();
             } catch (AJEException re) {
                 throw re;
             } catch (RuntimeException re) {
@@ -201,7 +203,7 @@ public class Expression {
 
         @Override
         public Obj compute() {
-            return accept(new ExprVisitor(), scope.copy());
+            return accept(new ExprInterpreter(), scope.copy());
         }
 
         @Override

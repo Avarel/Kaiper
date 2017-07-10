@@ -16,16 +16,15 @@
 package xyz.avarel.aje.parser.parslets.nodes;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.collections.ArrayNode;
 import xyz.avarel.aje.ast.collections.DictionaryNode;
+import xyz.avarel.aje.ast.value.StringNode;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Str;
 
 import java.util.*;
 
@@ -81,7 +80,7 @@ public class CollectionsParser implements PrefixParser {
         Map<Expr, Expr> map = new HashMap<>();
 
         if (initKey instanceof Identifier) {
-            initKey = new ValueNode(Str.of(((Identifier) initKey).getName()));
+            initKey = new StringNode(((Identifier) initKey).getName());
         }
 
         map.put(initKey, parser.parseExpr());

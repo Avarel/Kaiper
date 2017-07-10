@@ -29,7 +29,7 @@ Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xy
 ◀ 14.0 + 46.0i : complex
 ```
 
-#### Vectors
+#### Arrays
 ```
 ▶ [1,2,3][1]
 ◀ 2 : integer
@@ -37,10 +37,10 @@ Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xy
 ▶ [1..3] + 2
 ◀ [3, 4, 5] : array
 
-▶ var x = [50..60]; x[::-1]
+▶ let x = [50..60]; x[::-1]
 ◀ [60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50] : array
 
-▶ var x = [100..200]; x[25:30]
+▶ let x = [100..200]; x[25:30]
 ◀ [125, 126, 127, 128, 129] : array
 
 ▶ [1..10][2:8]
@@ -52,7 +52,7 @@ Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xy
 
 #### Flow Control
 ```
-▶ var x = 50
+▶ let x = 50
 ◀ undefined : undefined
 
 ▶ return if (x > 10) i else pi
@@ -64,7 +64,7 @@ Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xy
 ▶ fib(14)
 ◀ 377 : integer
 
-▶ var a = 0
+▶ let a = 0
 ◀ 0 : integer
 
 ▶ for (n in 1..10) { a += n }
@@ -76,16 +76,16 @@ Try evaluating AJE expressions by running the [`AJERepl.java`](/src/test/java/xy
 
 #### First Class Functions
 ```
-▶ [1..10] |> map(_ ^ 2)
+▶ [1..10] |> Array.map(_ ^ 2)
 ◀ [1, 4, 9, 16, 25, 36, 49, 64, 81, 100] : array
 
-▶ var add = { x, y -> x + y }; [1..10] |> fold(0, add)
+▶ let add = { x, y -> x + y }; [1..10] |> Array.fold(0, add)
 ◀ 55 : integer
 
-▶ func isEven(x) { x % 2 == 0 }; [1..20] |> filter(isEven)
+▶ func isEven(x) { x % 2 == 0 }; [1..20] |> Array.filter(isEven)
 ◀ [2, 4, 6, 8, 10, 12, 14, 16, 18, 20] : array
 
-▶ [1..10] |> fold(1, _ * __)
+▶ [1..10] |> Array.fold(1, _ * __)
 ◀ 3628800 : integer
 
 ▶ ["h", "e", "l", "l", "o"].map("hello".indexOf)
@@ -163,7 +163,7 @@ class AJETest {
         });
 
         // Add a varargs function.
-        exp.add("sum", new NativeFunction(true, Numeric.TYPE) {
+        exp.add("sum", new NativeFunction(Parameter.of(Numeric.TYPE, true)) {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 if (arguments.isEmpty()) return Int.of(0);
@@ -241,14 +241,14 @@ Variables are names with information that you can use to store values and use th
     the script. They can be declared using the following syntax:
 ```
 // Declaration
-var name = expression
+let name = expression
 
 // Assignment - requires a declaration.
 name = expression
 ```
 
 ```
-var x = 10
+let x = 10
 x = 20
 sin(x)
 ```
@@ -344,11 +344,10 @@ These are functions that are built into AJE. They include both higher-order and 
 
 |Symbol|Description|Arguments|Example|
 |---|---|---|---:|
-|`compose`|Create a composition of two functions|(`function(x)`,`function(x)`)|`compose(asin, sin)`|
-|`each`|List iteration action function|(`list`, `function(x)`)|<code>var x = 0;<br>[0..9] &#124;> each {it-> x += it }</code>|
-|`map`|List transform function|(`list`, `function(x)`)|`map([1..10], _ ^ 2)`|
-|`filter`|List filter function|(`list`, `function(x)`)|`filter([1..10], _ % 2 == 0)`|
-|`fold`|List accumulation function|(`list`, `value`, `function(x, y)`)|`fold([1..10], 0, {a, b -> a + b})`|
+|`each`|List iteration action function|(`list`, `function(x)`)|<code>let x = 0;<br>[0..9] &#124;> Array.each {it-> x += it}</code>|
+|`map`|List transform function|(`list`, `function(x)`)|`Array.map([1..10], _ ^ 2)`|
+|`filter`|List filter function|(`list`, `function(x)`)|`Array.filter([1..10], _ % 2 == 0)`|
+|`fold`|List accumulation function|(`list`, `value`, `function(x, y)`)|`Array.fold([1..10], 0, {a, b -> a + b})`|
 |`sqrt`|Square root function|(`complex`)|`sqrt(x)`|
 |`cbrt`|Cube root function|(`complex`)|`cbrt(x)`|
 |`exp`|Exponential function|(`complex`)|`exp(x)`|

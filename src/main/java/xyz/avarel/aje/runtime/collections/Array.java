@@ -206,7 +206,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
         int end;
         int step;
 
-        if (startObj == null) {
+        if (startObj == Undefined.VALUE) {
             start = 0;
         } else {
             if (startObj instanceof Int) {
@@ -219,7 +219,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
             }
         }
 
-        if (endObj == null) {
+        if (endObj == Undefined.VALUE) {
             end = size();
         } else {
             if (endObj instanceof Int) {
@@ -232,7 +232,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
             }
         }
 
-        if (stepObj == null) {
+        if (stepObj == Undefined.VALUE) {
             step = 1;
         } else {
             if (stepObj instanceof Int) {
@@ -361,7 +361,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
                 }
             });
 
-            getScope().declare("append", new NativeFunc(true, Obj.TYPE) {
+            getScope().declare("append", new NativeFunc(Parameter.of(Obj.TYPE, true)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     ((Array) arguments.get(0)).addAll(arguments);

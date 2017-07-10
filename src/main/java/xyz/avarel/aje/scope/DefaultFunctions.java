@@ -19,6 +19,7 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Complex;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -130,7 +131,7 @@ public enum DefaultFunctions {
         }
     }),
 
-    SUM(new NativeFunc(true, Numeric.TYPE) {
+    SUM(new NativeFunc(Parameter.of(Numeric.TYPE, true)) {
         @Override
         protected Obj eval(List<Obj> arguments) {
             if (arguments.isEmpty()) return Int.of(0);
@@ -142,7 +143,7 @@ public enum DefaultFunctions {
         }
     }),
 
-    PRODUCT(new NativeFunc(true, Numeric.TYPE) {
+    PRODUCT(new NativeFunc(Parameter.of(Numeric.TYPE, true)) {
         @Override
         protected Obj eval(List<Obj> arguments) {
             if (arguments.isEmpty()) return Int.of(0);

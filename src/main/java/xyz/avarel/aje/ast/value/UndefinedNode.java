@@ -13,38 +13,16 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast.operations;
+package xyz.avarel.aje.ast.value;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 
-public class UnaryOperation implements Expr {
-    private final Expr target;
-    private final UnaryOperatorType operator;
-
-    public UnaryOperation(Expr target, UnaryOperatorType operator) {
-        this.target = target;
-        this.operator = operator;
-    }
-
-    public Expr getTarget() {
-        return target;
-    }
-
-    public UnaryOperatorType getOperator() {
-        return operator;
-    }
+public enum UndefinedNode implements Expr {
+    VALUE;
 
     @Override
     public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
-    }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("unary ").append(operator);
-
-        builder.append('\n');
-        target.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 }

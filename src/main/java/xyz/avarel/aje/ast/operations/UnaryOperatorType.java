@@ -13,17 +13,10 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.nodes;
+package xyz.avarel.aje.ast.operations;
 
-import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.value.StringNode;
-import xyz.avarel.aje.parser.AJEParser;
-import xyz.avarel.aje.parser.PrefixParser;
-import xyz.avarel.aje.parser.lexer.Token;
-
-public class TextParser implements PrefixParser {
-    @Override
-    public Expr parse(AJEParser parser, Token token) {
-        return new StringNode(token.getString());
-    }
+public enum UnaryOperatorType {
+    PLUS,
+    MINUS,
+    NEGATE,
 }

@@ -48,7 +48,7 @@ public class ReferenceFunc extends Func {
 
     @Override
     public String toString() {
-        return "ref$" + super.toString();
+        return receiver + "." + super.toString();
     }
 
     @Override

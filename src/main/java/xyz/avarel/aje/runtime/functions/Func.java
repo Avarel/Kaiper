@@ -15,16 +15,28 @@
 
 package xyz.avarel.aje.runtime.functions;
 
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
     public static final Type<Func> TYPE = new FunctionType();
+
+    protected static ComputeException typeError(List<Parameter> parameters, List<Obj> arguments) {
+        StringJoiner argType = new StringJoiner(", ", "(", ")");
+        for (Obj obj : arguments) argType.add(obj.getType().getName());
+
+        StringJoiner funcType = new StringJoiner(", ", "(", ")");
+        for (Parameter param : parameters) funcType.add(param.typeString());
+
+        return new ComputeException(argType + " can not apply to " + funcType);
+    }
 
     public abstract int getArity();
 

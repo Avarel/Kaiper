@@ -16,15 +16,14 @@
 package xyz.avarel.aje.parser.parslets.nodes;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.runtime.Undefined;
 
 public class UndefinedParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        return new ValueNode(Undefined.VALUE);
+        return UndefinedNode.VALUE;
     }
 }

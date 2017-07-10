@@ -26,7 +26,9 @@ import xyz.avarel.aje.runtime.functions.NativeFunc;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class AJERepl {
     public static void main(String[] args) {
@@ -61,7 +63,7 @@ public class AJERepl {
                     return Undefined.VALUE;
                 });
 
-                Obj result = future.get(500, TimeUnit.MILLISECONDS);
+                Obj result = future.get();
 
                 System.out.println("\u25c0 " + result + " : " + result.getType());
 
@@ -69,7 +71,7 @@ public class AJERepl {
             } catch (RuntimeException e) {
                 System.out.println("\u25c0 Exception: " + e.getMessage() + "\n");
                 e.printStackTrace();
-            } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
         }

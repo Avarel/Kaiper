@@ -16,14 +16,15 @@
 package xyz.avarel.aje.parser.parslets.flow;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.flow.ForEachExpr;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Undefined;
+
+import java.util.Objects;
 
 public class ForEachParser implements PrefixParser {
     @Override
@@ -38,8 +39,9 @@ public class ForEachParser implements PrefixParser {
 
         String variant = parser.eat(TokenType.IDENTIFIER).getString();
 
-        if (!parser.eat().getString().equals("in")) {
-            throw new SyntaxException("Expected IN but found " + token.getType(), token.getPosition());
+        if (!Objects.equals(parser.eat().getString(), "in")) {
+            throw new SyntaxException("Expected IN but found " + parser.getLast().getType(),
+                    parser.getLast().getPosition());
         }
 
         Expr iterable = parser.parseExpr();
@@ -53,7 +55,7 @@ public class ForEachParser implements PrefixParser {
                 expr = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);
             } else {
-                expr = new ValueNode(Undefined.VALUE);
+                expr = UndefinedNode.VALUE;
             }
         } else {
             expr = parser.parseExpr();

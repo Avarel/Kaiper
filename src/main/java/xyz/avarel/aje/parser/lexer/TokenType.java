@@ -64,6 +64,7 @@ public enum TokenType {
     VERTICAL_BAR,
 
     // MISC
+    REST,
     RANGE_TO,
     PIPE_FORWARD,
     PIPE_BACKWARD,

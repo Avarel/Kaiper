@@ -28,29 +28,30 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast;
+package xyz.avarel.aje.interpreter;
 
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.scope.Scope;
+import xyz.avarel.aje.exceptions.ComputeException;
 
-public class ValueNode implements Expr {
-    private final Obj value;
+public class GlobalVisitorSettings {
+    public static int ITERATION_LIMIT = -1;
+    public static int SIZE_LIMIT = -1;
+    public static long MILLISECONDS_LIMIT = -1;
 
-    public ValueNode(Obj value) {
-        this.value = value;
+    public static void checkIterationLimit(int iter) {
+        if (ITERATION_LIMIT != -1 && iter > ITERATION_LIMIT) {
+            throw new ComputeException("Iteration limit");
+        }
     }
 
-    public Obj getValue() {
-        return value;
+    public static void checkSizeLimit(int size) {
+        if (SIZE_LIMIT != -1 && size > SIZE_LIMIT) {
+            throw new ComputeException("Size limit");
+        }
     }
 
-    @Override
-    public Obj accept(ExprVisitor visitor, Scope scope) {
-        return visitor.visit(this, scope);
-    }
-
-    @Override
-    public String toString() {
-        return value.toString();
+    public static void checkTimeout(long timeout) {
+        if (MILLISECONDS_LIMIT != -1 && System.currentTimeMillis() >= timeout) {
+            throw new ComputeException("Computation timeout");
+        }
     }
 }

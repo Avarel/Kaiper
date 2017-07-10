@@ -17,16 +17,15 @@ package xyz.avarel.aje.parser.parslets.nodes;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
+import xyz.avarel.aje.ast.operations.BinaryOperatorType;
+import xyz.avarel.aje.ast.value.DecimalNode;
+import xyz.avarel.aje.ast.value.IntNode;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.numbers.Decimal;
-import xyz.avarel.aje.runtime.numbers.Int;
 
 public class NumberParser implements PrefixParser {
     @Override
@@ -35,17 +34,17 @@ public class NumberParser implements PrefixParser {
 
         if (token.getType() == TokenType.INT) {
             String str = token.getString();
-            value = new ValueNode(Int.of(Integer.parseInt(str)));
+            value = new IntNode(Integer.parseInt(str));
         } else if (token.getType() == TokenType.DECIMAL) {
             String str = token.getString();
-            value = new ValueNode(Decimal.of(Double.parseDouble(str)));
+            value = new DecimalNode(Double.parseDouble(str));
         }
 
         if (parser.nextIs(TokenType.IDENTIFIER)) {
             Expr right = parser.parseExpr(Precedence.MULTIPLICATIVE);
-            return new BinaryOperation(value, right, Obj::times);
+            return new BinaryOperation(value, right, BinaryOperatorType.TIMES);
         }
 
-        return value != null ? value : new ValueNode(Undefined.VALUE);
+        return value != null ? value : UndefinedNode.VALUE;
     }
 }

@@ -17,19 +17,18 @@ package xyz.avarel.aje.parser.parslets;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.collections.GetOperation;
 import xyz.avarel.aje.ast.collections.SetOperation;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
+import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.operations.SliceOperation;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Position;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
 
 public class GetSetParser extends BinaryParser {
     public GetSetParser() {
@@ -39,7 +38,7 @@ public class GetSetParser extends BinaryParser {
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
         if (parser.match(TokenType.COLON)) {
-            return parseEnd(parser, token.getPosition(), left, null);
+            return parseEnd(parser, token.getPosition(), left, UndefinedNode.VALUE);
         }
 
         Expr key = parser.parseExpr();
@@ -61,8 +60,8 @@ public class GetSetParser extends BinaryParser {
             return new ConditionalExpr(
                     new BinaryOperation(
                             getOp,
-                            new ValueNode(Undefined.VALUE),
-                            Obj::isEqualTo),
+                            UndefinedNode.VALUE,
+                            BinaryOperatorType.EQUALS),
                     new SetOperation(left, key, value),
                     getOp);
         }
@@ -72,9 +71,9 @@ public class GetSetParser extends BinaryParser {
 
     public Expr parseEnd(AJEParser parser, Position position, Expr left, Expr start) {
         if (parser.match(TokenType.COLON)) {
-            return parseStep(parser, position, left, start, null);
+            return parseStep(parser, position, left, start, UndefinedNode.VALUE);
         } else if (parser.match(TokenType.RIGHT_BRACKET)) {
-            return new SliceOperation(left, start, null, null);
+            return new SliceOperation(left, start, UndefinedNode.VALUE, UndefinedNode.VALUE);
         }
 
         Expr end = parser.parseExpr();
@@ -84,12 +83,12 @@ public class GetSetParser extends BinaryParser {
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
-        return new SliceOperation(left, start, end, null);
+        return new SliceOperation(left, start, end, UndefinedNode.VALUE);
     }
 
     public Expr parseStep(AJEParser parser, Position position, Expr left, Expr start, Expr end) {
         if (parser.match(TokenType.RIGHT_BRACKET)) {
-            return new SliceOperation(left, start, end, null);
+            return new SliceOperation(left, start, end, UndefinedNode.VALUE);
         }
 
         Expr step = parser.parseExpr();

@@ -16,17 +16,15 @@
 package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.*;
 
@@ -38,7 +36,7 @@ public class LambdaFunctionParser implements PrefixParser {
         }
 
         if (parser.match(TokenType.RIGHT_BRACE)) {
-            return new FunctionNode(Collections.emptyList(), new ValueNode(Undefined.VALUE));
+            return new FunctionNode(Collections.emptyList(), UndefinedNode.VALUE);
         }
 
         List<ParameterData> parameters = new ArrayList<>();
@@ -67,6 +65,8 @@ public class LambdaFunctionParser implements PrefixParser {
                 Set<String> paramNames = new HashSet<>();
 
                 do {
+                    boolean rest = parser.match(TokenType.REST);
+
                     String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
 
                     if (paramNames.contains(parameterName)) {
@@ -75,7 +75,7 @@ public class LambdaFunctionParser implements PrefixParser {
                         paramNames.add(parameterName);
                     }
 
-                    Expr parameterType = new ValueNode(Obj.TYPE);
+                    Expr parameterType = new Identifier("Object");
 
                     if (parser.match(TokenType.COLON)) {
                         Token typeToken = parser.eat(TokenType.IDENTIFIER);
@@ -85,8 +85,13 @@ public class LambdaFunctionParser implements PrefixParser {
                         }
                     }
 
-                    ParameterData parameter = new ParameterData(parameterName, parameterType);
+                    ParameterData parameter = new ParameterData(parameterName, parameterType, null, rest);
                     parameters.add(parameter);
+
+                    if (rest && parser.match(TokenType.COMMA)) {
+                        throw new SyntaxException("Rest parameters must be the last parameter",
+                                parser.peek(0).getPosition());
+                    }
                 } while (parser.match(TokenType.COMMA));
 
                 parser.eat(TokenType.ARROW);

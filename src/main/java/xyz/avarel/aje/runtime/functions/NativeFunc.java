@@ -15,12 +15,14 @@
 
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class NativeFunc extends Func {
     //    private final Type receiverType;
@@ -48,18 +50,11 @@ public abstract class NativeFunc extends Func {
         this.varargs = false;
     }
 
-    public NativeFunc(boolean varargs, Type parameter) { // a : Int...
-        //this.parameters = new ArrayList<>();
-
-        this.parameters = Collections.singletonList(Parameter.of(parameter));
-        this.varargs = varargs;
-    }
-
     protected abstract Obj eval(List<Obj> arguments);
 
     @Override
     public int getArity() {
-        return parameters.size();
+        return parameters.get(parameters.size() - 1).isRest() ? parameters.size() - 1 : parameters.size();
     }
 
     public List<Parameter> getParameters() {
@@ -68,31 +63,33 @@ public abstract class NativeFunc extends Func {
 
     @Override
     public String toString() {
-        return "native$" + super.toString();
+        return super.toString() + "$native";
     }
 
     @Override
     public Obj invoke(List<Obj> arguments) {
-        if (!varargs && arguments.size() < getArity()) {
-            return Undefined.VALUE;
+        for (int i = 0; i < getArity(); i++) {
+            Parameter parameter = parameters.get(i);
+
+            Type type = parameter.getType();
+
+            if (i < arguments.size()) {
+                if (!(arguments.get(i).getType().is(type) || type == Obj.TYPE)) {
+                    throw typeError(parameters, arguments);
+                }
+            } else if (!(parameter.hasDefault() || type == Obj.TYPE)) {
+                throw typeError(parameters, arguments);
+            }
         }
 
-        if (!varargs) {
-            for (int i = 0; i < parameters.size(); i++) {
-                if (!arguments.get(i).getType().is(parameters.get(i).getType())) {
-                    StringJoiner argType = new StringJoiner(", ", "(", ")");
-                    for (Obj obj : arguments) argType.add(obj.getType().getName());
+        Parameter lastParam = parameters.get(parameters.size() - 1);
+        if (arguments.size() > getArity() && lastParam.isRest()) {
+            Type type = lastParam.getType();
+            List<Obj> sublist = arguments.subList(parameters.size() - 1, arguments.size());
 
-                    StringJoiner funcType = new StringJoiner(", ", "(", ")");
-                    for (Parameter param : parameters) funcType.add(param.getType().getName());
-
-                    throw new ComputeException(argType + " can not apply to " + funcType);
-                }
-            }
-        } else {
-            for (Obj argument : arguments) { // all varargs should be the same size
-                if (!argument.getType().is(parameters.get(0).getType())) {
-                    return Undefined.VALUE;
+            for (Obj obj : sublist) {
+                if (obj.getType().is(type) && type == Obj.TYPE) {
+                    throw typeError(parameters, arguments);
                 }
             }
         }

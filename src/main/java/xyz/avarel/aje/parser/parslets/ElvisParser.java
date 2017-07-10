@@ -17,14 +17,13 @@ package xyz.avarel.aje.parser.parslets;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
+import xyz.avarel.aje.ast.operations.BinaryOperatorType;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
 
 public class ElvisParser extends BinaryParser {
     public ElvisParser() {
@@ -36,8 +35,8 @@ public class ElvisParser extends BinaryParser {
         return new ConditionalExpr(
                 new BinaryOperation(
                         left,
-                        new ValueNode(Undefined.VALUE),
-                        Obj::isEqualTo),
+                        UndefinedNode.VALUE,
+                        BinaryOperatorType.EQUALS),
                 parser.parseExpr(),
                 left);
     }

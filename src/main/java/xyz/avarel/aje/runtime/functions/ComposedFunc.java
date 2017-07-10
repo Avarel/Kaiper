@@ -50,7 +50,7 @@ public class ComposedFunc extends Func {
 
     @Override
     public String toString() {
-        return "composed$" + super.toString();
+        return super.toString() + "$composed";
     }
 
     @Override

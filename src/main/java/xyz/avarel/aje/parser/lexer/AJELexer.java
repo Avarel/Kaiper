@@ -154,6 +154,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
     private Token readToken() {
+        if (!hasNext()) return make(TokenType.EOF);
+
         char c = advance();
 
         while (Character.isSpaceChar(c)) c = advance();
@@ -182,7 +184,9 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             }
 
             case '.': return match('.')
-                    ? make(TokenType.RANGE_TO)
+                    ? match('.')
+                    ? make(TokenType.REST)
+                    : make(TokenType.RANGE_TO)
                     : make(TokenType.DOT);
             case ',': return make(TokenType.COMMA);
             case '!': return match('=')
@@ -272,7 +276,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 } else if (Character.isLetter(c)) {
                     return nextName(c);
                 } else {
-                    if (hasNext()) return make(TokenType.EOF);
                     throw new SyntaxException("Unrecognized `" + c + "`", getPosition());
                 }
         }

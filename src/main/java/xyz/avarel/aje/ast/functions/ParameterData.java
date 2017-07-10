@@ -16,31 +16,32 @@
 package xyz.avarel.aje.ast.functions;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
-import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.runtime.Type;
 
 public class ParameterData {
     private final String name;
     private final Expr type;
     private final Expr defaultExpr;
+    private final boolean rest;
 
     public ParameterData(String name) {
-        this(name, new ValueNode(Obj.TYPE), null);
+        this(name, new Identifier("Object"), null, false);
     }
 
     public ParameterData(Type type) {
-        this(null, new ValueNode(type), null);
+        this(null, new Identifier("Object"), null, false);
     }
 
     public ParameterData(String name, Expr type) {
-        this(name, type, null);
+        this(name, type, null, false);
     }
 
-    public ParameterData(String name, Expr type, Expr defaultExpr) {
+    public ParameterData(String name, Expr type, Expr defaultExpr, boolean rest) {
         this.name = name;
         this.type = type;
         this.defaultExpr = defaultExpr;
+        this.rest = rest;
     }
 
     public String getName() {
@@ -51,12 +52,12 @@ public class ParameterData {
         return type;
     }
 
-    public boolean hasDefault() {
-        return defaultExpr != null;
-    }
-
     public Expr getDefault() {
         return defaultExpr;
+    }
+
+    public boolean isRest() {
+        return rest;
     }
 
     @Override

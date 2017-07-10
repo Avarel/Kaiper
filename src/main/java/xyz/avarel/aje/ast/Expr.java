@@ -19,12 +19,12 @@ import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
+import xyz.avarel.aje.interpreter.ExprInterpreter;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.DefaultScope;
-import xyz.avarel.aje.scope.Scope;
 
 public interface Expr {
-    Obj accept(ExprVisitor visitor, Scope scope);
+    <R, C> R accept(ExprVisitor<R, C> visitor, C scope);
 
     default Expr andThen(Expr after) {
         return new Statements(this, after);
@@ -32,7 +32,7 @@ public interface Expr {
 
     default Obj compute() {
         try {
-            return accept(new ExprVisitor(), DefaultScope.INSTANCE.copy());
+            return accept(new ExprInterpreter(), DefaultScope.INSTANCE.copy());
         } catch (ReturnException re) {
             return re.getValue();
         } catch (AJEException re) {

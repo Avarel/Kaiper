@@ -16,12 +16,11 @@
 package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ValueNode;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.parser.lexer.Token;
 import xyz.avarel.aje.parser.lexer.TokenType;
-import xyz.avarel.aje.runtime.Undefined;
 
 public class AJEParser extends Parser {
     private ParserFlags parserFlags = ParserFlags.ALL_FLAGS;
@@ -57,7 +56,7 @@ public class AJEParser extends Parser {
 
     public Expr parseStatements() {
         checkTimeout();
-        if (match(TokenType.EOF)) return new ValueNode(Undefined.VALUE);
+        if (match(TokenType.EOF)) return UndefinedNode.VALUE;
 
         checkTimeout();
         Expr any = parseExpr();

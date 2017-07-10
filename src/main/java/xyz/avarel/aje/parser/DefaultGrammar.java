@@ -16,6 +16,8 @@
 package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.Precedence;
+import xyz.avarel.aje.ast.operations.BinaryOperatorType;
+import xyz.avarel.aje.ast.operations.UnaryOperatorType;
 import xyz.avarel.aje.parser.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.ElvisParser;
 import xyz.avarel.aje.parser.parslets.GetSetParser;
@@ -33,7 +35,6 @@ import xyz.avarel.aje.parser.parslets.operators.UnaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.variables.AttributeParser;
 import xyz.avarel.aje.parser.parslets.variables.DeclarationParser;
 import xyz.avarel.aje.parser.parslets.variables.NameParser;
-import xyz.avarel.aje.runtime.Obj;
 
 public class DefaultGrammar extends Grammar {
     public static final Grammar INSTANCE = new DefaultGrammar();
@@ -55,7 +56,7 @@ public class DefaultGrammar extends Grammar {
         prefix(TokenType.BOOLEAN, new BoolParser());
         prefix(TokenType.TEXT, new TextParser());
         prefix(TokenType.UNDEFINED, new UndefinedParser());
-        prefix(TokenType.ATOM, new AtomParser());
+//        prefix(TokenType.ATOM, new AtomParser());
 
         prefix(TokenType.FUNCTION, new FunctionParser());
         prefix(TokenType.UNDERSCORE, new ImplicitFunctionParser());
@@ -66,30 +67,28 @@ public class DefaultGrammar extends Grammar {
         prefix(TokenType.LET, new DeclarationParser());
 
         // Numeric
-        prefix(TokenType.MINUS, new UnaryOperatorParser(Obj::negative));
-        prefix(TokenType.PLUS, new UnaryOperatorParser(Obj::identity));
-        infix(TokenType.PLUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, Obj::plus));
-        infix(TokenType.MINUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, Obj::minus));
-        infix(TokenType.ASTERISK, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Obj::times));
-        infix(TokenType.SLASH, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Obj::divide));
-        infix(TokenType.PERCENT, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, Obj::mod));
-        infix(TokenType.CARET, new BinaryOperatorParser(Precedence.EXPONENTIAL, false, Obj::pow));
+        prefix(TokenType.MINUS, new UnaryOperatorParser(UnaryOperatorType.MINUS));
+        prefix(TokenType.PLUS, new UnaryOperatorParser(UnaryOperatorType.PLUS));
+        infix(TokenType.PLUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, BinaryOperatorType.PLUS));
+        infix(TokenType.MINUS, new BinaryOperatorParser(Precedence.ADDITIVE, true, BinaryOperatorType.MINUS));
+        infix(TokenType.ASTERISK, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, BinaryOperatorType.TIMES));
+        infix(TokenType.SLASH, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, BinaryOperatorType.DIVIDE));
+        infix(TokenType.PERCENT, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, BinaryOperatorType.MODULUS));
+        infix(TokenType.CARET, new BinaryOperatorParser(Precedence.EXPONENTIAL, false, BinaryOperatorType.POWER));
 
         // RELATIONAL
-        infix(TokenType.EQUALS, new BinaryOperatorParser(Precedence.EQUALITY, true, Obj::isEqualTo));
-        infix(TokenType.NOT_EQUAL,
-                new BinaryOperatorParser(Precedence.EQUALITY, true, (a, b) -> a.isEqualTo(b).negate()));
-        infix(TokenType.GT, new BinaryOperatorParser(Precedence.COMPARISON, true, Obj::greaterThan));
-        infix(TokenType.LT, new BinaryOperatorParser(Precedence.COMPARISON, true, Obj::lessThan));
-        infix(TokenType.GTE, new BinaryOperatorParser(Precedence.COMPARISON, true,
-                (a, b) -> a.isEqualTo(b).or(a.greaterThan(b))));
-        infix(TokenType.LTE, new BinaryOperatorParser(Precedence.COMPARISON, true,
-                (a, b) -> a.isEqualTo(b).or(a.lessThan(b))));
+        infix(TokenType.EQUALS, new BinaryOperatorParser(Precedence.EQUALITY, true, BinaryOperatorType.EQUALS));
+        infix(TokenType.NOT_EQUAL, new BinaryOperatorParser(Precedence.EQUALITY, true, BinaryOperatorType.NOT_EQUALS));
+        infix(TokenType.GT, new BinaryOperatorParser(Precedence.COMPARISON, true, BinaryOperatorType.GREATER_THAN));
+        infix(TokenType.LT, new BinaryOperatorParser(Precedence.COMPARISON, true, BinaryOperatorType.LESS_THAN));
+        infix(TokenType.GTE,
+                new BinaryOperatorParser(Precedence.COMPARISON, true, BinaryOperatorType.GREATER_THAN_EQUAL));
+        infix(TokenType.LTE, new BinaryOperatorParser(Precedence.COMPARISON, true, BinaryOperatorType.LESS_THAN_EQUAL));
 
         // Truth
-        prefix(TokenType.BANG, new UnaryOperatorParser(Obj::negate));
-        infix(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, Obj::and));
-        infix(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, Obj::or));
+        prefix(TokenType.BANG, new UnaryOperatorParser(UnaryOperatorType.NEGATE));
+        infix(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, BinaryOperatorType.AND));
+        infix(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, BinaryOperatorType.OR));
 
         infix(TokenType.RANGE_TO, new RangeOperatorParser());
 
