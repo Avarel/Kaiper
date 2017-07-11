@@ -52,22 +52,22 @@ public class ExprDeserializer {
             case END: {
                 /*
                 END endId
-				 */
+                 */
                 int endId = input.readInt();
                 if (endId != validEndId) throw new InvalidBytecodeException("Invalid END");
                 return null;
             }
             case RETURN: {
-				/*
-				RETURN endId (... => expr) END endId
-    			 */
+                /*
+                RETURN endId (... => expr) END endId
+                 */
                 int endId = input.readInt();
                 return new ReturnExpr(collectUntil(endId));
             }
             case ASSIGN: {
-				/*
-				ASSIGN declaration name hasParent endId [hasParent ? (... => parent) END endId] (... => expr) END endId
-    			 */
+                /*
+                ASSIGN declaration name hasParent endId [hasParent ? (... => parent) END endId] (... => expr) END endId
+                 */
                 boolean declaration = input.readBoolean();
                 String name = input.readUTF();
                 boolean hasParent = input.readBoolean();
@@ -80,31 +80,31 @@ public class ExprDeserializer {
 
             }
             case CONDITIONAL: {
-				/*
-				CONDITIONAL endId (... => condition) END endId (... => ifBranch) END endId (... => elseBranch) END endId
-				 */
+                /*
+                CONDITIONAL endId (... => condition) END endId (... => ifBranch) END endId (... => elseBranch) END endId
+                 */
                 int endId = input.readInt();
                 return new ConditionalExpr(collectUntil(endId), collectUntil(endId), collectUntil(endId));
             }
             case FOREACH: {
-				/*
-				FOREACH variant endId (... => iterable) END endId (... => action) END endId
-				 */
+                /*
+                FOREACH variant endId (... => iterable) END endId (... => action) END endId
+                 */
                 String variant = input.readUTF();
                 int endId = input.readInt();
                 return new ForEachExpr(variant, collectUntil(endId), collectUntil(endId));
             }
             case ARRAY: {
-				/*
-				ARRAY endId (... => childs) END endId
-				 */
+                /*
+                ARRAY endId (... => childs) END endId
+                 */
                 int endId = input.readInt();
                 return new ArrayNode(toList(collectUntil(endId)));
             }
             case DICTIONARY: {
-				/*
-				DICTIONARY endId (... => (key,value)*) END endId
-				 */
+                /*
+                DICTIONARY endId (... => (key,value)*) END endId
+                 */
                 int endId = input.readInt();
                 List<Expr> exprs = toList(collectUntil(endId));
 
@@ -120,48 +120,48 @@ public class ExprDeserializer {
                 return new DictionaryNode(map);
             }
             case RANGE: {
-				/*
-				RANGE endId (... => left) END endId (... => right) END endId
-				 */
+                /*
+                RANGE endId (... => left) END endId (... => right) END endId
+                 */
                 int endId = input.readInt();
                 return new RangeNode(collectUntil(endId), collectUntil(endId));
             }
             case UNDEFINED: {
-				/*
-				UNDEFINED
-				 */
+                /*
+                UNDEFINED
+                 */
                 return UndefinedNode.VALUE;
             }
             case BOOLEAN: {
-				/*
-				BOOLEAN bool
-				 */
+                /*
+                BOOLEAN bool
+                 */
                 return input.readBoolean() ? BooleanNode.TRUE : BooleanNode.FALSE;
             }
             case INT: {
-				/*
-				INT int
-				 */
+                /*
+                INT int
+                 */
                 return new IntNode(input.readInt());
             }
             case DECIMAL: {
-				/*
-				DECIMAL decimal
-				 */
+                /*
+                DECIMAL decimal
+                 */
                 return new DecimalNode(input.readDouble());
             }
             case STRING: {
-				/*
-				STRING string
-				 */
+                /*
+                STRING string
+                 */
                 return new StringNode(input.readUTF());
             }
             case FUNCTION: {
-				/*
-				FUNCTION name endId (... => parameters) END endId (... => expr) END endId
+                /*
+                FUNCTION name endId (... => parameters) END endId (... => expr) END endId
 
-				FUNCTION_PARAM name modifiers endId (... => typeExpr) END endId [modifiers.hasDefaultValue ? (... => defaultValue) END endId]
-				 */
+                FUNCTION_PARAM name modifiers endId (... => typeExpr) END endId [modifiers.hasDefaultValue ? (... => defaultValue) END endId]
+                 */
                 String name = input.readUTF();
                 int endId = input.readInt();
 
@@ -184,9 +184,9 @@ public class ExprDeserializer {
                         }
 
                     } else if (b == 0) { //END
-						/*
-						END endId
-						 */
+                        /*
+                        END endId
+                         */
                         if (input.readInt() != endId) throw new InvalidBytecodeException("Invalid END");
                         finished = true;
                     } else {
@@ -197,9 +197,9 @@ public class ExprDeserializer {
                 return new FunctionNode(name.isEmpty() ? null : name, parameterData, collectUntil(endId));
             }
             case IDENTIFIER: {
-				/*
-				IDENTIFIER parented name [parented ? endId (... => parent) END endId]
-				 */
+                /*
+                IDENTIFIER parented name [parented ? endId (... => parent) END endId]
+                 */
                 boolean parented = input.readBoolean();
                 String name = input.readUTF();
 
@@ -211,44 +211,44 @@ public class ExprDeserializer {
                 return new Identifier(collectUntil(endId), name);
             }
             case INVOCATION: {
-				/*
-				INVOCATION endId (... => left) END endId (... => arguments) END endId
-				 */
+                /*
+                INVOCATION endId (... => left) END endId (... => arguments) END endId
+                 */
                 int endId = input.readInt();
                 return new Invocation(collectUntil(endId), toList(collectUntil(endId)));
             }
             case UNARY_OP: {
-				/*
-				UNARY_OP type endId (... => target) END endId
-				 */
+                /*
+                UNARY_OP type endId (... => target) END endId
+                 */
                 int type = input.readInt(), endId = input.readInt();
                 return new UnaryOperation(collectUntil(endId), UnaryOperatorType.values()[type]);
             }
             case BINARY_OP: {
-				/*
-				BINARY_OP type endId (... => left) END endId (... => right) END endId
-				 */
+                /*
+                BINARY_OP type endId (... => left) END endId (... => right) END endId
+                 */
                 int type = input.readInt(), endId = input.readInt();
                 return new BinaryOperation(collectUntil(endId), collectUntil(endId), BinaryOperatorType.values()[type]);
             }
             case SLICE_OP: {
-				/*
-				SLICE_OP endId (... => obj) END endId (... => start) END endId (... => end) END endId (... => step) END endId
-				 */
+                /*
+                SLICE_OP endId (... => obj) END endId (... => start) END endId (... => end) END endId (... => step) END endId
+                 */
                 int endId = input.readInt();
                 return new SliceOperation(collectUntil(endId), collectUntil(endId), collectUntil(endId), collectUntil(endId));
             }
             case GET: {
-				/*
-				GET endId (... => left) END endId (... => key) END endId
-				 */
+                /*
+                GET endId (... => left) END endId (... => key) END endId
+                 */
                 int endId = input.readInt();
                 return new GetOperation(collectUntil(endId), collectUntil(endId));
             }
             case SET: {
-				/*
-				SET endId (... => left) END endId (... => key) END endId (... => value) END endId
-				 */
+                /*
+                SET endId (... => left) END endId (... => key) END endId (... => value) END endId
+                 */
                 int endId = input.readInt();
                 return new SetOperation(collectUntil(endId), collectUntil(endId), collectUntil(endId));
             }

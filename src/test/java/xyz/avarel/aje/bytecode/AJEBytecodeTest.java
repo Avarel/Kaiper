@@ -2,6 +2,7 @@ package xyz.avarel.aje.bytecode;
 
 import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.bytecode.deserialization.ExprDeserializer;
 import xyz.avarel.aje.bytecode.viewer.ExprViewer;
 
 import java.io.ByteArrayInputStream;
@@ -39,9 +40,9 @@ public class AJEBytecodeTest {
 
         byte[] bytecode = expCompiled.bytecode();
 
-//		System.out.println("Bytecode: " + bytesToHex(bytecode));
+        System.out.println("Bytecode: " + bytesToHex(bytecode));
 
-//		System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
 
         System.out.println("AJE Bytecode Viewer:\n");
 
@@ -55,23 +56,23 @@ public class AJEBytecodeTest {
                 )
         );
 
-//		System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
 
 
-//        Expr expr = new ExprDeserializer(
-//            new DataInputStream(
-//                new ByteArrayInputStream(
-//                    bytecode
-//                )
-//            )
-//        ).deserializeAll();
-//
-//        StringBuilder b2 = new StringBuilder("AST Now:\n");
-//        expr.ast(b2, "", true);
-//        System.out.println(b2);
-//
-//        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-//
-//        System.out.println("Result Now: " + expr.compute().toJava());
+        Expr expr = new ExprDeserializer(
+                new DataInputStream(
+                        new ByteArrayInputStream(
+                                bytecode
+                        )
+                )
+        ).deserializeAll();
+
+        StringBuilder b2 = new StringBuilder("AST Now:\n");
+        expr.ast(b2, "", true);
+        System.out.println(b2);
+
+        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+
+        System.out.println("Result Now: " + expr.compute().toJava());
     }
 }

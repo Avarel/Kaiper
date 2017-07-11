@@ -62,7 +62,7 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     public DataOutputConsumer visit(FunctionNode expr, Void ignored) {
         /*
         FUNCTION name endId (... => parameters) END endId (... => expr) END endId
-		 */
+         */
         int id = endId;
         endId++;
         DataOutputConsumer childs = zip(expr.getParameterExprs().stream().map(this::visitParameter).collect(Collectors.toList()));
@@ -86,9 +86,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(Identifier expr, Void ignored) {
-		/*
-		IDENTIFIER parented name [parented ? endId (... => parent) END endId]
-		 */
+        /*
+        IDENTIFIER parented name [parented ? endId (... => parent) END endId]
+         */
         if (expr.getParent() == null) {
             return output -> {
                 output.writeByte(IDENTIFIER.id());
@@ -114,9 +114,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(Invocation expr, Void ignored) {
-		/*
-		INVOCATION endId (... => left) END endId (... => arguments) END endId
-		 */
+        /*
+        INVOCATION endId (... => left) END endId (... => arguments) END endId
+         */
         int id = endId;
         endId++;
         DataOutputConsumer left = expr.getLeft().accept(this, null);
@@ -136,9 +136,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(BinaryOperation expr, Void ignored) {
-		/*
-		BINARY_OP type endId (... => left) END endId (... => right) END endId
-		 */
+        /*
+        BINARY_OP type endId (... => left) END endId (... => right) END endId
+         */
 
         int id = endId;
         endId++;
@@ -160,9 +160,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(UnaryOperation expr, Void ignored) {
-		/*
-		UNARY_OP type endId (... => target) END endId
-		 */
+        /*
+        UNARY_OP type endId (... => target) END endId
+         */
 
         int id = endId;
         endId++;
@@ -180,9 +180,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(RangeNode expr, Void ignored) {
-		/*
-		RANGE endId (... => left) END endId (... => right) END endId
-    	 */
+        /*
+        RANGE endId (... => left) END endId (... => right) END endId
+         */
         int id = endId;
         endId++;
         DataOutputConsumer left = expr.getLeft().accept(this, null);
@@ -202,9 +202,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(ArrayNode expr, Void ignored) {
-		/*
-		ARRAY endId (... => childs) END endId
-    	 */
+        /*
+        ARRAY endId (... => childs) END endId
+         */
         int id = endId;
         endId++;
         DataOutputConsumer childs = zip(expr.getItems().stream().map(item -> item.accept(this, null)).collect(Collectors.toList()));
@@ -220,9 +220,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(SliceOperation expr, Void ignored) {
-		/*
-		SLICE_OP endId (... => obj) END endId (... => start) END endId (... => end) END endId (... => step) END endId
-    	 */
+        /*
+        SLICE_OP endId (... => obj) END endId (... => start) END endId (... => end) END endId (... => step) END endId
+         */
         int id = endId;
         endId++;
         DataOutputConsumer obj = expr.getLeft().accept(this, null);
@@ -250,9 +250,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(AssignmentExpr expr, Void ignored) {
-    	/*
-    	ASSIGN declaration name hasParent endId [hasParent ? (... => parent) END endId] (... => expr) END endId
-    	 */
+        /*
+        ASSIGN declaration name hasParent endId [hasParent ? (... => parent) END endId] (... => expr) END endId
+         */
         if (expr.getParent() == null) {
             int id = endId;
             endId++;
@@ -293,9 +293,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(GetOperation expr, Void ignored) {
-		/*
-    	GET endId (... => left) END endId (... => key) END endId
-    	 */
+        /*
+        GET endId (... => left) END endId (... => key) END endId
+         */
         int id = endId;
         endId++;
         DataOutputConsumer left = expr.getLeft().accept(this, null);
@@ -315,9 +315,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(SetOperation expr, Void ignored) {
-		/*
-    	SET endId (... => left) END endId (... => key) END endId (... => value) END endId
-    	 */
+        /*
+        SET endId (... => left) END endId (... => key) END endId (... => value) END endId
+         */
         int id = endId;
         endId++;
         DataOutputConsumer left = expr.getLeft().accept(this, null);
@@ -341,9 +341,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(ReturnExpr expr, Void ignored) {
-    	/*
-    	RETURN endId (... => expr) END endId
-    	 */
+        /*
+        RETURN endId (... => expr) END endId
+         */
         int id = endId;
         endId++;
         DataOutputConsumer data = expr.getExpr().accept(this, null);
@@ -359,9 +359,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(ConditionalExpr expr, Void ignored) {
-    	/*
-    	CONDITIONAL endId (... => condition) END endId (... => ifBranch) END endId (... => elseBranch) END endId
-    	 */
+        /*
+        CONDITIONAL endId (... => condition) END endId (... => ifBranch) END endId (... => elseBranch) END endId
+         */
         int id = endId;
         endId++;
         DataOutputConsumer condition = expr.getCondition().accept(this, null);
@@ -385,9 +385,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(ForEachExpr expr, Void ignored) {
-    	/*
-    	FOREACH variant endId (... => iterable) END endId (... => action) END endId
-    	 */
+        /*
+        FOREACH variant endId (... => iterable) END endId (... => action) END endId
+         */
         int id = endId;
         endId++;
         DataOutputConsumer iterable = expr.getIterable().accept(this, null);
@@ -408,9 +408,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     public DataOutputConsumer visit(DictionaryNode expr, Void ignored) {
-    	/*
-    	DICTIONARY endId (... => (key,value)*) END endId
-    	 */
+        /*
+        DICTIONARY endId (... => (key,value)*) END endId
+         */
         int id = endId;
         endId++;
         DataOutputConsumer childs = zip(
@@ -431,17 +431,17 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(UndefinedNode expr, Void scope) {
-		/*
-		UNDEFINED
-		 */
+        /*
+        UNDEFINED
+         */
         return output -> output.writeByte(UNDEFINED.id());
     }
 
     @Override
     public DataOutputConsumer visit(IntNode expr, Void scope) {
-		/*
-		INT int
-		 */
+        /*
+        INT int
+         */
         return output -> {
             output.writeByte(INT.id());
             output.writeInt(expr.getValue());
@@ -450,9 +450,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(DecimalNode expr, Void scope) {
-		/*
-		DECIMAL decimal
-		 */
+        /*
+        DECIMAL decimal
+         */
         return output -> {
             output.writeByte(DECIMAL.id());
             output.writeDouble(expr.getValue());
@@ -461,9 +461,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(BooleanNode expr, Void scope) {
-		/*
-		BOOLEAN bool
-		 */
+        /*
+        BOOLEAN bool
+         */
         return output -> {
             output.writeByte(BOOLEAN.id());
             output.writeBoolean(expr == BooleanNode.TRUE);
@@ -472,9 +472,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(StringNode expr, Void scope) {
-		/*
-		STRING string
-		 */
+        /*
+        STRING string
+         */
         return output -> {
             output.writeByte(STRING.id());
             output.writeUTF(expr.getValue());
@@ -482,9 +482,9 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     private DataOutputConsumer visitParameter(ParameterData data) {
-		/*
-		FUNCTION_PARAM name modifiers endId (... => typeExpr) END endId [modifiers.hasDefaultValue ? (... => defaultValue) END endId]
-		 */
+        /*
+        FUNCTION_PARAM name modifiers endId (... => typeExpr) END endId [modifiers.hasDefaultValue ? (... => defaultValue) END endId]
+         */
         if (data.getDefault() == null) {
             int modifiers = data.isRest() ? 0b10 : 0b00;
 

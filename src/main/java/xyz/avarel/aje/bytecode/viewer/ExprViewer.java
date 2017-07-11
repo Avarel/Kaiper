@@ -43,7 +43,7 @@ public class ExprViewer {
             case END: {
                 /*
                 END endId
-				 */
+                 */
                 int endId = input.readInt();
                 output.append(tab).append("END endId=").append(endId);
                 if (endId != validEndId) output.append(" (Invalid)");
@@ -51,9 +51,9 @@ public class ExprViewer {
                 return false;
             }
             case RETURN: {
-				/*
-				RETURN endId (... => expr) END endId
-    			 */
+                /*
+                RETURN endId (... => expr) END endId
+                 */
                 int endId = input.readInt();
                 output.append(tab).append("RETURN endId=").append(endId).append('\n');
                 output.append(tab).append(">expr\n");
@@ -61,9 +61,9 @@ public class ExprViewer {
                 return true;
             }
             case ASSIGN: {
-				/*
-				ASSIGN declaration name hasParent endId [hasParent ? (... => parent) END endId] (... => expr) END endId
-    			 */
+                /*
+                ASSIGN declaration name hasParent endId [hasParent ? (... => parent) END endId] (... => expr) END endId
+                 */
                 boolean declaration = input.readBoolean();
                 String name = input.readUTF();
                 boolean hasParent = input.readBoolean();
@@ -79,9 +79,9 @@ public class ExprViewer {
                 return true;
             }
             case CONDITIONAL: {
-				/*
-				CONDITIONAL endId (... => condition) END endId (... => ifBranch) END endId (... => elseBranch) END endId
-				 */
+                /*
+                CONDITIONAL endId (... => condition) END endId (... => ifBranch) END endId (... => elseBranch) END endId
+                 */
                 int endId = input.readInt();
                 output.append(tab).append("CONDITIONAL endId=").append(endId).append('\n');
                 output.append(tab).append(">condition\n");
@@ -93,9 +93,9 @@ public class ExprViewer {
                 return true;
             }
             case FOREACH: {
-				/*
-				FOREACH variant endId (... => iterable) END endId (... => action) END endId
-				 */
+                /*
+                FOREACH variant endId (... => iterable) END endId (... => action) END endId
+                 */
                 String variant = input.readUTF();
                 int endId = input.readInt();
                 output.append(tab).append("FOREACH variant=").append(variant).append(" endId=").append(endId).append('\n');
@@ -106,9 +106,9 @@ public class ExprViewer {
                 return true;
             }
             case ARRAY: {
-				/*
-				ARRAY endId (... => childs) END endId
-				 */
+                /*
+                ARRAY endId (... => childs) END endId
+                 */
                 int endId = input.readInt();
                 output.append(tab).append("ARRAY endId=").append(endId).append('\n');
                 output.append(tab).append(">childs\n");
@@ -116,9 +116,9 @@ public class ExprViewer {
                 return true;
             }
             case DICTIONARY: {
-				/*
-				DICTIONARY endId (... => (key,value)*) END endId
-				 */
+                /*
+                DICTIONARY endId (... => (key,value)*) END endId
+                 */
                 int endId = input.readInt();
                 output.append(tab).append("DICTIONARY endId=").append(endId).append('\n');
                 output.append(tab).append(">kvpairs\n");
@@ -126,9 +126,9 @@ public class ExprViewer {
                 return true;
             }
             case RANGE: {
-				/*
-				RANGE endId (... => left) END endId (... => right) END endId
-				 */
+                /*
+                RANGE endId (... => left) END endId (... => right) END endId
+                 */
                 int endId = input.readInt();
                 output.append(tab).append("RANGE endId=").append(endId).append('\n');
                 output.append(tab).append(">left\n");
@@ -138,44 +138,44 @@ public class ExprViewer {
                 return true;
             }
             case UNDEFINED: {
-				/*
-				UNDEFINED
-				 */
+                /*
+                UNDEFINED
+                 */
                 output.append(tab).append("UNDEFINED\n");
                 return true;
             }
             case BOOLEAN: {
-				/*
-				BOOLEAN bool
-				 */
+                /*
+                BOOLEAN bool
+                 */
                 output.append(tab).append("BOOLEAN bool=").append(input.readBoolean()).append('\n');
                 return true;
             }
             case INT: {
-				/*
-				INT int
-				 */
+                /*
+                INT int
+                 */
                 output.append(tab).append("INT int=").append(input.readInt()).append('\n');
                 return true;
             }
             case DECIMAL: {
-				/*
-				DECIMAL decimal
-				 */
+                /*
+                DECIMAL decimal
+                 */
                 output.append(tab).append("DECIMAL decimal=").append(input.readDouble()).append('\n');
                 return true;
             }
             case STRING: {
-				/*
-				STRING string
-				 */
+                /*
+                STRING string
+                 */
                 output.append(tab).append("STRING string=").append(input.readUTF()).append('\n');
                 return true;
             }
             case FUNCTION: {
-				/*
-				FUNCTION name endId (... => parameters) END endId (... => expr) END endId
-				 */
+                /*
+                FUNCTION name endId (... => parameters) END endId (... => expr) END endId
+                 */
                 String name = input.readUTF();
                 int endId = input.readInt();
 
@@ -187,9 +187,9 @@ public class ExprViewer {
                 return true;
             }
             case FUNCTION_PARAM: {
-				/*
-				FUNCTION_PARAM name modifiers endId (... => typeExpr) END endId [modifiers.hasDefaultValue ? (... => defaultValue) END endId]
-				 */
+                /*
+                FUNCTION_PARAM name modifiers endId (... => typeExpr) END endId [modifiers.hasDefaultValue ? (... => defaultValue) END endId]
+                 */
                 String name = input.readUTF();
                 int modifiers = input.readInt();
                 int endId = input.readInt();
@@ -205,9 +205,9 @@ public class ExprViewer {
                 return true;
             }
             case IDENTIFIER: {
-				/*
-				IDENTIFIER parented name [parented ? endId (... => parent) END endId]
-				 */
+                /*
+                IDENTIFIER parented name [parented ? endId (... => parent) END endId]
+                 */
                 boolean parented = input.readBoolean();
                 String name = input.readUTF();
 
@@ -225,9 +225,9 @@ public class ExprViewer {
                 return true;
             }
             case INVOCATION: {
-				/*
-				INVOCATION endId (... => left) END endId (... => arguments) END endId
-				 */
+                /*
+                INVOCATION endId (... => left) END endId (... => arguments) END endId
+                 */
                 int endId = input.readInt();
                 output.append(tab).append("INVOCATION endId=").append(endId).append('\n');
                 output.append(tab).append(">left\n");
@@ -237,9 +237,9 @@ public class ExprViewer {
                 return true;
             }
             case UNARY_OP: {
-				/*
-				UNARY_OP type endId (... => operand) END endId
-				 */
+                /*
+                UNARY_OP type endId (... => operand) END endId
+                 */
                 int type = input.readInt(), endId = input.readInt();
                 output.append(tab).append("UNARY_OP type=").append(type)
                         .append("(").append(UnaryOperatorType.values()[type]).append(")")
@@ -249,9 +249,9 @@ public class ExprViewer {
                 return true;
             }
             case BINARY_OP: {
-				/*
-				BINARY_OP type endId (... => left) END endId (... => right) END endId
-				 */
+                /*
+                BINARY_OP type endId (... => left) END endId (... => right) END endId
+                 */
                 int type = input.readInt(), endId = input.readInt();
                 output.append(tab).append("UNARY_OP type=").append(type)
                         .append("(").append(BinaryOperatorType.values()[type]).append(")")
@@ -263,9 +263,9 @@ public class ExprViewer {
                 return true;
             }
             case SLICE_OP: {
-				/*
-				SLICE_OP endId (... => obj) END endId (... => start) END endId (... => end) END endId (... => step) END endId
-				 */
+                /*
+                SLICE_OP endId (... => obj) END endId (... => start) END endId (... => end) END endId (... => step) END endId
+                 */
                 int endId = input.readInt();
                 output.append(tab).append("SLICE_OP endId=").append(endId).append('\n');
                 output.append(tab).append(">obj\n");
@@ -279,9 +279,9 @@ public class ExprViewer {
                 return true;
             }
             case GET: {
-				/*
-				GET endId (... => left) END endId (... => key) END endId
-				 */
+                /*
+                GET endId (... => left) END endId (... => key) END endId
+                 */
                 int endId = input.readInt();
                 output.append(tab).append("GET endId=").append(endId).append('\n');
                 output.append(tab).append(">left\n");
@@ -291,9 +291,9 @@ public class ExprViewer {
                 return true;
             }
             case SET: {
-				/*
-				SET endId (... => left) END endId (... => key) END endId (... => value) END endId
-				 */
+                /*
+                SET endId (... => left) END endId (... => key) END endId (... => value) END endId
+                 */
                 int endId = input.readInt();
                 output.append(tab).append("SET endId=").append(endId).append('\n');
                 output.append(tab).append(">left\n");
