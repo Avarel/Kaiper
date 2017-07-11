@@ -17,17 +17,47 @@ package xyz.avarel.aje.ast;
 
 import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.ast.flow.Statements;
+import xyz.avarel.aje.bytecode.AJEBytecode;
+import xyz.avarel.aje.bytecode.serialization.DataOutputConsumer;
+import xyz.avarel.aje.bytecode.serialization.ExprSerializer;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.interpreter.ExprInterpreter;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.DefaultScope;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public interface Expr {
     <R, C> R accept(ExprVisitor<R, C> visitor, C scope);
 
     default Expr andThen(Expr after) {
         return new Statements(this, after);
+    }
+
+    default void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append(toString());
+    }
+
+    default void ast(String label, StringBuilder builder, String indent, boolean tail) {
+        builder.append(indent).append(tail ? "└── " : "├── ").append(label).append(':');
+
+        builder.append('\n');
+        ast(builder, indent + (tail ? "    " : "│   "), true);
+    }
+
+    default byte[] bytecode() throws IOException {
+        DataOutputConsumer consumer = accept(new ExprSerializer(), null);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        DataOutput output = AJEBytecode.initialize(new DataOutputStream(stream));
+        consumer.writeInto(output);
+        AJEBytecode.finalize(output);
+
+        return stream.toByteArray();
     }
 
     default Obj compute() {
@@ -40,16 +70,5 @@ public interface Expr {
         } catch (RuntimeException re) {
             throw new ComputeException(re);
         }
-    }
-
-    default void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append(toString());
-    }
-
-    default void ast(String label, StringBuilder builder, String indent, boolean tail) {
-        builder.append(indent).append(tail ? "└── " : "├── ").append(label).append(':');
-
-        builder.append('\n');
-        ast(builder, indent + (tail ? "    " : "│   "), true);
     }
 }

@@ -245,11 +245,11 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         checkTimeout();
         Obj obj = expr.getLeft().accept(this, scope);
         checkTimeout();
-        Obj start = expr.getStart() != null ? expr.getStart().accept(this, scope) : null;
+        Obj start = expr.getStart().accept(this, scope);
         checkTimeout();
-        Obj end = expr.getEnd() != null ? expr.getEnd().accept(this, scope) : null;
+        Obj end = expr.getEnd().accept(this, scope);
         checkTimeout();
-        Obj step = expr.getStep() != null ? expr.getStep().accept(this, scope) : null;
+        Obj step = expr.getStep().accept(this, scope);
 
         return obj.slice(start, end, step);
     }
