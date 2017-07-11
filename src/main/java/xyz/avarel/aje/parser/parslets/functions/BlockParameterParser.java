@@ -21,9 +21,9 @@ import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
+import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
-import xyz.avarel.aje.parser.lexer.Token;
 
 import java.util.ArrayList;
 import java.util.List;

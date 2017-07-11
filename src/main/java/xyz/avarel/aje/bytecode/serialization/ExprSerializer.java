@@ -36,9 +36,15 @@ import java.util.stream.Collectors;
 
 import static xyz.avarel.aje.bytecode.Bytecode.*;
 
+/**
+ * Serialize AJE nodes into a {@link DataOutputConsumer} that can write AJE
+ * nodes into a {@code byte[]}.
+ *
+ * @author AdrianTodt
+ */
 public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
-    private static final DataOutputConsumer NO_OP_CONSUMER = os -> {
-    };
+    private static final DataOutputConsumer NO_OP_CONSUMER = os -> {};
+
     /**
      * <p>This variable stores the id of the END instruction, used in other instructions.</p>
      * <p>Example: {@link ExprSerializer#visit(ReturnExpr, Void)}</p>

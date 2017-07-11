@@ -48,7 +48,7 @@ public class BinaryOperation implements Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("binary op");
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("binary ").append(operator);
 
         builder.append('\n');
         left.ast(builder, indent + (isTail ? "    " : "│   "), false);

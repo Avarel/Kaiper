@@ -16,7 +16,7 @@
 package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.exceptions.ComputeException;
-import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.lexer.TokenType;
 
 import java.util.HashMap;
 import java.util.Map;

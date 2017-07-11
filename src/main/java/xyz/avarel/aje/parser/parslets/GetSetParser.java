@@ -24,11 +24,11 @@ import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.value.UndefinedNode;
+import xyz.avarel.aje.lexer.Position;
+import xyz.avarel.aje.lexer.Token;
+import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
-import xyz.avarel.aje.parser.lexer.Position;
-import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.parser.lexer.TokenType;
 
 public class GetSetParser extends BinaryParser {
     public GetSetParser() {

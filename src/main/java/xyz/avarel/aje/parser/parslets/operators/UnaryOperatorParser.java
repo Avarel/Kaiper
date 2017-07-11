@@ -19,9 +19,9 @@ import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperatorType;
+import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
-import xyz.avarel.aje.parser.lexer.Token;
 
 public class UnaryOperatorParser implements PrefixParser {
     private final UnaryOperatorType operator;

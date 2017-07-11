@@ -15,7 +15,7 @@
 
 package xyz.avarel.aje.exceptions;
 
-import xyz.avarel.aje.parser.lexer.Position;
+import xyz.avarel.aje.lexer.Position;
 
 public class SyntaxException extends AJEException {
     public SyntaxException(String msg) {

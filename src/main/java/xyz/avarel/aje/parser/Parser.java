@@ -16,9 +16,9 @@
 package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.exceptions.SyntaxException;
-import xyz.avarel.aje.parser.lexer.AJELexer;
-import xyz.avarel.aje.parser.lexer.Token;
-import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.lexer.AJELexer;
+import xyz.avarel.aje.lexer.Token;
+import xyz.avarel.aje.lexer.TokenType;
 
 import java.util.ArrayList;
 import java.util.List;

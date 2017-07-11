@@ -17,15 +17,14 @@ package xyz.avarel.aje;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.interpreter.ExprInterpreter;
+import xyz.avarel.aje.lexer.AJELexer;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.ParserFlags;
-import xyz.avarel.aje.parser.lexer.AJELexer;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.DefaultScope;
 import xyz.avarel.aje.scope.Scope;
@@ -191,9 +190,6 @@ public class Expression {
         public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
             try {
                 return expr.accept(visitor, scope);
-            } catch (ReturnException re) {
-                // hope for the best
-                return (R) re.getValue();
             } catch (AJEException re) {
                 throw re;
             } catch (RuntimeException re) {

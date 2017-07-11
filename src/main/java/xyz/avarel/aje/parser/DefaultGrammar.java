@@ -18,7 +18,7 @@ package xyz.avarel.aje.parser;
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.operations.UnaryOperatorType;
-import xyz.avarel.aje.parser.lexer.TokenType;
+import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.parslets.ElvisParser;
 import xyz.avarel.aje.parser.parslets.GetSetParser;
 import xyz.avarel.aje.parser.parslets.GroupParser;

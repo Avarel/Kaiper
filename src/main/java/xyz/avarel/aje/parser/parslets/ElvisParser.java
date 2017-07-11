@@ -21,9 +21,9 @@ import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.value.UndefinedNode;
+import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
-import xyz.avarel.aje.parser.lexer.Token;
 
 public class ElvisParser extends BinaryParser {
     public ElvisParser() {

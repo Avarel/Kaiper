@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.lexer;
+package xyz.avarel.aje.lexer;
 
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -29,7 +29,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
     private Entry[] history;
     private int previous;
-    
+
     private boolean init;
     private boolean eof;
     private long lineIndex;
@@ -161,14 +161,20 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
         while (Character.isSpaceChar(c)) c = advance();
 
         switch (c) {
-            case '(': return make(TokenType.LEFT_PAREN);
-            case ')': return make(TokenType.RIGHT_PAREN);
+            case '(':
+                return make(TokenType.LEFT_PAREN);
+            case ')':
+                return make(TokenType.RIGHT_PAREN);
 
-            case '[': return make(TokenType.LEFT_BRACKET);
-            case ']': return make(TokenType.RIGHT_BRACKET);
+            case '[':
+                return make(TokenType.LEFT_BRACKET);
+            case ']':
+                return make(TokenType.RIGHT_BRACKET);
 
-            case '{': return make(TokenType.LEFT_BRACE);
-            case '}': return make(TokenType.RIGHT_BRACE);
+            case '{':
+                return make(TokenType.LEFT_BRACE);
+            case '}':
+                return make(TokenType.RIGHT_BRACE);
 
             case '_': {
                 StringBuilder builder = new StringBuilder().append(c);
@@ -183,38 +189,50 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 return make(TokenType.UNDERSCORE, builder.toString());
             }
 
-            case '.': return match('.')
-                    ? match('.')
-                    ? make(TokenType.REST)
-                    : make(TokenType.RANGE_TO)
-                    : make(TokenType.DOT);
-            case ',': return make(TokenType.COMMA);
-            case '!': return match('=')
-                    ? make(TokenType.NOT_EQUAL)
-                    : make(TokenType.BANG);
-            case '?': return match('=')
-                    ? make(TokenType.OPTIONAL_ASSIGN)
-                    : match(':')
-                    ? make(TokenType.ELVIS)
-                    : make(TokenType.QUESTION);
-            case '~': return make(TokenType.TILDE);
+            case '.':
+                return match('.')
+                        ? match('.')
+                        ? make(TokenType.REST)
+                        : make(TokenType.RANGE_TO)
+                        : make(TokenType.DOT);
+            case ',':
+                return make(TokenType.COMMA);
+            case '!':
+                return match('=')
+                        ? make(TokenType.NOT_EQUAL)
+                        : make(TokenType.BANG);
+            case '?':
+                return match('=')
+                        ? make(TokenType.OPTIONAL_ASSIGN)
+                        : match(':')
+                        ? make(TokenType.ELVIS)
+                        : make(TokenType.QUESTION);
+            case '~':
+                return make(TokenType.TILDE);
 
-            case '+': return make(TokenType.PLUS);
-            case '-': return match('>')
-                    ? make(TokenType.ARROW)
-                    : make(TokenType.MINUS);
-            case '*': return make(TokenType.ASTERISK);
-            case '/': return match('\\')
-                    ? make(TokenType.AND)
-                    : match('/')
-                    ? nextComment()
-                    : make(TokenType.SLASH);
-            case '%': return make(TokenType.PERCENT);
-            case '^': return make(TokenType.CARET);
+            case '+':
+                return make(TokenType.PLUS);
+            case '-':
+                return match('>')
+                        ? make(TokenType.ARROW)
+                        : make(TokenType.MINUS);
+            case '*':
+                return make(TokenType.ASTERISK);
+            case '/':
+                return match('\\')
+                        ? make(TokenType.AND)
+                        : match('/')
+                        ? nextComment()
+                        : make(TokenType.SLASH);
+            case '%':
+                return make(TokenType.PERCENT);
+            case '^':
+                return make(TokenType.CARET);
 
-            case '\\': return match('/')
-                    ? make(TokenType.OR)
-                    : make(TokenType.BACKSLASH);
+            case '\\':
+                return match('/')
+                        ? make(TokenType.OR)
+                        : make(TokenType.BACKSLASH);
 
             case ':':
                 return Character.isLetter(peek())
@@ -224,19 +242,19 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
             case '=':
                 return match('=') // ==
-                    ? make(TokenType.EQUALS)
+                        ? make(TokenType.EQUALS)
                         : make(TokenType.ASSIGN); // >
 
             case '>':
                 return match('=') // >=
-                    ? make(TokenType.GTE)
+                        ? make(TokenType.GTE)
                         : match('>') // >>
                         ? make(TokenType.FORWARD_COMPOSITION)
                         : make(TokenType.GT); // >
 
             case '<':
                 return match('=') // <=
-                    ? make(TokenType.LTE)
+                        ? make(TokenType.LTE)
                         : match('|') // <|
                         ? make(TokenType.PIPE_BACKWARD)
                         : match('<') // <<
@@ -245,14 +263,14 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
             case '|':
                 return match('|') // ||
-                    ? make(TokenType.OR)
+                        ? make(TokenType.OR)
                         : match('>') // |>
-                    ? make(TokenType.PIPE_FORWARD)
+                        ? make(TokenType.PIPE_FORWARD)
                         : make(TokenType.VERTICAL_BAR); // |
 
             case '&':
                 return match('&') // &&
-                    ? make(TokenType.AND)
+                        ? make(TokenType.AND)
                         : make(TokenType.AMPERSAND); // &
 
             case ';':
@@ -263,12 +281,16 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case '"':
                 return nextString('"');
 
-            case '\r': match('\n');
-            case '\n': return make(TokenType.LINE);
+            case '\r':
+                match('\n');
+            case '\n':
+                return make(TokenType.LINE);
 
-            case '\0': return make(TokenType.EOF);
+            case '\0':
+                return make(TokenType.EOF);
 
-            case (char) -1: return make(TokenType.EOF);
+            case (char) -1:
+                return make(TokenType.EOF);
 
             default:
                 if (Character.isDigit(c)) {
@@ -373,31 +395,38 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
         String value = sb.toString();
         switch (value) {
-            case "if": return make(TokenType.IF, "if");
-            case "else": return make(TokenType.ELSE, "else");
-            case "return": return make(TokenType.RETURN, "return");
+            case "if":
+                return make(TokenType.IF, "if");
+            case "else":
+                return make(TokenType.ELSE, "else");
+            case "return":
+                return make(TokenType.RETURN, "return");
             case "let":
                 return make(TokenType.LET, "let");
-            case "for": return make(TokenType.FOR, "for");
-            case "undefined": return make(TokenType.UNDEFINED, "undefined");
+            case "for":
+                return make(TokenType.FOR, "for");
+            case "undefined":
+                return make(TokenType.UNDEFINED, "undefined");
 
             case "fn":
-                return make(TokenType.FUNCTION);
+            case "def":
             case "func":
-                return make(TokenType.FUNCTION);
             case "function":
                 return make(TokenType.FUNCTION);
 
-            case "true": return make(TokenType.BOOLEAN, "true");
-            case "false": return make(TokenType.BOOLEAN, "false");
-            default: return make(TokenType.IDENTIFIER, value);
+            case "true":
+                return make(TokenType.BOOLEAN, "true");
+            case "false":
+                return make(TokenType.BOOLEAN, "false");
+            default:
+                return make(TokenType.IDENTIFIER, value);
         }
     }
 
     public Token nextString(char quote) {
         char c;
         StringBuilder sb = new StringBuilder();
-        while(true) {
+        while (true) {
             c = this.advance();
             switch (c) {
                 case 0:
@@ -424,7 +453,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                             break;
                         case 'u':
                             try {
-                                sb.append((char)Integer.parseInt(this.advance(4), 16));
+                                sb.append((char) Integer.parseInt(this.advance(4), 16));
                             } catch (NumberFormatException e) {
                                 throw new SyntaxException("Illegal escape.", e);
                             }
@@ -695,6 +724,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
     /**
      * Make a printable string of this AJELexer.
+     *
      * @return " at {index} [character {character} line {line}]"
      */
     @Override

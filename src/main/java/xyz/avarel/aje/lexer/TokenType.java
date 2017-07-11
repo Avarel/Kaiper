@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.lexer;
+package xyz.avarel.aje.lexer;
 
 public enum TokenType {
     // PAIRS

@@ -72,11 +72,19 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         for (int i = 0; i < exprs.size() - 1; i++) {
             checkTimeout();
-            exprs.get(i).accept(this, scope);
+            try {
+                exprs.get(i).accept(this, scope);
+            } catch (ReturnException re) {
+                return re.getValue();
+            }
         }
 
         checkTimeout();
-        return exprs.get(exprs.size() - 1).accept(this, scope);
+        try {
+            return exprs.get(exprs.size() - 1).accept(this, scope);
+        } catch (ReturnException re) {
+            return re.getValue();
+        }
     }
 
     // func print(str: String, n: Int) { for (x in 0..n) { print(str) } }

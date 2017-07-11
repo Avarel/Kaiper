@@ -24,25 +24,25 @@ public class AJEBytecodeTest {
 
     public static void main(String[] args) throws IOException {
         // Base expression.
-        Expression exp = new Expression("'Boa noite' + ' ' + 'Natan'");
+        Expression exp = new Expression("\"Boa noite\" + \" \" + \"Natan\"");
         Expr expCompiled = exp.compile();
 
         StringBuilder b1 = new StringBuilder("Original AST:\n");
         expCompiled.ast(b1, "", true);
         System.out.println(b1);
 
-        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        System.out.println();
 
         System.out.println("Original Result: " + exp.compute().toJava());
 
-        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        System.out.println();
 
 
         byte[] bytecode = expCompiled.bytecode();
 
         System.out.println("Bytecode: " + bytesToHex(bytecode));
 
-        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        System.out.println();
 
         System.out.println("AJE Bytecode Viewer:\n");
 
@@ -56,7 +56,7 @@ public class AJEBytecodeTest {
                 )
         );
 
-        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        System.out.println();
 
 
         Expr expr = new ExprDeserializer(
@@ -71,7 +71,7 @@ public class AJEBytecodeTest {
         expr.ast(b2, "", true);
         System.out.println(b2);
 
-        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        System.out.println();
 
         System.out.println("Result Now: " + expr.compute().toJava());
     }

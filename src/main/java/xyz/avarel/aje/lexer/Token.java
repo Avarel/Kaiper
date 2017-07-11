@@ -13,33 +13,37 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.lexer;
+package xyz.avarel.aje.lexer;
 
-public class Position {
-    private final long line;
-    private final long lineIndex;
-    private final long index;
+public final class Token {
+    private final Position position;
+    private final TokenType type;
+    private final String str;
 
-    public Position(long index, long line, long lineIndex) {
-        this.index = index;
-        this.line = line;
-        this.lineIndex = lineIndex;
+    public Token(Position position, TokenType type) {
+        this(position, type, null);
     }
 
-    public long getIndex() {
-        return index;
+    public Token(Position position, TokenType type, String str) {
+        this.position = position;
+        this.type = type;
+        this.str = str;
     }
 
-    public long getLineNumber() {
-        return line;
+    public Position getPosition() {
+        return position;
     }
 
-    public long getLineIndex() {
-        return lineIndex;
+    public TokenType getType() {
+        return type;
+    }
+
+    public String getString() {
+        return str;
     }
 
     @Override
     public String toString() {
-        return " at " + this.index + " [line " + this.line + " : char " + this.lineIndex + "]";
+        return type.toString();
     }
 }

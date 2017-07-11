@@ -19,9 +19,9 @@ import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.collections.RangeNode;
 import xyz.avarel.aje.exceptions.SyntaxException;
+import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
-import xyz.avarel.aje.parser.lexer.Token;
 
 public class RangeOperatorParser extends BinaryParser {
     public RangeOperatorParser() {
