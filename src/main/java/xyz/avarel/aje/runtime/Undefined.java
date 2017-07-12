@@ -15,8 +15,6 @@
 
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.exceptions.ComputeException;
-
 /**
  * Every operation results in the same
  * instance, NOTHING.
@@ -34,11 +32,6 @@ public enum Undefined implements Obj<Undefined> {
     @Override
     public Undefined toJava() {
         return this;
-    }
-
-    @Override
-    public Obj getAttr(String name) {
-        throw new ComputeException("Unable to read attribute " + name + " of " + toString());
     }
 
     @Override

@@ -15,6 +15,7 @@
 
 package xyz.avarel.aje.runtime;
 
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.scope.Scope;
 
 @SuppressWarnings("unused")
@@ -54,7 +55,11 @@ public class Type<T> implements Obj<Type> {
 
     @Override
     public Obj getAttr(String name) {
-        return scope.lookup(name);
+        if (scope.contains(name)) {
+            return scope.lookup(name);
+        } else {
+            throw new ComputeException("Unable to read attribute " + name + " of " + toString());
+        }
     }
 
     @Override

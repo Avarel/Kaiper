@@ -209,10 +209,6 @@ public interface Obj<J> {
         throw unimplemented("invocation");
     }
 
-    default ComputeException unimplemented(String string) {
-        return new ComputeException(getType() + " does not support " + string + " operator");
-    }
-
     /**
      * Invcoation operator in AJE. Default symbol is {@code a(b, c...)}.
      * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
@@ -267,7 +263,7 @@ public interface Obj<J> {
             return new ReferenceFunc(this, (Func) obj);
         }
 
-        return Undefined.VALUE;
+        throw new ComputeException("Unable to read attribute " + name + " of " + toString());
     }
 
     /**
@@ -325,6 +321,10 @@ public interface Obj<J> {
     }
     default Obj pow(double other) {
         return pow(Decimal.of(other));
+    }
+
+    default ComputeException unimplemented(String string) {
+        return new ComputeException(getType() + " does not support " + string + " operator");
     }
 
     class ObjType extends Type<Obj> {
