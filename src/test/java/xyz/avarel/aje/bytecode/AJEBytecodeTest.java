@@ -24,7 +24,7 @@ public class AJEBytecodeTest {
 
     public static void main(String[] args) throws IOException {
         // Base expression.
-        Expression exp = new Expression("\"Boa noite\" + \" \" + \"Natan\"");
+        Expression exp = new Expression("let x = 2; x = 3; x");
         Expr expCompiled = exp.compile();
 
         StringBuilder b1 = new StringBuilder("Original AST:\n");

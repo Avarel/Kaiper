@@ -395,6 +395,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
         String value = sb.toString();
         switch (value) {
+            case "class":
+                return make(TokenType.CLASS, "class");
             case "if":
                 return make(TokenType.IF, "if");
             case "else":
@@ -410,8 +412,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
             case "fn":
             case "def":
-            case "func":
-            case "function":
                 return make(TokenType.FUNCTION);
 
             case "true":

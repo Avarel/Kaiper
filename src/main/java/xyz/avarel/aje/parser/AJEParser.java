@@ -55,16 +55,13 @@ public class AJEParser extends Parser {
     }
 
     public Expr parseStatements() {
-        checkTimeout();
         if (match(TokenType.EOF)) return UndefinedNode.VALUE;
 
-        checkTimeout();
         Expr any = parseExpr();
 
         while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
             if (match(TokenType.EOF)) break;
 
-            checkTimeout();
             any = any.andThen(parseExpr());
         }
 
@@ -78,10 +75,8 @@ public class AJEParser extends Parser {
     public Expr parseExpr(int precedence) {
         Token token = eat();
 
-        checkTimeout();
         Expr expr = parsePrefix(token);
 
-        checkTimeout();
         return parseInfix(precedence, expr);
     }
 
@@ -90,7 +85,6 @@ public class AJEParser extends Parser {
 
         if (prefix == null) throw new SyntaxException("Unexpected " + token, token.getPosition());
 
-        checkTimeout();
         return prefix.parse(this, token);
     }
 
@@ -103,16 +97,9 @@ public class AJEParser extends Parser {
             if (infix == null) {
                 throw new SyntaxException("Unexpected " + token, token.getPosition());
             } else {
-                checkTimeout();
                 left = infix.parse(this, left, token);
             }
         }
         return left;
-    }
-
-    private void checkTimeout() {
-        if (Thread.interrupted()) {
-            throw new SyntaxException("Parsing phase interrupted");
-        }
     }
 }

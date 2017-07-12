@@ -42,6 +42,7 @@ import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
 import xyz.avarel.aje.ast.value.*;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
+import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.*;
@@ -69,6 +70,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     @Override
     public Obj visit(Statements statements, Scope scope) {
         List<Expr> exprs = statements.getExprs();
+
+        if (exprs.isEmpty()) return Undefined.VALUE;
 
         for (int i = 0; i < exprs.size() - 1; i++) {
             checkTimeout();
@@ -284,19 +287,24 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             return target.setAttr(attr, value);
         }
 
-        if (expr.isDeclaration()) {
-            checkTimeout();
-            Obj value = expr.getExpr().accept(this, scope);
-            scope.declare(attr, value);
-            return value;
-        } else if (scope.contains(expr.getName())) {
-            checkTimeout();
-            Obj value = expr.getExpr().accept(this, scope);
-            scope.assign(attr, value);
-            return value;
-        } else {
+        if (!scope.contains(expr.getName())) {
             throw new ComputeException(expr.getName() + " is not defined");
         }
+
+        checkTimeout();
+        Obj value = expr.getExpr().accept(this, scope);
+        scope.assign(attr, value);
+        return value;
+    }
+
+    @Override
+    public Obj visit(DeclarationExpr expr, Scope scope) {
+        String attr = expr.getName();
+
+        checkTimeout();
+        Obj value = expr.getExpr().accept(this, scope);
+        scope.declare(attr, value);
+        return Undefined.VALUE;
     }
 
     @Override

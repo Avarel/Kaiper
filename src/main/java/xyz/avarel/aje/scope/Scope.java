@@ -55,11 +55,10 @@ public class Scope {
     public void assign(String key, Obj value) {
         if (map.containsKey(key)) {
             map.put(key, value);
-        } else if (parent != null) {
-            if (parent.contains(key)) {
-                parent.assign(key, value);
-                return;
-            }
+            return;
+        } else if (parent != null && parent.contains(key)) {
+            parent.assign(key, value);
+            return;
         }
         throw new ComputeException(key + " is not defined, it must be declared using Scope#declare first");
     }

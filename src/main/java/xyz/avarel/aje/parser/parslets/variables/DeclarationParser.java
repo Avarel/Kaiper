@@ -17,7 +17,7 @@ package xyz.avarel.aje.parser.parslets.variables;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.value.UndefinedNode;
-import xyz.avarel.aje.ast.variables.AssignmentExpr;
+import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
@@ -34,9 +34,9 @@ public class DeclarationParser implements PrefixParser {
         Token name = parser.eat(TokenType.IDENTIFIER);
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(null, name.getString(), parser.parseExpr(), true);
+            return new DeclarationExpr(name.getString(), parser.parseExpr());
         }
 
-        return new AssignmentExpr(null, name.getString(), UndefinedNode.VALUE, true);
+        return new DeclarationExpr(name.getString(), UndefinedNode.VALUE);
     }
 }

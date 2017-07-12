@@ -189,14 +189,6 @@ public class Int implements Obj<Integer> {
         return Bool.of(value < other.value);
     }
 
-    @Override
-    public Obj invoke(List<Obj> arguments) {
-        if (arguments.size() == 1) {
-            return times(arguments.get(0));
-        }
-        return Undefined.VALUE;
-    }
-
     private static class IntCache {
         private static final int LOW = -128;
         private static final int HIGH = 127;

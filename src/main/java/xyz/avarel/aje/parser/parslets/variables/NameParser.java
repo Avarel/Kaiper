@@ -31,7 +31,7 @@ public class NameParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(null, token.getString(), parser.parseExpr(), false);
+            return new AssignmentExpr(token.getString(), parser.parseExpr());
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
             Expr getOp = new Identifier(token.getString());
             return new ConditionalExpr(
@@ -39,7 +39,7 @@ public class NameParser implements PrefixParser {
                             getOp,
                             UndefinedNode.VALUE,
                             BinaryOperatorType.EQUALS),
-                    new AssignmentExpr(null, token.getString(), parser.parseExpr(), false),
+                    new AssignmentExpr(token.getString(), parser.parseExpr()),
                     getOp);
         }
 

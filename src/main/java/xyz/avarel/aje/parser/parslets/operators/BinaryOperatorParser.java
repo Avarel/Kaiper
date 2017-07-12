@@ -18,6 +18,9 @@ package xyz.avarel.aje.parser.parslets.operators;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
+import xyz.avarel.aje.ast.value.BooleanNode;
+import xyz.avarel.aje.ast.value.DecimalNode;
+import xyz.avarel.aje.ast.value.IntNode;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -44,13 +47,82 @@ public class BinaryOperatorParser extends BinaryParser {
                 }
 
                 Expr right = parser.parseExpr(0);
-                return new AssignmentExpr(null, ((Identifier) left).getName(),
-                        new BinaryOperation(left, right, operator),
-                        false);
+                return new AssignmentExpr(
+                        ((Identifier) left).getName(),
+                        new BinaryOperation(left, right, operator)
+                );
             }
         }
 
         Expr right = parser.parseExpr(getPrecedence() - (isLeftAssoc() ? 0 : 1));
+
+        if ((left instanceof IntNode || left instanceof DecimalNode)
+                && (right instanceof IntNode || right instanceof DecimalNode)) {
+            return optimizeArithmetic(left, right, operator);
+        }
+
         return new BinaryOperation(left, right, operator);
+    }
+
+    private Expr optimizeArithmetic(Expr left, Expr right, BinaryOperatorType operator) {
+        boolean endInt = left instanceof IntNode && right instanceof IntNode;
+        double leftValue;
+        if (left instanceof IntNode) {
+            leftValue = ((IntNode) left).getValue();
+        } else {
+            leftValue = ((DecimalNode) left).getValue();
+        }
+
+        double rightValue;
+        if (right instanceof IntNode) {
+            rightValue = ((IntNode) right).getValue();
+        } else {
+            rightValue = ((DecimalNode) right).getValue();
+        }
+
+        double finalValue;
+
+        switch (operator) {
+            case PLUS:
+                finalValue = leftValue + rightValue;
+                break;
+            case MINUS:
+                finalValue = leftValue - rightValue;
+                break;
+            case TIMES:
+                finalValue = leftValue * rightValue;
+                break;
+            case DIVIDE:
+                finalValue = leftValue / rightValue;
+                break;
+            case MODULUS:
+                finalValue = leftValue % rightValue;
+                break;
+            case POWER:
+                finalValue = Math.pow(leftValue, rightValue);
+                break;
+
+            case EQUALS:
+                return BooleanNode.of(leftValue == rightValue);
+            case NOT_EQUALS:
+                return BooleanNode.of(leftValue != rightValue);
+            case GREATER_THAN:
+                return BooleanNode.of(leftValue > rightValue);
+            case GREATER_THAN_EQUAL:
+                return BooleanNode.of(leftValue >= rightValue);
+            case LESS_THAN:
+                return BooleanNode.of(leftValue < rightValue);
+            case LESS_THAN_EQUAL:
+                return BooleanNode.of(leftValue <= rightValue);
+
+            default:
+                return new BinaryOperation(left, right, operator);
+        }
+
+        if (endInt) {
+            return new IntNode((int) finalValue);
+        }
+
+        return new DecimalNode(finalValue);
     }
 }

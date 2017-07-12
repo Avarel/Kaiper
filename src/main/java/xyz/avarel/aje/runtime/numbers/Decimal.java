@@ -182,14 +182,6 @@ public class Decimal implements Obj<Double> {
         return Bool.of(value < other.value);
     }
 
-    @Override
-    public Obj invoke(List<Obj> arguments) {
-        if (arguments.size() == 1) {
-            return times(arguments.get(0));
-        }
-        return Undefined.VALUE;
-    }
-
     private static class DecimalType extends Type<Decimal> {
         public DecimalType() {
             super(Numeric.TYPE, "Decimal");

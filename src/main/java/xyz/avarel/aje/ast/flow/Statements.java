@@ -25,15 +25,23 @@ import java.util.List;
 public class Statements implements Expr, Iterable<Expr> {
     private final List<Expr> statements;
 
-    public Statements(Expr before, Expr after) {
+    public Statements() {
         this.statements = new ArrayList<>();
+    }
+
+    public Statements(Expr before, Expr after) {
+        this();
         statements.add(before);
         statements.add(after);
     }
 
     @Override
     public Expr andThen(Expr after) {
-        statements.add(after);
+        if (after instanceof Statements) {
+            statements.addAll(((Statements) after).statements);
+        } else {
+            statements.add(after);
+        }
         return this;
     }
 

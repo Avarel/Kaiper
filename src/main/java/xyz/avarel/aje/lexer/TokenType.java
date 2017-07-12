@@ -81,6 +81,7 @@ public enum TokenType {
     UNDERSCORE,
 
     // SCRIPT
+    CLASS,
     IDENTIFIER,
     UNDEFINED,
     LET,

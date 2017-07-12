@@ -18,23 +18,13 @@ package xyz.avarel.aje.ast.variables;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 
-public class AssignmentExpr implements Expr {
-    private final Expr parent;
+public class DeclarationExpr implements Expr {
     private final String name;
     private final Expr expr;
 
-    public AssignmentExpr(String name, Expr expr) {
-        this(null, name, expr);
-    }
-
-    public AssignmentExpr(Expr parent, String name, Expr expr) {
-        this.parent = parent;
+    public DeclarationExpr(String name, Expr expr) {
         this.name = name;
         this.expr = expr;
-    }
-
-    public Expr getParent() {
-        return parent;
     }
 
     public String getName() {
@@ -52,12 +42,7 @@ public class AssignmentExpr implements Expr {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("assign");
-
-        if (parent != null) {
-            builder.append('\n');
-            parent.ast("parent", builder, indent + (isTail ? "    " : "│   "), false);
-        }
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("declare");
 
         builder.append('\n');
         builder.append(indent).append(isTail ? "    " : "│   ").append("├── name: ").append(name);

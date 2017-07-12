@@ -22,6 +22,10 @@ public enum BooleanNode implements Expr {
     TRUE,
     FALSE;
 
+    public static BooleanNode of(boolean bool) {
+        return bool ? TRUE : FALSE;
+    }
+
     @Override
     public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);

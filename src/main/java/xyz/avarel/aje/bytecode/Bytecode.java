@@ -27,7 +27,7 @@ public enum Bytecode {
     END,
 
     //Expressions
-    RETURN, ASSIGN, CONDITIONAL, FOREACH,
+    RETURN, DECLARE, ASSIGN, CONDITIONAL, FOREACH,
 
     //Nodes
     ARRAY, DICTIONARY, RANGE,

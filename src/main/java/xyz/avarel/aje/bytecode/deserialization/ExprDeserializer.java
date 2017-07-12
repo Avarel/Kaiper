@@ -27,6 +27,7 @@ import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.operations.*;
 import xyz.avarel.aje.ast.value.*;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
+import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.bytecode.AJEBytecode;
 import xyz.avarel.aje.bytecode.Bytecode;
@@ -86,18 +87,24 @@ public class ExprDeserializer {
             }
             case ASSIGN: {
                 /*
-                ASSIGN declaration name hasParent endId [hasParent ? (... => parent) END endId] (... => expr) END endId
+                ASSIGN name hasParent endId [hasParent ? (... => parent) END endId] (... => expr) END endId
                  */
-                boolean declaration = input.readBoolean();
                 String name = input.readUTF();
                 boolean hasParent = input.readBoolean();
                 int endId = input.readInt();
                 if (hasParent) {
-                    return new AssignmentExpr(collectUntil(endId), name, collectUntil(endId), declaration);
+                    return new AssignmentExpr(collectUntil(endId), name, collectUntil(endId));
                 } else {
-                    return new AssignmentExpr(null, name, collectUntil(endId), declaration);
+                    return new AssignmentExpr(name, collectUntil(endId));
                 }
-
+            }
+            case DECLARE: {
+                /*
+                DECLARE name endId (... => expr) END endId
+                 */
+                String name = input.readUTF();
+                int endId = input.readInt();
+                return new DeclarationExpr(name, collectUntil(endId));
             }
             case CONDITIONAL: {
                 /*

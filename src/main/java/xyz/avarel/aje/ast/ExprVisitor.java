@@ -57,6 +57,7 @@ import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
 import xyz.avarel.aje.ast.value.*;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
+import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 
 public interface ExprVisitor<R, C> {
@@ -101,4 +102,6 @@ public interface ExprVisitor<R, C> {
     R visit(BooleanNode booleanNode, C scope);
 
     R visit(StringNode stringNode, C scope);
+
+    R visit(DeclarationExpr declarationExpr, C scope);
 }

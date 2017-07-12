@@ -38,7 +38,7 @@ public class AttributeParser extends BinaryParser {
         Token name = parser.eat(TokenType.IDENTIFIER);
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(left, name.getString(), parser.parseExpr(), false);
+            return new AssignmentExpr(left, name.getString(), parser.parseExpr());
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
             Expr getOp = new Identifier(left, token.getString());
 
@@ -47,7 +47,7 @@ public class AttributeParser extends BinaryParser {
                             getOp,
                             UndefinedNode.VALUE,
                             BinaryOperatorType.EQUALS),
-                    new AssignmentExpr(left, name.getString(), parser.parseExpr(), false),
+                    new AssignmentExpr(left, name.getString(), parser.parseExpr()),
                     getOp);
         }
 

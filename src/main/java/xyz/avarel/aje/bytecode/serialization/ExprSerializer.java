@@ -29,6 +29,7 @@ import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
 import xyz.avarel.aje.ast.value.*;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
+import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 
 import java.util.Iterator;
@@ -267,7 +268,6 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
 
             return output -> {
                 output.writeByte(ASSIGN.id());
-                output.writeBoolean(expr.isDeclaration());
                 output.writeUTF(expr.getName());
                 output.writeBoolean(false);
                 output.writeInt(id);
@@ -284,7 +284,6 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
 
             return output -> {
                 output.writeByte(ASSIGN.id());
-                output.writeBoolean(expr.isDeclaration());
                 output.writeUTF(expr.getName());
                 output.writeBoolean(true);
                 output.writeInt(id);
@@ -296,6 +295,23 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
                 output.writeInt(id);
             };
         }
+    }
+
+    @Override
+    public DataOutputConsumer visit(DeclarationExpr expr, Void scope) {
+        int id = endId;
+        endId++;
+        DataOutputConsumer data = expr.getExpr().accept(this, null);
+        endId--;
+
+        return output -> {
+            output.writeByte(DECLARE.id());
+            output.writeUTF(expr.getName());
+            output.writeInt(id);
+            data.writeInto(output);
+            output.writeByte(END.id());
+            output.writeInt(id);
+        };
     }
 
     public DataOutputConsumer visit(GetOperation expr, Void ignored) {
