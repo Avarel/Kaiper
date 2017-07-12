@@ -28,23 +28,11 @@ public abstract class Numeric extends Number implements Obj {
                 return (T) a;
             } else if (type == Decimal.TYPE) {
                 return (T) Decimal.of(((Int) a).value());
-            } else if (type == Complex.TYPE) {
-                return (T) Complex.of(((Int) a).value());
             }
         } else if (a instanceof Decimal) {
             if (type == Int.TYPE) {
                 return (T) Int.of((int) ((Decimal) a).value());
             } else if (type == Decimal.TYPE) {
-                return (T) a;
-            } else if (type == Complex.TYPE) {
-                return (T) Complex.of(((Decimal) a).value());
-            }
-        } else if (a instanceof Complex) {
-            if (type == Int.TYPE) {
-                return (T) Int.of((int) ((Complex) a).real());
-            } else if (type == Decimal.TYPE) {
-                return (T) Decimal.of(((Complex) a).real());
-            } else if (type == Complex.TYPE) {
                 return (T) a;
             }
         }

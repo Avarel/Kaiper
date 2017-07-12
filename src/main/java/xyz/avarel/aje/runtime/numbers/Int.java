@@ -77,10 +77,6 @@ public class Int implements Obj<Integer> {
     public Obj plus(Obj other) {
         if (other instanceof Int) {
             return this.plus((Int) other);
-        } else if (other instanceof Decimal) {
-            return Decimal.of(value).plus(other);
-        } else if (other instanceof Complex) {
-            return Complex.of(value).plus(other);
         }
         return Undefined.VALUE;
     }
@@ -93,10 +89,6 @@ public class Int implements Obj<Integer> {
     public Obj minus(Obj other) {
         if (other instanceof Int) {
             return this.minus((Int) other);
-        } else if (other instanceof Decimal) {
-            return Decimal.of(value).minus(other);
-        } else if (other instanceof Complex) {
-            return Complex.of(value).minus(other);
         }
         return Undefined.VALUE;
     }
@@ -109,10 +101,6 @@ public class Int implements Obj<Integer> {
     public Obj times(Obj other) {
         if (other instanceof Int) {
             return this.times((Int) other);
-        } else if (other instanceof Decimal) {
-            return Decimal.of(value).times(other);
-        } else if (other instanceof Complex) {
-            return Complex.of(value).times(other);
         }
         return Undefined.VALUE;
     }
@@ -125,17 +113,13 @@ public class Int implements Obj<Integer> {
     public Obj divide(Obj other) {
         if (other instanceof Int) {
             return this.divide((Int) other);
-        } else if (other instanceof Decimal) {
-            return Decimal.of(value).divide(other);
-        } else if (other instanceof Complex) {
-            return Complex.of(value).divide(other);
         }
         return Undefined.VALUE;
     }
 
     private Obj divide(Int other) {
         if (other.value == 0) {
-            return Decimal.of(value).divide(other);
+            throw new ArithmeticException("Division by zero");
         }
         return Int.of(value / other.value);
     }
@@ -144,10 +128,6 @@ public class Int implements Obj<Integer> {
     public Obj pow(Obj other) {
         if (other instanceof Int) {
             return this.pow((Int) other);
-        } else if (other instanceof Decimal) {
-            return Decimal.of(value).pow(other);
-        } else if (other instanceof Complex) {
-            return Complex.of(value).pow(other);
         }
         return Undefined.VALUE;
     }
@@ -160,10 +140,6 @@ public class Int implements Obj<Integer> {
     public Obj mod(Obj other) {
         if (other instanceof Int) {
             return this.mod((Int) other);
-        } else if (other instanceof Decimal) {
-            return Decimal.of(value).mod(other);
-        } else if (other instanceof Complex) {
-            return Complex.of(value).mod(other);
         }
         return Undefined.VALUE;
     }
@@ -181,10 +157,6 @@ public class Int implements Obj<Integer> {
     public Obj isEqualTo(Obj other) {
         if (other instanceof Int) {
             return this.isEqualTo((Int) other);
-        } else if (other instanceof Decimal) {
-            return Decimal.of(value).isEqualTo(other);
-        } else if (other instanceof Complex) {
-            return Complex.of(value).isEqualTo(other);
         }
         return Bool.FALSE;
     }
@@ -197,10 +169,6 @@ public class Int implements Obj<Integer> {
     public Obj greaterThan(Obj other) {
         if (other instanceof Int) {
             return this.greaterThan((Int) other);
-        } else if (other instanceof Decimal) {
-            return Decimal.of(value).greaterThan(other);
-        } else if (other instanceof Complex) {
-            return Complex.of(value).greaterThan(other);
         }
         return Bool.FALSE;
     }
@@ -213,10 +181,6 @@ public class Int implements Obj<Integer> {
     public Obj lessThan(Obj other) {
         if (other instanceof Int) {
             return this.lessThan((Int) other);
-        } else if (other instanceof Decimal) {
-            return Decimal.of(value).lessThan(other);
-        } else if (other instanceof Complex) {
-            return Complex.of(value).lessThan(other);
         }
         return Bool.FALSE;
     }
@@ -266,12 +230,6 @@ public class Int implements Obj<Integer> {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Decimal.of(((Int) arguments.get(0)).value());
-                }
-            });
-            getScope().declare("toComplex", new NativeFunc(Parameter.of("self")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return Complex.of(((Int) arguments.get(0)).value());
                 }
             });
         }

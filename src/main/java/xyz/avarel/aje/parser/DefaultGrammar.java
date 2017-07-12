@@ -51,8 +51,8 @@ public class DefaultGrammar extends Grammar {
         infix(TokenType.ELVIS, new ElvisParser());
 
         // NODES
-        prefix(TokenType.INT, new NumberParser());
-        prefix(TokenType.DECIMAL, new NumberParser());
+        prefix(TokenType.INT, new IntParser());
+        prefix(TokenType.DECIMAL, new DecimalParser());
         prefix(TokenType.BOOLEAN, new BoolParser());
         prefix(TokenType.TEXT, new TextParser());
         prefix(TokenType.UNDEFINED, new UndefinedParser());

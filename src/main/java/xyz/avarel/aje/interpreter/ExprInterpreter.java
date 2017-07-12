@@ -147,6 +147,16 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         Obj right = expr.getRight().accept(this, scope);
         checkTimeout();
 
+        if (left instanceof Int) {
+            if (right instanceof Decimal) {
+                left = Decimal.of(((Int) left).value());
+            }
+        } else if (left instanceof Decimal) {
+            if (right instanceof Int) {
+                right = Decimal.of(((Int) right).value());
+            }
+        }
+
         switch (expr.getOperator()) {
             case PLUS:
                 return left.plus(right);

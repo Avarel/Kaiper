@@ -21,7 +21,6 @@ import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
-import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 
@@ -75,10 +74,6 @@ public class Decimal implements Obj<Double> {
     public Obj plus(Obj other) {
         if (other instanceof Decimal) {
             return plus((Decimal) other);
-        } else if (other instanceof Int) {
-            return plus(Decimal.of(((Int) other).value()));
-        } else if (other instanceof Complex) {
-            return Complex.of(value).plus(other);
         }
         return Undefined.VALUE;
     }
@@ -91,10 +86,6 @@ public class Decimal implements Obj<Double> {
     public Obj minus(Obj other) {
         if (other instanceof Decimal) {
             return minus((Decimal) other);
-        } else if (other instanceof Int) {
-            return minus(Decimal.of(((Int) other).value()));
-        } else if (other instanceof Complex) {
-            return Complex.of(value).minus(other);
         }
         return Undefined.VALUE;
     }
@@ -107,10 +98,6 @@ public class Decimal implements Obj<Double> {
     public Obj times(Obj other) {
         if (other instanceof Decimal) {
             return times((Decimal) other);
-        } else if (other instanceof Int) {
-            return times(Decimal.of(((Int) other).value()));
-        } else if (other instanceof Complex) {
-            return Complex.of(value).times(other);
         }
         return Undefined.VALUE;
     }
@@ -123,10 +110,6 @@ public class Decimal implements Obj<Double> {
     public Obj divide(Obj other) {
         if (other instanceof Decimal) {
             return divide((Decimal) other);
-        } else if (other instanceof Int) {
-            return divide(Decimal.of(((Int) other).value()));
-        } else if (other instanceof Complex) {
-            return Complex.of(value).divide(other);
         }
         return Undefined.VALUE;
     }
@@ -139,10 +122,6 @@ public class Decimal implements Obj<Double> {
     public Obj pow(Obj other) {
         if (other instanceof Decimal) {
             return pow((Decimal) other);
-        } else if (other instanceof Int) {
-            return pow(Decimal.of(((Int) other).value()));
-        } else if (other instanceof Complex) {
-            return Complex.of(value).pow(other);
         }
         return Undefined.VALUE;
     }
@@ -155,10 +134,6 @@ public class Decimal implements Obj<Double> {
     public Obj mod(Obj other) {
         if (other instanceof Decimal) {
             return mod((Decimal) other);
-        } else if (other instanceof Int) {
-            return mod(Decimal.of(((Int) other).value()));
-        } else if (other instanceof Complex) {
-            return Complex.of(value).mod(other);
         }
         return Undefined.VALUE;
     }
@@ -175,10 +150,6 @@ public class Decimal implements Obj<Double> {
     public Obj isEqualTo(Obj other) {
         if (other instanceof Decimal) {
             return this.isEqualTo((Decimal) other);
-        } else if (other instanceof Int) {
-            return this.isEqualTo(Decimal.of(((Int) other).value()));
-        } else if (other instanceof Complex) {
-            return Complex.of(value).isEqualTo(other);
         }
         return Bool.FALSE;
     }
@@ -191,10 +162,6 @@ public class Decimal implements Obj<Double> {
     public Obj greaterThan(Obj other) {
         if (other instanceof Decimal) {
             return this.greaterThan((Decimal) other);
-        } else if (other instanceof Int) {
-            return this.greaterThan(Decimal.of(((Int) other).value()));
-        } else if (other instanceof Complex) {
-            return Complex.of(value).greaterThan(other);
         }
         return Bool.FALSE;
     }
@@ -207,10 +174,6 @@ public class Decimal implements Obj<Double> {
     public Obj lessThan(Obj other) {
         if (other instanceof Decimal) {
             return this.lessThan((Decimal) other);
-        } else if (other instanceof Int) {
-            return this.lessThan(Decimal.of(((Int) other).value()));
-        } else if (other instanceof Complex) {
-            return Complex.of(value).lessThan(other);
         }
         return Bool.FALSE;
     }
@@ -228,10 +191,8 @@ public class Decimal implements Obj<Double> {
     }
 
     private static class DecimalType extends Type<Decimal> {
-        private Scope scope = new Scope();
-
         public DecimalType() {
-            super(Complex.TYPE, "Decimal");
+            super(Numeric.TYPE, "Decimal");
 
             getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
                 @Override
@@ -243,12 +204,6 @@ public class Decimal implements Obj<Double> {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return arguments.get(0);
-                }
-            });
-            getScope().declare("toComplex", new NativeFunc(Parameter.of("self")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return Complex.of(((Decimal) arguments.get(0)).value());
                 }
             });
         }
