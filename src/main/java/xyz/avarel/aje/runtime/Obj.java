@@ -333,7 +333,7 @@ public interface Obj<J> {
         }
 
         public void initialize() {
-            getScope().declare("toString", new NativeFunc(Parameter.of("self")) {
+            getScope().declare("toString", new NativeFunc(Parameter.of("self", this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Str.of(arguments.get(0).toString());
@@ -347,13 +347,14 @@ public interface Obj<J> {
                 }
             });
 
-            getScope().declare("get", new NativeFunc(Parameter.of("self"), Parameter.of(this)) {
+            getScope().declare("get", new NativeFunc(Parameter.of("self", this), Parameter.of(this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return arguments.get(0).get(arguments.get(1));
                 }
             });
-            getScope().declare("set", new NativeFunc(Parameter.of("self"), Parameter.of(this), Parameter.of(this)) {
+            getScope().declare("set",
+                    new NativeFunc(Parameter.of("self", this), Parameter.of(this), Parameter.of(this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return arguments.get(0).set(arguments.get(1), arguments.get(2));

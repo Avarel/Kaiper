@@ -24,8 +24,6 @@ import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 
-import java.util.Objects;
-
 public class ForEachParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
@@ -39,10 +37,7 @@ public class ForEachParser implements PrefixParser {
 
         String variant = parser.eat(TokenType.IDENTIFIER).getString();
 
-        if (!Objects.equals(parser.eat().getString(), "in")) {
-            throw new SyntaxException("Expected IN but found " + parser.getLast().getType(),
-                    parser.getLast().getPosition());
-        }
+        parser.eatSoftKeyword("in");
 
         Expr iterable = parser.parseExpr();
 

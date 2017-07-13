@@ -18,7 +18,6 @@ package xyz.avarel.aje.runtime.functions;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
-import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
 import java.util.StringJoiner;
@@ -56,54 +55,6 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
     public abstract Obj invoke(List<Obj> arguments);
 
     @Override
-    public Obj plus(Obj other) {
-        if (other instanceof Func) {
-            return plus((Func) other);
-        }
-        return Undefined.VALUE;
-    }
-
-    private Func plus(Func right) {
-        return new CombinedFunc(this, right, Obj::plus);
-    }
-
-    @Override
-    public Obj minus(Obj other) {
-        if (other instanceof Func) {
-            return minus((Func) other);
-        }
-        return Undefined.VALUE;
-    }
-
-    private Func minus(Func right) {
-        return new CombinedFunc(this, right, Obj::minus);
-    }
-
-    @Override
-    public Obj times(Obj other) {
-        if (other instanceof Func) {
-            return times((Func) other);
-        }
-        return Undefined.VALUE;
-    }
-
-    private Func times(Func right) {
-        return new CombinedFunc(this, right, Obj::times);
-    }
-
-    @Override
-    public Obj divide(Obj other) {
-        if (other instanceof Func) {
-            return divide((Func) other);
-        }
-        return Undefined.VALUE;
-    }
-
-    private Func divide(Func right) {
-        return new CombinedFunc(this, right, Obj::divide);
-    }
-
-    @Override
     public String toString() {
         return "func(" + getParameters().stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
     }
@@ -112,7 +63,7 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
         public FunctionType() {
             super("Function");
 
-            getScope().declare("compose", new NativeFunc(Parameter.of("self"), Parameter.of(this)) {
+            getScope().declare("compose", new NativeFunc(Parameter.of("self", this), Parameter.of(this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return new ComposedFunc((Func) arguments.get(0), (Func) arguments.get(1));

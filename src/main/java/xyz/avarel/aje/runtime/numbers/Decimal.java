@@ -20,7 +20,6 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.util.List;
 
@@ -186,16 +185,28 @@ public class Decimal implements Obj<Double> {
         public DecimalType() {
             super(Numeric.TYPE, "Decimal");
 
-            getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
+            getScope().declare("MAX_VALUE", Decimal.of(Double.MAX_VALUE));
+            getScope().declare("MIN_VALUE", Decimal.of(Double.MIN_VALUE));
+            getScope().declare("NEGATIVE_INFINITY", Decimal.of(Double.NEGATIVE_INFINITY));
+            getScope().declare("POSITIVE_INFINITY", Decimal.of(Double.POSITIVE_INFINITY));
+            getScope().declare("NaN", Decimal.of(Double.NaN));
+            getScope().declare("BYTES", Decimal.of(Double.BYTES));
+            getScope().declare("SIZE", Decimal.of(Double.SIZE));
+
+            getScope().declare("new", new NativeFunc(Obj.TYPE) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return Int.of((int) ((Decimal) arguments.get(0)).value());
-                }
-            });
-            getScope().declare("toDecimal", new NativeFunc(Parameter.of("self")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return arguments.get(0);
+                    Obj obj = arguments.get(0);
+                    if (obj instanceof Decimal) {
+                        return obj;
+                    } else if (obj instanceof Int) {
+                        return Decimal.of(((Int) obj).value());
+                    }
+                    try {
+                        return Decimal.of(Double.parseDouble(obj.toString()));
+                    } catch (NumberFormatException e) {
+                        return Undefined.VALUE;
+                    }
                 }
             });
         }

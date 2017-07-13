@@ -22,6 +22,8 @@ import xyz.avarel.aje.lexer.AJELexer;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
 
+import java.util.Objects;
+
 public class AJEParser extends Parser {
     private ParserFlags parserFlags = ParserFlags.ALL_FLAGS;
 
@@ -101,5 +103,12 @@ public class AJEParser extends Parser {
             }
         }
         return left;
+    }
+
+    public void eatSoftKeyword(String keyword) {
+        if (!Objects.equals(eat().getString(), keyword)) {
+            throw new SyntaxException("Expected " + keyword.toUpperCase() + " but found " + getLast().getType(),
+                    getLast().getPosition());
+        }
     }
 }

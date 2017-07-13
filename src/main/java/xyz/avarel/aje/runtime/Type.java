@@ -18,6 +18,8 @@ package xyz.avarel.aje.runtime;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.scope.Scope;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class Type<T> implements Obj<Type> {
     public static final Type<Type> TYPE = new TypeObj();
@@ -91,6 +93,11 @@ public class Type<T> implements Obj<Type> {
         } else {
             return name;
         }
+    }
+
+    @Override
+    public Obj invoke(List<Obj> arguments) {
+        return getScope().lookup("new").invoke(arguments);
     }
 
     private static class TypeObj extends Type<Type> {

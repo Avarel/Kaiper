@@ -33,7 +33,7 @@ public class ReferenceFunc extends Func {
                 || func.getParameters().get(0).getName() == null
                 || !func.getParameters().get(0).getName().equals("self")) {
             throw new ComputeException("Function does not take receivers.");
-        } // TODO stuff
+        }
     }
 
     @Override

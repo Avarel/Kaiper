@@ -25,8 +25,6 @@ import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.function.UnaryOperator;
 
 /**
  * AJE wrapper class for a one dimensional list.
@@ -90,71 +88,6 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
     }
 
     @Override
-    public Obj plus(Obj other) {
-        if (other instanceof Array) {
-            return plus((Array) other);
-        }
-        return plus(Array.of(other));
-    }
-
-    private Array plus(Array other) {
-        return listOperation(other, Obj::plus);
-    }
-
-    @Override
-    public Obj minus(Obj other) {
-        if (other instanceof Array) {
-            return minus((Array) other);
-        }
-        return minus(Array.of(other));
-    }
-
-    private Array minus(Array other) {
-        return listOperation(other, Obj::minus);
-    }
-
-    @Override
-    public Obj times(Obj other) {
-        if (other instanceof Array) {
-            return times((Array) other);
-        }
-        return times(Array.of(other));
-    }
-
-    private Array times(Array other) {
-        return listOperation(other, Obj::times);
-    }
-
-    @Override
-    public Obj divide(Obj other) {
-        if (other instanceof Array) {
-            return divide((Array) other);
-        }
-        return divide(Array.of(other));
-    }
-
-    private Array divide(Array other) {
-        return listOperation(other, Obj::divide);
-    }
-
-    @Override
-    public Obj pow(Obj other) {
-        if (other instanceof Array) {
-            return pow((Array) other);
-        }
-        return pow(Array.of(other));
-    }
-
-    private Array pow(Array other) {
-        return listOperation(other, Obj::pow);
-    }
-
-    @Override
-    public Array negative() {
-        return listOperation(Obj::negative);
-    }
-
-    @Override
     public Bool isEqualTo(Obj other) {
         if (other instanceof Array) {
             return isEqualTo((Array) other);
@@ -169,35 +102,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
             return Bool.FALSE;
         }
 
-        Array array = listOperation(other, Obj::isEqualTo);
-        for (Obj o : array) {
-            if (!(o instanceof Bool)) {
-                if (o == Bool.FALSE) {
-                    return Bool.FALSE;
-                }
-            }
-        }
-
-        return Bool.TRUE;
-    }
-
-    private Array listOperation(Array other, BinaryOperator<Obj> operator) {
-        int len = size() == 1 ? other.size()
-                : other.size() == 1 ? size()
-                : Math.min(size(), other.size());
-        Array array = Array.of();
-        for (int i = 0; i < len; i++) {
-            array.add(operator.apply(get(i % size()), other.get(i % other.size())));
-        }
-        return array;
-    }
-
-    private Array listOperation(UnaryOperator<Obj> operator) {
-        Array array = Array.of();
-        for (int i = 0; i < size(); i++) {
-            array.add(operator.apply(get(i % size())));
-        }
-        return array;
+        return Bool.of(this.equals(other));
     }
 
     @Override
@@ -345,7 +250,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
         public ArrayType() {
             super("Array");
 
-            getScope().declare("length", new NativeFunc(Parameter.of("self")) {
+            getScope().declare("length", new NativeFunc(Parameter.of("self", this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of(((Array) arguments.get(0)).size());
@@ -354,7 +259,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
 
             getScope().declare("size", getScope().lookup("length"));
 
-            getScope().declare("lastIndex", new NativeFunc(Parameter.of("self")) {
+            getScope().declare("lastIndex", new NativeFunc(Parameter.of("self", this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of(((Array) arguments.get(0)).size() - 1);
@@ -369,7 +274,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
                 }
             });
 
-            getScope().declare("each", new NativeFunc(Parameter.of("self"), Parameter.of(Func.TYPE)) {
+            getScope().declare("each", new NativeFunc(Parameter.of("self", this), Parameter.of(Func.TYPE)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Func action = (Func) arguments.get(1);
@@ -381,7 +286,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
                 }
             });
 
-            getScope().declare("map", new NativeFunc(Parameter.of("self"), Parameter.of(Func.TYPE)) {
+            getScope().declare("map", new NativeFunc(Parameter.of("self", this), Parameter.of(Func.TYPE)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Func transform = (Func) arguments.get(1);
@@ -394,7 +299,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
                 }
             });
 
-            getScope().declare("filter", new NativeFunc(Parameter.of("self"), Parameter.of(Func.TYPE)) {
+            getScope().declare("filter", new NativeFunc(Parameter.of("self", this), Parameter.of(Func.TYPE)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Func predicate = (Func) arguments.get(1);
@@ -409,7 +314,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
             });
 
             getScope().declare("fold",
-                    new NativeFunc(Parameter.of("self"), Parameter.of(Obj.TYPE), Parameter.of(Func.TYPE)) {
+                    new NativeFunc(Parameter.of("self", this), Parameter.of(Obj.TYPE), Parameter.of(Func.TYPE)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Obj accumulator = arguments.get(1);

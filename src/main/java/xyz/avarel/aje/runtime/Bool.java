@@ -16,7 +16,6 @@
 package xyz.avarel.aje.runtime;
 
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
 
 import java.util.List;
@@ -115,10 +114,14 @@ public enum Bool implements Obj<Boolean> {
         public BoolType() {
             super("Boolean");
 
-            getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
+            getScope().declare("new", new NativeFunc(Obj.TYPE) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return Int.of(((Bool) arguments.get(0)).value ? 1 : 0);
+                    Obj obj = arguments.get(0);
+                    if (obj instanceof Bool) {
+                        return obj;
+                    }
+                    return Bool.of(Boolean.valueOf(obj.toString()));
                 }
             });
         }

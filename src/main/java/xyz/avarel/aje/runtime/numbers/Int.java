@@ -20,7 +20,6 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.util.List;
 
@@ -211,17 +210,23 @@ public class Int implements Obj<Integer> {
 
             getScope().declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
             getScope().declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
+            getScope().declare("BYTES", Int.of(Integer.BYTES));
+            getScope().declare("SIZE", Int.of(Integer.SIZE));
 
-            getScope().declare("toInt", new NativeFunc(Parameter.of("self")) {
+            getScope().declare("new", new NativeFunc(Obj.TYPE) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return arguments.get(0);
-                }
-            });
-            getScope().declare("toDecimal", new NativeFunc(Parameter.of("self")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return Decimal.of(((Int) arguments.get(0)).value());
+                    Obj obj = arguments.get(0);
+                    if (obj instanceof Int) {
+                        return obj;
+                    } else if (obj instanceof Decimal) {
+                        return Int.of((int) ((Decimal) obj).value());
+                    }
+                    try {
+                        return Int.of(Integer.parseInt(obj.toString()));
+                    } catch (NumberFormatException e) {
+                        return Undefined.VALUE;
+                    }
                 }
             });
         }

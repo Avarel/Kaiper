@@ -87,7 +87,7 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj<Map<Object, Obj
         public DictionaryType() {
             super("Dictionary");
 
-            getScope().declare("size", new NativeFunc(Parameter.of("self")) {
+            getScope().declare("size", new NativeFunc(Parameter.of("self", this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of(((Dictionary) arguments.get(0)).size());
