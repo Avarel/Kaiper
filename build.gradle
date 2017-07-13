@@ -38,8 +38,6 @@ repositories {
 }
 
 dependencies {
-    compile project.rootProject
-
     project.rootProject.childProjects.values().each {
         if (it != project) compile it
     }
