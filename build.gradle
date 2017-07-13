@@ -24,8 +24,6 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '2.0.0'
 }
 
-pluginManager
-
 def versionObj = new Version(major: 3, minor: 5, revision: 0)
 
 group = 'xyz.avarel'
@@ -40,7 +38,12 @@ repositories {
 }
 
 dependencies {
-    compile project(":runtime-lib")
+    compile project.rootProject
+
+    project.rootProject.childProjects.values().each {
+        if (it != project) compile it
+    }
+
     //testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 

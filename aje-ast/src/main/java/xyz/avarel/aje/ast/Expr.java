@@ -26,11 +26,6 @@ import xyz.avarel.aje.interpreter.ExprInterpreter;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.DefaultScope;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 public interface Expr {
     <R, C> R accept(ExprVisitor<R, C> visitor, C scope);
 

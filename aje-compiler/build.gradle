@@ -35,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    compile project.rootProject
+    compile project(":aje-ast")
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
