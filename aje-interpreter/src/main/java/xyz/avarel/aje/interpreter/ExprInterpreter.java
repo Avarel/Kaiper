@@ -45,11 +45,11 @@ import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
+import xyz.avarel.aje.interpreter.runtime.CompiledFunc;
 import xyz.avarel.aje.runtime.*;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
-import xyz.avarel.aje.interpreter.runtime.CompiledFunc;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Decimal;
@@ -103,7 +103,12 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
                 throw new ComputeException(obj_type + " is not a valid parameter type");
             }
 
-            parameters.add(Parameter.of(data.getName(), (Type) obj_type, data.getDefault(), data.isRest()));
+            Obj defaultObj = null;
+            if (data.getDefault() != null) {
+                defaultObj = data.getDefault().accept(this, scope);
+            }
+
+            parameters.add(Parameter.of(data.getName(), (Type) obj_type, defaultObj, data.isRest()));
         }
 
         checkTimeout();

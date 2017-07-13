@@ -16,12 +16,9 @@
 package xyz.avarel.aje;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.exceptions.SyntaxException;
-import xyz.avarel.aje.interpreter.ExprInterpreter;
 import xyz.avarel.aje.lexer.AJELexer;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.ParserFlags;
@@ -39,7 +36,7 @@ import java.io.Reader;
 public class Expression {
     private final AJEParser parser;
     private final Scope scope;
-    private Expr expr;
+    private CompiledExpr expr;
 
     /**
      * Creates an expression based on a string. The expression uses a copy of the {@link DefaultScope default scope}
@@ -139,9 +136,9 @@ public class Expression {
      * @throws  SyntaxException
      *          Error during the lexing or parsing process of the expression.
      */
-    public Expr compile() {
+    public CompiledExpr compile() {
         if (expr == null) {
-            expr = new ExpressionExpr(parser.compile());
+            expr = new CompiledExpr(this, parser.compile());
         }
         return expr;
     }
@@ -160,6 +157,10 @@ public class Expression {
         return compile().compute();
     }
 
+    public Scope getScope() {
+        return scope;
+    }
+
     /**
      * Sets the parser flags, which controls what features of AJE are enabled for this expression.
      * Useful for limiting end-user's abilities to ensure that performance-expensive features are not abused.
@@ -170,41 +171,4 @@ public class Expression {
         parser.setParserFlags(new ParserFlags(flags));
     }
 
-    private class ExpressionExpr implements Expr {
-        private final Expr expr;
-
-        public ExpressionExpr(Expr expr) {
-            this.expr = expr;
-        }
-
-        @Override
-        public Expr andThen(Expr after) {
-            if (expr instanceof Statements) {
-                ((Statements) expr).getExprs().add(after);
-                return this;
-            }
-            return new ExpressionExpr(new Statements(expr, after));
-        }
-
-        @Override
-        public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
-            try {
-                return expr.accept(visitor, scope);
-            } catch (AJEException re) {
-                throw re;
-            } catch (RuntimeException re) {
-                throw new ComputeException(re);
-            }
-        }
-
-        @Override
-        public Obj compute() {
-            return accept(new ExprInterpreter(), scope.copy());
-        }
-
-        @Override
-        public void ast(StringBuilder builder, String indent, boolean isTail) {
-            expr.ast(builder, indent, isTail);
-        }
-    }
 }

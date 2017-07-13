@@ -15,16 +15,7 @@
 
 package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.ast.flow.Statements;
-import bytecode.AJEBytecode;
-import bytecode.serialization.DataOutputConsumer;
-import bytecode.serialization.ExprSerializer;
-import xyz.avarel.aje.exceptions.AJEException;
-import xyz.avarel.aje.exceptions.ComputeException;
-import xyz.avarel.aje.interpreter.ExprInterpreter;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.scope.DefaultScope;
 
 public interface Expr {
     <R, C> R accept(ExprVisitor<R, C> visitor, C scope);
@@ -42,17 +33,5 @@ public interface Expr {
 
         builder.append('\n');
         ast(builder, indent + (tail ? "    " : "│   "), true);
-    }
-
-    default Obj compute() { //TODO Move this to :interpreter package, somehow...
-        try {
-            return accept(new ExprInterpreter(), DefaultScope.INSTANCE.copy());
-        } catch (ReturnException re) {
-            return re.getValue();
-        } catch (AJEException re) {
-            throw re;
-        } catch (RuntimeException re) {
-            throw new ComputeException(re);
-        }
     }
 }

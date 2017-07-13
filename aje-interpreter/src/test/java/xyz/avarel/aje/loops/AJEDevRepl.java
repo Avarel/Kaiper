@@ -19,8 +19,8 @@
 
 package xyz.avarel.aje.loops;
 
+import xyz.avarel.aje.CompiledExpr;
 import xyz.avarel.aje.Expression;
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.interop.JavaModel;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.java.JavaObject;
@@ -52,7 +52,7 @@ public class AJEDevRepl {
                 exp.add("model", new JavaObject(new JavaModel("hello world! how are you")));
 
                 long start = System.nanoTime();
-                Expr expr = exp.compile();
+                CompiledExpr expr = exp.compile();
                 Obj result = expr.compute();
                 long end = System.nanoTime();
 

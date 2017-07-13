@@ -19,8 +19,8 @@
 
 package xyz.avarel.aje.others;
 
+import xyz.avarel.aje.CompiledExpr;
 import xyz.avarel.aje.Expression;
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.lexer.AJELexer;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
@@ -49,7 +49,7 @@ public class FileTest {
             }
         });
 
-        Expr expr = exp.compile();
+        CompiledExpr expr = exp.compile();
 
         StringBuilder sb = new StringBuilder();
         expr.ast(sb, "", true);

@@ -71,7 +71,7 @@ public class CompiledFunc extends Func {
                     throw typeError(parameters, arguments);
                 }
             } else if (parameter.hasDefault()) {
-                scope.declare(parameter.getName(), parameter.getDefault().accept(visitor, scope));
+                scope.declare(parameter.getName(), parameter.getDefault());
             } else if (type == Obj.TYPE) {
                 scope.declare(parameter.getName(), Undefined.VALUE);
             } else {

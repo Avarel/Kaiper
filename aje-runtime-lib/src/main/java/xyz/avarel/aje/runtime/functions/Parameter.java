@@ -15,21 +15,19 @@
 
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 
-//TODO Remove Expr dependency (runtime-lib MUST not have a dependency with AST)
 public class Parameter {
     private final String name;
     private final Type type;
-    private final Expr defaultExpr;
+    private final Obj defaultObj;
     private final boolean rest;
 
-    private Parameter(String name, Type type, Expr defaultExpr, boolean rest) {
+    private Parameter(String name, Type type, Obj defaultObj, boolean rest) {
         this.name = name;
         this.type = type;
-        this.defaultExpr = defaultExpr;
+        this.defaultObj = defaultObj;
         this.rest = rest;
     }
 
@@ -49,7 +47,7 @@ public class Parameter {
         return Parameter.of(name, type, null, false);
     }
 
-    public static Parameter of(String name, Type type, Expr defaultExpr, boolean rest) {
+    public static Parameter of(String name, Type type, Obj defaultExpr, boolean rest) {
         return new Parameter(name, type, defaultExpr, rest);
     }
 
@@ -63,11 +61,11 @@ public class Parameter {
     }
 
     public boolean hasDefault() {
-        return defaultExpr != null;
+        return defaultObj != null;
     }
 
-    public Expr getDefault() {
-        return defaultExpr;
+    public Obj getDefault() {
+        return defaultObj;
     }
 
     public boolean isRest() {
@@ -99,8 +97,8 @@ public class Parameter {
             sb.append(type);
         }
 
-        if (defaultExpr != null) {
-            sb.append(" = ").append(defaultExpr);
+        if (defaultObj != null) {
+            sb.append(" = ").append(defaultObj);
         }
         return sb.toString();
     }

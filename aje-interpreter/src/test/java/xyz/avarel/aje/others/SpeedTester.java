@@ -19,8 +19,8 @@
 
 package xyz.avarel.aje.others;
 
+import xyz.avarel.aje.CompiledExpr;
 import xyz.avarel.aje.Expression;
-import xyz.avarel.aje.ast.Expr;
 
 public class SpeedTester {
     public static void main(String[] args) {
@@ -42,7 +42,7 @@ public class SpeedTester {
     private static long testPrecompiledSpeed(String script, long tests) {
         Expression exp = new Expression(script);
 
-        Expr expr = exp.compile();
+        CompiledExpr expr = exp.compile();
 
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
@@ -57,7 +57,7 @@ public class SpeedTester {
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
             Expression exp = new Expression(script);
-            Expr expr = exp.compile();
+            CompiledExpr expr = exp.compile();
             expr.compute();
         }
         long end = System.nanoTime();
