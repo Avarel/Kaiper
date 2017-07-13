@@ -1,2 +1,2 @@
 rootProject.name = 'AJE'
-include 'interpreter', 'compiler', 'runtime-lib', 'playground'
+include 'interpreter', 'compiler', 'runtime-lib', 'vm', 'all'
