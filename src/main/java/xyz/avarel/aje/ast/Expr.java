@@ -17,9 +17,9 @@ package xyz.avarel.aje.ast;
 
 import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.ast.flow.Statements;
-import xyz.avarel.aje.bytecode.AJEBytecode;
-import xyz.avarel.aje.bytecode.serialization.DataOutputConsumer;
-import xyz.avarel.aje.bytecode.serialization.ExprSerializer;
+import bytecode.AJEBytecode;
+import bytecode.serialization.DataOutputConsumer;
+import bytecode.serialization.ExprSerializer;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.interpreter.ExprInterpreter;
@@ -49,18 +49,7 @@ public interface Expr {
         ast(builder, indent + (tail ? "    " : "│   "), true);
     }
 
-    default byte[] bytecode() throws IOException {
-        DataOutputConsumer consumer = accept(new ExprSerializer(), null);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-        DataOutput output = AJEBytecode.initialize(new DataOutputStream(stream));
-        consumer.writeInto(output);
-        AJEBytecode.finalize(output);
-
-        return stream.toByteArray();
-    }
-
-    default Obj compute() {
+    default Obj compute() { //TODO Move this to :interpreter package, somehow...
         try {
             return accept(new ExprInterpreter(), DefaultScope.INSTANCE.copy());
         } catch (ReturnException re) {

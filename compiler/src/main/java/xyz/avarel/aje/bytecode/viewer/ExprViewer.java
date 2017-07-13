@@ -17,6 +17,7 @@ package xyz.avarel.aje.bytecode.viewer;
 
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.operations.UnaryOperatorType;
+import xyz.avarel.aje.bytecode.AJEBytecode;
 import xyz.avarel.aje.bytecode.Bytecode;
 import xyz.avarel.aje.exceptions.InvalidBytecodeException;
 
@@ -24,15 +25,13 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static xyz.avarel.aje.bytecode.AJEBytecode.*;
-
 /**
  * @author AdrianTodt
  */
 public class ExprViewer {
     public static String view(DataInput input) throws IOException {
         byte[] identifier = {input.readByte(), input.readByte(), input.readByte()};
-        if (!Arrays.equals(identifier, IDENTIFIER)) {
+        if (!Arrays.equals(identifier, AJEBytecode.IDENTIFIER)) {
             throw new InvalidBytecodeException("Invalid Itentifier");
         }
 
@@ -40,7 +39,7 @@ public class ExprViewer {
 
         StringBuilder builder = new StringBuilder("Header: AJE").append(versionMajor).append('.').append(versionMinor).append('\n');
 
-        if (versionMajor != BYTECODE_VERSION_MAJOR || versionMinor > BYTECODE_VERSION_MINOR) {
+        if (versionMajor != AJEBytecode.BYTECODE_VERSION_MAJOR || versionMinor > AJEBytecode.BYTECODE_VERSION_MINOR) {
             builder.append("(Bytecode viewing might be incorrect)\n");
         }
 

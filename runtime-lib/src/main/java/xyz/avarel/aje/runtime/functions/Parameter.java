@@ -19,6 +19,7 @@ import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 
+//TODO Remove Expr dependency (runtime-lib MUST not have a dependency with AST)
 public class Parameter {
     private final String name;
     private final Type type;

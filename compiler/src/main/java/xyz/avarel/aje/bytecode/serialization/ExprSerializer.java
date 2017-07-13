@@ -31,11 +31,10 @@ import xyz.avarel.aje.ast.value.*;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
+import xyz.avarel.aje.bytecode.Bytecode;
 
 import java.util.Iterator;
 import java.util.stream.Collectors;
-
-import static xyz.avarel.aje.bytecode.Bytecode.*;
 
 /**
  * Serialize AJE nodes into a {@link DataOutputConsumer} that can write AJE
@@ -72,22 +71,22 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
          */
         int id = endId;
         endId++;
-        DataOutputConsumer childs = zip(expr.getParameterExprs().stream().map(this::visitParameter).collect(Collectors.toList()));
-        DataOutputConsumer data = expr.getExpr().accept(this, null);
+        DataOutputConsumer parameters = zip(expr.getParameterExprs().stream().map(this::visitParameter).collect(Collectors.toList()));
+        DataOutputConsumer inner = expr.getExpr().accept(this, null);
         endId--;
 
         String tmp = expr.getName();
         String name = tmp == null ? "" : tmp;
 
         return output -> {
-            output.writeByte(FUNCTION.id());
+            output.writeByte(Bytecode.FUNCTION.id());
             output.writeUTF(name);
             output.writeInt(id);
-            childs.writeInto(output);
-            output.writeByte(END.id());
+            parameters.writeInto(output);
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
-            data.writeInto(output);
-            output.writeByte(END.id());
+            inner.writeInto(output);
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -98,7 +97,7 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
          */
         if (expr.getParent() == null) {
             return output -> {
-                output.writeByte(IDENTIFIER.id());
+                output.writeByte(Bytecode.IDENTIFIER.id());
                 output.writeBoolean(false);
                 output.writeUTF(expr.getName());
             };
@@ -110,12 +109,12 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(IDENTIFIER.id());
+            output.writeByte(Bytecode.IDENTIFIER.id());
             output.writeBoolean(true);
             output.writeUTF(expr.getName());
             output.writeInt(id);
             parent.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -131,13 +130,13 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(INVOCATION.id());
+            output.writeByte(Bytecode.INVOCATION.id());
             output.writeInt(id);
             left.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             arguments.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -154,14 +153,14 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(BINARY_OP.id());
+            output.writeByte(Bytecode.BINARY_OP.id());
             output.writeInt(expr.getOperator().ordinal());
             output.writeInt(id);
             left.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             right.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -177,11 +176,11 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(BINARY_OP.id());
+            output.writeByte(Bytecode.BINARY_OP.id());
             output.writeInt(expr.getOperator().ordinal());
             output.writeInt(id);
             target.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -197,13 +196,13 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(RANGE.id());
+            output.writeByte(Bytecode.RANGE.id());
             output.writeInt(id);
             left.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             right.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -218,10 +217,10 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(ARRAY.id());
+            output.writeByte(Bytecode.ARRAY.id());
             output.writeInt(id);
             childs.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -239,19 +238,19 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(SLICE_OP.id());
+            output.writeByte(Bytecode.SLICE_OP.id());
             output.writeInt(id);
             obj.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             start.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             end.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             step.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -267,12 +266,12 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
             endId--;
 
             return output -> {
-                output.writeByte(ASSIGN.id());
+                output.writeByte(Bytecode.ASSIGN.id());
                 output.writeUTF(expr.getName());
                 output.writeBoolean(false);
                 output.writeInt(id);
                 data.writeInto(output);
-                output.writeByte(END.id());
+                output.writeByte(Bytecode.END.id());
                 output.writeInt(id);
             };
         } else {
@@ -283,15 +282,15 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
             endId--;
 
             return output -> {
-                output.writeByte(ASSIGN.id());
+                output.writeByte(Bytecode.ASSIGN.id());
                 output.writeUTF(expr.getName());
                 output.writeBoolean(true);
                 output.writeInt(id);
                 parent.writeInto(output);
-                output.writeByte(END.id());
+                output.writeByte(Bytecode.END.id());
                 output.writeInt(id);
                 data.writeInto(output);
-                output.writeByte(END.id());
+                output.writeByte(Bytecode.END.id());
                 output.writeInt(id);
             };
         }
@@ -305,11 +304,11 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(DECLARE.id());
+            output.writeByte(Bytecode.DECLARE.id());
             output.writeUTF(expr.getName());
             output.writeInt(id);
             data.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -325,13 +324,13 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(GET.id());
+            output.writeByte(Bytecode.GET.id());
             output.writeInt(id);
             left.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             key.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -348,16 +347,16 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(SET.id());
+            output.writeByte(Bytecode.SET.id());
             output.writeInt(id);
             left.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             key.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             value.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -372,10 +371,10 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(RETURN.id());
+            output.writeByte(Bytecode.RETURN.id());
             output.writeInt(id);
             data.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -392,16 +391,16 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(CONDITIONAL.id());
+            output.writeByte(Bytecode.CONDITIONAL.id());
             output.writeInt(id);
             condition.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             ifBranch.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             elseBranch.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -417,14 +416,14 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(FOREACH.id());
+            output.writeByte(Bytecode.FOREACH.id());
             output.writeUTF(expr.getVariant());
             output.writeInt(id);
             iterable.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
             action.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -443,10 +442,10 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         endId--;
 
         return output -> {
-            output.writeByte(DICTIONARY.id());
+            output.writeByte(Bytecode.DICTIONARY.id());
             output.writeInt(id);
             childs.writeInto(output);
-            output.writeByte(END.id());
+            output.writeByte(Bytecode.END.id());
             output.writeInt(id);
         };
     }
@@ -456,7 +455,7 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         /*
         UNDEFINED
          */
-        return output -> output.writeByte(UNDEFINED.id());
+        return output -> output.writeByte(Bytecode.UNDEFINED.id());
     }
 
     @Override
@@ -465,7 +464,7 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         INT int
          */
         return output -> {
-            output.writeByte(INT.id());
+            output.writeByte(Bytecode.INT.id());
             output.writeInt(expr.getValue());
         };
     }
@@ -476,7 +475,7 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         DECIMAL decimal
          */
         return output -> {
-            output.writeByte(DECIMAL.id());
+            output.writeByte(Bytecode.DECIMAL.id());
             output.writeDouble(expr.getValue());
         };
     }
@@ -487,7 +486,7 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         BOOLEAN bool
          */
         return output -> {
-            output.writeByte(BOOLEAN.id());
+            output.writeByte(Bytecode.BOOLEAN.id());
             output.writeBoolean(expr == BooleanNode.TRUE);
         };
     }
@@ -498,7 +497,7 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
         STRING string
          */
         return output -> {
-            output.writeByte(STRING.id());
+            output.writeByte(Bytecode.STRING.id());
             output.writeUTF(expr.getValue());
         };
     }
@@ -516,12 +515,12 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
             endId--;
 
             return output -> {
-                output.writeByte(FUNCTION_PARAM.id());
+                output.writeByte(Bytecode.FUNCTION_PARAM.id());
                 output.writeUTF(data.getName());
                 output.writeInt(modifiers);
                 output.writeInt(id);
                 typeExpr.writeInto(output);
-                output.writeByte(END.id());
+                output.writeByte(Bytecode.END.id());
                 output.writeInt(id);
             };
         } else {
@@ -534,15 +533,15 @@ public class ExprSerializer implements ExprVisitor<DataOutputConsumer, Void> {
             endId--;
 
             return output -> {
-                output.writeByte(FUNCTION_PARAM.id());
+                output.writeByte(Bytecode.FUNCTION_PARAM.id());
                 output.writeUTF(data.getName());
                 output.writeInt(modifiers);
                 output.writeInt(id);
                 typeExpr.writeInto(output);
-                output.writeByte(END.id());
+                output.writeByte(Bytecode.END.id());
                 output.writeInt(id);
                 defaultValue.writeInto(output);
-                output.writeByte(END.id());
+                output.writeByte(Bytecode.END.id());
                 output.writeInt(id);
             };
         }

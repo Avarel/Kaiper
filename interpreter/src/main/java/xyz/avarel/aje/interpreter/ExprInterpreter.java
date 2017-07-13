@@ -49,7 +49,7 @@ import xyz.avarel.aje.runtime.*;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
-import xyz.avarel.aje.runtime.functions.CompiledFunc;
+import xyz.avarel.aje.interpreter.runtime.CompiledFunc;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Decimal;

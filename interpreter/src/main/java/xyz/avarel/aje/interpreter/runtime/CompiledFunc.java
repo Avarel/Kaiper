@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.runtime.functions;
+package xyz.avarel.aje.interpreter.runtime;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.flow.ReturnException;
@@ -22,6 +22,8 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Array;
+import xyz.avarel.aje.runtime.functions.Func;
+import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
