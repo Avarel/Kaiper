@@ -29,6 +29,7 @@ import xyz.avarel.aje.parser.parslets.functional.CompositionParser;
 import xyz.avarel.aje.parser.parslets.functional.PipeParser;
 import xyz.avarel.aje.parser.parslets.functions.*;
 import xyz.avarel.aje.parser.parslets.nodes.*;
+import xyz.avarel.aje.parser.parslets.oop.ClassParser;
 import xyz.avarel.aje.parser.parslets.operators.BinaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.operators.RangeOperatorParser;
 import xyz.avarel.aje.parser.parslets.operators.UnaryOperatorParser;
@@ -58,6 +59,7 @@ public class DefaultGrammar extends Grammar {
         prefix(TokenType.UNDEFINED, new UndefinedParser());
 //        prefix(TokenType.ATOM, new AtomParser());
 
+        prefix(TokenType.CLASS, new ClassParser());
         prefix(TokenType.FUNCTION, new FunctionParser());
         prefix(TokenType.UNDERSCORE, new ImplicitFunctionParser());
         prefix(TokenType.LEFT_BRACE, new LambdaFunctionParser());

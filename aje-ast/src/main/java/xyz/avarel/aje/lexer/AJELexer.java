@@ -15,7 +15,6 @@
 
 package xyz.avarel.aje.lexer;
 
-import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.SyntaxException;
 
 import java.io.*;
@@ -98,7 +97,6 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
             if (tokens.size() == 0) {
                 switch (next.getType()) {
-                    case SEMICOLON:
                     case LINE:
                         continue;
                 }
@@ -116,18 +114,12 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                                 continue;
                         }
                         break;
-                    case SEMICOLON:
-                        switch (next.getType()) {
-                            case SEMICOLON:
-                                continue;
-                        }
                     case LINE: // Remove previous LINE token if followed by:
                         switch (next.getType()) {
                             case RIGHT_BRACE:
                             case RIGHT_BRACKET:
                             case RIGHT_PAREN:
                             case COMMA:
-                            case SEMICOLON:
                             case PIPE_FORWARD:
                             case LINE:
                                 tokens.remove(tokens.size() - 1);
@@ -276,7 +268,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             case ';':
                 match('\r');
                 match('\n');
-                return make(TokenType.SEMICOLON);
+                return make(TokenType.LINE);
 
             case '"':
                 return nextString('"');

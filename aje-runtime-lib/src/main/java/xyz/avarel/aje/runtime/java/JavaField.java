@@ -16,8 +16,8 @@
 package xyz.avarel.aje.runtime.java;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.types.Type;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

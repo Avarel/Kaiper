@@ -17,19 +17,19 @@ package xyz.avarel.aje;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.interpreter.ExprInterpreter;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.scope.Scope;
 
 public class CompiledExpr implements Expr {
     private final Expr expr;
-    private Expression expression;
+    private Scope scope;
 
-    public CompiledExpr(Expression expression, Expr expr) {
-        this.expression = expression;
+    public CompiledExpr(Scope scope, Expr expr) {
+        this.scope = scope;
         this.expr = expr;
     }
 
@@ -39,7 +39,7 @@ public class CompiledExpr implements Expr {
             ((Statements) expr).getExprs().add(after);
             return this;
         }
-        return new CompiledExpr(expression, new Statements(expr, after));
+        return new CompiledExpr(scope, new Statements(expr, after));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class CompiledExpr implements Expr {
     }
 
     public Obj compute() {
-        return accept(new ExprInterpreter(), expression.getScope().copy());
+        return accept(new ExprInterpreter(), scope.copy());
     }
 
     @Override

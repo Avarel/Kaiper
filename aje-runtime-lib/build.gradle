@@ -36,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    //testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile project(":aje-common")
 }
 
 task sourcesForRelease(type: Copy) {

@@ -1,9 +1,11 @@
 package xyz.avarel.aje.bytecode;
 
 import xyz.avarel.aje.BytecodeHelper;
+import xyz.avarel.aje.CompiledExpr;
 import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.bytecode.viewer.ExprViewer;
+import xyz.avarel.aje.scope.DefaultScope;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -59,7 +61,7 @@ public class AJEBytecodeTest {
         System.out.println();
 
 
-        Expr expr = BytecodeHelper.fromBytecode(bytecode);
+        CompiledExpr expr = new CompiledExpr(DefaultScope.INSTANCE.copy(), BytecodeHelper.fromBytecode(bytecode));
 
         StringBuilder b2 = new StringBuilder("AST Now:\n");
         expr.ast(b2, "", true);

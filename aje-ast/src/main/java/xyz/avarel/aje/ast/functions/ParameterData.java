@@ -17,7 +17,6 @@ package xyz.avarel.aje.ast.functions;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.variables.Identifier;
-import xyz.avarel.aje.runtime.Type;
 
 public class ParameterData {
     private final String name;
@@ -27,10 +26,6 @@ public class ParameterData {
 
     public ParameterData(String name) {
         this(name, new Identifier("Object"), null, false);
-    }
-
-    public ParameterData(Type type) {
-        this(null, new Identifier("Object"), null, false);
     }
 
     public ParameterData(String name, Expr type) {

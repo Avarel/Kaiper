@@ -17,7 +17,7 @@ package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
 import java.util.StringJoiner;
@@ -49,6 +49,12 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
     @Override
     public Function<List<Obj>, Obj> toJava() {
         return this::invoke;
+    }
+
+    public boolean isReferenceFunction() {
+        return !getParameters().isEmpty()
+                && getParameters().get(0).getName() != null
+                && getParameters().get(0).getName().equals("self");
     }
 
     @Override

@@ -45,7 +45,7 @@ public class LambdaFunctionParser implements PrefixParser {
         int peek = 0;
         boolean hasArrow = false;
         lookAhead:
-        while (parser.peek(0).getType() != TokenType.RIGHT_BRACE) {
+        while (!parser.nextIs(TokenType.RIGHT_BRACE)) {
             TokenType type = parser.peek(peek).getType();
             switch (type) {
                 case IDENTIFIER:

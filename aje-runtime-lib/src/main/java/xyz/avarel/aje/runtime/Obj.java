@@ -22,6 +22,7 @@ import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.functions.ReferenceFunc;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.Arrays;
 import java.util.List;
@@ -340,7 +341,7 @@ public interface Obj<J> {
                 }
             });
 
-            getScope().declare("getType", new NativeFunc(Parameter.of(this)) {
+            getScope().declare("getType", new NativeFunc(Parameter.of("self", this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return arguments.get(0).getType();

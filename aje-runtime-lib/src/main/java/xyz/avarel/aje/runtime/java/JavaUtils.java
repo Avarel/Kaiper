@@ -15,11 +15,15 @@
 
 package xyz.avarel.aje.runtime.java;
 
-import xyz.avarel.aje.runtime.*;
+import xyz.avarel.aje.runtime.Bool;
+import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Str;
+import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.HashMap;
 import java.util.List;

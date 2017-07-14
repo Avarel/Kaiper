@@ -102,7 +102,7 @@ public abstract class Parser {
         return tokens.get(distance);
     }
 
-    public boolean peek(TokenType... tokens) {
+    public boolean nextIs(TokenType... tokens) {
         for (int i = 0; i < tokens.length; i++) {
             if (peek(i).getType() != tokens[i]) return false;
         }
@@ -110,9 +110,9 @@ public abstract class Parser {
         return true;
     }
 
-    public boolean peekAny(TokenType... tokens) {
+    public boolean nextIsAny(TokenType... tokens) {
         for (TokenType token : tokens) {
-            if (peek(token)) return true;
+            if (this.nextIs(token)) return true;
         }
 
         return false;

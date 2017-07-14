@@ -15,7 +15,7 @@
 
 package xyz.avarel.aje.runtime.numbers;
 
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.types.Type;
 import xyz.avarel.aje.scope.DefaultFunctions;
 
 public class AJEMath {

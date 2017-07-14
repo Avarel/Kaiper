@@ -21,10 +21,6 @@ import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.List;
 
-/**
- * Every operation results in the same
- * instance, NOTHING.
- */
 public class ComposedFunc extends Func {
     private final Func outer;
     private final Func inner;

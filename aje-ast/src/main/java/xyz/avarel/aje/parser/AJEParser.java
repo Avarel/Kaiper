@@ -61,7 +61,7 @@ public class AJEParser extends Parser {
 
         Expr any = parseExpr();
 
-        while (match(TokenType.LINE) || match(TokenType.SEMICOLON)) {
+        while (match(TokenType.LINE)) {
             if (match(TokenType.EOF)) break;
 
             any = any.andThen(parseExpr());
@@ -110,5 +110,13 @@ public class AJEParser extends Parser {
             throw new SyntaxException("Expected " + keyword.toUpperCase() + " but found " + getLast().getType(),
                     getLast().getPosition());
         }
+    }
+
+    public boolean matchSoftKeyword(String keyword) {
+        if (Objects.equals(peek(0).getString(), keyword)) {
+            eat();
+            return true;
+        }
+        return false;
     }
 }

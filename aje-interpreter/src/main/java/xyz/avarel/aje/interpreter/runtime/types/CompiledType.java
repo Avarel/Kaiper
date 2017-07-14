@@ -13,31 +13,31 @@
  * under the License.
  */
 
-package xyz.avarel.aje.runtime;
+package xyz.avarel.aje.interpreter.runtime.types;
 
+import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.types.Type;
 
-/**
- * Every operation results in the same
- * instance, NOTHING.
- */
-public enum Undefined implements Obj<Undefined> {
-    VALUE;
+import java.util.ArrayList;
+import java.util.List;
 
-    public static final Type<Undefined> TYPE = new Type<>("Undefined");
-
-    @Override
-    public String toString() {
-        return "undefined";
+public class CompiledType extends Type<CompiledObj> {
+    public CompiledType(String name, Type parent) {
+        super(parent, name);
     }
 
     @Override
-    public Undefined toJava() {
-        return this;
-    }
+    public Obj invoke(List<Obj> arguments) {
+        List<Obj> newArguments = arguments instanceof ArrayList
+                ? arguments
+                : new ArrayList<>(arguments);
 
-    @Override
-    public Type getType() {
-        return TYPE;
+        Obj instance = new CompiledObj(this);
+
+        newArguments.add(0, instance);
+
+        super.invoke(newArguments);
+
+        return instance;
     }
 }

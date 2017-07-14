@@ -16,7 +16,7 @@
 package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.types.Type;
 
 public class Parameter {
     private final String name;

@@ -16,7 +16,7 @@
 package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
+import xyz.avarel.aje.runtime.types.Type;
 
 public abstract class Numeric extends Number implements Obj {
     public static final Type<Numeric> TYPE = new NumericType();

@@ -16,7 +16,6 @@
 package xyz.avarel.aje;
 
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.AJELexer;
@@ -138,7 +137,7 @@ public class Expression {
      */
     public CompiledExpr compile() {
         if (expr == null) {
-            expr = new CompiledExpr(this, parser.compile());
+            expr = new CompiledExpr(scope, parser.compile());
         }
         return expr;
     }

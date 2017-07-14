@@ -91,7 +91,6 @@ public enum TokenType {
     FOR,
 
     SKIP,
-    SEMICOLON,
     LINE,
     EOF,
 }

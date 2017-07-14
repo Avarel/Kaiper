@@ -15,7 +15,6 @@
 
 package xyz.avarel.aje;
 
-import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -144,12 +143,12 @@ public class Evaluator {
         } catch (ReturnException re) {
             return answer = re.getValue();
         } catch (AJEException re) {
-            re.printStackTrace();
+            throw re;
         } catch (RuntimeException re) {
-            new ComputeException(re).printStackTrace();
+            throw new ComputeException(re);
         }
 
-        return answer = Undefined.VALUE;
+        //return answer = Undefined.VALUE;
     }
 
     /**

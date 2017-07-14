@@ -16,11 +16,11 @@
 package xyz.avarel.aje.runtime.collections;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.ArrayList;
 import java.util.Iterator;

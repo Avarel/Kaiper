@@ -13,32 +13,31 @@
  * under the License.
  */
 
-package xyz.avarel.aje.interpreter.runtime;
+package xyz.avarel.aje.interpreter.runtime.functions;
 
+import xyz.avarel.aje.ReturnException;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.flow.ReturnException;
 import xyz.avarel.aje.interpreter.ExprInterpreter;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.Parameter;
+import xyz.avarel.aje.runtime.types.Type;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * Every operation results in the same
- * instance, NOTHING.
- */
-public class CompiledFunc extends Func {
+public final class CompiledFunc extends Func {
+    private final String name;
     private final List<Parameter> parameters;
     private final Expr expr;
     private final Scope scope;
     private final ExprInterpreter visitor;
 
-    public CompiledFunc(List<Parameter> parameters, Expr expr, ExprInterpreter visitor, Scope scope) {
+    public CompiledFunc(String name, List<Parameter> parameters, Expr expr, ExprInterpreter visitor, Scope scope) {
+        this.name = name;
         this.parameters = parameters;
         this.expr = expr;
         this.scope = scope;
@@ -47,11 +46,19 @@ public class CompiledFunc extends Func {
 
     @Override
     public int getArity() {
+        if (parameters.isEmpty()) return 0;
         return parameters.get(parameters.size() - 1).isRest() ? parameters.size() - 1 : parameters.size();
     }
 
     public List<Parameter> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public String toString() {
+        return "func" + (name == null ? "" : " " + name) + "(" + getParameters().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(", ")) + ")";
     }
 
     @Override
@@ -79,25 +86,27 @@ public class CompiledFunc extends Func {
             }
         }
 
-        Parameter lastParam = parameters.get(parameters.size() - 1);
+        if (!parameters.isEmpty()) {
+            Parameter lastParam = parameters.get(parameters.size() - 1);
 
-        if (lastParam.isRest()) {
-            if (arguments.size() > getArity()) {
-                Type type = lastParam.getType();
-                List<Obj> sublist = arguments.subList(parameters.size() - 1, arguments.size());
-                Array array = new Array();
+            if (lastParam.isRest()) {
+                if (arguments.size() > getArity()) {
+                    Type type = lastParam.getType();
+                    List<Obj> sublist = arguments.subList(parameters.size() - 1, arguments.size());
+                    Array array = new Array();
 
-                for (Obj obj : sublist) {
-                    if (obj.getType().is(type)) {
-                        array.add(obj);
-                    } else if (type != Obj.TYPE) {
-                        throw typeError(parameters, arguments);
+                    for (Obj obj : sublist) {
+                        if (obj.getType().is(type)) {
+                            array.add(obj);
+                        } else if (type != Obj.TYPE) {
+                            throw typeError(parameters, arguments);
+                        }
                     }
-                }
 
-                scope.declare(lastParam.getName(), array);
-            } else {
-                scope.declare(lastParam.getName(), new Array());
+                    scope.declare(lastParam.getName(), array);
+                } else {
+                    scope.declare(lastParam.getName(), new Array());
+                }
             }
         }
 

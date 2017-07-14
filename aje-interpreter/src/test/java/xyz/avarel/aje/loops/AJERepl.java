@@ -20,15 +20,13 @@
 package xyz.avarel.aje.loops;
 
 import xyz.avarel.aje.Evaluator;
+import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 public class AJERepl {
     public static void main(String[] args) {
@@ -58,20 +56,22 @@ public class AJERepl {
                         continue;
                 }
 
-                Future<Obj> future = CompletableFuture.supplyAsync(() -> evaluator.eval(input)).exceptionally(t -> {
-                    System.out.println("! " + t.getMessage());
-                    return Undefined.VALUE;
-                });
 
-                Obj result = future.get();
+                Obj result;
+
+                try {
+                    result = evaluator.eval(input);
+                } catch (AJEException e) {
+                    System.out.println("! " + e.getMessage());
+                    e.printStackTrace();
+                    result = Undefined.VALUE;
+                }
 
                 System.out.println("\u25c0 " + result + " : " + result.getType());
 
                 System.out.println();
             } catch (RuntimeException e) {
                 System.out.println("\u25c0 Exception: " + e.getMessage() + "\n");
-                e.printStackTrace();
-            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
         }

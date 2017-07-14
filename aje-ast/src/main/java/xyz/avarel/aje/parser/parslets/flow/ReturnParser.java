@@ -32,7 +32,7 @@ public class ReturnParser implements PrefixParser {
         }
 
         Expr expr;
-        if (parser.peekAny(TokenType.LINE, TokenType.SEMICOLON, TokenType.RIGHT_BRACE)) {
+        if (parser.nextIsAny(TokenType.LINE, TokenType.RIGHT_BRACE)) {
             expr = UndefinedNode.VALUE;
         } else {
             expr = parser.parseExpr();

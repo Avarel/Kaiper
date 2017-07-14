@@ -17,9 +17,9 @@ package xyz.avarel.aje.runtime.numbers;
 
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Type;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
 

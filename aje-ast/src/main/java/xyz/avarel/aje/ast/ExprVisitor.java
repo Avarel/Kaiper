@@ -52,6 +52,7 @@ import xyz.avarel.aje.ast.flow.ReturnExpr;
 import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.invocation.Invocation;
+import xyz.avarel.aje.ast.oop.ClassNode;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
@@ -104,4 +105,6 @@ public interface ExprVisitor<R, C> {
     R visit(StringNode stringNode, C scope);
 
     R visit(DeclarationExpr declarationExpr, C scope);
+
+    R visit(ClassNode classNode, C scope);
 }

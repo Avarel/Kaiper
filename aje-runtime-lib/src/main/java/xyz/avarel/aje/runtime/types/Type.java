@@ -13,9 +13,10 @@
  * under the License.
  */
 
-package xyz.avarel.aje.runtime;
+package xyz.avarel.aje.runtime.types;
 
 import xyz.avarel.aje.exceptions.ComputeException;
+import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
@@ -76,6 +77,10 @@ public class Type<T> implements Obj<Type> {
 
     public Type getParent() {
         return parent;
+    }
+
+    public boolean hasParent() {
+        return getParent() != null;
     }
 
     public String getName() {
