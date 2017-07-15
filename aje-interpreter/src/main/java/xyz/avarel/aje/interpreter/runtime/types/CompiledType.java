@@ -16,9 +16,10 @@
 package xyz.avarel.aje.interpreter.runtime.types;
 
 import xyz.avarel.aje.runtime.types.Type;
+import xyz.avarel.aje.scope.Scope;
 
 public class CompiledType extends Type<CompiledObj> {
-    public CompiledType(String name, Type parent, CompiledConstructor constructor) {
-        super(parent, name, constructor);
+    public CompiledType(String name, Type parent, Scope scope, CompiledConstructor constructor) {
+        super(parent, name, scope, constructor);
     }
 }

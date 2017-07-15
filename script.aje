@@ -1,0 +1,24 @@
+// Test file for FileTest.java
+
+class Meme {
+    val upper = "hello"
+
+    constructor(var x = 1)
+
+    def memes() = 500
+}
+
+class Dank : Meme {
+    val level
+
+    constructor(x, var y, z) : super(x) {
+        this.level = 5
+    }
+
+    def instanceMethod() = this.x + 5000
+
+    static def memes() = 2
+}
+
+var i1 = Meme()
+var i2 = Dank(1,2,3)

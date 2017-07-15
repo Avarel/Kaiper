@@ -46,6 +46,7 @@ public class Scope {
             if (parent.contains(key)) {
                 return parent.lookup(key);
             }
+
         }
         return Undefined.VALUE;
     }
@@ -63,12 +64,14 @@ public class Scope {
     }
 
     public void assign(String key, Obj value) {
-        System.out.println(flagsMap.get(key));
         if (map.containsKey(key)) {
             if ((flagsMap.get(key) & VariableFlags.FINAL) == VariableFlags.FINAL) {
                 throw new ComputeException("Can not assign to final variable " + key);
             }
 
+            map.put(key, value);
+            return;
+        } else if (flagsMap.containsKey(key)) { // declared but not assigned yet
             map.put(key, value);
             return;
         } else for (Scope parent : parents) {
@@ -80,8 +83,16 @@ public class Scope {
         throw new ComputeException(key + " is not defined, it must be declared using Scope#declare first");
     }
 
+    public Scope[] getParents() {
+        return parents;
+    }
+
     public Map<String, Obj> getMap() {
         return map;
+    }
+
+    public Map<String, Short> getFlagsMap() {
+        return flagsMap;
     }
 
     public boolean contains(String key) {
@@ -112,5 +123,11 @@ public class Scope {
     @Override
     public String toString() {
         return map.toString();
+    }
+
+    public Scope withFlags(Map<String, Short> otherFlags) {
+        Map<String, Short> newFlags = new HashMap<>(flagsMap);
+        newFlags.putAll(otherFlags);
+        return new Scope(new HashMap<>(map), newFlags, parents);
     }
 }

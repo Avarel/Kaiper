@@ -462,16 +462,23 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         Type parent = (Type) parentObj;
 
-        Obj obj = expr.getConstructorNode().accept(this, scope);
+
+        Obj obj = expr.getConstructorNode().accept(this, scope.withFlags(expr.getVariableDeclarations()));
         if (!(obj instanceof Constructor)) {
             throw new ComputeException("Internal error");
         }
 
         CompiledConstructor constructor = (CompiledConstructor) obj;
 
-        CompiledType type = new CompiledType(expr.getName(), parent, constructor);
+        Scope classScope = parent.getScope().subPool().combine(scope);
+
+        CompiledType type = new CompiledType(expr.getName(), parent, classScope, constructor);
 
         scope.declare(expr.getName(), type);
+
+        for (FunctionNode func : expr.getFunctions()) {
+            func.accept(this, classScope);
+        }
 
         return type;
     }
@@ -497,7 +504,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         }
 
         checkTimeout();
-        return new CompiledConstructor(parameters, expr.getSuperInvocation(), expr.getExpr(), this, scope.subPool());
+
+        return new CompiledConstructor(parameters, expr.getSuperInvocation(), expr.getExpr(), this, scope);
     }
 
     private void checkTimeout() {

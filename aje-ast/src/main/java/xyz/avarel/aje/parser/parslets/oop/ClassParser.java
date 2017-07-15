@@ -15,6 +15,7 @@
 
 package xyz.avarel.aje.parser.parslets.oop;
 
+import xyz.avarel.aje.VariableFlags;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.Statements;
@@ -33,90 +34,69 @@ import xyz.avarel.aje.parser.PrefixParser;
 
 import java.util.*;
 
-// class Meme { constructor(x) { self.x = x } }
-// class Dank extends Meme { constructor(x, y) : super(x) { self.y = y } }
+// class Meme { constructor(x) { this.x = x } }
+// class Dank : Meme { constructor(x, y) : super(x) { this.y = y } }
 
+// The most hacky parser thing in existence
 public class ClassParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        String name = parser.eat(TokenType.IDENTIFIER).getString();
+        String className = parser.eat(TokenType.IDENTIFIER).getString();
 
-        ConstructorNode constructorNode = null;
+        ConstructorNode classConstructor = null;
 
-        Identifier parent = new Identifier("Object");
+        Identifier classParent = new Identifier("Object");
         if (parser.match(TokenType.COLON)) {
-            parent = parser.parseIdentifier();
+            classParent = parser.parseIdentifier();
         }
 
-        List<FunctionNode> functions = new ArrayList<>();
+        List<FunctionNode> classFunctions = new ArrayList<>();
+
+        Map<String, Short> variableDeclarations = new HashMap<>();
+        Statements variableAssignments = new Statements();
 
         if (parser.match(TokenType.LEFT_BRACE)) {
             while (!(parser.nextIs(TokenType.EOF) || parser.nextIs(TokenType.RIGHT_BRACE))) {
                 if (parser.match(TokenType.LINE)) continue;
 
-                if (parser.matchSoftKeyword("constructor")) {
+                if (parser.match(TokenType.VAL) || parser.match(TokenType.VAR)) {
+                    TokenType type = parser.getLast().getType();
 
-                    List<ParameterData> constructorParameters = new ArrayList<>();
-                    List<Single> constructorSuperExprs = Collections.emptyList();
-                    Statements constructorExpr = new Statements();
+                    String variableName = parser.eat(TokenType.IDENTIFIER).getString();
 
-                    // constructor(constructorParameters...) : super(superExprs) { constructorExpr }
+                    variableDeclarations.put(variableName,
+                            type == TokenType.VAL ? VariableFlags.FINAL : VariableFlags.NONE);
 
-                    if (parser.nextIs(TokenType.LEFT_PAREN)) {
-                        parser.eat(TokenType.LEFT_PAREN);
-                        if (!parser.match(TokenType.RIGHT_PAREN)) {
-                            Set<String> paramNames = new HashSet<>();
-                            boolean requireDef = false;
+                    if (parser.match(TokenType.ASSIGN)) {
+                        Single expr = parser.parseSingle();
 
-                            do {
-                                boolean var = parser.match(TokenType.VAR);
-
-                                ParameterData parameter = AJEParserUtils.parseParameter(parser, requireDef);
-
-                                if (parameter.getDefault() != null) {
-                                    requireDef = true;
-                                }
-
-                                if (paramNames.contains(parameter.getName())) {
-                                    throw new SyntaxException("Duplicate parameter name",
-                                            parser.getLast().getPosition());
-                                } else {
-                                    paramNames.add(parameter.getName());
-                                }
-
-                                if (parameter.isRest() && parser.match(TokenType.COMMA)) {
-                                    throw new SyntaxException("Rest parameters must be the last parameter",
-                                            parser.peek(0).getPosition());
-                                }
-
-                                constructorParameters.add(parameter);
-
-                                if (var) {
-                                    constructorExpr.getExprs().add(
-                                            new AssignmentExpr(
-                                                    AJEParserUtils.THIS_ID,
-                                                    parameter.getName(),
-                                                    new Identifier(parameter.getName())
-                                            )
-                                    );
-                                }
-                            } while (parser.match(TokenType.COMMA));
-                            parser.match(TokenType.RIGHT_PAREN);
-                        }
+                        variableAssignments.getExprs().add(
+                                new AssignmentExpr(
+                                        AJEParserUtils.THIS_ID,
+                                        variableName,
+                                        expr
+                                )
+                        );
                     }
-
-                    if (parser.match(TokenType.COLON)) {
-                        parser.eatSoftKeyword("super");
-                        constructorSuperExprs = AJEParserUtils.parseArguments(parser);
+                } else if (parser.matchSoftKeyword("constructor")) {
+                    classConstructor = parseConstructor(parser, variableDeclarations);
+                } else if (parser.nextIs(TokenType.FUNCTION)) {
+                    Single expr = parser.parseSingle();
+                    if (!(expr instanceof FunctionNode)) {
+                        throw new SyntaxException("Internal compiler error");
                     }
+                    FunctionNode functionNode = (FunctionNode) expr;
+                    functionNode.getParameterExprs().add(0, new ParameterData("this", new Identifier(className)));
 
-                    if (parser.nextIs(TokenType.LEFT_BRACE)) {
-                        constructorExpr.getExprs().add(AJEParserUtils.parseBlock(parser));
+                    classFunctions.add(functionNode);
+                } else if (parser.matchSoftKeyword("static")) {
+                    Single expr = parser.parseSingle();
+                    if (!(expr instanceof FunctionNode)) {
+                        throw new SyntaxException("Internal compiler error");
                     }
+                    FunctionNode functionNode = (FunctionNode) expr;
 
-                    constructorNode = new ConstructorNode(constructorParameters,
-                            constructorSuperExprs,
-                            constructorExpr);
+                    classFunctions.add(functionNode);
                 } else {
                     throw new SyntaxException(parser.peek(0)
                             .getType() + " is not allowed in the top level of a class declaration");
@@ -126,12 +106,115 @@ public class ClassParser implements PrefixParser {
             parser.eat(TokenType.RIGHT_BRACE);
         }
 
-        if (constructorNode == null) {
-            constructorNode = new ConstructorNode(Collections.emptyList(), Collections.emptyList(), new Statements());
+        if (classConstructor == null) {
+            classConstructor = new ConstructorNode(Collections.emptyList(),
+                    Collections.emptyList(),
+                    variableAssignments);
+        } else {
+            ((Statements) classConstructor.getExpr()).getExprs().addAll(0, variableAssignments.getExprs());
         }
 
-        return new ClassNode(name, parent, constructorNode, functions);
+        scanConstructor(classConstructor, variableDeclarations);
+
+        return new ClassNode(className, classParent, classConstructor, variableDeclarations, classFunctions);
     }
 
+    private void scanConstructor(ConstructorNode constructor, Map<String, Short> variableDeclarations) {
+        Set<String> variables = new HashSet<>(variableDeclarations.keySet());
+        List<Expr> statements = ((Statements) constructor.getExpr()).getExprs();
 
+        for (Expr expr : statements) {
+            if (expr instanceof AssignmentExpr) {
+                if (((AssignmentExpr) expr).getParent() == null) {
+                    variables.remove(((AssignmentExpr) expr).getName());
+                } else if (((AssignmentExpr) expr).getParent() instanceof Identifier) {
+                    Identifier parent = (Identifier) ((AssignmentExpr) expr).getParent();
+                    if (parent.getName().equals("this")) {
+                        variables.remove(((AssignmentExpr) expr).getName());
+                    }
+                }
+            }
+        }
+
+        if (!variables.isEmpty()) {
+            throw new SyntaxException(variables + " need to be declared in the constructor");
+        }
+    }
+
+    private ConstructorNode parseConstructor(AJEParser parser, Map<String, Short> variableDeclarations) {
+        List<ParameterData> constructorParameters = new ArrayList<>();
+        List<Single> constructorSuperExprs = Collections.emptyList();
+        Statements constructorExpr = new Statements();
+
+        // constructor(constructorParameters...) : super(superExprs) { constructorExpr }
+
+        // constructorParameters = [var|val] name [: (parameterType)] [= (parameterDefault)]
+
+        if (parser.nextIs(TokenType.LEFT_PAREN)) {
+            parser.eat(TokenType.LEFT_PAREN);
+            if (!parser.match(TokenType.RIGHT_PAREN)) {
+                boolean requireDefault = false;
+
+                do {
+                    byte parameterType = 0;
+                    if (parser.match(TokenType.VAR)) {
+                        parameterType = 1;
+                    } else if (parser.match(TokenType.VAL)) {
+                        parameterType = 2;
+                    }
+
+                    ParameterData parameter = AJEParserUtils.parseParameter(parser, requireDefault);
+
+                    if (parameter.getDefault() != null) {
+                        requireDefault = true;
+                    }
+
+                    if (variableDeclarations.containsKey(parameter.getName())) {
+                        throw new SyntaxException("Duplicate parameter name",
+                                parser.getLast().getPosition());
+                    } else {
+                        switch (parameterType) {
+                            case 1:
+                                variableDeclarations.put(parameter.getName(), (short) 0);
+                                break;
+                            case 2:
+                                variableDeclarations.put(parameter.getName(), VariableFlags.FINAL);
+                        }
+                    }
+
+                    if (parameter.isRest() && parser.match(TokenType.COMMA)) {
+                        throw new SyntaxException("Rest parameters must be the last parameter",
+                                parser.peek(0).getPosition());
+                    }
+
+                    constructorParameters.add(parameter);
+
+                    if (parameterType != 0) {
+                        constructorExpr.getExprs().add(
+                                new AssignmentExpr(
+                                        AJEParserUtils.THIS_ID,
+                                        parameter.getName(),
+                                        new Identifier(parameter.getName())
+                                )
+                        );
+                    }
+
+                } while (parser.match(TokenType.COMMA));
+                parser.match(TokenType.RIGHT_PAREN);
+            }
+        }
+
+        if (parser.match(TokenType.COLON)) {
+            parser.eatSoftKeyword("super");
+            constructorSuperExprs = AJEParserUtils.parseArguments(parser);
+        }
+
+        if (parser.nextIs(TokenType.LEFT_BRACE)) {
+            constructorExpr.getExprs().add(AJEParserUtils.parseBlock(parser));
+        }
+
+        return new ConstructorNode(constructorParameters,
+                constructorSuperExprs,
+                constructorExpr);
+    }
 }

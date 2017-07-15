@@ -22,6 +22,8 @@ public class Precedence {
     /* a.b */
     public static final int POSTFIX = 12;
 
+    public static final int BLOCK_PARAM = 11;
+
     /* a ^ b */
     public static final int EXPONENTIAL = 10;
 

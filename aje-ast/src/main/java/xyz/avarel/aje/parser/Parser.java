@@ -84,6 +84,17 @@ public abstract class Parser {
         return true;
     }
 
+    public boolean matchAny(TokenType... tokens) {
+        Token token = peek(0);
+        for (TokenType expected : tokens) {
+            if (token.getType() == expected) {
+                eat();
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Token eat() {
         // Make sure we've read the token.
         peek(0);

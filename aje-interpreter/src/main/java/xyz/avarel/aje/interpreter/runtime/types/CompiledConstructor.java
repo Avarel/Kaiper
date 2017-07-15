@@ -82,7 +82,7 @@ public class CompiledConstructor extends Constructor {
 
     @Override
     public CompiledObj invoke(List<Obj> arguments) {
-        return eval(arguments, this.scope.subPool());
+        return eval(arguments, this.scope);
     }
 
     private CompiledObj eval(List<Obj> arguments, Scope scope) {
@@ -148,12 +148,9 @@ public class CompiledConstructor extends Constructor {
                     throw new ComputeException(targetType.getParent() + " can not be extended (no constructor)");
                 }
 
-                Obj superObject;
+                Obj superObject = parentConstructor.invoke(superArguments);
                 if (parentConstructor instanceof CompiledConstructor) {
-                    superObject = ((CompiledConstructor) parentConstructor).eval(superArguments, new Scope());
                     scope = scope.combine(((CompiledObj) superObject).getScope());
-                } else {
-                    superObject = parentConstructor.invoke(superArguments);
                 }
 
                 constructorScope.declare("super", superObject);
@@ -161,7 +158,7 @@ public class CompiledConstructor extends Constructor {
         }
 
 
-        CompiledObj instance = new CompiledObj(targetType, scope);
+        CompiledObj instance = new CompiledObj(targetType, scope.subPool().withFlags(scope.getFlagsMap()));
 
         constructorScope.declare("this", instance);
 

@@ -31,7 +31,7 @@ import java.util.List;
 
 public class BlockParameterParser extends BinaryParser {
     public BlockParameterParser() {
-        super(Precedence.POSTFIX);
+        super(Precedence.BLOCK_PARAM);
     }
 
     @Override // [1..10] |> fold(0) { a, b -> a + b } // [1..10] |> filter { it -> it % 2 == 0 }
