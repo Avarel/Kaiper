@@ -51,15 +51,16 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     @Override
-    public DataOutputConsumer visit(Statements statements, Void scope) {
-        Iterator<Expr> iterator = statements.getExprs().iterator();
+    public DataOutputConsumer visit(Statements expr, Void scope) {
+        Iterator<Expr> iterator = expr.getExprs().iterator();
         if (!iterator.hasNext()) return NO_OP_CONSUMER;
 
         DataOutputConsumer consumer = iterator.next().accept(this, null);
         if (!iterator.hasNext()) return consumer;
 
         while (iterator.hasNext()) {
-            consumer = consumer.andThen(iterator.next().accept(this, null)).andThen(POP);
+            consumer = consumer.andThen(iterator.next().accept(this, null));
+            if (iterator.hasNext()) consumer = consumer.andThen(POP);
         }
 
         return consumer;
@@ -230,13 +231,13 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     @Override
-    public DataOutputConsumer visit(UndefinedNode undefinedNode, Void scope) {
+    public DataOutputConsumer visit(UndefinedNode expr, Void scope) {
         return U_CONST;
     }
 
     @Override
-    public DataOutputConsumer visit(IntNode intNode, Void scope) {
-        int constValue = intNode.getValue();
+    public DataOutputConsumer visit(IntNode expr, Void scope) {
+        int constValue = expr.getValue();
 
         return out -> {
             I_CONST.writeInto(out);
@@ -245,8 +246,8 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     @Override
-    public DataOutputConsumer visit(DecimalNode decimalNode, Void scope) {
-        double constValue = decimalNode.getValue();
+    public DataOutputConsumer visit(DecimalNode expr, Void scope) {
+        double constValue = expr.getValue();
 
         return out -> {
             D_CONST.writeInto(out);
@@ -255,32 +256,43 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     @Override
-    public DataOutputConsumer visit(BooleanNode booleanNode, Void scope) {
-        return booleanNode == BooleanNode.TRUE ? B_CONST_TRUE : B_CONST_FALSE;
+    public DataOutputConsumer visit(BooleanNode expr, Void scope) {
+        return expr == BooleanNode.TRUE ? B_CONST_TRUE : B_CONST_FALSE;
     }
 
     @Override
-    public DataOutputConsumer visit(StringNode stringNode, Void scope) {
-        int constValue = stringConst(stringNode.getValue());
+    public DataOutputConsumer visit(StringNode expr, Void scope) {
+        int constValue = stringConst(expr.getValue());
 
         return out -> {
             S_CONST.writeInto(out);
-            out.writeInt(constValue);
+            out.writeShort(constValue);
         };
     }
 
     @Override
-    public DataOutputConsumer visit(DeclarationExpr declarationExpr, Void scope) {
+    public DataOutputConsumer visit(DeclarationExpr expr, Void scope) {
+        int name = stringConst(expr.getName());
+        int flags = expr.getFlags();
+
+        if (expr.getExpr() == null) {
+            return out -> {
+                DECLARE.writeInto(out);
+                out.writeShort(name);
+                out.writeByte(flags);
+            };
+        }
+
+        return null; //TODO LATER
+    }
+
+    @Override
+    public DataOutputConsumer visit(ClassNode expr, Void scope) {
         return null;
     }
 
     @Override
-    public DataOutputConsumer visit(ClassNode classNode, Void scope) {
-        return null;
-    }
-
-    @Override
-    public DataOutputConsumer visit(ConstructorNode constructorNode, Void scope) {
+    public DataOutputConsumer visit(ConstructorNode expr, Void scope) {
         return null;
     }
 }

@@ -128,6 +128,7 @@ public enum Opcodes implements DataOutputConsumer {
      */
     NEW_RANGE,
     INVOKE,
+    DECLARE,
     /**
      * {@code UNARY_OPERATION type;}
      * <p>Executes a Unary Operation.</p>
