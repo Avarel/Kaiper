@@ -15,7 +15,6 @@
 
 package xyz.avarel.aje.parser.parslets.oop;
 
-import xyz.avarel.aje.VariableFlags;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.Statements;
@@ -52,34 +51,12 @@ public class ClassParser implements PrefixParser {
 
         List<FunctionNode> classFunctions = new ArrayList<>();
 
-        Map<String, Byte> variableDeclarations = new HashMap<>();
-        Statements variableAssignments = new Statements();
-
         if (parser.match(TokenType.LEFT_BRACE)) {
             while (!(parser.nextIs(TokenType.EOF) || parser.nextIs(TokenType.RIGHT_BRACE))) {
                 if (parser.match(TokenType.LINE)) continue;
 
-                if (parser.match(TokenType.VAL) || parser.match(TokenType.VAR)) {
-                    TokenType type = parser.getLast().getType();
-
-                    String variableName = parser.eat(TokenType.IDENTIFIER).getString();
-
-                    variableDeclarations.put(variableName,
-                            type == TokenType.VAL ? VariableFlags.FINAL : VariableFlags.NONE);
-
-                    if (parser.match(TokenType.ASSIGN)) {
-                        Single expr = parser.parseSingle();
-
-                        variableAssignments.getExprs().add(
-                                new AssignmentExpr(
-                                        AJEParserUtils.THIS_ID,
-                                        variableName,
-                                        expr
-                                )
-                        );
-                    }
-                } else if (parser.matchSoftKeyword("constructor")) {
-                    classConstructor = parseConstructor(parser, variableDeclarations);
+                if (parser.matchSoftKeyword("constructor")) {
+                    classConstructor = parseConstructor(parser);
                 } else if (parser.nextIs(TokenType.FUNCTION)) {
                     Single expr = parser.parseSingle();
                     if (!(expr instanceof FunctionNode)) {
@@ -98,8 +75,9 @@ public class ClassParser implements PrefixParser {
 
                     classFunctions.add(functionNode);
                 } else {
-                    throw new SyntaxException(parser.peek(0)
-                            .getType() + " is not allowed in the top level of a class declaration");
+                    throw new SyntaxException(parser.peek(0).getType()
+                            + " is not allowed in the top level of a class declaration",
+                            parser.peek(0).getPosition());
                 }
             }
 
@@ -109,39 +87,15 @@ public class ClassParser implements PrefixParser {
         if (classConstructor == null) {
             classConstructor = new ConstructorNode(Collections.emptyList(),
                     Collections.emptyList(),
-                    variableAssignments);
-        } else {
-            ((Statements) classConstructor.getExpr()).getExprs().addAll(0, variableAssignments.getExprs());
+                    new Statements());
         }
 
-        scanConstructor(classConstructor, variableDeclarations);
-
-        return new ClassNode(className, classParent, classConstructor, variableDeclarations, classFunctions);
+        return new ClassNode(className, classParent, classConstructor, classFunctions);
     }
 
-    private void scanConstructor(ConstructorNode constructor, Map<String, Byte> variableDeclarations) {
-        Set<String> variables = new HashSet<>(variableDeclarations.keySet());
-        List<Expr> statements = ((Statements) constructor.getExpr()).getExprs();
+    private ConstructorNode parseConstructor(AJEParser parser) {
+        Set<String> usedParameters = new HashSet<>();
 
-        System.out.println(statements);
-
-        for (Expr expr : statements) {
-            if (expr instanceof AssignmentExpr) {
-                if (((AssignmentExpr) expr).getParent() instanceof Identifier) {
-                    Identifier parent = (Identifier) ((AssignmentExpr) expr).getParent();
-                    if (parent.getName().equals("this")) {
-                        variables.remove(((AssignmentExpr) expr).getName());
-                    }
-                }
-            }
-        }
-
-        if (!variables.isEmpty()) {
-            throw new SyntaxException(variables + " need to be declared in the constructor");
-        }
-    }
-
-    private ConstructorNode parseConstructor(AJEParser parser, Map<String, Byte> variableDeclarations) {
         List<ParameterData> constructorParameters = new ArrayList<>();
         List<Single> constructorSuperExprs = Collections.emptyList();
         Statements constructorExpr = new Statements();
@@ -156,12 +110,7 @@ public class ClassParser implements PrefixParser {
                 boolean requireDefault = false;
 
                 do {
-                    byte parameterType = 0;
-                    if (parser.match(TokenType.VAR)) {
-                        parameterType = 1;
-                    } else if (parser.match(TokenType.VAL)) {
-                        parameterType = 2;
-                    }
+                    boolean parameterVariable = parser.match(TokenType.LET);
 
                     ParameterData parameter = AJEParserUtils.parseParameter(parser, requireDefault);
 
@@ -169,17 +118,9 @@ public class ClassParser implements PrefixParser {
                         requireDefault = true;
                     }
 
-                    if (variableDeclarations.containsKey(parameter.getName())) {
+                    if (usedParameters.contains(parameter.getName())) {
                         throw new SyntaxException("Duplicate parameter name",
                                 parser.getLast().getPosition());
-                    } else {
-                        switch (parameterType) {
-                            case 1:
-                                variableDeclarations.put(parameter.getName(), VariableFlags.NONE);
-                                break;
-                            case 2:
-                                variableDeclarations.put(parameter.getName(), VariableFlags.FINAL);
-                        }
                     }
 
                     if (parameter.isRest() && parser.match(TokenType.COMMA)) {
@@ -189,7 +130,7 @@ public class ClassParser implements PrefixParser {
 
                     constructorParameters.add(parameter);
 
-                    if (parameterType != 0) {
+                    if (parameterVariable) {
                         constructorExpr.getExprs().add(
                                 new AssignmentExpr(
                                         AJEParserUtils.THIS_ID,

@@ -84,14 +84,12 @@ public enum TokenType {
     CLASS,
     IDENTIFIER,
     UNDEFINED,
-    VAR,
-    VAL,
+    LET,
     RETURN,
     IF,
     ELSE,
     FOR,
 
-    SKIP,
     LINE,
     EOF,
 }

@@ -158,7 +158,7 @@ public class CompiledConstructor extends Constructor {
         }
 
 
-        CompiledObj instance = new CompiledObj(targetType, scope.subPool().withFlags(scope.getFlagsMap()));
+        CompiledObj instance = new CompiledObj(targetType, scope.subPool());
 
         constructorScope.declare("this", instance);
 

@@ -1,19 +1,16 @@
 // Test file for FileTest.java
 
 class Meme {
-    val upper = "hello"
-
-    constructor(var x = 1)
+    constructor(let x = 1) {
+        this.upper = 500
+    }
 
     def memes() = 500
 }
 
 class Dank : Meme {
-    val level = x
-    var what
-
-    constructor(x, var y, z) : super(x) {
-        this.what = 2
+    constructor(x, let y, z) : super(x) {
+        this.level = super.upper + 75
     }
 
     def instanceMethod() = this.x + 5000
@@ -21,7 +18,7 @@ class Dank : Meme {
     static def memes() = 2
 }
 
-var i1 = Meme()
-var i2 = Dank(1,2,3)
+let i1 = Meme()
+let i2 = Dank(1,2,3)
 
 [i1.x, i2.x, i2.y, i2.level, i1.memes(), i1.upper, i2.upper, Dank.instanceMethod(i2), i2.instanceMethod()]

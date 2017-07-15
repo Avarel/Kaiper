@@ -24,7 +24,7 @@ import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 
-public class VariableParser implements PrefixParser {
+public class DeclarationParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         if (!parser.getParserFlags().allowVariables()) {

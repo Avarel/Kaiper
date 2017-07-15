@@ -15,7 +15,6 @@
 
 package xyz.avarel.aje.scope;
 
-import xyz.avarel.aje.VariableFlags;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
@@ -27,15 +26,13 @@ import java.util.Map;
 public class Scope {
     private final Scope[] parents;
     private final Map<String, Obj> map;
-    private final Map<String, Byte> flagsMap;
 
     public Scope(Scope... parents) {
-        this(new HashMap<>(), new HashMap<>(), parents);
+        this(new HashMap<>(), parents);
     }
 
-    public Scope(Map<String, Obj> map, Map<String, Byte> flagsMap, Scope... parents) {
+    public Scope(Map<String, Obj> map, Scope... parents) {
         this.map = map;
-        this.flagsMap = flagsMap;
         this.parents = parents;
     }
 
@@ -52,26 +49,14 @@ public class Scope {
     }
 
     public void declare(String key, Obj value) {
-        declare(key, value, VariableFlags.NONE);
-    }
-
-    public void declare(String key, Obj value, byte flags) {
         if (map.containsKey(key)) {
             throw new ComputeException(key + " already exists in the scope");
         }
         map.put(key, value);
-        flagsMap.put(key, flags);
     }
 
     public void assign(String key, Obj value) {
         if (map.containsKey(key)) {
-            if ((flagsMap.get(key) & VariableFlags.FINAL) == VariableFlags.FINAL) {
-                throw new ComputeException("Can not assign to final variable " + key);
-            }
-
-            map.put(key, value);
-            return;
-        } else if (flagsMap.containsKey(key)) { // declared but not assigned yet
             map.put(key, value);
             return;
         } else for (Scope parent : parents) {
@@ -91,10 +76,6 @@ public class Scope {
         return map;
     }
 
-    public Map<String, Byte> getFlagsMap() {
-        return flagsMap;
-    }
-
     public boolean contains(String key) {
         if (map.containsKey(key)) return true;
         for (Scope parent : parents) {
@@ -106,7 +87,7 @@ public class Scope {
     }
 
     public Scope copy() {
-        return new Scope(new HashMap<>(map), new HashMap<>(flagsMap), parents);
+        return new Scope(new HashMap<>(map), parents);
     }
 
     public Scope subPool() {
@@ -117,17 +98,11 @@ public class Scope {
         Scope[] array = Arrays.copyOf(parents, parents.length + 1);
         array[array.length - 1] = otherScope;
 
-        return new Scope(new HashMap<>(map), new HashMap<>(flagsMap), array);
+        return new Scope(new HashMap<>(map), array);
     }
 
     @Override
     public String toString() {
         return map.toString();
-    }
-
-    public Scope withFlags(Map<String, Byte> otherFlags) {
-        Map<String, Byte> newFlags = new HashMap<>(flagsMap);
-        newFlags.putAll(otherFlags);
-        return new Scope(new HashMap<>(map), newFlags, parents);
     }
 }

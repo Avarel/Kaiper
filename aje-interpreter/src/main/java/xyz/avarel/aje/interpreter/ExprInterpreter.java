@@ -322,7 +322,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         checkTimeout();
         Obj value = expr.getExpr().accept(this, scope);
-        scope.declare(attr, value, expr.getFlags());
+        scope.declare(attr, value);
         return Undefined.VALUE;
     }
 
@@ -463,7 +463,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         Type parent = (Type) parentObj;
 
 
-        Obj obj = expr.getConstructorNode().accept(this, scope.withFlags(expr.getVariableDeclarations()));
+        Obj obj = expr.getConstructorNode().accept(this, scope);
         if (!(obj instanceof Constructor)) {
             throw new ComputeException("Internal error");
         }

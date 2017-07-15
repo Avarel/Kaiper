@@ -395,10 +395,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 return make(TokenType.ELSE, "else");
             case "return":
                 return make(TokenType.RETURN, "return");
-            case "var":
-                return make(TokenType.VAR, "var");
-            case "val":
-                return make(TokenType.VAL, "val");
+            case "let":
+                return make(TokenType.LET, "let");
             case "for":
                 return make(TokenType.FOR, "for");
             case "undefined":

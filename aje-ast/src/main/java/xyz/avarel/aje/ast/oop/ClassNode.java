@@ -21,20 +21,17 @@ import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.variables.Identifier;
 
 import java.util.List;
-import java.util.Map;
 
 public class ClassNode implements Single {
     private final String name;
     private final Identifier parent;
     private final ConstructorNode constructorNode;
-    private final Map<String, Byte> variableDeclarations;
     private final List<FunctionNode> functions;
 
-    public ClassNode(String name, Identifier parent, ConstructorNode constructorNode, Map<String, Byte> variableDeclarations, List<FunctionNode> functions) {
+    public ClassNode(String name, Identifier parent, ConstructorNode constructorNode, List<FunctionNode> functions) {
         this.name = name;
         this.parent = parent;
         this.constructorNode = constructorNode;
-        this.variableDeclarations = variableDeclarations;
         this.functions = functions;
     }
 
@@ -48,10 +45,6 @@ public class ClassNode implements Single {
 
     public ConstructorNode getConstructorNode() {
         return constructorNode;
-    }
-
-    public Map<String, Byte> getVariableDeclarations() {
-        return variableDeclarations;
     }
 
     public List<FunctionNode> getFunctions() {

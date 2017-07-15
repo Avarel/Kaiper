@@ -34,9 +34,8 @@ import xyz.avarel.aje.parser.parslets.operators.BinaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.operators.RangeOperatorParser;
 import xyz.avarel.aje.parser.parslets.operators.UnaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.variables.AttributeParser;
+import xyz.avarel.aje.parser.parslets.variables.DeclarationParser;
 import xyz.avarel.aje.parser.parslets.variables.NameParser;
-import xyz.avarel.aje.parser.parslets.variables.ValueParser;
-import xyz.avarel.aje.parser.parslets.variables.VariableParser;
 
 public class DefaultGrammar extends Grammar {
     public static final Grammar INSTANCE = new DefaultGrammar();
@@ -67,8 +66,7 @@ public class DefaultGrammar extends Grammar {
 
 
         prefix(TokenType.IDENTIFIER, new NameParser());
-        prefix(TokenType.VAR, new VariableParser());
-        prefix(TokenType.VAL, new ValueParser());
+        prefix(TokenType.LET, new DeclarationParser());
 
         // Numeric
         prefix(TokenType.MINUS, new UnaryOperatorParser(UnaryOperatorType.MINUS));

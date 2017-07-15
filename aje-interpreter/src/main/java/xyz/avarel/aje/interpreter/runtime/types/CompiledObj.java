@@ -32,7 +32,7 @@ public class CompiledObj implements Obj {
 
     @Override
     public Obj setAttr(String name, Obj value) {
-        scope.assign(name, value);
+        scope.declare(name, value);
         return Undefined.VALUE;
     }
 

@@ -27,10 +27,10 @@ class FuncTest {
         eval("def isEven0(x) { x % 2 == 0 }")
         eval("def isEven1(x) { x % 2 == 0 }")
         eval("def isEven2(x) = x % 2 == 0")
-        eval("var isEven3 = { x -> x % 2 == 0 }")
-        eval("var isEven4 = _ % 2 == 0")
+        eval("let isEven3 = { x -> x % 2 == 0 }")
+        eval("let isEven4 = _ % 2 == 0")
 
-        eval("var add = { x, y -> x + y }")
+        eval("let add = { x, y -> x + y }")
     }
 
     @Test

@@ -44,7 +44,7 @@ class ExprTest {
         eval("def f(x) = x + 2; f(2) == 4")
         eval("def isEven(x) { x % 2 == 0 }; [1..20] |> Array.filter(isEven)")
 
-        eval("var add = { x, y -> x + y }; [1..10] |> Array.fold(0, add) == 55")
+        eval("let add = { x, y -> x + y }; [1..10] |> Array.fold(0, add) == 55")
         eval("[1..10] |> Array.fold(1, { x, y -> x * y })")
 
         eval("[[1, 2, 3], [1, 5, 8, 9, 10], [1..50]] |> Array.map(_.size)")
@@ -53,11 +53,11 @@ class ExprTest {
         eval("Math.sqrt(-1)")
 
         eval("[1,2,3][1]")
-        eval("var x = [50..60]; x[5]")
-        eval("var x = [100..200]; x[25:30]")
+        eval("let x = [50..60]; x[5]")
+        eval("let x = [100..200]; x[25:30]")
 
         eval("[1..10] |> Array.map(_ ^ 2)")
-        eval("var add = { x, y -> x + y }; [1..10] |> Array.fold(0, add)")
+        eval("let add = { x, y -> x + y }; [1..10] |> Array.fold(0, add)")
         eval("def isEven(x) { x % 2 == 0 }; [1..20] |> Array.filter(isEven)")
         eval("[1..10] |> Array.fold(1, { x, y -> x * y })")
     }
