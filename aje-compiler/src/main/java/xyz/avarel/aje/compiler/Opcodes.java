@@ -15,6 +15,11 @@
 
 package xyz.avarel.aje.compiler;
 
+import xyz.avarel.aje.ast.collections.RangeNode;
+import xyz.avarel.aje.ast.operations.BinaryOperation;
+import xyz.avarel.aje.ast.operations.BinaryOperatorType;
+import xyz.avarel.aje.ast.operations.UnaryOperation;
+import xyz.avarel.aje.ast.operations.UnaryOperatorType;
 import xyz.avarel.aje.exceptions.InvalidBytecodeException;
 
 import java.io.DataOutput;
@@ -28,6 +33,7 @@ import java.io.IOException;
 public enum Opcodes implements DataOutputConsumer {
     END,
     /**
+     * {@code RETURN;}
      * <p>Stops the action, returning an object.</p>
      * <b>Parameters:</b>
      * <ul>
@@ -41,6 +47,7 @@ public enum Opcodes implements DataOutputConsumer {
      */
     RETURN,
     /**
+     * {@code U_CONST;}
      * <p>Summons the <b>Undefined</b> constant.</p>
      * <b>Parameters:</b>
      * <ul>
@@ -53,6 +60,7 @@ public enum Opcodes implements DataOutputConsumer {
      */
     U_CONST,
     /**
+     * {@code B_CONST_TRUE;}
      * <p>Summons the <b>True</b> constant.</p>
      * <b>Parameters:</b>
      * <ul>
@@ -65,6 +73,7 @@ public enum Opcodes implements DataOutputConsumer {
      */
     B_CONST_TRUE,
     /**
+     * {@code B_CONST_FALSE;}
      * <p>Summons the <b>False</b> constant.</p>
      * <b>Parameters:</b>
      * <ul>
@@ -81,8 +90,57 @@ public enum Opcodes implements DataOutputConsumer {
     S_CONST,
     NEW_ARRAY,
     NEW_DICTIONARY,
+    /**
+     * {@code NEW_RANGE;}
+     * <p>Creates a Range.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     *     <li>none</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     *     <li>Retrieves the Top-most Object on the stack ({@link RangeNode#getRight()});</li>
+     *     <li>Retrieves the Top-most Object on the stack ({@link RangeNode#getLeft()});</li>
+     *     <li>Pushes the new {@code Range} into the stack.</li>
+     * </ul>
+     */
     NEW_RANGE,
-    INVOKE;
+    INVOKE,
+    /**
+     * {@code UNARY_OPERATION type;}
+     * <p>Executes a Unary Operation.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     *     <li>{@code type} - The {@link UnaryOperatorType} index.</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     *     <li>Retrieves the Top-most Object on the stack ({@link UnaryOperation#getOperator()});</li>
+     *     <li>Execute the Unary Operation on it;</li>
+     *     <li>Pushes the new Object into the stack.</li>
+     * </ul>
+     */
+    UNARY_OPERATION,
+    /**
+     * {@code BINARY_OPERATION type;}
+     * <p>Executes a Binary Operation.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     *     <li>{@code type} - The {@link BinaryOperatorType} index.</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     *     <li>Retrieves the Top-most Object on the stack ({@link BinaryOperation#getRight()});</li>
+     *     <li>Retrieves the Top-most Object on the stack ({@link BinaryOperation#getLeft()});</li>
+     *     <li>Execute the Binary Operation on them;</li>
+     *     <li>Pushes the new Object into the stack.</li>
+     * </ul>
+     */
+    BINARY_OPERATION,
+
+    SLICE_OPERATION,
+
+    ;
 
     public static Opcodes byID(byte id) {
         Opcodes[] values = values();

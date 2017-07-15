@@ -26,7 +26,8 @@ import java.util.List;
 import static xyz.avarel.aje.compiler.Opcodes.*;
 
 public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
-    private static final DataOutputConsumer NO_OP_CONSUMER = out -> {};
+    private static final DataOutputConsumer NO_OP_CONSUMER = out -> {
+    };
 
     private final List<String> stringPool = new LinkedList<>();
 
@@ -86,17 +87,39 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(BinaryOperation expr, Void scope) {
-        return null;
+        DataOutputConsumer left = expr.getLeft().accept(this, null);
+        DataOutputConsumer right = expr.getRight().accept(this, null);
+        int operator = expr.getOperator().ordinal();
+
+        return out -> {
+            left.writeInto(out);
+            right.writeInto(out);
+            BINARY_OPERATION.writeInto(out);
+            out.writeByte(operator);
+        };
     }
 
     @Override
     public DataOutputConsumer visit(UnaryOperation expr, Void scope) {
-        return null;
+        DataOutputConsumer target = expr.getTarget().accept(this, null);
+        int operator = expr.getOperator().ordinal();
+        return out -> {
+            target.writeInto(out);
+            UNARY_OPERATION.writeInto(out);
+            out.writeByte(operator);
+        };
     }
 
     @Override
     public DataOutputConsumer visit(RangeNode expr, Void scope) {
-        return null;
+        DataOutputConsumer left = expr.getLeft().accept(this, null);
+        DataOutputConsumer right = expr.getRight().accept(this, null);
+
+        return out -> {
+            left.writeInto(out);
+            right.writeInto(out);
+            NEW_RANGE.writeInto(out);
+        };
     }
 
     @Override
@@ -106,7 +129,18 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(SliceOperation expr, Void scope) {
-        return null;
+        DataOutputConsumer left = expr.getLeft().accept(this, null);
+        DataOutputConsumer start = expr.getStart().accept(this, null);
+        DataOutputConsumer end = expr.getEnd().accept(this, null);
+        DataOutputConsumer step = expr.getStep().accept(this, null);
+
+        return out -> {
+            left.writeInto(out);
+            start.writeInto(out);
+            end.writeInto(out);
+            step.writeInto(out);
+            SLICE_OPERATION.writeInto(out);
+        };
     }
 
     @Override
@@ -126,10 +160,10 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(ReturnExpr expr, Void scope) {
-        DataOutputConsumer bytecode = expr.getExpr().accept(this, null);
+        DataOutputConsumer consumer = expr.getExpr().accept(this, null);
 
         return out -> {
-            bytecode.writeInto(out);
+            consumer.writeInto(out);
             RETURN.writeInto(out);
         };
     }
