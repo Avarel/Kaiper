@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 /*
  * Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
@@ -24,11 +26,9 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '2.0.0'
 }
 
-def versionObj = new Version(major: 3, minor: 5, revision: 0)
-
 group = 'xyz.avarel'
 archivesBaseName = 'AJE'
-version = "$versionObj"
+version = new Version(major: 3, minor: 5, revision: 0)
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -38,17 +38,23 @@ repositories {
 }
 
 dependencies {
-    project.rootProject.childProjects.values().each {
-        if (it != project) compile it
-    }
-
+    project.childProjects.values().each { compile it }
     //testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
+task clearPrepared(type: Delete) {
+    delete 'build/prepared-src'
+}
+
+//Task for the versioning system
 task sourcesForRelease(type: Copy) {
     from 'src/main/java'
-    into 'build/filteredSrc'
+    into 'build/prepared-src'
+    filter(ReplaceTokens, tokens: [
+            version: version.toString()
+    ])
 }
+sourcesForRelease.dependsOn clearPrepared
 
 compileJava {
     source = sourcesForRelease.destinationDir
@@ -72,7 +78,7 @@ shadowJar {
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
-    from "${buildDir}/filteredSrc"
+    from sourcesForRelease.destinationDir
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -110,11 +116,9 @@ publishing {
     }
 }
 
-String getProjectProperty(String propertyName)
-{
+String getProjectProperty(String propertyName) {
     String property = ""
-    if (hasProperty(propertyName))
-    {
+    if (hasProperty(propertyName)) {
         property = this.properties[propertyName]
     }
     return property
@@ -126,18 +130,12 @@ task wrapper(type: Wrapper) {
 
 
 build {
-    dependsOn clean
     dependsOn jar
     dependsOn javadocJar
     dependsOn sourcesJar
     dependsOn shadowJar
 
     dependsOn test
-
-    jar.mustRunAfter clean
-    javadocJar.mustRunAfter jar
-    sourcesJar.mustRunAfter javadocJar
-    shadowJar.mustRunAfter sourcesJar
 }
 
 bintrayUpload {

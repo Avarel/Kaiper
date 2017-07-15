@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.bytecode.serialization;
+package xyz.avarel.aje.compiler;
 
 import java.io.DataOutput;
 import java.io.IOException;

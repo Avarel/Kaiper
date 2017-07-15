@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.bytecode;
+package xyz.avarel.aje.compiler;
 
 import xyz.avarel.aje.exceptions.InvalidBytecodeException;
 
@@ -22,7 +22,7 @@ import xyz.avarel.aje.exceptions.InvalidBytecodeException;
  *
  * @author AdrianTodt
  */
-public enum Bytecode {
+public enum Opcodes {
     //Special Instruction (Always need to be 0)
     END,
 
@@ -33,7 +33,7 @@ public enum Bytecode {
     ARRAY, DICTIONARY, RANGE,
 
     //Value Nodes
-    UNDEFINED, BOOLEAN, INT, DECIMAL, STRING,
+    U_CONST, B_CONST_TRUE, B_CONST_FALSE, I_CONST, D_CONST, S_CONST,
 
     //Function Nodes (Function Param is a Reserved instruction for Data)
     FUNCTION, FUNCTION_PARAM,
@@ -44,13 +44,9 @@ public enum Bytecode {
     //Operations
     UNARY_OP, BINARY_OP, SLICE_OP, GET, SET;
 
-    public static Bytecode byID(byte id) {
-        Bytecode[] values = values();
+    public static Opcodes byID(byte id) {
+        Opcodes[] values = values();
         if (id < values.length) return values[id];
         throw new InvalidBytecodeException("Invalid Instruction");
-    }
-
-    public byte id() {
-        return (byte) ordinal();
     }
 }
