@@ -114,14 +114,14 @@ public class Range implements Obj<List<Integer>>, Iterable<Int> {
         public RangeType() {
             super("Range");
 
-            getScope().declare("length", new NativeFunc(Parameter.of("self", this)) {
+            getScope().declare("length", new NativeFunc(Parameter.of("this", this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of(((Range) arguments.get(0)).size());
                 }
             });
 
-            getScope().declare("lastIndex", new NativeFunc(Parameter.of("self", this)) {
+            getScope().declare("lastIndex", new NativeFunc(Parameter.of("this", this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return Int.of(((Range) arguments.get(0)).size() - 1);

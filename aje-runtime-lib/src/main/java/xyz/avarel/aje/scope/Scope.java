@@ -19,31 +19,30 @@ import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Scope {
-    private final Scope parent;
+    private final Scope[] parents;
     private final Map<String, Obj> map;
 
-    public Scope() {
-        this(null);
+    public Scope(Scope... parents) {
+        this(new HashMap<>(), parents);
     }
 
-    public Scope(Scope parent) {
-        this(parent, new HashMap<>());
-    }
-
-    public Scope(Scope parent, Map<String, Obj> map) {
-        this.parent = parent;
+    public Scope(Map<String, Obj> map, Scope... parents) {
         this.map = map;
+        this.parents = parents;
     }
 
     public Obj lookup(String key) {
         if (map.containsKey(key)) {
             return map.get(key);
-        } else if (parent != null && parent.contains(key)) {
-            return parent.lookup(key);
+        } else for (Scope parent : parents) {
+            if (parent.contains(key)) {
+                return parent.lookup(key);
+            }
         }
         return Undefined.VALUE;
     }
@@ -56,9 +55,11 @@ public class Scope {
         if (map.containsKey(key)) {
             map.put(key, value);
             return;
-        } else if (parent != null && parent.contains(key)) {
-            parent.assign(key, value);
-            return;
+        } else for (Scope parent : parents) {
+            if (parent.contains(key)) {
+                parent.assign(key, value);
+                return;
+            }
         }
         throw new ComputeException(key + " is not defined, it must be declared using Scope#declare first");
     }
@@ -68,15 +69,28 @@ public class Scope {
     }
 
     public boolean contains(String key) {
-        return map.containsKey(key) || parent != null && parent.contains(key);
+        if (map.containsKey(key)) return true;
+        for (Scope parent : parents) {
+            if (parent.contains(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Scope copy() {
-        return new Scope(this.parent, new HashMap<>(map));
+        return new Scope(new HashMap<>(map), parents);
     }
 
     public Scope subPool() {
         return new Scope(this);
+    }
+
+    public Scope combine(Scope otherScope) {
+        Scope[] array = Arrays.copyOf(parents, parents.length + 1);
+        array[array.length - 1] = otherScope;
+
+        return new Scope(new HashMap<>(map), array);
     }
 
     @Override

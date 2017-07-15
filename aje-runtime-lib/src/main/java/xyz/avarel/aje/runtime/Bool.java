@@ -15,8 +15,8 @@
 
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.types.NativeConstructor;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
@@ -113,9 +113,7 @@ public enum Bool implements Obj<Boolean> {
 
     private static class BoolType extends Type<Bool> {
         public BoolType() {
-            super("Boolean");
-
-            getScope().declare("new", new NativeFunc(Obj.TYPE) {
+            super("Boolean", new NativeConstructor() {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Obj obj = arguments.get(0);

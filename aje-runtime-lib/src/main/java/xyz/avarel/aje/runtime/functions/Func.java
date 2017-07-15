@@ -51,12 +51,6 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
         return this::invoke;
     }
 
-    public boolean isReferenceFunction() {
-        return !getParameters().isEmpty()
-                && getParameters().get(0).getName() != null
-                && getParameters().get(0).getName().equals("self");
-    }
-
     @Override
     public abstract Obj invoke(List<Obj> arguments);
 
@@ -69,7 +63,7 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
         public FunctionType() {
             super("Function");
 
-            getScope().declare("compose", new NativeFunc(Parameter.of("self", this), Parameter.of(this)) {
+            getScope().declare("compose", new NativeFunc(Parameter.of("this", this), Parameter.of(this)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     return new ComposedFunc((Func) arguments.get(0), (Func) arguments.get(1));

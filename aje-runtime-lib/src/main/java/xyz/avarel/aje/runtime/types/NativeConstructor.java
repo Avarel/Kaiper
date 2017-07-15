@@ -13,31 +13,29 @@
  * under the License.
  */
 
-package xyz.avarel.aje.runtime.functions;
+package xyz.avarel.aje.runtime.types;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.types.Type;
+import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class NativeFunc extends Func {
-    //    private final Type receiverType;
+public abstract class NativeConstructor extends Constructor {
     private final List<Parameter> parameters;
 
-    public NativeFunc() {
+    public NativeConstructor() {
         this.parameters = Collections.emptyList();
     }
 
-    public NativeFunc(Parameter... parameters) {
+    public NativeConstructor(Parameter... parameters) {
         this.parameters = new ArrayList<>();
         this.parameters.addAll(Arrays.asList(parameters));
     }
 
-    public NativeFunc(Type... classes) {
+    public NativeConstructor(Type... classes) {
         this.parameters = new ArrayList<>();
 
         for (Type type : classes) {
@@ -45,20 +43,8 @@ public abstract class NativeFunc extends Func {
         }
     }
 
-    @Override
-    public int getArity() {
-        return !parameters.isEmpty() && parameters.get(parameters.size() - 1).isRest()
-                ? parameters.size() - 1
-                : parameters.size();
-    }
-
     public List<Parameter> getParameters() {
         return parameters;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + "$native";
     }
 
     @Override
@@ -91,8 +77,7 @@ public abstract class NativeFunc extends Func {
             }
         }
 
-        Obj result = eval(arguments);
-        return result != null ? result : Undefined.VALUE;
+        return eval(arguments);
     }
 
     protected abstract Obj eval(List<Obj> arguments);

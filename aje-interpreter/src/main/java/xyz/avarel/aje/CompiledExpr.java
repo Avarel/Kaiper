@@ -46,7 +46,7 @@ public class CompiledExpr implements Expr {
     @SuppressWarnings("unchecked")
     public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
         try {
-            return accept(visitor, scope);
+            return expr.accept(visitor, scope);
         } catch (ReturnException re) {
             return (R) re.getValue();
         } catch (AJEException re) {

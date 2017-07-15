@@ -13,12 +13,28 @@
  * under the License.
  */
 
-package xyz.avarel.aje.interpreter.runtime.types;
+package xyz.avarel.aje.scope;
 
 import xyz.avarel.aje.runtime.types.Type;
 
-public class CompiledType extends Type<CompiledObj> {
-    public CompiledType(String name, Type parent, CompiledConstructor constructor) {
-        super(parent, name, constructor);
+public class VariableFlags {
+    private final Type type;
+    private final short flags;
+
+    public VariableFlags(Type type, short flags) {
+        this.type = type;
+        this.flags = flags;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public short getFlags() {
+        return flags;
+    }
+
+    public boolean checkFlag(short flag) {
+        return (flags & flag) == flag;
     }
 }

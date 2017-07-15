@@ -18,7 +18,7 @@ package xyz.avarel.aje.runtime.numbers;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.types.NativeConstructor;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
@@ -206,14 +206,7 @@ public class Int implements Obj<Integer> {
 
     private static class IntType extends Type<Int> {
         public IntType() {
-            super(Decimal.TYPE, "Int");
-
-            getScope().declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
-            getScope().declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
-            getScope().declare("BYTES", Int.of(Integer.BYTES));
-            getScope().declare("SIZE", Int.of(Integer.SIZE));
-
-            getScope().declare("new", new NativeFunc(Obj.TYPE) {
+            super(Decimal.TYPE, "Int", new NativeConstructor(Obj.TYPE) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Obj obj = arguments.get(0);
@@ -229,6 +222,11 @@ public class Int implements Obj<Integer> {
                     }
                 }
             });
+
+            getScope().declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
+            getScope().declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
+            getScope().declare("BYTES", Int.of(Integer.BYTES));
+            getScope().declare("SIZE", Int.of(Integer.SIZE));
         }
     }
 }

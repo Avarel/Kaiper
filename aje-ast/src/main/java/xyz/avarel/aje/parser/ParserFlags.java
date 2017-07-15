@@ -16,22 +16,22 @@
 package xyz.avarel.aje.parser;
 
 public class ParserFlags {
-    public static final int VARIABLES = 1;
-    public static final int CONTROL_FLOW = 1 << 1;
-    public static final int FUNCTION_CREATION = 1 << 2;
-    public static final int INVOCATION = 1 << 3;
-    public static final int LOOPS = 1 << 4;
-    public static final int ARRAYS = 1 << 5;
-    public static final int RANGES = 1 << 6;
-    public static final int DICTIONARIES = 1 << 7;
-    public static final int COLLECTIONS = ARRAYS | RANGES | DICTIONARIES;
-    public static final int ALL_OPTS = VARIABLES | CONTROL_FLOW | FUNCTION_CREATION | INVOCATION | LOOPS | COLLECTIONS;
+    public static final short VARIABLES = 1;
+    public static final short CONTROL_FLOW = 1 << 1;
+    public static final short FUNCTION_CREATION = 1 << 2;
+    public static final short INVOCATION = 1 << 3;
+    public static final short LOOPS = 1 << 4;
+    public static final short ARRAYS = 1 << 5;
+    public static final short RANGES = 1 << 6;
+    public static final short DICTIONARIES = 1 << 7;
+    public static final short COLLECTIONS = ARRAYS | RANGES | DICTIONARIES;
+    public static final short ALL_OPTS = VARIABLES | CONTROL_FLOW | FUNCTION_CREATION | INVOCATION | LOOPS | COLLECTIONS;
 
     public static final ParserFlags ALL_FLAGS = new ParserFlags(ALL_OPTS);
 
-    private final int flags;
+    private final short flags;
 
-    public ParserFlags(int flags) {
+    public ParserFlags(short flags) {
         this.flags = flags;
     }
 

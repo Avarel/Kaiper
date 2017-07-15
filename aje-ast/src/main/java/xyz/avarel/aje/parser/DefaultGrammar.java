@@ -66,7 +66,7 @@ public class DefaultGrammar extends Grammar {
 
 
         prefix(TokenType.IDENTIFIER, new NameParser());
-        prefix(TokenType.LET, new DeclarationParser());
+        prefix(TokenType.VAR, new DeclarationParser());
 
         // Numeric
         prefix(TokenType.MINUS, new UnaryOperatorParser(UnaryOperatorType.MINUS));

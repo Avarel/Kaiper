@@ -13,12 +13,22 @@
  * under the License.
  */
 
-package xyz.avarel.aje.interpreter.runtime.types;
+package xyz.avarel.aje.runtime.types;
 
-import xyz.avarel.aje.runtime.types.Type;
+import xyz.avarel.aje.runtime.functions.Func;
 
-public class CompiledType extends Type<CompiledObj> {
-    public CompiledType(String name, Type parent, CompiledConstructor constructor) {
-        super(parent, name, constructor);
+import java.util.stream.Collectors;
+
+public abstract class Constructor extends Func {
+    protected Type targetType;
+
+    @Override
+    public int getArity() {
+        return getParameters().size();
+    }
+
+    @Override
+    public String toString() {
+        return "init(" + getParameters().stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
     }
 }

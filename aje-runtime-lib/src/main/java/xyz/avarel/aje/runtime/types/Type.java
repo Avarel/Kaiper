@@ -27,20 +27,31 @@ public class Type<T> implements Obj<Type> {
 
     private final Type parent;
     private final String name;
-    private Scope scope;
+    private final Scope scope;
+    private final Constructor constructor;
 
     public Type(String name) {
-        this(Obj.TYPE, name);
+        this(name, null);
+    }
+
+    public Type(String name, Constructor constructor) {
+        this(Obj.TYPE, name, constructor);
     }
 
     public Type(Type parent, String name) {
-        this(parent, name, parent != null ? parent.scope.subPool() : new Scope());
+        this(parent, name, parent != null ? parent.scope.subPool() : new Scope(), null);
     }
 
-    public Type(Type parent, String name, Scope scope) {
+    public Type(Type parent, String name, Constructor constructor) {
+        this(parent, name, parent != null ? parent.scope.subPool() : new Scope(), constructor);
+    }
+
+    public Type(Type parent, String name, Scope scope, Constructor constructor) {
         this.parent = parent;
         this.name = name;
         this.scope = scope;
+        this.constructor = constructor;
+        if (constructor != null) constructor.targetType = this;
     }
 
     public boolean is(Type type) {
@@ -54,6 +65,10 @@ public class Type<T> implements Obj<Type> {
 
     public Scope getScope() {
         return scope;
+    }
+
+    public Constructor getConstructor() {
+        return constructor;
     }
 
     @Override
@@ -102,12 +117,18 @@ public class Type<T> implements Obj<Type> {
 
     @Override
     public Obj invoke(List<Obj> arguments) {
-        return getScope().lookup("new").invoke(arguments);
+        if (constructor == null) {
+            throw new ComputeException(toString() + " does not support instantiation");
+        } else {
+            return constructor.invoke(arguments);
+        }
     }
 
     private static class TypeObj extends Type<Type> {
         public TypeObj() {
             super("Type");
+
+
         }
 
         @Override

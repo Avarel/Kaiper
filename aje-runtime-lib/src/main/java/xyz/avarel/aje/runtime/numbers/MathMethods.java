@@ -18,10 +18,10 @@ package xyz.avarel.aje.runtime.numbers;
 import xyz.avarel.aje.runtime.types.Type;
 import xyz.avarel.aje.scope.DefaultFunctions;
 
-public class AJEMath {
+public class MathMethods {
     public static final Type TYPE = new MathType();
 
-    private AJEMath() {}
+    private MathMethods() {}
 
     private static class MathType extends Type {
         public MathType() {

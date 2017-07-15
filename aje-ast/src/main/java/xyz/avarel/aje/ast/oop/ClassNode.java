@@ -24,11 +24,13 @@ import java.util.List;
 public class ClassNode implements Expr {
     private final String name;
     private final Expr parent;
+    private final ConstructorNode constructorNode;
     private final List<FunctionNode> functions;
 
-    public ClassNode(String name, Expr parent, List<FunctionNode> functions) {
+    public ClassNode(String name, Expr parent, ConstructorNode constructorNode, List<FunctionNode> functions) {
         this.name = name;
         this.parent = parent;
+        this.constructorNode = constructorNode;
         this.functions = functions;
     }
 
@@ -38,6 +40,10 @@ public class ClassNode implements Expr {
 
     public Expr getParent() {
         return parent;
+    }
+
+    public ConstructorNode getConstructorNode() {
+        return constructorNode;
     }
 
     public List<FunctionNode> getFunctions() {

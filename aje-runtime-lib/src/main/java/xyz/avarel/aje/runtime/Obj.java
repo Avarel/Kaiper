@@ -17,8 +17,6 @@ package xyz.avarel.aje.runtime;
 
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.functions.Func;
-import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.functions.ReferenceFunc;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -334,33 +332,19 @@ public interface Obj<J> {
         }
 
         public void initialize() {
-            getScope().declare("toString", new NativeFunc(Parameter.of("self", this)) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return Str.of(arguments.get(0).toString());
-                }
-            });
-
-            getScope().declare("getType", new NativeFunc(Parameter.of("self", this)) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return arguments.get(0).getType();
-                }
-            });
-
-            getScope().declare("get", new NativeFunc(Parameter.of("self", this), Parameter.of(this)) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return arguments.get(0).get(arguments.get(1));
-                }
-            });
-            getScope().declare("set",
-                    new NativeFunc(Parameter.of("self", this), Parameter.of(this), Parameter.of(this)) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return arguments.get(0).set(arguments.get(1), arguments.get(2));
-                }
-            });
+//            getScope().declare("get", new NativeFunc(Parameter.of("this", this), Parameter.of(this)) {
+//                @Override
+//                protected Obj eval(List<Obj> arguments) {
+//                    return arguments.get(0).get(arguments.get(1));
+//                }
+//            });
+//            getScope().declare("set",
+//                    new NativeFunc(Parameter.of("this", this), Parameter.of(this), Parameter.of(this)) {
+//                @Override
+//                protected Obj eval(List<Obj> arguments) {
+//                    return arguments.get(0).set(arguments.get(1), arguments.get(2));
+//                }
+//            });
         }
     }
 }

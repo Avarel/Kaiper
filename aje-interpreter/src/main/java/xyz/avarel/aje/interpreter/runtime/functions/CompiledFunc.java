@@ -29,12 +29,12 @@ import xyz.avarel.aje.scope.Scope;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class CompiledFunc extends Func {
-    private final String name;
-    private final List<Parameter> parameters;
-    private final Expr expr;
-    private final Scope scope;
-    private final ExprInterpreter visitor;
+public class CompiledFunc extends Func {
+    final String name;
+    final List<Parameter> parameters;
+    final Expr expr;
+    final Scope scope;
+    final ExprInterpreter visitor;
 
     public CompiledFunc(String name, List<Parameter> parameters, Expr expr, ExprInterpreter visitor, Scope scope) {
         this.name = name;
@@ -96,9 +96,9 @@ public final class CompiledFunc extends Func {
                     Array array = new Array();
 
                     for (Obj obj : sublist) {
-                        if (obj.getType().is(type)) {
+                        if (type == Obj.TYPE || obj.getType().is(type)) {
                             array.add(obj);
-                        } else if (type != Obj.TYPE) {
+                        } else {
                             throw typeError(parameters, arguments);
                         }
                     }

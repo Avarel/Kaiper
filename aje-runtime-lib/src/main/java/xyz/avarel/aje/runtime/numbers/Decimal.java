@@ -18,7 +18,7 @@ package xyz.avarel.aje.runtime.numbers;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.types.NativeConstructor;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
@@ -183,17 +183,7 @@ public class Decimal implements Obj<Double> {
 
     private static class DecimalType extends Type<Decimal> {
         public DecimalType() {
-            super(Numeric.TYPE, "Decimal");
-
-            getScope().declare("MAX_VALUE", Decimal.of(Double.MAX_VALUE));
-            getScope().declare("MIN_VALUE", Decimal.of(Double.MIN_VALUE));
-            getScope().declare("NEGATIVE_INFINITY", Decimal.of(Double.NEGATIVE_INFINITY));
-            getScope().declare("POSITIVE_INFINITY", Decimal.of(Double.POSITIVE_INFINITY));
-            getScope().declare("NaN", Decimal.of(Double.NaN));
-            getScope().declare("BYTES", Decimal.of(Double.BYTES));
-            getScope().declare("SIZE", Decimal.of(Double.SIZE));
-
-            getScope().declare("new", new NativeFunc(Obj.TYPE) {
+            super(Numeric.TYPE, "Decimal", new NativeConstructor(Obj.TYPE) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     Obj obj = arguments.get(0);
@@ -209,6 +199,14 @@ public class Decimal implements Obj<Double> {
                     }
                 }
             });
+
+            getScope().declare("MAX_VALUE", Decimal.of(Double.MAX_VALUE));
+            getScope().declare("MIN_VALUE", Decimal.of(Double.MIN_VALUE));
+            getScope().declare("NEGATIVE_INFINITY", Decimal.of(Double.NEGATIVE_INFINITY));
+            getScope().declare("POSITIVE_INFINITY", Decimal.of(Double.POSITIVE_INFINITY));
+            getScope().declare("NaN", Decimal.of(Double.NaN));
+            getScope().declare("BYTES", Decimal.of(Double.BYTES));
+            getScope().declare("SIZE", Decimal.of(Double.SIZE));
         }
     }
 }

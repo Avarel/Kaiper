@@ -15,22 +15,18 @@
 
 package xyz.avarel.aje.parser.parslets.functions;
 
-import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.value.UndefinedNode;
-import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.AJEParserUtils;
 import xyz.avarel.aje.parser.PrefixParser;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class FunctionParser implements PrefixParser {
     @Override
@@ -39,53 +35,14 @@ public class FunctionParser implements PrefixParser {
             throw new SyntaxException("Function creation are disabled");
         }
 
-        List<ParameterData> parameters = new ArrayList<>();
+
 
         String name = null;
         if (parser.match(TokenType.IDENTIFIER)) {
             name = parser.getLast().getString();
         }
 
-        parser.eat(TokenType.LEFT_PAREN);
-        if (!parser.match(TokenType.RIGHT_PAREN)) {
-            Set<String> paramNames = new HashSet<>();
-            boolean requireDef = false;
-
-            do {
-                boolean rest = parser.match(TokenType.REST);
-
-                String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
-
-                if (paramNames.contains(parameterName)) {
-                    throw new SyntaxException("Duplicate parameter name", parser.getLast().getPosition());
-                } else {
-                    paramNames.add(parameterName);
-                }
-
-                Expr parameterType = new Identifier("Object");
-                Expr parameterDefault = null;
-
-                if (parser.match(TokenType.COLON)) {
-                    parameterType = parser.parseExpr(Precedence.POSTFIX - 1);
-                }
-
-                if (parser.match(TokenType.ASSIGN)) {
-                    parameterDefault = parser.parseExpr();
-                    requireDef = true;
-                } else if (requireDef) {
-                    throw new SyntaxException("All parameters after the first default requires a default", parser.peek(0).getPosition());
-                }
-
-                ParameterData parameter = new ParameterData(parameterName, parameterType, parameterDefault, rest);
-                parameters.add(parameter);
-
-                if (rest && parser.match(TokenType.COMMA)) {
-                    throw new SyntaxException("Rest parameters must be the last parameter",
-                            parser.peek(0).getPosition());
-                }
-            } while (parser.match(TokenType.COMMA));
-            parser.match(TokenType.RIGHT_PAREN);
-        }
+        List<ParameterData> parameters = AJEParserUtils.parseParameters(parser);
 
         Expr expr;
 

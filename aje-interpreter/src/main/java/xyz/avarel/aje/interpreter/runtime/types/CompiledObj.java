@@ -21,18 +21,13 @@ import xyz.avarel.aje.runtime.types.Type;
 import xyz.avarel.aje.scope.Scope;
 
 public class CompiledObj implements Obj {
-    private final Type<CompiledObj> type;
+    private final Type type;
     private final Scope scope;
 
     @SuppressWarnings("unchecked")
-    public CompiledObj(Type<CompiledObj> type) {
+    public CompiledObj(Type type, Scope scope) {
         this.type = type;
-
-        if (type.hasParent()) {
-            this.scope = new CompiledObj(type.getParent()).scope.subPool();
-        } else {
-            this.scope = new Scope();
-        }
+        this.scope = scope;
     }
 
     @Override
@@ -50,8 +45,12 @@ public class CompiledObj implements Obj {
         return Obj.super.getAttr(name);
     }
 
+    public Scope getScope() {
+        return scope;
+    }
+
     @Override
-    public Type<CompiledObj> getType() {
+    public Type getType() {
         return type;
     }
 

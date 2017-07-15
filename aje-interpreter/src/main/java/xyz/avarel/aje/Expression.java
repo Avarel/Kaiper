@@ -30,7 +30,7 @@ import java.io.Reader;
 /**
  * Used to preset values and functions using {@link #add}, compile and compute an AJE expression. All values are stored
  * in the {@link #scope}. The expression not compiled until the invocation of either {@link #compile()} or
- * {@link #compute()} explicitly; {@link AJEException} and its derivatives would not be thrown until then.
+ * {@link #compute()} explicitly; {@link xyz.avarel.aje.exceptions.AJEException} and its derivatives would not be thrown until then.
  */
 public class Expression {
     private final AJEParser parser;
@@ -166,7 +166,7 @@ public class Expression {
      *
      * @see ParserFlags
      */
-    public void setParserFlags(int flags) {
+    public void setParserFlags(short flags) {
         parser.setParserFlags(new ParserFlags(flags));
     }
 

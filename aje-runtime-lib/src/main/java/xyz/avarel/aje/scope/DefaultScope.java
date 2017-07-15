@@ -23,9 +23,9 @@ import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
 import xyz.avarel.aje.runtime.functions.Func;
-import xyz.avarel.aje.runtime.numbers.AJEMath;
 import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.numbers.MathMethods;
 import xyz.avarel.aje.runtime.numbers.Numeric;
 import xyz.avarel.aje.runtime.types.Type;
 
@@ -41,7 +41,7 @@ public class DefaultScope extends Scope {
         ((Obj.ObjType) Obj.TYPE).initialize();
 
         declare("Object", Obj.TYPE);
-        declare("Math", AJEMath.TYPE);
+        declare("Math", MathMethods.TYPE);
         declare("Type", Type.TYPE);
         declare("Int", Int.TYPE);
         declare("Decimal", Decimal.TYPE);

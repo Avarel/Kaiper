@@ -15,149 +15,111 @@
 
 package xyz.avarel.aje.parser.parslets.oop;
 
-import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.oop.ClassNode;
-import xyz.avarel.aje.ast.value.UndefinedNode;
+import xyz.avarel.aje.ast.oop.ConstructorNode;
+import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.AJEParserUtils;
 import xyz.avarel.aje.parser.PrefixParser;
 
 import java.util.*;
+
+// class Meme { constructor(x) { self.x = x } }
+// class Dank extends Meme { constructor(x, y) : super(x) { self.y = y } }
 
 public class ClassParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         String name = parser.eat(TokenType.IDENTIFIER).getString();
 
-        List<FunctionNode> functions = new ArrayList<>();
+        List<ParameterData> constructorParameters = new ArrayList<>();
+        Statements constructorExpr = new Statements();
+        List<Expr> constructorSuperExprs = Collections.emptyList();
 
-        FunctionNode constructorNode = null;
 
-        Expr parent = new Identifier("Object");
-        if (parser.matchSoftKeyword("extends")) {
-            parent = parser.parseExpr();
+        if (parser.nextIs(TokenType.LEFT_PAREN)) {
+
+            parser.eat(TokenType.LEFT_PAREN);
+            if (!parser.match(TokenType.RIGHT_PAREN)) {
+                Set<String> paramNames = new HashSet<>();
+                boolean requireDef = false;
+
+                do {
+                    boolean var = parser.match(TokenType.VAR);
+
+                    ParameterData parameter = AJEParserUtils.parseParameter(parser, requireDef);
+
+                    if (parameter.getDefault() != null) {
+                        requireDef = true;
+                    }
+
+                    if (paramNames.contains(parameter.getName())) {
+                        throw new SyntaxException("Duplicate parameter name", parser.getLast().getPosition());
+                    } else {
+                        paramNames.add(parameter.getName());
+                    }
+
+                    if (parameter.isRest() && parser.match(TokenType.COMMA)) {
+                        throw new SyntaxException("Rest parameters must be the last parameter",
+                                parser.peek(0).getPosition());
+                    }
+
+                    constructorParameters.add(parameter);
+
+                    if (var) {
+                        constructorExpr.getExprs().add(
+                                new AssignmentExpr(
+                                        AJEParserUtils.THIS_ID,
+                                        parameter.getName(),
+                                        new Identifier(parameter.getName())
+                                )
+                        );
+                    }
+                } while (parser.match(TokenType.COMMA));
+                parser.match(TokenType.RIGHT_PAREN);
+            }
         }
 
-        if (parser.match(TokenType.LEFT_BRACE)) {
-            while (!parser.nextIs(TokenType.EOF) && !parser.nextIs(TokenType.RIGHT_BRACE)) {
-                FunctionNode functionNode;
+        Expr parent = new Identifier("Object");
+        if (parser.match(TokenType.COLON)) {
+            parent = parser.parseExpr(100);
 
-                if (parser.match(TokenType.LINE)) {
-                    continue;
-                }
-
-                if (parser.nextIs(TokenType.FUNCTION)) {
-                    Expr node = parser.parseExpr();
-                    if (!(node instanceof FunctionNode)) {
-                        throw new SyntaxException("Class members can only be functions",
-                                parser.getLast().getPosition());
-                    }
-
-                    ((FunctionNode) node).getParameterExprs().add(0, new ParameterData("self", new Identifier(name)));
-                    functionNode = (FunctionNode) node;
-                } else if (parser.matchSoftKeyword("static")) {
-                    Expr node = parser.parseExpr();
-                    if (!(node instanceof FunctionNode)) {
-                        throw new SyntaxException("Class members can only be functions",
-                                parser.getLast().getPosition());
-                    }
-
-                    functionNode = (FunctionNode) node;
-                } else if (parser.matchSoftKeyword("constructor")) {
-                    if (constructorNode != null) {
-                        throw new SyntaxException("Only one constructor per class", parser.getLast().getPosition());
-                    }
-                    constructorNode = parseConstructor(parser, name);
-                    continue;
-                } else {
-                    throw new SyntaxException("Class members can only be functions", parser.peek(0).getPosition());
-                }
-
-                functions.add(functionNode);
+            if (parser.nextIs(TokenType.LEFT_PAREN)) {
+                constructorSuperExprs = AJEParserUtils.parseArguments(parser);
             }
+        }
+
+        List<FunctionNode> functions = new ArrayList<>();
+
+        if (parser.match(TokenType.LEFT_BRACE)) {
+            while (!(parser.nextIs(TokenType.EOF) || parser.nextIs(TokenType.RIGHT_BRACE))) {
+                if (parser.match(TokenType.LINE)) continue;
+
+                if (parser.matchSoftKeyword("init")) {
+                    constructorExpr.getExprs().add(AJEParserUtils.parseBlock(parser));
+                } else {
+                    throw new SyntaxException(parser.peek(0)
+                            .getType() + " is not allowed in the top level of a class declaration");
+                }
+            }
+
             parser.eat(TokenType.RIGHT_BRACE);
         }
 
-        if (constructorNode == null) {
-            constructorNode = new FunctionNode(
-                    "new",
-                    Collections.singletonList(new ParameterData("self", new Identifier(name))),
-                    new Statements());
-        }
+        ConstructorNode constructorNode = new ConstructorNode(constructorParameters,
+                constructorSuperExprs,
+                constructorExpr);
 
-        functions.add(constructorNode);
-
-        return new ClassNode(name, parent, functions);
+        return new ClassNode(name, parent, constructorNode, functions);
     }
 
-    public FunctionNode parseConstructor(AJEParser parser, String name) {
-        List<ParameterData> parameters = new ArrayList<>();
 
-        parameters.add(new ParameterData("self", new Identifier(name)));
-
-        parser.eat(TokenType.LEFT_PAREN);
-        if (!parser.match(TokenType.RIGHT_PAREN)) {
-            Set<String> paramNames = new HashSet<>();
-            boolean requireDef = false;
-
-            do {
-                boolean rest = parser.match(TokenType.REST);
-
-                String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
-
-                if (paramNames.contains(parameterName)) {
-                    throw new SyntaxException("Duplicate parameter name", parser.getLast().getPosition());
-                } else {
-                    paramNames.add(parameterName);
-                }
-
-                Expr parameterType = new Identifier("Object");
-                Expr parameterDefault = null;
-
-                if (parser.match(TokenType.COLON)) {
-                    parameterType = parser.parseExpr(Precedence.POSTFIX - 1);
-                }
-
-                if (parser.match(TokenType.ASSIGN)) {
-                    parameterDefault = parser.parseExpr();
-                    requireDef = true;
-                } else if (requireDef) {
-                    throw new SyntaxException("All parameters after the first default requires a default",
-                            parser.peek(0).getPosition());
-                }
-
-                ParameterData parameter = new ParameterData(parameterName, parameterType, parameterDefault, rest);
-                parameters.add(parameter);
-
-                if (rest && parser.match(TokenType.COMMA)) {
-                    throw new SyntaxException("Rest parameters must be the last parameter",
-                            parser.peek(0).getPosition());
-                }
-            } while (parser.match(TokenType.COMMA));
-            parser.match(TokenType.RIGHT_PAREN);
-        }
-
-        Expr expr;
-
-        if (parser.match(TokenType.ASSIGN)) {
-            expr = parser.parseExpr();
-        } else {
-            parser.eat(TokenType.LEFT_BRACE);
-            if (parser.match(TokenType.RIGHT_BRACE)) {
-                expr = UndefinedNode.VALUE;
-            } else {
-                expr = parser.parseStatements();
-                parser.eat(TokenType.RIGHT_BRACE);
-            }
-        }
-
-        return new FunctionNode("new", parameters, expr);
-    }
 }
