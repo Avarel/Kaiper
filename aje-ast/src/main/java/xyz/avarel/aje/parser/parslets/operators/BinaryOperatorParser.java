@@ -94,7 +94,7 @@ public class BinaryOperatorParser extends BinaryParser {
                 finalValue = leftValue * rightValue;
                 break;
             case DIVIDE:
-                if (rightValue == 0) {
+                if (endInt && rightValue == 0) {
                     throw new SyntaxException("Division by 0", parser.getLast().getPosition());
                 }
                 finalValue = leftValue / rightValue;
