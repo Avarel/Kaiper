@@ -44,13 +44,13 @@ public class GetSetParser extends BinaryParser {
         }
 
         if (parser.match(TokenType.COLON)) {
-            return parseEnd(parser, token.getPosition(), left, UndefinedNode.VALUE);
+            return parseEnd(parser, token.getPosition(), (Single) left, UndefinedNode.VALUE);
         }
 
         Single key = parser.parseSingle();
 
         if (parser.match(TokenType.COLON)) {
-            return parseEnd(parser, token.getPosition(), left, key);
+            return parseEnd(parser, token.getPosition(), (Single) left, key);
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
@@ -75,14 +75,14 @@ public class GetSetParser extends BinaryParser {
         return new GetOperation((Single) left, key);
     }
 
-    public Expr parseEnd(AJEParser parser, Position position, Expr left, Expr start) {
+    public Single parseEnd(AJEParser parser, Position position, Single left, Single start) {
         if (parser.match(TokenType.COLON)) {
             return parseStep(parser, position, left, start, UndefinedNode.VALUE);
         } else if (parser.match(TokenType.RIGHT_BRACKET)) {
             return new SliceOperation(left, start, UndefinedNode.VALUE, UndefinedNode.VALUE);
         }
 
-        Expr end = parser.parseExpr();
+        Single end = parser.parseSingle();
 
         if (parser.match(TokenType.COLON)) {
             return parseStep(parser, position, left, start, end);
@@ -92,12 +92,12 @@ public class GetSetParser extends BinaryParser {
         return new SliceOperation(left, start, end, UndefinedNode.VALUE);
     }
 
-    public Expr parseStep(AJEParser parser, Position position, Expr left, Expr start, Expr end) {
+    public Single parseStep(AJEParser parser, Position position, Single left, Single start, Single end) {
         if (parser.match(TokenType.RIGHT_BRACKET)) {
             return new SliceOperation(left, start, end, UndefinedNode.VALUE);
         }
 
-        Expr step = parser.parseExpr();
+        Single step = parser.parseSingle();
 
         parser.eat(TokenType.RIGHT_BRACKET);
         return new SliceOperation(left, start, end, step);

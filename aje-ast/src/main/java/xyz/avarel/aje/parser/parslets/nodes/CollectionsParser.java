@@ -54,7 +54,7 @@ public class CollectionsParser implements PrefixParser {
             return new ArrayNode(Collections.emptyList());
         }
 
-        Expr expr = parser.parseExpr();
+        Single expr = parser.parseSingle();
 
         if (parser.match(TokenType.COLON)) {
             if (!parser.getParserFlags().allowDictionary()) {
@@ -69,13 +69,13 @@ public class CollectionsParser implements PrefixParser {
         }
     }
 
-    private Expr parseVector(AJEParser parser, Token token, Expr initItem) {
-        List<Expr> items = new ArrayList<>();
+    private Expr parseVector(AJEParser parser, Token token, Single initItem) {
+        List<Single> items = new ArrayList<>();
 
         items.add(initItem);
 
         while (parser.match(TokenType.COMMA)) {
-            items.add(parser.parseExpr());
+            items.add(parser.parseSingle());
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
@@ -113,19 +113,19 @@ public class CollectionsParser implements PrefixParser {
         return new ArrayNode(items);
     }
 
-    private Expr parseDictionary(AJEParser parser, Token token, Expr initKey) {
-        Map<Expr, Expr> map = new HashMap<>();
+    private Expr parseDictionary(AJEParser parser, Token token, Single initKey) {
+        Map<Single, Single> map = new HashMap<>();
 
         if (initKey instanceof Identifier) {
             initKey = new StringNode(((Identifier) initKey).getName());
         }
 
-        map.put(initKey, parser.parseExpr());
+        map.put(initKey, parser.parseSingle());
 
         while (parser.match(TokenType.COMMA)) {
-            Expr key = parser.parseExpr();
+            Single key = parser.parseSingle();
             parser.eat(TokenType.COLON);
-            Expr value = parser.parseExpr();
+            Single value = parser.parseSingle();
 
             map.put(key, value);
         }

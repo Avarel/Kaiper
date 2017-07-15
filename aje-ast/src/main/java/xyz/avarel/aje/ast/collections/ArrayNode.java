@@ -30,20 +30,19 @@
 
 package xyz.avarel.aje.ast.collections;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.ast.Single;
 
 import java.util.List;
 
 public class ArrayNode implements Single {
-    private final List<Expr> items;
+    private final List<Single> items;
 
-    public ArrayNode(List<Expr> items) {
+    public ArrayNode(List<Single> items) {
         this.items = items;
     }
 
-    public List<Expr> getItems() {
+    public List<Single> getItems() {
         return items;
     }
 

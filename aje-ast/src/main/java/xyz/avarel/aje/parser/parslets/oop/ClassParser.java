@@ -16,6 +16,7 @@
 package xyz.avarel.aje.parser.parslets.oop;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
@@ -42,9 +43,9 @@ public class ClassParser implements PrefixParser {
 
         ConstructorNode constructorNode = null;
 
-        Expr parent = new Identifier("Object");
+        Identifier parent = new Identifier("Object");
         if (parser.match(TokenType.COLON)) {
-            parent = parser.parseExpr(100);
+            parent = parser.parseIdentifier();
         }
 
         List<FunctionNode> functions = new ArrayList<>();
@@ -56,7 +57,7 @@ public class ClassParser implements PrefixParser {
                 if (parser.matchSoftKeyword("constructor")) {
 
                     List<ParameterData> constructorParameters = new ArrayList<>();
-                    List<Expr> constructorSuperExprs = Collections.emptyList();
+                    List<Single> constructorSuperExprs = Collections.emptyList();
                     Statements constructorExpr = new Statements();
 
                     // constructor(constructorParameters...) : super(superExprs) { constructorExpr }

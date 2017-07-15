@@ -17,6 +17,7 @@ package xyz.avarel.aje.parser.parslets.operators;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.collections.RangeNode;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
@@ -30,11 +31,15 @@ public class RangeOperatorParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!(left instanceof Single)) {
+            throw new SyntaxException("Internal compiler error", token.getPosition());
+        }
+
         if (!parser.getParserFlags().allowRanges()) {
             throw new SyntaxException("Ranges are disabled");
         }
 
-        Expr right = parser.parseExpr(getPrecedence());
-        return new RangeNode(left, right);
+        Single right = parser.parseSingle(getPrecedence());
+        return new RangeNode((Single) left, right);
     }
 }

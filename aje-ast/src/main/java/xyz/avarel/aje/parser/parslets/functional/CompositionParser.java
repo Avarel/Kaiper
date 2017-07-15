@@ -17,6 +17,7 @@ package xyz.avarel.aje.parser.parslets.functional;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -33,20 +34,24 @@ public class CompositionParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!(left instanceof Single)) {
+            throw new SyntaxException("Internal compiler error", token.getPosition());
+        }
+
         if (!parser.getParserFlags().allowInvocation()) {
             throw new SyntaxException("Function creation are disabled");
         }
 
-        Expr identifier = new Identifier(new Identifier("Function"), "compose");
+        Identifier identifier = new Identifier(new Identifier("Function"), "compose");
 
         switch (token.getType()) { // Compiles down to Function.compose(f1, f2)
             case FORWARD_COMPOSITION: {
-                Expr right = parser.parseExpr(getPrecedence());
-                return new Invocation(identifier, Arrays.asList(right, left));
+                Single right = parser.parseSingle(getPrecedence());
+                return new Invocation(identifier, Arrays.asList(right, (Single) left));
             }
             case BACKWARD_COMPOSITION: {
-                Expr right = parser.parseExpr(getPrecedence() - 1);
-                return new Invocation(identifier, Arrays.asList(left, right));
+                Single right = parser.parseSingle(getPrecedence() - 1);
+                return new Invocation(identifier, Arrays.asList((Single) left, right));
             }
             default:
                 throw new SyntaxException("Illegal token passed into composition parser");

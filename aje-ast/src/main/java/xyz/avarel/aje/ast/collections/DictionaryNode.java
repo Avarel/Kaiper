@@ -30,20 +30,19 @@
 
 package xyz.avarel.aje.ast.collections;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.ast.Single;
 
 import java.util.Map;
 
 public class DictionaryNode implements Single {
-    private final Map<Expr, Expr> map;
+    private final Map<Single, Single> map;
 
-    public DictionaryNode(Map<Expr, Expr> map) {
+    public DictionaryNode(Map<Single, Single> map) {
         this.map = map;
     }
 
-    public Map<Expr, Expr> getMap() {
+    public Map<Single, Single> getMap() {
         return map;
     }
 

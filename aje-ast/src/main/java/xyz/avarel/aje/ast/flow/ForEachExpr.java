@@ -21,10 +21,10 @@ import xyz.avarel.aje.ast.Single;
 
 public class ForEachExpr implements Single {
     private final String variant;
-    private final Expr iterable;
+    private final Single iterable;
     private final Expr action;
 
-    public ForEachExpr(String variant, Expr iterable, Expr action) {
+    public ForEachExpr(String variant, Single iterable, Expr action) {
         this.variant = variant;
         this.iterable = iterable;
         this.action = action;
@@ -34,7 +34,7 @@ public class ForEachExpr implements Single {
         return variant;
     }
 
-    public Expr getIterable() {
+    public Single getIterable() {
         return iterable;
     }
 

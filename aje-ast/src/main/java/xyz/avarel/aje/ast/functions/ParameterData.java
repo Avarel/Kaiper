@@ -15,13 +15,13 @@
 
 package xyz.avarel.aje.ast.functions;
 
-import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.variables.Identifier;
 
 public class ParameterData {
     private final String name;
     private final Identifier type;
-    private final Expr defaultExpr;
+    private final Single defaultExpr;
     private final boolean rest;
 
     public ParameterData(String name) {
@@ -32,7 +32,7 @@ public class ParameterData {
         this(name, type, null, false);
     }
 
-    public ParameterData(String name, Identifier type, Expr defaultExpr, boolean rest) {
+    public ParameterData(String name, Identifier type, Single defaultExpr, boolean rest) {
         this.name = name;
         this.type = type;
         this.defaultExpr = defaultExpr;
@@ -47,7 +47,7 @@ public class ParameterData {
         return type;
     }
 
-    public Expr getDefault() {
+    public Single getDefault() {
         return defaultExpr;
     }
 

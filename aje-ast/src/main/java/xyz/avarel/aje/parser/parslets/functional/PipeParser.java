@@ -17,6 +17,7 @@ package xyz.avarel.aje.parser.parslets.functional;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.variables.Identifier;
@@ -34,19 +35,23 @@ public class PipeParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!(left instanceof Single)) {
+            throw new SyntaxException("Internal compiler error", token.getPosition());
+        }
+
         if (!parser.getParserFlags().allowInvocation()) {
             throw new SyntaxException("Function invocation are disabled");
         }
 
         switch (token.getType()) {
             case PIPE_FORWARD: {
-                Expr right = parser.parseExpr(getPrecedence());
+                Single right = parser.parseSingle(getPrecedence());
 
                 if (right instanceof Invocation) {
-                    ((Invocation) right).getArguments().add(0, left);
+                    ((Invocation) right).getArguments().add(0, (Single) left);
                     return right;
                 } else if (right instanceof FunctionNode || right instanceof Identifier) {
-                    return new Invocation(right, Collections.singletonList(left));
+                    return new Invocation(right, Collections.singletonList((Single) left));
                 }
 
                 throw new SyntaxException(
@@ -54,13 +59,13 @@ public class PipeParser extends BinaryParser {
                         token.getPosition());
             }
             case PIPE_BACKWARD: {
-                Expr right = parser.parseExpr(getPrecedence() - 1);
+                Single right = parser.parseSingle(getPrecedence() - 1);
 
                 if (left instanceof Invocation) {
-                    ((Invocation) left).getArguments().add(0, left);
+                    ((Invocation) left).getArguments().add(0, (Single) left);
                     return left;
                 } else if (left instanceof FunctionNode || left instanceof Identifier) {
-                    return new Invocation(left, Collections.singletonList(right));
+                    return new Invocation((Single) left, Collections.singletonList(right));
                 }
 
                 throw new SyntaxException(

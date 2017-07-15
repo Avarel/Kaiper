@@ -46,6 +46,7 @@
 package xyz.avarel.aje.interpreter.runtime.types;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.interpreter.ExprInterpreter;
 import xyz.avarel.aje.runtime.Obj;
@@ -61,12 +62,12 @@ import java.util.List;
 
 public class CompiledConstructor extends Constructor {
     private final List<Parameter> parameters;
-    private final List<Expr> superInvocation;
+    private final List<Single> superInvocation;
     private final ExprInterpreter visitor;
     private final Scope scope;
     private final Expr expr;
 
-    public CompiledConstructor(List<Parameter> parameters, List<Expr> superInvocation, Expr expr, ExprInterpreter visitor, Scope scope) {
+    public CompiledConstructor(List<Parameter> parameters, List<Single> superInvocation, Expr expr, ExprInterpreter visitor, Scope scope) {
         this.parameters = parameters;
         this.superInvocation = superInvocation;
         this.visitor = visitor;

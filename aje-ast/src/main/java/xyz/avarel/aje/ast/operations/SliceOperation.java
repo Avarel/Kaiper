@@ -15,36 +15,35 @@
 
 package xyz.avarel.aje.ast.operations;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.ast.Single;
 
 public class SliceOperation implements Single {
-    private final Expr left;
-    private final Expr start;
-    private final Expr end;
-    private final Expr step;
+    private final Single left;
+    private final Single start;
+    private final Single end;
+    private final Single step;
 
-    public SliceOperation(Expr left, Expr start, Expr end, Expr step) {
+    public SliceOperation(Single left, Single start, Single end, Single step) {
         this.left = left;
         this.start = start;
         this.end = end;
         this.step = step;
     }
 
-    public Expr getLeft() {
+    public Single getLeft() {
         return left;
     }
 
-    public Expr getStart() {
+    public Single getStart() {
         return start;
     }
 
-    public Expr getEnd() {
+    public Single getEnd() {
         return end;
     }
 
-    public Expr getStep() {
+    public Single getStep() {
         return step;
     }
 

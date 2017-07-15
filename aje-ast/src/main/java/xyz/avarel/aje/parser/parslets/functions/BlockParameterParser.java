@@ -17,6 +17,7 @@ package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.variables.Identifier;
@@ -33,20 +34,24 @@ public class BlockParameterParser extends BinaryParser {
         super(Precedence.POSTFIX);
     }
 
-    @Override // [1..10] |> fold(0) { a, b -> a + b }
-    public Expr parse(AJEParser parser, Expr left, Token token) { // [1..10] |> filter { it -> it % 2 == 0 }
+    @Override // [1..10] |> fold(0) { a, b -> a + b } // [1..10] |> filter { it -> it % 2 == 0 }
+    public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!(left instanceof Single)) {
+            throw new SyntaxException("Internal compiler error", token.getPosition());
+        }
+
         if (!parser.getParserFlags().allowFunctionCreation()) {
             throw new SyntaxException("Function creation are disabled");
         }
 
-        Expr block = parser.getPrefixParsers().get(token.getType()).parse(parser, token);
+        Single block = (Single) parser.getPrefixParsers().get(token.getType()).parse(parser, token);
 
         if (left instanceof Invocation) {
             ((Invocation) left).getArguments().add(block);
         } else if (left instanceof FunctionNode || left instanceof Identifier) {
-            List<Expr> args = new ArrayList<>();
+            List<Single> args = new ArrayList<>();
             args.add(block);
-            return new Invocation(left, args);
+            return new Invocation((Single) left, args);
         }
 
         throw new SyntaxException("Block parameters incompatible with " + left.getClass().getSimpleName(), token.getPosition());

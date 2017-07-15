@@ -16,6 +16,7 @@
 package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.variables.Identifier;
@@ -41,13 +42,13 @@ public class AJEParserUtils {
         return expr;
     }
 
-    public static List<Expr> parseArguments(AJEParser parser) {
-        List<Expr> arguments = new ArrayList<>();
+    public static List<Single> parseArguments(AJEParser parser) {
+        List<Single> arguments = new ArrayList<>();
 
         parser.eat(TokenType.LEFT_PAREN);
         if (!parser.match(TokenType.RIGHT_PAREN)) {
             do {
-                arguments.add(parser.parseExpr());
+                arguments.add(parser.parseSingle());
             } while (parser.match(TokenType.COMMA));
             parser.eat(TokenType.RIGHT_PAREN);
         }
@@ -95,14 +96,14 @@ public class AJEParserUtils {
         String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
 
         Identifier parameterType = OBJ_ID;
-        Expr parameterDefault = null;
+        Single parameterDefault = null;
 
         if (parser.match(TokenType.COLON)) {
             parameterType = parser.parseIdentifier();
         }
 
         if (parser.match(TokenType.ASSIGN)) {
-            parameterDefault = parser.parseExpr();
+            parameterDefault = parser.parseSingle();
         } else if (requireDef) {
             throw new SyntaxException("All parameters after the first default requires a default",
                     parser.peek(0).getPosition());

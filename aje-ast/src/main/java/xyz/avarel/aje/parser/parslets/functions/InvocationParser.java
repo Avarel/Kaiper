@@ -17,6 +17,7 @@ package xyz.avarel.aje.parser.parslets.functions;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
@@ -34,19 +35,23 @@ public class InvocationParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!(left instanceof Single)) {
+            throw new SyntaxException("Internal compiler error", token.getPosition());
+        }
+
         if (!parser.getParserFlags().allowInvocation()) {
             throw new SyntaxException("Function creation are disabled");
         }
 
-        List<Expr> arguments = new ArrayList<>();
+        List<Single> arguments = new ArrayList<>();
 
         if (!parser.match(TokenType.RIGHT_PAREN)) {
             do {
-                arguments.add(parser.parseExpr());
+                arguments.add(parser.parseSingle());
             } while (parser.match(TokenType.COMMA));
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return new Invocation(left, arguments);
+        return new Invocation((Single) left, arguments);
     }
 }

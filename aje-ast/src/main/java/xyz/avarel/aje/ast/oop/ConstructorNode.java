@@ -24,10 +24,10 @@ import java.util.List;
 
 public class ConstructorNode implements Single {
     private final List<ParameterData> parameters;
-    private final List<Expr> superInvocation;
+    private final List<Single> superInvocation;
     private final Expr expr;
 
-    public ConstructorNode(List<ParameterData> parameters, List<Expr> superInvocation, Expr expr) {
+    public ConstructorNode(List<ParameterData> parameters, List<Single> superInvocation, Expr expr) {
         this.parameters = parameters;
         this.superInvocation = superInvocation;
         this.expr = expr;
@@ -37,7 +37,7 @@ public class ConstructorNode implements Single {
         return parameters;
     }
 
-    public List<Expr> getSuperInvocation() {
+    public List<Single> getSuperInvocation() {
         return superInvocation;
     }
 

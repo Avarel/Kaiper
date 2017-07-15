@@ -15,24 +15,23 @@
 
 package xyz.avarel.aje.ast.collections;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.ast.Single;
 
 public class RangeNode implements Single {
-    private final Expr left;
-    private final Expr right;
+    private final Single left;
+    private final Single right;
 
-    public RangeNode(Expr left, Expr right) {
+    public RangeNode(Single left, Single right) {
         this.left = left;
         this.right = right;
     }
 
-    public Expr getLeft() {
+    public Single getLeft() {
         return left;
     }
 
-    public Expr getRight() {
+    public Single getRight() {
         return right;
     }
 

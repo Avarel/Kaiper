@@ -33,6 +33,7 @@ package xyz.avarel.aje.interpreter;
 import xyz.avarel.aje.ReturnException;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.collections.*;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.flow.ForEachExpr;
@@ -405,11 +406,11 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     @Override
     public Obj visit(DictionaryNode expr, Scope scope) {
         checkTimeout();
-        Map<Expr, Expr> map = expr.getMap();
+        Map<Single, Single> map = expr.getMap();
 
         Dictionary dict = new Dictionary();
 
-        for (Map.Entry<Expr, Expr> entry : map.entrySet()) {
+        for (Map.Entry<Single, Single> entry : map.entrySet()) {
             checkTimeout();
             Obj key = entry.getKey().accept(this, scope);
             checkTimeout();

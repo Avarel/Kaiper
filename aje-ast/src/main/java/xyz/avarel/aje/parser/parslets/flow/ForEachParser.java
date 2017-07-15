@@ -16,6 +16,7 @@
 package xyz.avarel.aje.parser.parslets.flow;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.ForEachExpr;
 import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -39,7 +40,7 @@ public class ForEachParser implements PrefixParser {
 
         parser.eatSoftKeyword("in");
 
-        Expr iterable = parser.parseExpr();
+        Single iterable = parser.parseSingle();
 
         parser.eat(TokenType.RIGHT_PAREN);
 

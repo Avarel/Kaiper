@@ -15,20 +15,20 @@
 
 package xyz.avarel.aje.ast.oop;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.functions.FunctionNode;
+import xyz.avarel.aje.ast.variables.Identifier;
 
 import java.util.List;
 
 public class ClassNode implements Single {
     private final String name;
-    private final Expr parent;
+    private final Identifier parent;
     private final ConstructorNode constructorNode;
     private final List<FunctionNode> functions;
 
-    public ClassNode(String name, Expr parent, ConstructorNode constructorNode, List<FunctionNode> functions) {
+    public ClassNode(String name, Identifier parent, ConstructorNode constructorNode, List<FunctionNode> functions) {
         this.name = name;
         this.parent = parent;
         this.constructorNode = constructorNode;
@@ -39,7 +39,7 @@ public class ClassNode implements Single {
         return name;
     }
 
-    public Expr getParent() {
+    public Identifier getParent() {
         return parent;
     }
 
