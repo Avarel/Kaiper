@@ -36,10 +36,6 @@ class ExprTest {
         eval("3 >= 2")
         eval("true && false")
 
-        eval("i^2")
-        eval("3i")
-        eval("(8+2i)*(5i+3)")
-
         eval("[1,2,3] == [1..3]")
         eval("[1,2,3] + [1]")
 
