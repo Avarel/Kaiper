@@ -16,9 +16,7 @@
 package xyz.avarel.aje.compiler;
 
 import xyz.avarel.aje.ast.collections.RangeNode;
-import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
-import xyz.avarel.aje.ast.operations.UnaryOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperatorType;
 import xyz.avarel.aje.exceptions.InvalidBytecodeException;
 
@@ -37,12 +35,12 @@ public enum Opcodes implements DataOutputConsumer {
      * <p>Stops the action, returning an object.</p>
      * <b>Parameters:</b>
      * <ul>
-     *     <li>none</li>
+     * <li>none</li>
      * </ul>
      * <b>Action:</b>
      * <ul>
-     *     <li>Retrieves the Top-most Object on the stack;</li>
-     *     <li>Returns it, stopping the execution of the Code.</li>
+     * <li>Retrieves the Top-most Object on the stack;</li>
+     * <li>Returns it, stopping the execution of the Code.</li>
      * </ul>
      */
     RETURN,
@@ -51,11 +49,11 @@ public enum Opcodes implements DataOutputConsumer {
      * <p>Summons the <b>Undefined</b> constant.</p>
      * <b>Parameters:</b>
      * <ul>
-     *     <li>none</li>
+     * <li>none</li>
      * </ul>
      * <b>Action:</b>
      * <ul>
-     *     <li>Pushes the {@code undefined} constant into the stack.</li>
+     * <li>Pushes the {@code undefined} constant into the stack.</li>
      * </ul>
      */
     U_CONST,
@@ -64,11 +62,11 @@ public enum Opcodes implements DataOutputConsumer {
      * <p>Summons the <b>True</b> constant.</p>
      * <b>Parameters:</b>
      * <ul>
-     *     <li>none</li>
+     * <li>none</li>
      * </ul>
      * <b>Action:</b>
      * <ul>
-     *     <li>Pushes the {@code true} constant into the stack.</li>
+     * <li>Pushes the {@code true} constant into the stack.</li>
      * </ul>
      */
     B_CONST_TRUE,
@@ -77,31 +75,55 @@ public enum Opcodes implements DataOutputConsumer {
      * <p>Summons the <b>False</b> constant.</p>
      * <b>Parameters:</b>
      * <ul>
-     *     <li>none</li>
+     * <li>none</li>
      * </ul>
      * <b>Action:</b>
      * <ul>
-     *     <li>Pushes the {@code false} constant into the stack.</li>
+     * <li>Pushes the {@code false} constant into the stack.</li>
      * </ul>
      */
     B_CONST_FALSE,
-    I_CONST,
-    D_CONST,
-    S_CONST,
+    I_CONST, //TODO DOC
+    D_CONST, //TODO DOC
+    S_CONST, //TODO DOC
+    /**
+     * {@code NEW_ARRAY;}
+     * <p>Creates an Array.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     * <li>none</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     * <li>Pushes the new {@code Array} into the stack.</li>
+     * </ul>
+     */
     NEW_ARRAY,
+    /**
+     * {@code NEW_DICTIONARY;}
+     * <p>Creates a Dictionary.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     * <li>none</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     * <li>Pushes the new {@code Dictionary} into the stack.</li>
+     * </ul>
+     */
     NEW_DICTIONARY,
     /**
      * {@code NEW_RANGE;}
      * <p>Creates a Range.</p>
      * <b>Parameters:</b>
      * <ul>
-     *     <li>none</li>
+     * <li>none</li>
      * </ul>
      * <b>Action:</b>
      * <ul>
-     *     <li>Retrieves the Top-most Object on the stack ({@link RangeNode#getRight()});</li>
-     *     <li>Retrieves the Top-most Object on the stack ({@link RangeNode#getLeft()});</li>
-     *     <li>Pushes the new {@code Range} into the stack.</li>
+     * <li>Retrieves the Top-most Object on the stack ({@link RangeNode#getRight()});</li>
+     * <li>Retrieves the Top-most Object on the stack ({@link RangeNode#getLeft()});</li>
+     * <li>Pushes the new {@code Range} into the stack.</li>
      * </ul>
      */
     NEW_RANGE,
@@ -111,13 +133,13 @@ public enum Opcodes implements DataOutputConsumer {
      * <p>Executes a Unary Operation.</p>
      * <b>Parameters:</b>
      * <ul>
-     *     <li>{@code type} - The {@link UnaryOperatorType} index.</li>
+     * <li>{@code type} - The {@link UnaryOperatorType} index.</li>
      * </ul>
      * <b>Action:</b>
      * <ul>
-     *     <li>Retrieves the Top-most Object on the stack ({@link UnaryOperation#getOperator()});</li>
-     *     <li>Execute the Unary Operation on it;</li>
-     *     <li>Pushes the new Object into the stack.</li>
+     * <li>Pushes an Object from the stack;</li>
+     * <li>Execute the Unary Operation on it;</li>
+     * <li>Pushes the new Object into the stack.</li>
      * </ul>
      */
     UNARY_OPERATION,
@@ -126,21 +148,63 @@ public enum Opcodes implements DataOutputConsumer {
      * <p>Executes a Binary Operation.</p>
      * <b>Parameters:</b>
      * <ul>
-     *     <li>{@code type} - The {@link BinaryOperatorType} index.</li>
+     * <li>{@code type} - The {@link BinaryOperatorType} index.</li>
      * </ul>
      * <b>Action:</b>
      * <ul>
-     *     <li>Retrieves the Top-most Object on the stack ({@link BinaryOperation#getRight()});</li>
-     *     <li>Retrieves the Top-most Object on the stack ({@link BinaryOperation#getLeft()});</li>
-     *     <li>Execute the Binary Operation on them;</li>
-     *     <li>Pushes the new Object into the stack.</li>
+     * <li>Pushes 2 Objects from the stack (right, left);</li>
+     * <li>Execute the Binary Operation on them;</li>
+     * <li>Pushes the new Object into the stack.</li>
      * </ul>
      */
     BINARY_OPERATION,
-
+    /**
+     * {@code SLICE_OPERATION;}
+     * <p>Executes a Slice Operation.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     * <li>none</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     * <li>Pushes 4 Objects from the stack ({@code step}, {@code end}, {@code start}, {@code left});</li>
+     * <li>Execute the Slice Operation on the {@code left};</li>
+     * <li>Pushes the new Object into the stack.</li>
+     * </ul>
+     */
     SLICE_OPERATION,
+    /**
+     * {@code GET;}
+     * <p>Executes a Get Operation.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     * <li>none</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     * <li>Pushes 2 Objects from the stack (key, left);</li>
+     * <li>Execute the Get Operation on them;</li>
+     * <li>Pushes the new Object into the stack.</li>
+     * </ul>
+     */
+    GET,
+    /**
+     * {@code SET;}
+     * <p>Executes a Get Operation.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     * <li>none</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     * <li>Pushes 2 Objects from the stack (key, left);</li>
+     * <li>Execute the Get Operation on them;</li>
+     * <li>Pushes the new Object into the stack.</li>
+     * </ul>
+     */
+    SET,
 
-    ;
+    DUP, SWAP, POP;
 
     public static Opcodes byID(byte id) {
         Opcodes[] values = values();

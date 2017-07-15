@@ -1,6 +1,8 @@
 package xyz.avarel.aje.compiler;
 
+import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.collections.*;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.flow.ForEachExpr;
@@ -18,10 +20,7 @@ import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static xyz.avarel.aje.compiler.Opcodes.*;
 
@@ -51,23 +50,19 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
         };
     }
 
-    private DataOutputConsumer zip(Iterator<DataOutputConsumer> iterator) {
-        if (!iterator.hasNext()) return NO_OP_CONSUMER;
-
-        DataOutputConsumer consumer = iterator.next();
-        if (!iterator.hasNext()) return consumer;
-
-        while (iterator.hasNext()) consumer = consumer.andThen(iterator.next());
-        return consumer;
-    }
-
     @Override
     public DataOutputConsumer visit(Statements statements, Void scope) {
-        return zip(
-                statements.getExprs().stream()
-                        .map(expr -> expr.accept(this, null))
-                        .iterator()
-        );
+        Iterator<Expr> iterator = statements.getExprs().iterator();
+        if (!iterator.hasNext()) return NO_OP_CONSUMER;
+
+        DataOutputConsumer consumer = iterator.next().accept(this, null);
+        if (!iterator.hasNext()) return consumer;
+
+        while (iterator.hasNext()) {
+            consumer = consumer.andThen(iterator.next().accept(this, null)).andThen(POP);
+        }
+
+        return consumer;
     }
 
     @Override
@@ -124,7 +119,26 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(ArrayNode expr, Void scope) {
-        return null;
+        List<Single> items = expr.getItems();
+        if (items.isEmpty()) return NEW_ARRAY;
+
+        DataOutputConsumer consumer = NEW_ARRAY;
+        for (int i = 0; i < items.size(); i++) {
+            Single single = items.get(i);
+            DataOutputConsumer data = single.accept(this, null);
+            int index = i;
+
+            consumer = consumer.andThen(out -> {
+                DUP.writeInto(out);
+                I_CONST.writeInto(out);
+                out.writeInt(index);
+                data.writeInto(out);
+                SET.writeInto(out);
+                POP.writeInto(out);
+            });
+        }
+
+        return consumer;
     }
 
     @Override
@@ -150,12 +164,28 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(GetOperation expr, Void scope) {
-        return null;
+        DataOutputConsumer left = expr.getLeft().accept(this, null);
+        DataOutputConsumer key = expr.getKey().accept(this, null);
+
+        return out -> {
+            left.writeInto(out);
+            key.writeInto(out);
+            GET.writeInto(out);
+        };
     }
 
     @Override
     public DataOutputConsumer visit(SetOperation expr, Void scope) {
-        return null;
+        DataOutputConsumer left = expr.getLeft().accept(this, null);
+        DataOutputConsumer key = expr.getKey().accept(this, null);
+        DataOutputConsumer data = expr.getExpr().accept(this, null);
+
+        return out -> {
+            left.writeInto(out);
+            key.writeInto(out);
+            data.writeInto(out);
+            SET.writeInto(out);
+        };
     }
 
     @Override
@@ -180,7 +210,23 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(DictionaryNode expr, Void scope) {
-        return null;
+        Map<Single, Single> map = expr.getMap();
+        if (map.isEmpty()) return NEW_DICTIONARY;
+
+        DataOutputConsumer consumer = NEW_DICTIONARY;
+        for (Map.Entry<Single, Single> entry : map.entrySet()) {
+            DataOutputConsumer key = entry.getKey().accept(this, null);
+            DataOutputConsumer value = entry.getValue().accept(this, null);
+
+            consumer = consumer.andThen(out -> {
+                DUP.writeInto(out);
+                key.writeInto(out);
+                value.writeInto(out);
+                SET.writeInto(out);
+            });
+        }
+
+        return consumer;
     }
 
     @Override
