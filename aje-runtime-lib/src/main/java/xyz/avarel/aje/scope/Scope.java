@@ -27,13 +27,13 @@ import java.util.Map;
 public class Scope {
     private final Scope[] parents;
     private final Map<String, Obj> map;
-    private final Map<String, Short> flagsMap;
+    private final Map<String, Byte> flagsMap;
 
     public Scope(Scope... parents) {
         this(new HashMap<>(), new HashMap<>(), parents);
     }
 
-    public Scope(Map<String, Obj> map, Map<String, Short> flagsMap, Scope... parents) {
+    public Scope(Map<String, Obj> map, Map<String, Byte> flagsMap, Scope... parents) {
         this.map = map;
         this.flagsMap = flagsMap;
         this.parents = parents;
@@ -52,10 +52,10 @@ public class Scope {
     }
 
     public void declare(String key, Obj value) {
-        declare(key, value, (short) 0);
+        declare(key, value, VariableFlags.NONE);
     }
 
-    public void declare(String key, Obj value, short flags) {
+    public void declare(String key, Obj value, byte flags) {
         if (map.containsKey(key)) {
             throw new ComputeException(key + " already exists in the scope");
         }
@@ -80,7 +80,7 @@ public class Scope {
                 return;
             }
         }
-        throw new ComputeException(key + " is not defined, it must be declared using Scope#declare first");
+        throw new ComputeException(key + " is not defined, it must be declared first");
     }
 
     public Scope[] getParents() {
@@ -91,7 +91,7 @@ public class Scope {
         return map;
     }
 
-    public Map<String, Short> getFlagsMap() {
+    public Map<String, Byte> getFlagsMap() {
         return flagsMap;
     }
 
@@ -125,8 +125,8 @@ public class Scope {
         return map.toString();
     }
 
-    public Scope withFlags(Map<String, Short> otherFlags) {
-        Map<String, Short> newFlags = new HashMap<>(flagsMap);
+    public Scope withFlags(Map<String, Byte> otherFlags) {
+        Map<String, Byte> newFlags = new HashMap<>(flagsMap);
         newFlags.putAll(otherFlags);
         return new Scope(new HashMap<>(map), newFlags, parents);
     }

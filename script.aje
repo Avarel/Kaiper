@@ -9,10 +9,11 @@ class Meme {
 }
 
 class Dank : Meme {
-    val level
+    val level = x
+    var what
 
     constructor(x, var y, z) : super(x) {
-        this.level = 5
+        this.what = 2
     }
 
     def instanceMethod() = this.x + 5000
@@ -22,3 +23,5 @@ class Dank : Meme {
 
 var i1 = Meme()
 var i2 = Dank(1,2,3)
+
+[i1.x, i2.x, i2.y, i2.level, i1.memes(), i1.upper, i2.upper, Dank.instanceMethod(i2), i2.instanceMethod()]

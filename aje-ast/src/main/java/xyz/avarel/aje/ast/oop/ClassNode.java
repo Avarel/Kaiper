@@ -27,10 +27,10 @@ public class ClassNode implements Single {
     private final String name;
     private final Identifier parent;
     private final ConstructorNode constructorNode;
-    private final Map<String, Short> variableDeclarations;
+    private final Map<String, Byte> variableDeclarations;
     private final List<FunctionNode> functions;
 
-    public ClassNode(String name, Identifier parent, ConstructorNode constructorNode, Map<String, Short> variableDeclarations, List<FunctionNode> functions) {
+    public ClassNode(String name, Identifier parent, ConstructorNode constructorNode, Map<String, Byte> variableDeclarations, List<FunctionNode> functions) {
         this.name = name;
         this.parent = parent;
         this.constructorNode = constructorNode;
@@ -50,7 +50,7 @@ public class ClassNode implements Single {
         return constructorNode;
     }
 
-    public Map<String, Short> getVariableDeclarations() {
+    public Map<String, Byte> getVariableDeclarations() {
         return variableDeclarations;
     }
 

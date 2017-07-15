@@ -21,13 +21,13 @@ import xyz.avarel.aje.ast.Single;
 public class DeclarationExpr implements Single {
     private final String name;
     private final Single expr;
-    private final short flags;
+    private final byte flags;
 
     public DeclarationExpr(String name, Single expr) {
-        this(name, expr, (short) 0);
+        this(name, expr, (byte) 0);
     }
 
-    public DeclarationExpr(String name, Single expr, short flags) {
+    public DeclarationExpr(String name, Single expr, byte flags) {
         this.name = name;
         this.expr = expr;
         this.flags = flags;
@@ -41,7 +41,7 @@ public class DeclarationExpr implements Single {
         return expr;
     }
 
-    public short getFlags() {
+    public byte getFlags() {
         return flags;
     }
 

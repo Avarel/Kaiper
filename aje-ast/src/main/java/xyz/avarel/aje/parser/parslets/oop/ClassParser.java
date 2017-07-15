@@ -52,7 +52,7 @@ public class ClassParser implements PrefixParser {
 
         List<FunctionNode> classFunctions = new ArrayList<>();
 
-        Map<String, Short> variableDeclarations = new HashMap<>();
+        Map<String, Byte> variableDeclarations = new HashMap<>();
         Statements variableAssignments = new Statements();
 
         if (parser.match(TokenType.LEFT_BRACE)) {
@@ -119,15 +119,15 @@ public class ClassParser implements PrefixParser {
         return new ClassNode(className, classParent, classConstructor, variableDeclarations, classFunctions);
     }
 
-    private void scanConstructor(ConstructorNode constructor, Map<String, Short> variableDeclarations) {
+    private void scanConstructor(ConstructorNode constructor, Map<String, Byte> variableDeclarations) {
         Set<String> variables = new HashSet<>(variableDeclarations.keySet());
         List<Expr> statements = ((Statements) constructor.getExpr()).getExprs();
 
+        System.out.println(statements);
+
         for (Expr expr : statements) {
             if (expr instanceof AssignmentExpr) {
-                if (((AssignmentExpr) expr).getParent() == null) {
-                    variables.remove(((AssignmentExpr) expr).getName());
-                } else if (((AssignmentExpr) expr).getParent() instanceof Identifier) {
+                if (((AssignmentExpr) expr).getParent() instanceof Identifier) {
                     Identifier parent = (Identifier) ((AssignmentExpr) expr).getParent();
                     if (parent.getName().equals("this")) {
                         variables.remove(((AssignmentExpr) expr).getName());
@@ -141,7 +141,7 @@ public class ClassParser implements PrefixParser {
         }
     }
 
-    private ConstructorNode parseConstructor(AJEParser parser, Map<String, Short> variableDeclarations) {
+    private ConstructorNode parseConstructor(AJEParser parser, Map<String, Byte> variableDeclarations) {
         List<ParameterData> constructorParameters = new ArrayList<>();
         List<Single> constructorSuperExprs = Collections.emptyList();
         Statements constructorExpr = new Statements();
@@ -175,7 +175,7 @@ public class ClassParser implements PrefixParser {
                     } else {
                         switch (parameterType) {
                             case 1:
-                                variableDeclarations.put(parameter.getName(), (short) 0);
+                                variableDeclarations.put(parameter.getName(), VariableFlags.NONE);
                                 break;
                             case 2:
                                 variableDeclarations.put(parameter.getName(), VariableFlags.FINAL);
@@ -210,7 +210,7 @@ public class ClassParser implements PrefixParser {
         }
 
         if (parser.nextIs(TokenType.LEFT_BRACE)) {
-            constructorExpr.getExprs().add(AJEParserUtils.parseBlock(parser));
+            constructorExpr = constructorExpr.andThen(AJEParserUtils.parseBlock(parser));
         }
 
         return new ConstructorNode(constructorParameters,

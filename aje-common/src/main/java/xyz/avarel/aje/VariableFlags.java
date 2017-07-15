@@ -31,7 +31,7 @@
 package xyz.avarel.aje;
 
 public class VariableFlags {
-    public static final short NONE = 0;
-    public static final short FINAL = 1;
-    public static final short EXPORT = 1 << 1;
+    public static final byte NONE = 0;
+    public static final byte FINAL = 1;
+    public static final byte EXPORT = 1 << 1;
 }

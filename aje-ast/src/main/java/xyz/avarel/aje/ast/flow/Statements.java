@@ -36,7 +36,7 @@ public class Statements implements Expr, Iterable<Expr> {
     }
 
     @Override
-    public Expr andThen(Expr after) {
+    public Statements andThen(Expr after) {
         if (after instanceof Statements) {
             statements.addAll(((Statements) after).statements);
         } else {
