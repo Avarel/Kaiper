@@ -18,6 +18,7 @@ import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,9 +27,6 @@ import static xyz.avarel.aje.compiler.Opcodes.*;
 
 public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     private static final DataOutputConsumer NO_OP_CONSUMER = out -> {};
-    private static final DataOutputConsumer B_CONST_TRUE_CONSUMER = out -> out.writeByte(B_CONST_TRUE.ordinal());
-    private static final DataOutputConsumer B_CONST_FALSE_CONSUMER = out -> out.writeByte(B_CONST_FALSE.ordinal());
-    private static final DataOutputConsumer U_CONST_CONSUMER = out -> out.writeByte(U_CONST.ordinal());
 
     private final List<String> stringPool = new LinkedList<>();
 
@@ -39,6 +37,17 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
             return stringPool.indexOf(s);
         }
         return i;
+    }
+
+    public DataOutputConsumer stringPool() {
+        ArrayList<String> strings = new ArrayList<>(stringPool);
+
+        return out -> {
+            out.writeInt(strings.size());
+            for (String s : strings) {
+                out.writeUTF(s);
+            }
+        };
     }
 
     private DataOutputConsumer zip(Iterator<DataOutputConsumer> iterator) {
@@ -117,7 +126,12 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(ReturnExpr expr, Void scope) {
-        return null;
+        DataOutputConsumer bytecode = expr.getExpr().accept(this, null);
+
+        return out -> {
+            bytecode.writeInto(out);
+            RETURN.writeInto(out);
+        };
     }
 
     @Override
@@ -137,7 +151,7 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(UndefinedNode undefinedNode, Void scope) {
-        return U_CONST_CONSUMER;
+        return U_CONST;
     }
 
     @Override
@@ -145,7 +159,7 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
         int constValue = intNode.getValue();
 
         return out -> {
-            out.writeByte(I_CONST.ordinal());
+            I_CONST.writeInto(out);
             out.writeInt(constValue);
         };
     }
@@ -155,14 +169,14 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
         double constValue = decimalNode.getValue();
 
         return out -> {
-            out.writeByte(D_CONST.ordinal());
+            D_CONST.writeInto(out);
             out.writeDouble(constValue);
         };
     }
 
     @Override
     public DataOutputConsumer visit(BooleanNode booleanNode, Void scope) {
-        return booleanNode == BooleanNode.TRUE ? B_CONST_TRUE_CONSUMER : B_CONST_FALSE_CONSUMER;
+        return booleanNode == BooleanNode.TRUE ? B_CONST_TRUE : B_CONST_FALSE;
     }
 
     @Override
@@ -170,7 +184,7 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
         int constValue = stringConst(stringNode.getValue());
 
         return out -> {
-            out.writeByte(S_CONST.ordinal());
+            S_CONST.writeInto(out);
             out.writeInt(constValue);
         };
     }

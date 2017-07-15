@@ -15,6 +15,7 @@
 
 package xyz.avarel.aje.ast.flow;
 
+import xyz.avarel.aje.annotations.CanBeUndefined;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
 
@@ -25,6 +26,7 @@ public class ReturnExpr implements Expr {
         this.expr = expr;
     }
 
+    @CanBeUndefined
     public Expr getExpr() {
         return expr;
     }
