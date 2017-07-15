@@ -30,16 +30,12 @@ public class RangeOperatorParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        if (!(left instanceof Single)) {
-            throw new SyntaxException("Internal compiler error", token.getPosition());
-        }
-
+    public Expr parse(AJEParser parser, Single left, Token token) {
         if (!parser.getParserFlags().allowRanges()) {
             throw new SyntaxException("Ranges are disabled");
         }
 
         Single right = parser.parseSingle(getPrecedence());
-        return new RangeNode((Single) left, right);
+        return new RangeNode(left, right);
     }
 }

@@ -22,25 +22,20 @@ import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.value.UndefinedNode;
-import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
 
 public class ElvisParser extends BinaryParser {
     public ElvisParser() {
-        super(Precedence.INFIX, true);
+        super(Precedence.INFIX);
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        if (!(left instanceof Single)) {
-            throw new SyntaxException("Internal compiler error", token.getPosition());
-        }
-
+    public Expr parse(AJEParser parser, Single left, Token token) {
         return new ConditionalExpr(
                 new BinaryOperation(
-                        (Single) left,
+                        left,
                         UndefinedNode.VALUE,
                         BinaryOperatorType.EQUALS),
                 parser.parseExpr(),

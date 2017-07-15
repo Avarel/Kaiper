@@ -39,11 +39,7 @@ public class BinaryOperatorParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        if (!(left instanceof Single)) {
-            throw new SyntaxException("Internal compiler error", token.getPosition());
-        }
-
+    public Expr parse(AJEParser parser, Single left, Token token) {
         if (left instanceof Identifier) {
             if (parser.match(TokenType.ASSIGN)) {
                 if (parser.getLast().getPosition().getIndex() - token.getPosition().getIndex() != 2) {
@@ -54,7 +50,7 @@ public class BinaryOperatorParser extends BinaryParser {
                 Single right = parser.parseSingle();
                 return new AssignmentExpr(
                         ((Identifier) left).getName(),
-                        new BinaryOperation((Single) left, right, operator)
+                        new BinaryOperation(left, right, operator)
                 );
             }
         }
@@ -63,10 +59,10 @@ public class BinaryOperatorParser extends BinaryParser {
 
         if ((left instanceof IntNode || left instanceof DecimalNode)
                 && (right instanceof IntNode || right instanceof DecimalNode)) {
-            return optimizeArithmetic(parser, (Single) left, right, operator);
+            return optimizeArithmetic(parser, left, right, operator);
         }
 
-        return new BinaryOperation((Single) left, right, operator);
+        return new BinaryOperation(left, right, operator);
     }
 
     private Single optimizeArithmetic(AJEParser parser, Single left, Single right, BinaryOperatorType operator) {
@@ -98,7 +94,7 @@ public class BinaryOperatorParser extends BinaryParser {
                 finalValue = leftValue * rightValue;
                 break;
             case DIVIDE:
-                if (rightValue == 0) {
+                if (endInt && rightValue == 0) {
                     throw new SyntaxException("Division by 0", parser.getLast().getPosition());
                 }
                 finalValue = leftValue / rightValue;

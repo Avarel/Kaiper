@@ -35,11 +35,7 @@ public class BlockParameterParser extends BinaryParser {
     }
 
     @Override // [1..10] |> fold(0) { a, b -> a + b } // [1..10] |> filter { it -> it % 2 == 0 }
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        if (!(left instanceof Single)) {
-            throw new SyntaxException("Internal compiler error", token.getPosition());
-        }
-
+    public Expr parse(AJEParser parser, Single left, Token token) {
         if (!parser.getParserFlags().allowFunctionCreation()) {
             throw new SyntaxException("Function creation are disabled");
         }
@@ -51,7 +47,7 @@ public class BlockParameterParser extends BinaryParser {
         } else if (left instanceof FunctionNode || left instanceof Identifier) {
             List<Single> args = new ArrayList<>();
             args.add(block);
-            return new Invocation((Single) left, args);
+            return new Invocation(left, args);
         }
 
         throw new SyntaxException("Block parameters incompatible with " + left.getClass().getSimpleName(), token.getPosition());

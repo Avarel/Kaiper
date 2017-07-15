@@ -34,11 +34,7 @@ public class InvocationParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        if (!(left instanceof Single)) {
-            throw new SyntaxException("Internal compiler error", token.getPosition());
-        }
-
+    public Expr parse(AJEParser parser, Single left, Token token) {
         if (!parser.getParserFlags().allowInvocation()) {
             throw new SyntaxException("Function creation are disabled");
         }
@@ -52,6 +48,6 @@ public class InvocationParser extends BinaryParser {
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return new Invocation((Single) left, arguments);
+        return new Invocation(left, arguments);
     }
 }
