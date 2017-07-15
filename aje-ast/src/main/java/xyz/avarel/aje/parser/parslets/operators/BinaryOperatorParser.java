@@ -63,13 +63,13 @@ public class BinaryOperatorParser extends BinaryParser {
 
         if ((left instanceof IntNode || left instanceof DecimalNode)
                 && (right instanceof IntNode || right instanceof DecimalNode)) {
-            return optimizeArithmetic((Single) left, right, operator);
+            return optimizeArithmetic(parser, (Single) left, right, operator);
         }
 
         return new BinaryOperation((Single) left, right, operator);
     }
 
-    private Single optimizeArithmetic(Single left, Single right, BinaryOperatorType operator) {
+    private Single optimizeArithmetic(AJEParser parser, Single left, Single right, BinaryOperatorType operator) {
         boolean endInt = left instanceof IntNode && right instanceof IntNode;
         double leftValue;
         if (left instanceof IntNode) {
@@ -98,6 +98,9 @@ public class BinaryOperatorParser extends BinaryParser {
                 finalValue = leftValue * rightValue;
                 break;
             case DIVIDE:
+                if (rightValue == 0) {
+                    throw new SyntaxException("Division by 0", parser.getLast().getPosition());
+                }
                 finalValue = leftValue / rightValue;
                 break;
             case MODULUS:
