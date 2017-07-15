@@ -39,11 +39,6 @@ class IntTest {
     }
 
     @Test
-    fun `implicit multiplication`() {
-        Assert.assertEquals(2 * Math.PI, eval("2pi").toJava())
-    }
-
-    @Test
     fun `division`() {
         Assert.assertEquals(2, eval("20 / 10").toJava())
     }

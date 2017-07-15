@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 /*
  * Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
@@ -22,11 +24,9 @@ apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.github.johnrengelman.shadow'
 
-def versionObj = new Version(major: 3, minor: 5, revision: 0)
-
 group = 'xyz.avarel'
 archivesBaseName = 'AJE'
-version = "$versionObj"
+version = new Version(major: 3, minor: 5, revision: 0)
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -38,16 +38,26 @@ repositories {
 dependencies {
     compile project(":aje-ast")
     compile project(":aje-runtime-lib")
+
     testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8', version: '1.1.3-2'
     testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.1.3-2'
     testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit', version: '1.1.3-2'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
+task clearPrepared(type: Delete) {
+    delete 'build/prepared-src'
+}
+
+//Task for the versioning system
 task sourcesForRelease(type: Copy) {
     from 'src/main/java'
-    into 'build/filteredSrc'
+    into 'build/prepared-src'
+    filter(ReplaceTokens, tokens: [
+        version: version.toString()
+    ])
 }
+sourcesForRelease.dependsOn clearPrepared
 
 compileJava {
     source = sourcesForRelease.destinationDir
@@ -71,7 +81,7 @@ shadowJar {
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
-    from "${buildDir}/filteredSrc"
+    from sourcesForRelease.destinationDir
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -125,18 +135,12 @@ task wrapper(type: Wrapper) {
 
 
 build {
-    dependsOn clean
     dependsOn jar
     dependsOn javadocJar
     dependsOn sourcesJar
     dependsOn shadowJar
 
     dependsOn test
-
-    jar.mustRunAfter clean
-    javadocJar.mustRunAfter jar
-    sourcesJar.mustRunAfter javadocJar
-    shadowJar.mustRunAfter sourcesJar
 }
 
 bintrayUpload {

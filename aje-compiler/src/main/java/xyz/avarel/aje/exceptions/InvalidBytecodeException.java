@@ -1,6 +1,6 @@
 package xyz.avarel.aje.exceptions;
 
-public class InvalidBytecodeException extends IllegalStateException {
+public class InvalidBytecodeException extends AJEException {
     public InvalidBytecodeException(String msg) {
         super(msg);
     }

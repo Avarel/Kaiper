@@ -39,11 +39,6 @@ class DecimalTest {
     }
 
     @Test
-    fun `implicit multiplication`() {
-        Assert.assertEquals(4.3 * Math.PI, eval("4.3pi").toJava())
-    }
-
-    @Test
     fun `division`() {
         Assert.assertEquals(2.0, eval("20 / 10.0").toJava())
     }
@@ -86,11 +81,6 @@ class DecimalTest {
     @Test
     fun `equality with int`() {
         Assert.assertEquals(true, eval("2.0 == 2").toJava())
-    }
-
-    @Test
-    fun `equality with complex`() {
-        Assert.assertEquals(true, eval("2.0 == 2 + 0i").toJava())
     }
 
     @Test

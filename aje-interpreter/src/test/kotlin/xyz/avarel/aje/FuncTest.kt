@@ -24,13 +24,13 @@ import org.junit.Test
 
 class FuncTest {
     val evaluator = Evaluator().apply {
-        eval("func isEven0(x) { x % 2 == 0 }")
-        eval("func isEven1(x) { x % 2 == 0 }")
-        eval("func isEven2(x) = x % 2 == 0")
-        eval("let isEven3 = { x -> x % 2 == 0 }")
-        eval("let isEven4 = _ % 2 == 0")
+        eval("def isEven0(x) { x % 2 == 0 }")
+        eval("def isEven1(x) { x % 2 == 0 }")
+        eval("def isEven2(x) = x % 2 == 0")
+        eval("var isEven3 = { x -> x % 2 == 0 }")
+        eval("var isEven4 = _ % 2 == 0")
 
-        eval("let add = { x, y -> x + y }")
+        eval("var add = { x, y -> x + y }")
     }
 
     @Test
@@ -64,7 +64,7 @@ class FuncTest {
 
     @Test
     fun `implicit vs named`() {
-        Assert.assertEquals(evaluator.eval("[1..10] |> filter(_ % 2 == 0)"), evaluator.eval("[1..10] |> filter(isEven0)"))
+        Assert.assertEquals(evaluator.eval("[1..10] |> Array.filter(_ % 2 == 0)"), evaluator.eval("[1..10] |> Array.filter(isEven0)"))
     }
 
     @Test
