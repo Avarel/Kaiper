@@ -21,7 +21,6 @@ package xyz.avarel.aje
 
 import org.junit.Assert
 import org.junit.Test
-import xyz.avarel.aje.exceptions.SyntaxException
 
 class DecimalTest {
     @Test
@@ -49,9 +48,9 @@ class DecimalTest {
         Assert.assertEquals(0.5, eval("10.0 / 20").toJava())
     }
 
-    @Test(expected = SyntaxException::class)
+    @Test
     fun `division by zero`() {
-        eval("1 / 0.0").toJava()
+        Assert.assertEquals(java.lang.Double.POSITIVE_INFINITY, eval("1 / 0.0").toJava())
     }
 
     @Test
