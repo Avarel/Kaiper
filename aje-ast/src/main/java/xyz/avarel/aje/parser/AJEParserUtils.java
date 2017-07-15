@@ -15,7 +15,6 @@
 
 package xyz.avarel.aje.parser;
 
-import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.ast.functions.ParameterData;
@@ -95,11 +94,11 @@ public class AJEParserUtils {
 
         String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
 
-        Expr parameterType = new Identifier("Object");
+        Identifier parameterType = OBJ_ID;
         Expr parameterDefault = null;
 
         if (parser.match(TokenType.COLON)) {
-            parameterType = parser.parseExpr(Precedence.POSTFIX - 1);
+            parameterType = parser.parseIdentifier();
         }
 
         if (parser.match(TokenType.ASSIGN)) {

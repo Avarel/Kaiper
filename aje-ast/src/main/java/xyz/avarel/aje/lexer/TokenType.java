@@ -85,6 +85,7 @@ public enum TokenType {
     IDENTIFIER,
     UNDEFINED,
     VAR,
+    VAL,
     RETURN,
     IF,
     ELSE,

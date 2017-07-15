@@ -16,6 +16,7 @@
 package xyz.avarel.aje.parser.parslets.variables;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
@@ -31,15 +32,15 @@ public class NameParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(token.getString(), parser.parseExpr());
+            return new AssignmentExpr(token.getString(), parser.parseSingle());
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
-            Expr getOp = new Identifier(token.getString());
+            Single getOp = new Identifier(token.getString());
             return new ConditionalExpr(
                     new BinaryOperation(
                             getOp,
                             UndefinedNode.VALUE,
                             BinaryOperatorType.EQUALS),
-                    new AssignmentExpr(token.getString(), parser.parseExpr()),
+                    new AssignmentExpr(token.getString(), parser.parseSingle()),
                     getOp);
         }
 

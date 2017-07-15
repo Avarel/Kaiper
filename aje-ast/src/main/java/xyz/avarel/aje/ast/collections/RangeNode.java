@@ -17,8 +17,9 @@ package xyz.avarel.aje.ast.collections;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class RangeNode implements Expr {
+public class RangeNode implements Single {
     private final Expr left;
     private final Expr right;
 

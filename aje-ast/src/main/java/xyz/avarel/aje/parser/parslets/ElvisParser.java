@@ -17,10 +17,12 @@ package xyz.avarel.aje.parser.parslets;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.value.UndefinedNode;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.BinaryParser;
@@ -32,9 +34,13 @@ public class ElvisParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!(left instanceof Single)) {
+            throw new SyntaxException("Internal compiler error", token.getPosition());
+        }
+
         return new ConditionalExpr(
                 new BinaryOperation(
-                        left,
+                        (Single) left,
                         UndefinedNode.VALUE,
                         BinaryOperatorType.EQUALS),
                 parser.parseExpr(),

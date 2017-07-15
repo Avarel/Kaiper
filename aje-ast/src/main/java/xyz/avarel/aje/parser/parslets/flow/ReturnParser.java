@@ -16,6 +16,7 @@
 package xyz.avarel.aje.parser.parslets.flow;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.ReturnExpr;
 import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.exceptions.SyntaxException;
@@ -31,11 +32,11 @@ public class ReturnParser implements PrefixParser {
             throw new SyntaxException("Control flows are disabled");
         }
 
-        Expr expr;
+        Single expr;
         if (parser.nextIsAny(TokenType.LINE, TokenType.RIGHT_BRACE)) {
             expr = UndefinedNode.VALUE;
         } else {
-            expr = parser.parseExpr();
+            expr = parser.parseSingle();
         }
         return new ReturnExpr(expr);
     }

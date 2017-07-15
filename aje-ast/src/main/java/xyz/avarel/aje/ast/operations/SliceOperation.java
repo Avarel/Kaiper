@@ -17,8 +17,9 @@ package xyz.avarel.aje.ast.operations;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class SliceOperation implements Expr {
+public class SliceOperation implements Single {
     private final Expr left;
     private final Expr start;
     private final Expr end;

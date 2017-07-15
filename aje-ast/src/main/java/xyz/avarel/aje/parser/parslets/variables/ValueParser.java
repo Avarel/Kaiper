@@ -13,27 +13,30 @@
  * under the License.
  */
 
-package xyz.avarel.aje.parser.parslets.operators;
+package xyz.avarel.aje.parser.parslets.variables;
 
-import xyz.avarel.aje.Precedence;
+import xyz.avarel.aje.VariableFlags;
 import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.Single;
-import xyz.avarel.aje.ast.operations.UnaryOperation;
-import xyz.avarel.aje.ast.operations.UnaryOperatorType;
+import xyz.avarel.aje.ast.variables.DeclarationExpr;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
+import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 
-public class UnaryOperatorParser implements PrefixParser {
-    private final UnaryOperatorType operator;
-
-    public UnaryOperatorParser(UnaryOperatorType operator) {
-        this.operator = operator;
-    }
-
+public class ValueParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
-        Single left = parser.parseSingle(Precedence.PREFIX);
-        return new UnaryOperation(left, operator);
+        if (!parser.getParserFlags().allowVariables()) {
+            throw new SyntaxException("Values are disabled");
+        }
+
+        Token name = parser.eat(TokenType.IDENTIFIER);
+
+        if (!parser.match(TokenType.ASSIGN)) {
+            throw new SyntaxException("Values must be be initialized", token.getPosition());
+        }
+
+        return new DeclarationExpr(name.getString(), parser.parseSingle(), VariableFlags.FINAL);
     }
 }

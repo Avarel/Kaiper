@@ -15,10 +15,10 @@
 
 package xyz.avarel.aje.ast.value;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class DecimalNode implements Expr {
+public class DecimalNode implements Single {
     private final double value;
 
     public DecimalNode(double value) {

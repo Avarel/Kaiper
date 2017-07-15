@@ -28,40 +28,10 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast.collections;
+package xyz.avarel.aje;
 
-import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.ast.Single;
-
-import java.util.List;
-
-public class ArrayNode implements Single {
-    private final List<Expr> items;
-
-    public ArrayNode(List<Expr> items) {
-        this.items = items;
-    }
-
-    public List<Expr> getItems() {
-        return items;
-    }
-
-    @Override
-    public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
-        return visitor.visit(this, scope);
-    }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("list");
-        for (int i = 0; i < items.size() - 1; i++) {
-            builder.append('\n');
-            items.get(i).ast(builder, indent + (isTail ? "    " : "│   "), false);
-        }
-        if (items.size() > 0) {
-            builder.append('\n');
-            items.get(items.size() - 1).ast(builder, indent + (isTail ? "    " : "│   "), true);
-        }
-    }
+public class VariableFlags {
+    public static final short NONE = 0;
+    public static final short FINAL = 1;
+    public static final short EXPORT = 1 << 1;
 }

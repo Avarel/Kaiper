@@ -16,6 +16,7 @@
 package xyz.avarel.aje.parser.parslets.flow;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
@@ -31,7 +32,7 @@ public class IfElseParser implements PrefixParser {
         }
 
         parser.eat(TokenType.LEFT_PAREN);
-        Expr condition = parser.parseExpr();
+        Single condition = parser.parseSingle();
         parser.eat(TokenType.RIGHT_PAREN);
 
         Expr ifBranch;

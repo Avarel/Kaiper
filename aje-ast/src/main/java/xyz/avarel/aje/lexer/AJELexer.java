@@ -397,6 +397,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 return make(TokenType.RETURN, "return");
             case "var":
                 return make(TokenType.VAR, "var");
+            case "val":
+                return make(TokenType.VAL, "val");
             case "for":
                 return make(TokenType.FOR, "for");
             case "undefined":
@@ -564,7 +566,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
      *
      * @param n The number of characters to take.
      * @return A string of n characters.
-     * @throws AJEException Substring bounds error if there are not
+     * @throws SyntaxException Substring bounds error if there are not
      *                      n characters remaining in the source string.
      */
     private String advance(int n) {

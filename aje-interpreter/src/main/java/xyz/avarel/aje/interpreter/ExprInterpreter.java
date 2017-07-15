@@ -321,7 +321,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         checkTimeout();
         Obj value = expr.getExpr().accept(this, scope);
-        scope.declare(attr, value);
+        scope.declare(attr, value, expr.getFlags());
         return Undefined.VALUE;
     }
 

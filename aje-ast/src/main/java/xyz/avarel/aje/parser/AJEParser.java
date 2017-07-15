@@ -15,10 +15,14 @@
 
 package xyz.avarel.aje.parser;
 
+import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.value.UndefinedNode;
+import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.AJELexer;
+import xyz.avarel.aje.lexer.Position;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
 
@@ -72,6 +76,29 @@ public class AJEParser extends Parser {
 
     public Expr parseExpr() {
         return parseExpr(0);
+    }
+
+    public Identifier parseIdentifier() {
+        Position position = peek(0).getPosition();
+        Expr expr = parseExpr(Precedence.POSTFIX - 1);
+        if (expr instanceof Identifier) {
+            return (Identifier) expr;
+        } else {
+            throw new SyntaxException("Expected IDENTIFIER", position);
+        }
+    }
+
+    public Single parseSingle() {
+        return parseSingle(0);
+    }
+
+    public Single parseSingle(int precedence) {
+        Expr expr = parseExpr(precedence);
+        if (expr instanceof Single) {
+            return (Single) expr;
+        } else {
+            throw new SyntaxException("Internal compiler error");
+        }
     }
 
     public Expr parseExpr(int precedence) {

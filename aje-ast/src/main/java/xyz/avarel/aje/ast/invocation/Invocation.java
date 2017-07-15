@@ -17,10 +17,11 @@ package xyz.avarel.aje.ast.invocation;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
 import java.util.List;
 
-public class Invocation implements Expr {
+public class Invocation implements Single {
     private final Expr left;
     private final List<Expr> arguments;
 

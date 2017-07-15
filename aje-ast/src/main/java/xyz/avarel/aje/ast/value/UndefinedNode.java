@@ -15,10 +15,10 @@
 
 package xyz.avarel.aje.ast.value;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public enum UndefinedNode implements Expr {
+public enum UndefinedNode implements Single {
     VALUE;
 
     @Override

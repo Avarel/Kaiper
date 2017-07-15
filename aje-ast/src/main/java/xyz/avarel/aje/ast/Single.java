@@ -13,28 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.scope;
+package xyz.avarel.aje.ast;
 
-import xyz.avarel.aje.runtime.types.Type;
-
-public class VariableFlags {
-    private final Type type;
-    private final short flags;
-
-    public VariableFlags(Type type, short flags) {
-        this.type = type;
-        this.flags = flags;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public short getFlags() {
-        return flags;
-    }
-
-    public boolean checkFlag(short flag) {
-        return (flags & flag) == flag;
-    }
+public interface Single extends Expr {
 }

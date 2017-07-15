@@ -16,6 +16,7 @@
 package xyz.avarel.aje.parser.parslets.nodes;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.collections.ArrayNode;
 import xyz.avarel.aje.ast.collections.DictionaryNode;
 import xyz.avarel.aje.ast.collections.GetOperation;
@@ -86,7 +87,7 @@ public class CollectionsParser implements PrefixParser {
                 }
             }
 
-            Expr target = parser.parseExpr();
+            Single target = parser.parseSingle();
 
             Statements statements = new Statements();
 

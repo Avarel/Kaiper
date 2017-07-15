@@ -15,25 +15,25 @@
 
 package xyz.avarel.aje.ast.variables;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class AssignmentExpr implements Expr {
-    private final Expr parent;
+public class AssignmentExpr implements Single {
+    private final Single parent;
     private final String name;
-    private final Expr expr;
+    private final Single expr;
 
-    public AssignmentExpr(String name, Expr expr) {
+    public AssignmentExpr(String name, Single expr) {
         this(null, name, expr);
     }
 
-    public AssignmentExpr(Expr parent, String name, Expr expr) {
+    public AssignmentExpr(Single parent, String name, Single expr) {
         this.parent = parent;
         this.name = name;
         this.expr = expr;
     }
 
-    public Expr getParent() {
+    public Single getParent() {
         return parent;
     }
 
@@ -41,7 +41,7 @@ public class AssignmentExpr implements Expr {
         return name;
     }
 
-    public Expr getExpr() {
+    public Single getExpr() {
         return expr;
     }
 

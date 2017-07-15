@@ -15,10 +15,10 @@
 
 package xyz.avarel.aje.ast.value;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public enum BooleanNode implements Expr {
+public enum BooleanNode implements Single {
     TRUE,
     FALSE;
 

@@ -75,14 +75,10 @@ public class LambdaFunctionParser implements PrefixParser {
                         paramNames.add(parameterName);
                     }
 
-                    Expr parameterType = new Identifier("Object");
+                    Identifier parameterType = new Identifier("Object");
 
                     if (parser.match(TokenType.COLON)) {
-                        Token typeToken = parser.eat(TokenType.IDENTIFIER);
-                        parameterType = new Identifier(typeToken.getString());
-                        while (parser.match(TokenType.DOT)) {
-                            parameterType = new Identifier(parameterType, parser.eat(TokenType.IDENTIFIER).getString());
-                        }
+                        parameterType = parser.parseIdentifier();
                     }
 
                     ParameterData parameter = new ParameterData(parameterName, parameterType, null, rest);

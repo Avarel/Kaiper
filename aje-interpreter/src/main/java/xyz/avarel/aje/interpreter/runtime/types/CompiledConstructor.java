@@ -149,7 +149,7 @@ public class CompiledConstructor extends Constructor {
 
                 Obj superObject;
                 if (parentConstructor instanceof CompiledConstructor) {
-                    superObject = ((CompiledConstructor) parentConstructor).eval(superArguments, constructorScope);
+                    superObject = ((CompiledConstructor) parentConstructor).eval(superArguments, new Scope());
                     scope = scope.combine(((CompiledObj) superObject).getScope());
                 } else {
                     superObject = parentConstructor.invoke(superArguments);

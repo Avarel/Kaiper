@@ -63,7 +63,7 @@ public class AJERepl {
                     result = evaluator.eval(input);
                 } catch (AJEException e) {
                     System.out.println("! " + e.getMessage());
-                    e.printStackTrace();
+//                    e.printStackTrace();
                     result = Undefined.VALUE;
                 }
 

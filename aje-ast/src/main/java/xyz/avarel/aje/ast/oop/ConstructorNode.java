@@ -17,11 +17,12 @@ package xyz.avarel.aje.ast.oop;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.functions.ParameterData;
 
 import java.util.List;
 
-public class ConstructorNode implements Expr {
+public class ConstructorNode implements Single {
     private final List<ParameterData> parameters;
     private final List<Expr> superInvocation;
     private final Expr expr;

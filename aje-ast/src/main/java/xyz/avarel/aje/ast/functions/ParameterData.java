@@ -20,7 +20,7 @@ import xyz.avarel.aje.ast.variables.Identifier;
 
 public class ParameterData {
     private final String name;
-    private final Expr type;
+    private final Identifier type;
     private final Expr defaultExpr;
     private final boolean rest;
 
@@ -28,11 +28,11 @@ public class ParameterData {
         this(name, new Identifier("Object"), null, false);
     }
 
-    public ParameterData(String name, Expr type) {
+    public ParameterData(String name, Identifier type) {
         this(name, type, null, false);
     }
 
-    public ParameterData(String name, Expr type, Expr defaultExpr, boolean rest) {
+    public ParameterData(String name, Identifier type, Expr defaultExpr, boolean rest) {
         this.name = name;
         this.type = type;
         this.defaultExpr = defaultExpr;
@@ -43,7 +43,7 @@ public class ParameterData {
         return name;
     }
 
-    public Expr getTypeExpr() {
+    public Identifier getTypeExpr() {
         return type;
     }
 

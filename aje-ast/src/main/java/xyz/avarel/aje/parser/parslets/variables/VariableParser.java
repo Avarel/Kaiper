@@ -24,7 +24,7 @@ import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
 
-public class DeclarationParser implements PrefixParser {
+public class VariableParser implements PrefixParser {
     @Override
     public Expr parse(AJEParser parser, Token token) {
         if (!parser.getParserFlags().allowVariables()) {
@@ -34,7 +34,7 @@ public class DeclarationParser implements PrefixParser {
         Token name = parser.eat(TokenType.IDENTIFIER);
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new DeclarationExpr(name.getString(), parser.parseExpr());
+            return new DeclarationExpr(name.getString(), parser.parseSingle());
         }
 
         return new DeclarationExpr(name.getString(), UndefinedNode.VALUE);

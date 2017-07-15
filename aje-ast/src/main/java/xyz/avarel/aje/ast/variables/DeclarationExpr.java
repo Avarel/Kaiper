@@ -15,24 +15,34 @@
 
 package xyz.avarel.aje.ast.variables;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class DeclarationExpr implements Expr {
+public class DeclarationExpr implements Single {
     private final String name;
-    private final Expr expr;
+    private final Single expr;
+    private final short flags;
 
-    public DeclarationExpr(String name, Expr expr) {
+    public DeclarationExpr(String name, Single expr) {
+        this(name, expr, (short) 0);
+    }
+
+    public DeclarationExpr(String name, Single expr, short flags) {
         this.name = name;
         this.expr = expr;
+        this.flags = flags;
     }
 
     public String getName() {
         return name;
     }
 
-    public Expr getExpr() {
+    public Single getExpr() {
         return expr;
+    }
+
+    public short getFlags() {
+        return flags;
     }
 
     @Override

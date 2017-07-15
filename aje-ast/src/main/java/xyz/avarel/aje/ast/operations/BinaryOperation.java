@@ -15,25 +15,25 @@
 
 package xyz.avarel.aje.ast.operations;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class BinaryOperation implements Expr {
-    private final Expr left;
-    private final Expr right;
+public class BinaryOperation implements Single {
+    private final Single left;
+    private final Single right;
     private final BinaryOperatorType operator;
 
-    public BinaryOperation(Expr left, Expr right, BinaryOperatorType operator) {
+    public BinaryOperation(Single left, Single right, BinaryOperatorType operator) {
         this.left = left;
         this.right = right;
         this.operator = operator;
     }
 
-    public Expr getLeft() {
+    public Single getLeft() {
         return left;
     }
 
-    public Expr getRight() {
+    public Single getRight() {
         return right;
     }
 

@@ -15,17 +15,17 @@
 
 package xyz.avarel.aje.ast.flow;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class ReturnExpr implements Expr {
-    private final Expr expr;
+public class ReturnExpr implements Single {
+    private final Single expr;
 
-    public ReturnExpr(Expr expr) {
+    public ReturnExpr(Single expr) {
         this.expr = expr;
     }
 
-    public Expr getExpr() {
+    public Single getExpr() {
         return expr;
     }
 

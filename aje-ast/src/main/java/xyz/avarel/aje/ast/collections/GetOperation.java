@@ -15,23 +15,23 @@
 
 package xyz.avarel.aje.ast.collections;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class GetOperation implements Expr {
-    private final Expr left;
-    private final Expr key;
+public class GetOperation implements Single {
+    private final Single left;
+    private final Single key;
 
-    public GetOperation(Expr left, Expr key) {
+    public GetOperation(Single left, Single key) {
         this.left = left;
         this.key = key;
     }
 
-    public Expr getLeft() {
+    public Single getLeft() {
         return left;
     }
 
-    public Expr getKey() {
+    public Single getKey() {
         return key;
     }
 

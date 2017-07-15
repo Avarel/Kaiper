@@ -15,19 +15,19 @@
 
 package xyz.avarel.aje.ast.operations;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class UnaryOperation implements Expr {
-    private final Expr target;
+public class UnaryOperation implements Single {
+    private final Single target;
     private final UnaryOperatorType operator;
 
-    public UnaryOperation(Expr target, UnaryOperatorType operator) {
+    public UnaryOperation(Single target, UnaryOperatorType operator) {
         this.target = target;
         this.operator = operator;
     }
 
-    public Expr getTarget() {
+    public Single getTarget() {
         return target;
     }
 

@@ -40,61 +40,11 @@ public class ClassParser implements PrefixParser {
     public Expr parse(AJEParser parser, Token token) {
         String name = parser.eat(TokenType.IDENTIFIER).getString();
 
-        List<ParameterData> constructorParameters = new ArrayList<>();
-        Statements constructorExpr = new Statements();
-        List<Expr> constructorSuperExprs = Collections.emptyList();
-
-
-        if (parser.nextIs(TokenType.LEFT_PAREN)) {
-
-            parser.eat(TokenType.LEFT_PAREN);
-            if (!parser.match(TokenType.RIGHT_PAREN)) {
-                Set<String> paramNames = new HashSet<>();
-                boolean requireDef = false;
-
-                do {
-                    boolean var = parser.match(TokenType.VAR);
-
-                    ParameterData parameter = AJEParserUtils.parseParameter(parser, requireDef);
-
-                    if (parameter.getDefault() != null) {
-                        requireDef = true;
-                    }
-
-                    if (paramNames.contains(parameter.getName())) {
-                        throw new SyntaxException("Duplicate parameter name", parser.getLast().getPosition());
-                    } else {
-                        paramNames.add(parameter.getName());
-                    }
-
-                    if (parameter.isRest() && parser.match(TokenType.COMMA)) {
-                        throw new SyntaxException("Rest parameters must be the last parameter",
-                                parser.peek(0).getPosition());
-                    }
-
-                    constructorParameters.add(parameter);
-
-                    if (var) {
-                        constructorExpr.getExprs().add(
-                                new AssignmentExpr(
-                                        AJEParserUtils.THIS_ID,
-                                        parameter.getName(),
-                                        new Identifier(parameter.getName())
-                                )
-                        );
-                    }
-                } while (parser.match(TokenType.COMMA));
-                parser.match(TokenType.RIGHT_PAREN);
-            }
-        }
+        ConstructorNode constructorNode = null;
 
         Expr parent = new Identifier("Object");
         if (parser.match(TokenType.COLON)) {
             parent = parser.parseExpr(100);
-
-            if (parser.nextIs(TokenType.LEFT_PAREN)) {
-                constructorSuperExprs = AJEParserUtils.parseArguments(parser);
-            }
         }
 
         List<FunctionNode> functions = new ArrayList<>();
@@ -103,8 +53,69 @@ public class ClassParser implements PrefixParser {
             while (!(parser.nextIs(TokenType.EOF) || parser.nextIs(TokenType.RIGHT_BRACE))) {
                 if (parser.match(TokenType.LINE)) continue;
 
-                if (parser.matchSoftKeyword("init")) {
-                    constructorExpr.getExprs().add(AJEParserUtils.parseBlock(parser));
+                if (parser.matchSoftKeyword("constructor")) {
+
+                    List<ParameterData> constructorParameters = new ArrayList<>();
+                    List<Expr> constructorSuperExprs = Collections.emptyList();
+                    Statements constructorExpr = new Statements();
+
+                    // constructor(constructorParameters...) : super(superExprs) { constructorExpr }
+
+                    if (parser.nextIs(TokenType.LEFT_PAREN)) {
+                        parser.eat(TokenType.LEFT_PAREN);
+                        if (!parser.match(TokenType.RIGHT_PAREN)) {
+                            Set<String> paramNames = new HashSet<>();
+                            boolean requireDef = false;
+
+                            do {
+                                boolean var = parser.match(TokenType.VAR);
+
+                                ParameterData parameter = AJEParserUtils.parseParameter(parser, requireDef);
+
+                                if (parameter.getDefault() != null) {
+                                    requireDef = true;
+                                }
+
+                                if (paramNames.contains(parameter.getName())) {
+                                    throw new SyntaxException("Duplicate parameter name",
+                                            parser.getLast().getPosition());
+                                } else {
+                                    paramNames.add(parameter.getName());
+                                }
+
+                                if (parameter.isRest() && parser.match(TokenType.COMMA)) {
+                                    throw new SyntaxException("Rest parameters must be the last parameter",
+                                            parser.peek(0).getPosition());
+                                }
+
+                                constructorParameters.add(parameter);
+
+                                if (var) {
+                                    constructorExpr.getExprs().add(
+                                            new AssignmentExpr(
+                                                    AJEParserUtils.THIS_ID,
+                                                    parameter.getName(),
+                                                    new Identifier(parameter.getName())
+                                            )
+                                    );
+                                }
+                            } while (parser.match(TokenType.COMMA));
+                            parser.match(TokenType.RIGHT_PAREN);
+                        }
+                    }
+
+                    if (parser.match(TokenType.COLON)) {
+                        parser.eatSoftKeyword("super");
+                        constructorSuperExprs = AJEParserUtils.parseArguments(parser);
+                    }
+
+                    if (parser.nextIs(TokenType.LEFT_BRACE)) {
+                        constructorExpr.getExprs().add(AJEParserUtils.parseBlock(parser));
+                    }
+
+                    constructorNode = new ConstructorNode(constructorParameters,
+                            constructorSuperExprs,
+                            constructorExpr);
                 } else {
                     throw new SyntaxException(parser.peek(0)
                             .getType() + " is not allowed in the top level of a class declaration");
@@ -114,9 +125,9 @@ public class ClassParser implements PrefixParser {
             parser.eat(TokenType.RIGHT_BRACE);
         }
 
-        ConstructorNode constructorNode = new ConstructorNode(constructorParameters,
-                constructorSuperExprs,
-                constructorExpr);
+        if (constructorNode == null) {
+            constructorNode = new ConstructorNode(Collections.emptyList(), Collections.emptyList(), new Statements());
+        }
 
         return new ClassNode(name, parent, constructorNode, functions);
     }

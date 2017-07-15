@@ -17,6 +17,7 @@ package xyz.avarel.aje.parser.parslets;
 
 import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.collections.GetOperation;
 import xyz.avarel.aje.ast.collections.SetOperation;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
@@ -24,6 +25,7 @@ import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.value.UndefinedNode;
+import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Position;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
@@ -37,11 +39,15 @@ public class GetSetParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!(left instanceof Single)) {
+            throw new SyntaxException("Internal compiler error", token.getPosition());
+        }
+
         if (parser.match(TokenType.COLON)) {
             return parseEnd(parser, token.getPosition(), left, UndefinedNode.VALUE);
         }
 
-        Expr key = parser.parseExpr();
+        Single key = parser.parseSingle();
 
         if (parser.match(TokenType.COLON)) {
             return parseEnd(parser, token.getPosition(), left, key);
@@ -51,22 +57,22 @@ public class GetSetParser extends BinaryParser {
 
         // SET
         if (parser.match(TokenType.ASSIGN)) {
-            Expr value = parser.parseExpr();
-            return new SetOperation(left, key, value);
+            Single value = parser.parseSingle();
+            return new SetOperation((Single) left, key, value);
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
-            Expr value = parser.parseExpr();
+            Single value = parser.parseSingle();
 
-            Expr getOp = new GetOperation(left, key);
+            Single getOp = new GetOperation((Single) left, key);
             return new ConditionalExpr(
                     new BinaryOperation(
                             getOp,
                             UndefinedNode.VALUE,
                             BinaryOperatorType.EQUALS),
-                    new SetOperation(left, key, value),
+                    new SetOperation((Single) left, key, value),
                     getOp);
         }
 
-        return new GetOperation(left, key);
+        return new GetOperation((Single) left, key);
     }
 
     public Expr parseEnd(AJEParser parser, Position position, Expr left, Expr start) {

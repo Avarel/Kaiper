@@ -15,6 +15,7 @@
 
 package xyz.avarel.aje.scope;
 
+import xyz.avarel.aje.VariableFlags;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
@@ -26,13 +27,15 @@ import java.util.Map;
 public class Scope {
     private final Scope[] parents;
     private final Map<String, Obj> map;
+    private final Map<String, Short> flagsMap;
 
     public Scope(Scope... parents) {
-        this(new HashMap<>(), parents);
+        this(new HashMap<>(), new HashMap<>(), parents);
     }
 
-    public Scope(Map<String, Obj> map, Scope... parents) {
+    public Scope(Map<String, Obj> map, Map<String, Short> flagsMap, Scope... parents) {
         this.map = map;
+        this.flagsMap = flagsMap;
         this.parents = parents;
     }
 
@@ -48,11 +51,24 @@ public class Scope {
     }
 
     public void declare(String key, Obj value) {
+        declare(key, value, (short) 0);
+    }
+
+    public void declare(String key, Obj value, short flags) {
+        if (map.containsKey(key)) {
+            throw new ComputeException(key + " already exists in the scope");
+        }
         map.put(key, value);
+        flagsMap.put(key, flags);
     }
 
     public void assign(String key, Obj value) {
+        System.out.println(flagsMap.get(key));
         if (map.containsKey(key)) {
+            if ((flagsMap.get(key) & VariableFlags.FINAL) == VariableFlags.FINAL) {
+                throw new ComputeException("Can not assign to final variable " + key);
+            }
+
             map.put(key, value);
             return;
         } else for (Scope parent : parents) {
@@ -79,7 +95,7 @@ public class Scope {
     }
 
     public Scope copy() {
-        return new Scope(new HashMap<>(map), parents);
+        return new Scope(new HashMap<>(map), new HashMap<>(flagsMap), parents);
     }
 
     public Scope subPool() {
@@ -90,7 +106,7 @@ public class Scope {
         Scope[] array = Arrays.copyOf(parents, parents.length + 1);
         array[array.length - 1] = otherScope;
 
-        return new Scope(new HashMap<>(map), array);
+        return new Scope(new HashMap<>(map), new HashMap<>(flagsMap), array);
     }
 
     @Override

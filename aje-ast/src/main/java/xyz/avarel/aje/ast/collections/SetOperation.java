@@ -15,30 +15,18 @@
 
 package xyz.avarel.aje.ast.collections;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
 public class SetOperation extends GetOperation {
-    private final Expr left;
-    private final Expr key;
-    private final Expr expr;
+    private final Single expr;
 
-    public SetOperation(Expr left, Expr key, Expr expr) {
+    public SetOperation(Single left, Single key, Single expr) {
         super(left, key);
-        this.left = left;
-        this.key = key;
         this.expr = expr;
     }
 
-    public Expr getLeft() {
-        return left;
-    }
-
-    public Expr getKey() {
-        return key;
-    }
-
-    public Expr getExpr() {
+    public Single getExpr() {
         return expr;
     }
 
@@ -52,10 +40,10 @@ public class SetOperation extends GetOperation {
         builder.append(indent).append(isTail ? "└── " : "├── ").append("get");
 
         builder.append('\n');
-        left.ast("target", builder, indent + (isTail ? "    " : "│   "), false);
+        getLeft().ast("target", builder, indent + (isTail ? "    " : "│   "), false);
 
         builder.append('\n');
-        key.ast("key", builder, indent + (isTail ? "    " : "│   "), false);
+        getKey().ast("key", builder, indent + (isTail ? "    " : "│   "), false);
 
         builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);

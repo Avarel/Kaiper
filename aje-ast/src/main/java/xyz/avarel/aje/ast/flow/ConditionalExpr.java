@@ -17,19 +17,20 @@ package xyz.avarel.aje.ast.flow;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class ConditionalExpr implements Expr {
-    private final Expr condition;
+public class ConditionalExpr implements Single {
+    private final Single condition;
     private final Expr ifBranch;
     private final Expr elseBranch;
 
-    public ConditionalExpr(Expr condition, Expr ifBranch, Expr elseBranch) {
+    public ConditionalExpr(Single condition, Expr ifBranch, Expr elseBranch) {
         this.condition = condition;
         this.ifBranch = ifBranch;
         this.elseBranch = elseBranch;
     }
 
-    public Expr getCondition() {
+    public Single getCondition() {
         return condition;
     }
 

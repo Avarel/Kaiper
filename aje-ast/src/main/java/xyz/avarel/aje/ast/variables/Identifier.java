@@ -15,23 +15,23 @@
 
 package xyz.avarel.aje.ast.variables;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class Identifier implements Expr {
-    private final Expr parent;
+public class Identifier implements Single {
+    private final Single parent;
     private final String name;
 
     public Identifier(String name) {
         this(null, name);
     }
 
-    public Identifier(Expr parent, String name) {
+    public Identifier(Single parent, String name) {
         this.parent = parent;
         this.name = name;
     }
 
-    public Expr getParent() {
+    public Single getParent() {
         return parent;
     }
 
@@ -60,7 +60,7 @@ public class Identifier implements Expr {
             builder.append('\n');
             builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append(name);
         } else {
-            Expr.super.ast(builder, indent, isTail);
+            Single.super.ast(builder, indent, isTail);
         }
     }
 }

@@ -17,8 +17,9 @@ package xyz.avarel.aje.ast.flow;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class ForEachExpr implements Expr {
+public class ForEachExpr implements Single {
     private final String variant;
     private final Expr iterable;
     private final Expr action;

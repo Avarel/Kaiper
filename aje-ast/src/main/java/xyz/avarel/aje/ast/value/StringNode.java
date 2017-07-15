@@ -15,10 +15,10 @@
 
 package xyz.avarel.aje.ast.value;
 
-import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
-public class StringNode implements Expr {
+public class StringNode implements Single {
     private final String value;
 
     public StringNode(String value) {

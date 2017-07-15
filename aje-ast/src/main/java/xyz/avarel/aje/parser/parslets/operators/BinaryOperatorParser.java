@@ -16,6 +16,7 @@
 package xyz.avarel.aje.parser.parslets.operators;
 
 import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.value.BooleanNode;
@@ -39,6 +40,10 @@ public class BinaryOperatorParser extends BinaryParser {
 
     @Override
     public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!(left instanceof Single)) {
+            throw new SyntaxException("Internal compiler error", token.getPosition());
+        }
+
         if (left instanceof Identifier) {
             if (parser.match(TokenType.ASSIGN)) {
                 if (parser.getLast().getPosition().getIndex() - token.getPosition().getIndex() != 2) {
@@ -46,25 +51,25 @@ public class BinaryOperatorParser extends BinaryParser {
                             parser.getLast().getPosition());
                 }
 
-                Expr right = parser.parseExpr(0);
+                Single right = parser.parseSingle();
                 return new AssignmentExpr(
                         ((Identifier) left).getName(),
-                        new BinaryOperation(left, right, operator)
+                        new BinaryOperation((Single) left, right, operator)
                 );
             }
         }
 
-        Expr right = parser.parseExpr(getPrecedence() - (isLeftAssoc() ? 0 : 1));
+        Single right = parser.parseSingle(getPrecedence() - (isLeftAssoc() ? 0 : 1));
 
         if ((left instanceof IntNode || left instanceof DecimalNode)
                 && (right instanceof IntNode || right instanceof DecimalNode)) {
-            return optimizeArithmetic(left, right, operator);
+            return optimizeArithmetic((Single) left, right, operator);
         }
 
-        return new BinaryOperation(left, right, operator);
+        return new BinaryOperation((Single) left, right, operator);
     }
 
-    private Expr optimizeArithmetic(Expr left, Expr right, BinaryOperatorType operator) {
+    private Single optimizeArithmetic(Single left, Single right, BinaryOperatorType operator) {
         boolean endInt = left instanceof IntNode && right instanceof IntNode;
         double leftValue;
         if (left instanceof IntNode) {

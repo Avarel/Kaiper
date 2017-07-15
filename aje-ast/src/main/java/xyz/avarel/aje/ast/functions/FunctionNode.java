@@ -17,11 +17,12 @@ package xyz.avarel.aje.ast.functions;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.ExprVisitor;
+import xyz.avarel.aje.ast.Single;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FunctionNode implements Expr {
+public class FunctionNode implements Single {
     private final String name;
     private final List<ParameterData> parameters;
     private final Expr expr;
