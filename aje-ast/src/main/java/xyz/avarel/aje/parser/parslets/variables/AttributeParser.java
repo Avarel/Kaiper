@@ -24,7 +24,6 @@ import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.ast.variables.AssignmentExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
-import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
@@ -36,27 +35,23 @@ public class AttributeParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        if (!(left instanceof Single)) {
-            throw new SyntaxException("Internal compiler error", token.getPosition());
-        }
-
+    public Expr parse(AJEParser parser, Single left, Token token) {
         Token name = parser.eat(TokenType.IDENTIFIER);
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr((Single) left, name.getString(), parser.parseSingle());
+            return new AssignmentExpr(left, name.getString(), parser.parseSingle());
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
-            Single getOp = new Identifier((Single) left, token.getString());
+            Single getOp = new Identifier(left, token.getString());
 
             return new ConditionalExpr(
                     new BinaryOperation(
                             getOp,
                             UndefinedNode.VALUE,
                             BinaryOperatorType.EQUALS),
-                    new AssignmentExpr((Single) left, name.getString(), parser.parseSingle()),
+                    new AssignmentExpr(left, name.getString(), parser.parseSingle()),
                     getOp);
         }
 
-        return new Identifier((Single) left, name.getString());
+        return new Identifier(left, name.getString());
     }
 }

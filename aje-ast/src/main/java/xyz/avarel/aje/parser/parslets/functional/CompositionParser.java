@@ -33,11 +33,7 @@ public class CompositionParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        if (!(left instanceof Single)) {
-            throw new SyntaxException("Internal compiler error", token.getPosition());
-        }
-
+    public Expr parse(AJEParser parser, Single left, Token token) {
         if (!parser.getParserFlags().allowInvocation()) {
             throw new SyntaxException("Function creation are disabled");
         }
@@ -47,11 +43,11 @@ public class CompositionParser extends BinaryParser {
         switch (token.getType()) { // Compiles down to Function.compose(f1, f2)
             case FORWARD_COMPOSITION: {
                 Single right = parser.parseSingle(getPrecedence());
-                return new Invocation(identifier, Arrays.asList(right, (Single) left));
+                return new Invocation(identifier, Arrays.asList(right, left));
             }
             case BACKWARD_COMPOSITION: {
                 Single right = parser.parseSingle(getPrecedence() - 1);
-                return new Invocation(identifier, Arrays.asList((Single) left, right));
+                return new Invocation(identifier, Arrays.asList(left, right));
             }
             default:
                 throw new SyntaxException("Illegal token passed into composition parser");

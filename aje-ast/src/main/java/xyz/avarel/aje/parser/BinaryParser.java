@@ -15,6 +15,11 @@
 
 package xyz.avarel.aje.parser;
 
+import xyz.avarel.aje.ast.Expr;
+import xyz.avarel.aje.ast.Single;
+import xyz.avarel.aje.exceptions.SyntaxException;
+import xyz.avarel.aje.lexer.Token;
+
 public abstract class BinaryParser implements InfixParser {
     private final int precedence;
     private final boolean leftAssoc;
@@ -27,6 +32,16 @@ public abstract class BinaryParser implements InfixParser {
         this.precedence = precedence;
         this.leftAssoc = leftAssoc;
     }
+
+    @Override
+    public Expr parse(AJEParser parser, Expr left, Token token) {
+        if (!(left instanceof Single)) {
+            throw new SyntaxException("Internal compiler error", token.getPosition());
+        }
+        return parse(parser, (Single) left, token);
+    }
+
+    public abstract Expr parse(AJEParser parser, Single left, Token token);
 
     @Override
     public int getPrecedence() {

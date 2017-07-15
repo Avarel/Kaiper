@@ -25,7 +25,6 @@ import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.value.UndefinedNode;
-import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Position;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
@@ -38,19 +37,15 @@ public class GetSetParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
-        if (!(left instanceof Single)) {
-            throw new SyntaxException("Internal compiler error", token.getPosition());
-        }
-
+    public Expr parse(AJEParser parser, Single left, Token token) {
         if (parser.match(TokenType.COLON)) {
-            return parseEnd(parser, token.getPosition(), (Single) left, UndefinedNode.VALUE);
+            return parseEnd(parser, token.getPosition(), left, UndefinedNode.VALUE);
         }
 
         Single key = parser.parseSingle();
 
         if (parser.match(TokenType.COLON)) {
-            return parseEnd(parser, token.getPosition(), (Single) left, key);
+            return parseEnd(parser, token.getPosition(), left, key);
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
@@ -58,21 +53,21 @@ public class GetSetParser extends BinaryParser {
         // SET
         if (parser.match(TokenType.ASSIGN)) {
             Single value = parser.parseSingle();
-            return new SetOperation((Single) left, key, value);
+            return new SetOperation(left, key, value);
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
             Single value = parser.parseSingle();
 
-            Single getOp = new GetOperation((Single) left, key);
+            Single getOp = new GetOperation(left, key);
             return new ConditionalExpr(
                     new BinaryOperation(
                             getOp,
                             UndefinedNode.VALUE,
                             BinaryOperatorType.EQUALS),
-                    new SetOperation((Single) left, key, value),
+                    new SetOperation(left, key, value),
                     getOp);
         }
 
-        return new GetOperation((Single) left, key);
+        return new GetOperation(left, key);
     }
 
     public Single parseEnd(AJEParser parser, Position position, Single left, Single start) {
