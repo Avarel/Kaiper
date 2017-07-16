@@ -18,11 +18,12 @@ package xyz.avarel.aje.runtime.types;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.scope.Scope;
+import xyz.avarel.aje.scope.ScopeContainer;
 
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Type<T> implements Obj<Type> {
+public class Type<T> implements Obj<Type>, ScopeContainer {
     public static final Type<Type> TYPE = new TypeObj();
 
     private final Type parent;
@@ -73,11 +74,7 @@ public class Type<T> implements Obj<Type> {
 
     @Override
     public Obj getAttr(String name) {
-        if (scope.contains(name)) {
-            return scope.lookup(name);
-        } else {
-            throw new ComputeException("Unable to read attribute " + name + " of " + toString());
-        }
+        return scope.lookup(name);
     }
 
     @Override

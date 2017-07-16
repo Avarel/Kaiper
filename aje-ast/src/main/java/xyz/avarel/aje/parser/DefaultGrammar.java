@@ -25,7 +25,6 @@ import xyz.avarel.aje.parser.parslets.GroupParser;
 import xyz.avarel.aje.parser.parslets.flow.ForEachParser;
 import xyz.avarel.aje.parser.parslets.flow.IfElseParser;
 import xyz.avarel.aje.parser.parslets.flow.ReturnParser;
-import xyz.avarel.aje.parser.parslets.functional.CompositionParser;
 import xyz.avarel.aje.parser.parslets.functional.PipeParser;
 import xyz.avarel.aje.parser.parslets.functions.*;
 import xyz.avarel.aje.parser.parslets.nodes.*;
@@ -78,6 +77,9 @@ public class DefaultGrammar extends Grammar {
         infix(TokenType.PERCENT, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, BinaryOperatorType.MODULUS));
         infix(TokenType.CARET, new BinaryOperatorParser(Precedence.EXPONENTIAL, false, BinaryOperatorType.POWER));
 
+        infix(TokenType.SHIFT_RIGHT, new BinaryOperatorParser(Precedence.SHIFT, true, BinaryOperatorType.SHR));
+        infix(TokenType.SHIFT_LEFT, new BinaryOperatorParser(Precedence.SHIFT, true, BinaryOperatorType.SHL));
+
         // RELATIONAL
         infix(TokenType.EQUALS, new BinaryOperatorParser(Precedence.EQUALITY, true, BinaryOperatorType.EQUALS));
         infix(TokenType.NOT_EQUAL, new BinaryOperatorParser(Precedence.EQUALITY, true, BinaryOperatorType.NOT_EQUALS));
@@ -104,9 +106,5 @@ public class DefaultGrammar extends Grammar {
         PipeParser pipeParser = new PipeParser();
         infix(TokenType.PIPE_BACKWARD, pipeParser);
         infix(TokenType.PIPE_FORWARD, pipeParser);
-
-        CompositionParser compositionParser = new CompositionParser();
-        infix(TokenType.BACKWARD_COMPOSITION, compositionParser);
-        infix(TokenType.FORWARD_COMPOSITION, compositionParser);
     }
 }

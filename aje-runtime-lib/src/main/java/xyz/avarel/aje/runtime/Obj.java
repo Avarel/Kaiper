@@ -18,8 +18,6 @@ package xyz.avarel.aje.runtime;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.ReferenceFunc;
-import xyz.avarel.aje.runtime.numbers.Decimal;
-import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.Arrays;
@@ -47,74 +45,74 @@ public interface Obj<J> {
 
     /**
      * Addition operator in AJE. Default symbol is {@code +}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
     default Obj plus(Obj other) {
-        throw unimplemented("plus");
+        throw unimplemented("plus", other);
     }
     
     /**
      * Subtraction operator in AJE. Default symbol is {@code -}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
     default Obj minus(Obj other) {
-        throw unimplemented("minus");
+        throw unimplemented("minus", other);
     }
     
     /**
      * Multiplication operator in AJE. Default symbol is {@code *}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
     default Obj times(Obj other) {
-        throw unimplemented("multiplication");
+        throw unimplemented("multiplication", other);
     }
     
     /**
      * Division operator in AJE. Default symbol is {@code /}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
     default Obj divide(Obj other) {
-        throw unimplemented("division");
+        throw unimplemented("division", other);
     }
     
     /**
      * Modulus operator in AJE. Default symbol is {@code %}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
     default Obj mod(Obj other) {
-        throw unimplemented("modulus");
+        throw unimplemented("modulus", other);
     }
     
     /**
      * Exponentiation operator in AJE. Default symbol is {@code ^}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
     default Obj pow(Obj other) {
-        throw unimplemented("exponentiation");
+        throw unimplemented("exponentiation", other);
     }
     
     /**
@@ -150,55 +148,77 @@ public interface Obj<J> {
 
     /**
      * Greater than operator in AJE. Default symbol is {@code >}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      *
      * @param   other
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
     default Obj greaterThan(Obj other) {
-        throw unimplemented("greater than");
+        throw unimplemented("greater than", other);
     }
 
     /**
      * Less than operator in AJE. Default symbol is {@code <}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      *
      * @param   other
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
     default Obj lessThan(Obj other) {
-        throw unimplemented("less than");
+        throw unimplemented("less than", other);
     }
 
     /**
      * Or operator in AJE. Default symbol is {@code ||}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      *
      * @param   other
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
     default Obj or(Obj other) {
-        throw unimplemented("or");
+        throw unimplemented("or", other);
     }
 
     /**
      * And operator in AJE. Default symbol is {@code &&}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      *
      * @param   other
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
     default Obj and(Obj other) {
-        throw unimplemented("and");
+        throw unimplemented("and", other);
+    }
+
+    /**
+     * And operator in AJE. Default symbol is {@code &&}.
+     * <br> Implementation should default to error if not implemented.
+     *
+     * @param other Right {@link Obj} operand.
+     * @return The {@link Obj} result of the operation.
+     */
+    default Obj shl(Obj other) {
+        throw unimplemented("shift left", other);
+    }
+
+    /**
+     * And operator in AJE. Default symbol is {@code &&}.
+     * <br> Implementation should default to error if not implemented.
+     *
+     * @param other Right {@link Obj} operand.
+     * @return The {@link Obj} result of the operation.
+     */
+    default Obj shr(Obj other) {
+        throw unimplemented("shift right", other);
     }
 
     /**
      * Invcoation operator in AJE. Default symbol is {@code a(b, c...)}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      *
      * @param   arguments
      *          List of {@link Obj} arguments.
@@ -210,7 +230,7 @@ public interface Obj<J> {
 
     /**
      * Invcoation operator in AJE. Default symbol is {@code a(b, c...)}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      *
      * @param   arguments
      *          Array of {@link Obj} arguments.
@@ -221,11 +241,11 @@ public interface Obj<J> {
     }
 
     default Obj slice(Obj start, Obj end, Obj step) {
-        return Undefined.VALUE;
+        throw unimplemented("slice");
     }
 
     /**
-     * @return  This {@link Obj}.
+     * @return This {@link Obj}.
      */
     default Obj identity() {
         return this;
@@ -233,7 +253,7 @@ public interface Obj<J> {
 
     /**
      * Get operator in AJE. Default symbol is {@code a[b]}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      *
      * @param   key
      *          Right {@link Obj} operand.
@@ -244,12 +264,12 @@ public interface Obj<J> {
     }
 
     default Obj set(Obj key, Obj value) {
-        throw unimplemented("set");
+        throw unimplemented("set property");
     }
 
     /**
      * Attribute operator in AJE. Default symbol is {@code a.b}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      *
      * @param   name
      *          Attribute name.
@@ -262,12 +282,12 @@ public interface Obj<J> {
             return new ReferenceFunc(this, (Func) obj);
         }
 
-        throw new ComputeException("Unable to read attribute " + name + " of " + toString());
+        return obj;
     }
 
     /**
      * Set attribute operator in AJE. Default symbol is {@code a.b = c}.
-     * <br> Implementation should defaults to returning {@link Undefined#VALUE} if not implemented.
+     * <br> Implementation should default to error if not implemented.
      *
      * @param   name
      *          Attribute name.
@@ -276,54 +296,54 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj setAttr(String name, Obj value) {
-        return Undefined.VALUE;
+        throw unimplemented("set attribute");
     }
 
 
-
-
-
-
-    default Obj plus(int other) {
-        return plus(Int.of(other));
-    }
-    default Obj minus(int other) {
-        return minus(Int.of(other));
-    }
-    default Obj times(int other) {
-        return times(Int.of(other));
-    }
-    default Obj divide(int other) {
-        return divide(Int.of(other));
-    }
-    default Obj mod(int other) {
-        return mod(Int.of(other));
-    }
-    default Obj pow(int other) {
-        return pow(Int.of(other));
-    }
-
-    default Obj plus(double other) {
-        return plus(Decimal.of(other));
-    }
-    default Obj minus(double other) {
-        return minus(Decimal.of(other));
-    }
-    default Obj times(double other) {
-        return times(Decimal.of(other));
-    }
-    default Obj divide(double other) {
-        return divide(Decimal.of(other));
-    }
-    default Obj mod(double other) {
-        return mod(Decimal.of(other));
-    }
-    default Obj pow(double other) {
-        return pow(Decimal.of(other));
-    }
+//    default Obj plus(int other) {
+//        return plus(Int.of(other));
+//    }
+//    default Obj minus(int other) {
+//        return minus(Int.of(other));
+//    }
+//    default Obj times(int other) {
+//        return times(Int.of(other));
+//    }
+//    default Obj divide(int other) {
+//        return divide(Int.of(other));
+//    }
+//    default Obj mod(int other) {
+//        return mod(Int.of(other));
+//    }
+//    default Obj pow(int other) {
+//        return pow(Int.of(other));
+//    }
+//
+//    default Obj plus(double other) {
+//        return plus(Decimal.of(other));
+//    }
+//    default Obj minus(double other) {
+//        return minus(Decimal.of(other));
+//    }
+//    default Obj times(double other) {
+//        return times(Decimal.of(other));
+//    }
+//    default Obj divide(double other) {
+//        return divide(Decimal.of(other));
+//    }
+//    default Obj mod(double other) {
+//        return mod(Decimal.of(other));
+//    }
+//    default Obj pow(double other) {
+//        return pow(Decimal.of(other));
+//    }
 
     default ComputeException unimplemented(String string) {
         return new ComputeException(getType() + " does not support " + string + " operator");
+    }
+
+    default ComputeException unimplemented(String string, Obj other) {
+        return new ComputeException(getType() + " does not support " + string + " operator with " + other.getType());
     }
 
     class ObjType extends Type<Obj> {

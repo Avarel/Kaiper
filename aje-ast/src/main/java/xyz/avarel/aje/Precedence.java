@@ -20,21 +20,23 @@ package xyz.avarel.aje;
  */
 public class Precedence {
     /* a.b */
-    public static final int POSTFIX = 12;
+    public static final int POSTFIX = 13;
 
-    public static final int BLOCK_PARAM = 11;
+    public static final int BLOCK_PARAM = 12;
 
     /* a ^ b */
-    public static final int EXPONENTIAL = 10;
+    public static final int EXPONENTIAL = 11;
 
     /* -a | +a | !a | ~a */
-    public static final int PREFIX = 9;
+    public static final int PREFIX = 10;
 
     /* a * b | a / b | a % b */
-    public static final int MULTIPLICATIVE = 8;
+    public static final int MULTIPLICATIVE = 9;
 
     /* a + b | a - b */
-    public static final int ADDITIVE = 7;
+    public static final int ADDITIVE = 8;
+
+    public static final int SHIFT = 7;
 
     /* a..b */
     public static final int RANGE_TO = 6;

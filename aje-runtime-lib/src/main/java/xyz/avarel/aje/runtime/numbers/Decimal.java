@@ -74,7 +74,7 @@ public class Decimal implements Obj<Double> {
         if (other instanceof Decimal) {
             return plus((Decimal) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.plus(other);
     }
 
     private Decimal plus(Decimal other) {
@@ -86,7 +86,7 @@ public class Decimal implements Obj<Double> {
         if (other instanceof Decimal) {
             return minus((Decimal) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.minus(other);
     }
 
     private Decimal minus(Decimal other) {
@@ -98,7 +98,7 @@ public class Decimal implements Obj<Double> {
         if (other instanceof Decimal) {
             return times((Decimal) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.times(other);
     }
 
     private Decimal times(Decimal other) {
@@ -110,7 +110,7 @@ public class Decimal implements Obj<Double> {
         if (other instanceof Decimal) {
             return divide((Decimal) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.divide(other);
     }
 
     public Decimal divide(Decimal other) {
@@ -122,7 +122,7 @@ public class Decimal implements Obj<Double> {
         if (other instanceof Decimal) {
             return pow((Decimal) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.pow(other);
     }
 
     private Decimal pow(Decimal other) {
@@ -134,7 +134,7 @@ public class Decimal implements Obj<Double> {
         if (other instanceof Decimal) {
             return mod((Decimal) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.mod(other);
     }
 
     private Decimal mod(Decimal other) {

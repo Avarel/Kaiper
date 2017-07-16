@@ -13,23 +13,8 @@
  * under the License.
  */
 
-package xyz.avarel.aje.ast.operations;
+package xyz.avarel.aje.scope;
 
-public enum BinaryOperatorType {
-    PLUS,
-    MINUS,
-    TIMES,
-    DIVIDE,
-    MODULUS,
-    POWER,
-    EQUALS,
-    NOT_EQUALS,
-    GREATER_THAN,
-    GREATER_THAN_EQUAL,
-    LESS_THAN,
-    LESS_THAN_EQUAL,
-    AND,
-    OR,
-    SHL,
-    SHR,
+public interface ScopeContainer {
+    Scope getScope();
 }

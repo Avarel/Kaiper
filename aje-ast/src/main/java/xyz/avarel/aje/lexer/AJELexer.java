@@ -215,6 +215,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                         ? make(TokenType.AND)
                         : match('/')
                         ? nextComment()
+                        : match('*')
+                        ? nextBlockComment()
                         : make(TokenType.SLASH);
             case '%':
                 return make(TokenType.PERCENT);
@@ -241,7 +243,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 return match('=') // >=
                         ? make(TokenType.GTE)
                         : match('>') // >>
-                        ? make(TokenType.FORWARD_COMPOSITION)
+                        ? make(TokenType.SHIFT_RIGHT)
                         : make(TokenType.GT); // >
 
             case '<':
@@ -250,7 +252,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                         : match('|') // <|
                         ? make(TokenType.PIPE_BACKWARD)
                         : match('<') // <<
-                        ? make(TokenType.BACKWARD_COMPOSITION)
+                        ? make(TokenType.SHIFT_LEFT)
                         : make(TokenType.LT); // <
 
             case '|':
@@ -297,6 +299,22 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
     private Token nextComment() {
         while (hasNext() && peek() != '\n') {
+            advance();
+        }
+        return null;
+    }
+
+    private Token nextBlockComment() {
+        while (hasNext()) {
+            if (peek() == '*') {
+                System.out.println("got here");
+                advance();
+                if (peek() == '/') {
+                    advance();
+                    break;
+                }
+                back();
+            }
             advance();
         }
         return null;

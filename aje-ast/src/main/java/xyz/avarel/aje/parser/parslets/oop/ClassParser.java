@@ -44,7 +44,7 @@ public class ClassParser implements PrefixParser {
 
         ConstructorNode classConstructor = null;
 
-        Identifier classParent = new Identifier("Object");
+        Identifier classParent = AJEParserUtils.OBJ_ID;
         if (parser.match(TokenType.COLON)) {
             classParent = parser.parseIdentifier();
         }
@@ -62,18 +62,7 @@ public class ClassParser implements PrefixParser {
                     if (!(expr instanceof FunctionNode)) {
                         throw new SyntaxException("Internal compiler error");
                     }
-                    FunctionNode functionNode = (FunctionNode) expr;
-                    functionNode.getParameterExprs().add(0, new ParameterData("this", new Identifier(className)));
-
-                    classFunctions.add(functionNode);
-                } else if (parser.matchSoftKeyword("static")) {
-                    Single expr = parser.parseSingle();
-                    if (!(expr instanceof FunctionNode)) {
-                        throw new SyntaxException("Internal compiler error");
-                    }
-                    FunctionNode functionNode = (FunctionNode) expr;
-
-                    classFunctions.add(functionNode);
+                    classFunctions.add((FunctionNode) expr);
                 } else {
                     throw new SyntaxException(parser.peek(0).getType()
                             + " is not allowed in the top level of a class declaration",
@@ -95,6 +84,7 @@ public class ClassParser implements PrefixParser {
 
     private ConstructorNode parseConstructor(AJEParser parser) {
         Set<String> usedParameters = new HashSet<>();
+        usedParameters.add("this");
 
         List<ParameterData> constructorParameters = new ArrayList<>();
         List<Single> constructorSuperExprs = Collections.emptyList();
@@ -104,46 +94,47 @@ public class ClassParser implements PrefixParser {
 
         // constructorParameters = [var|val] name [: (parameterType)] [= (parameterDefault)]
 
-        if (parser.nextIs(TokenType.LEFT_PAREN)) {
-            parser.eat(TokenType.LEFT_PAREN);
-            if (!parser.match(TokenType.RIGHT_PAREN)) {
-                boolean requireDefault = false;
+        parser.eat(TokenType.LEFT_PAREN);
 
-                do {
-                    boolean parameterVariable = parser.match(TokenType.LET);
+        boolean requireDefault = false;
 
-                    ParameterData parameter = AJEParserUtils.parseParameter(parser, requireDefault);
+        ParameterData thisParameter = AJEParserUtils.parseParameter(parser, false);
+        constructorParameters.add(thisParameter);
 
-                    if (parameter.getDefault() != null) {
-                        requireDefault = true;
-                    }
+        while (parser.match(TokenType.COMMA)) {
+            boolean parameterVariable = parser.match(TokenType.LET);
 
-                    if (usedParameters.contains(parameter.getName())) {
-                        throw new SyntaxException("Duplicate parameter name",
-                                parser.getLast().getPosition());
-                    }
+            ParameterData parameter = AJEParserUtils.parseParameter(parser, requireDefault);
 
-                    if (parameter.isRest() && parser.match(TokenType.COMMA)) {
-                        throw new SyntaxException("Rest parameters must be the last parameter",
-                                parser.peek(0).getPosition());
-                    }
+            if (parameter.getDefault() != null) {
+                requireDefault = true;
+            }
 
-                    constructorParameters.add(parameter);
+            if (usedParameters.contains(parameter.getName())) {
+                throw new SyntaxException("Duplicate parameter name",
+                        parser.getLast().getPosition());
+            }
 
-                    if (parameterVariable) {
-                        constructorExpr.getExprs().add(
-                                new AssignmentExpr(
-                                        AJEParserUtils.THIS_ID,
-                                        parameter.getName(),
-                                        new Identifier(parameter.getName())
-                                )
-                        );
-                    }
+            if (parameter.isRest() && parser.match(TokenType.COMMA)) {
+                throw new SyntaxException("Rest parameters must be the last parameter",
+                        parser.peek(0).getPosition());
+            }
 
-                } while (parser.match(TokenType.COMMA));
-                parser.match(TokenType.RIGHT_PAREN);
+            usedParameters.add(parameter.getName());
+            constructorParameters.add(parameter);
+
+            if (parameterVariable) {
+                constructorExpr.getExprs().add(
+                        new AssignmentExpr(
+                                AJEParserUtils.THIS_ID,
+                                parameter.getName(),
+                                new Identifier(parameter.getName())
+                        )
+                );
             }
         }
+
+        parser.eat(TokenType.RIGHT_PAREN);
 
         if (parser.match(TokenType.COLON)) {
             parser.eatSoftKeyword("super");

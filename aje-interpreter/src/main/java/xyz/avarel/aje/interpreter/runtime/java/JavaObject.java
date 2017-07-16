@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.runtime.java;
+package xyz.avarel.aje.interpreter.runtime.java;
 
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;

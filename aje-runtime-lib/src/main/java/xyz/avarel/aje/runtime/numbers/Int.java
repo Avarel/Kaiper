@@ -77,7 +77,7 @@ public class Int implements Obj<Integer> {
         if (other instanceof Int) {
             return this.plus((Int) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.plus(other);
     }
 
     private Int plus(Int other) {
@@ -89,7 +89,7 @@ public class Int implements Obj<Integer> {
         if (other instanceof Int) {
             return this.minus((Int) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.minus(other);
     }
 
     private Int minus(Int other) {
@@ -101,7 +101,7 @@ public class Int implements Obj<Integer> {
         if (other instanceof Int) {
             return this.times((Int) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.times(other);
     }
 
     private Int times(Int other) {
@@ -113,7 +113,7 @@ public class Int implements Obj<Integer> {
         if (other instanceof Int) {
             return this.divide((Int) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.divide(other);
     }
 
     private Obj divide(Int other) {
@@ -128,7 +128,7 @@ public class Int implements Obj<Integer> {
         if (other instanceof Int) {
             return this.pow((Int) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.pow(other);
     }
 
     private Int pow(Int other) {
@@ -140,7 +140,7 @@ public class Int implements Obj<Integer> {
         if (other instanceof Int) {
             return this.mod((Int) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.mod(other);
     }
 
     private Int mod(Int other) {
@@ -186,6 +186,30 @@ public class Int implements Obj<Integer> {
 
     private Obj lessThan(Int other) {
         return Bool.of(value < other.value);
+    }
+
+    @Override
+    public Obj shl(Obj other) {
+        if (other instanceof Int) {
+            return this.shl((Int) other);
+        }
+        return Obj.super.shl(other);
+    }
+
+    private Int shl(Int other) {
+        return Int.of(value << other.value);
+    }
+
+    @Override
+    public Obj shr(Obj other) {
+        if (other instanceof Int) {
+            return this.shr((Int) other);
+        }
+        return Obj.super.shr(other);
+    }
+
+    private Int shr(Int other) {
+        return Int.of(value >> other.value);
     }
 
     private static class IntCache {

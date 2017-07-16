@@ -247,6 +247,12 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
         }
     }
 
+    @Override
+    public Obj shl(Obj other) {
+        this.add(other);
+        return this;
+    }
+
     private static class ArrayType extends Type<Array> {
         public ArrayType() {
             super("Array", new NativeConstructor(Parameter.of(Obj.TYPE, true)) {
@@ -272,7 +278,7 @@ public class Array extends ArrayList<Obj> implements Obj<List<Object>>, Iterable
                 }
             });
 
-            getScope().declare("append", new NativeFunc(Parameter.of(Obj.TYPE, true)) {
+            getScope().declare("append", new NativeFunc(Parameter.of("this", this), Parameter.of(Obj.TYPE, true)) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     ((Array) arguments.get(0)).addAll(arguments);

@@ -19,8 +19,9 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.types.Type;
 import xyz.avarel.aje.scope.Scope;
+import xyz.avarel.aje.scope.ScopeContainer;
 
-public class CompiledObj implements Obj {
+public class CompiledObj implements Obj, ScopeContainer {
     private final Type type;
     private final Scope scope;
 
@@ -56,6 +57,17 @@ public class CompiledObj implements Obj {
 
     @Override
     public String toString() {
-        return type.toString() + "$" + hashCode();
+        Obj method = scope.lookup("toString");
+        if (method == null) {
+            method = getType().getScope().lookup("toString");
+            if (method == null) {
+                return type.toString() + "$" + hashCode();
+            }
+            return method.invoke(this).toString();
+        } else {
+            return method.invoke(this).toString();
+        }
+
+
     }
 }

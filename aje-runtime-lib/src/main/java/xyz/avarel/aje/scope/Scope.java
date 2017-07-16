@@ -17,7 +17,6 @@ package xyz.avarel.aje.scope;
 
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,7 +44,7 @@ public class Scope {
             }
 
         }
-        return Undefined.VALUE;
+        return null;
     }
 
     public void declare(String key, Obj value) {

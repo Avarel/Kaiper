@@ -55,6 +55,22 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
     public abstract Obj invoke(List<Obj> arguments);
 
     @Override
+    public Obj shr(Obj other) { // this >> other
+        if (other instanceof Func) {
+            return new ComposedFunc((Func) other, this);
+        }
+        return Obj.super.shr(other);
+    }
+
+    @Override
+    public Obj shl(Obj other) { // this << other
+        if (other instanceof Func) {
+            return new ComposedFunc(this, (Func) other);
+        }
+        return Obj.super.shr(other);
+    }
+
+    @Override
     public String toString() {
         return "func(" + getParameters().stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
     }
@@ -62,13 +78,6 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
     public static class FunctionType extends Type<Func> {
         public FunctionType() {
             super("Function");
-
-            getScope().declare("compose", new NativeFunc(Parameter.of("this", this), Parameter.of(this)) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return new ComposedFunc((Func) arguments.get(0), (Func) arguments.get(1));
-                }
-            });
         }
     }
 }

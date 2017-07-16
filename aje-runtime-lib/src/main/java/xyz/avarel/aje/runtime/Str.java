@@ -70,7 +70,7 @@ public class Str implements Obj<String> {
         if (key instanceof Int) {
             return get((Int) key);
         }
-        return Undefined.VALUE;
+        return Obj.super.get(key);
     }
 
     private Obj get(Int index) {

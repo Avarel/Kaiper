@@ -22,8 +22,8 @@ package xyz.avarel.aje.loops;
 import xyz.avarel.aje.CompiledExpr;
 import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.interop.JavaModel;
+import xyz.avarel.aje.interpreter.runtime.java.JavaObject;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.java.JavaObject;
 
 import java.util.Scanner;
 

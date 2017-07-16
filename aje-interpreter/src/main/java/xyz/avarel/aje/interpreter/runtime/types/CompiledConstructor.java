@@ -88,7 +88,12 @@ public class CompiledConstructor extends Constructor {
     private CompiledObj eval(List<Obj> arguments, Scope scope) {
         Scope constructorScope = scope.subPool();
 
-        for (int i = 0; i < getArity(); i++) {
+        if (parameters.get(0).getType() != Obj.TYPE && targetType != parameters.get(0).getType()) {
+            throw new ComputeException("First parameter type is invalid");
+        }
+
+        // `this` param is always first, so make room, shoo
+        for (int i = 1; i < getArity(); i++) {
             Parameter parameter = parameters.get(i);
 
             Type type = parameter.getType();
@@ -142,6 +147,10 @@ public class CompiledConstructor extends Constructor {
             }
 
             if (targetType.getParent() != Obj.TYPE) {
+                if (!(targetType.getParent() instanceof CompiledType)) {
+                    throw new ComputeException(targetType.getParent() + " can not be extended (native type)");
+                }
+
                 Constructor parentConstructor = targetType.getParent().getConstructor();
 
                 if (parentConstructor == null) {
@@ -149,9 +158,7 @@ public class CompiledConstructor extends Constructor {
                 }
 
                 Obj superObject = parentConstructor.invoke(superArguments);
-                if (parentConstructor instanceof CompiledConstructor) {
-                    scope = scope.combine(((CompiledObj) superObject).getScope());
-                }
+                scope = scope.combine(((CompiledObj) superObject).getScope());
 
                 constructorScope.declare("super", superObject);
             }

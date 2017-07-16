@@ -1,24 +1,33 @@
 // Test file for FileTest.java
 
 class Meme {
-    constructor(let x = 1) {
+    constructor(this, let x = 1) {
         this.upper = 500
     }
+
+    def toString(this) = "memes * " + this.x
 
     def memes() = 500
 }
 
+/* how to mix scala + python + kotlin + elixir into 1 single bowl of salad
+   this could pass off as an esoteric lang LUL */
+
 class Dank : Meme {
-    constructor(x, let y, z) : super(x) {
+    constructor(this, x, let y, z) : super(x) {
         this.level = super.upper + 75
     }
 
-    def instanceMethod() = this.x + 5000
+    def instanceMethod(this) = this.x + 5000
 
-    static def memes() = 2
+    def toString(this) = String(this.x) + "*" + this.y
+
+    def memes() = 2
 }
 
 let i1 = Meme()
 let i2 = Dank(1,2,3)
 
-[i1.x, i2.x, i2.y, i2.level, i1.memes(), i1.upper, i2.upper, Dank.instanceMethod(i2), i2.instanceMethod()]
+def wewLad(x: Meme) = x.toString()
+
+[wewLad(i1), wewLad(i2), String(i2)]

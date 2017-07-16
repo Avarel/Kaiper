@@ -103,6 +103,10 @@ public class AJEParserUtils {
         }
 
         if (parser.match(TokenType.ASSIGN)) {
+            if (parameterName.equals("this")) {
+                throw new SyntaxException("Instance parameters can not have defaults", parser.getLast().getPosition());
+            }
+
             parameterDefault = parser.parseSingle();
         } else if (requireDef) {
             throw new SyntaxException("All parameters after the first default requires a default",

@@ -57,7 +57,7 @@ public enum Bool implements Obj<Boolean> {
         if (other instanceof Bool) {
             return or((Bool) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.shr(other);
     }
 
     public Bool or(Bool other) {
@@ -69,7 +69,7 @@ public enum Bool implements Obj<Boolean> {
         if (other instanceof Bool) {
             return and((Bool) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.and(other);
     }
 
     public Bool and(Bool other) {
@@ -86,7 +86,7 @@ public enum Bool implements Obj<Boolean> {
         if (other instanceof Bool) {
             return pow((Bool) other);
         }
-        return Undefined.VALUE;
+        return Obj.super.pow(other);
     }
 
     public Bool pow(Bool other) {

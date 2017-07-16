@@ -210,6 +210,12 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
                 return left.or(right);
             case AND:
                 return left.and(right);
+
+            case SHL:
+                return left.shl(right);
+            case SHR:
+                return left.shr(right);
+
             default:
                 throw new ComputeException("Unknown binary operator");
         }
