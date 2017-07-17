@@ -23,21 +23,18 @@ import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.Parameter;
-import xyz.avarel.aje.runtime.types.Type;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CompiledFunc extends Func {
-    final String name;
-    final List<Parameter> parameters;
-    final Expr expr;
-    final Scope scope;
-    final ExprInterpreter visitor;
+    private final List<Parameter> parameters;
+    private final Expr expr;
+    private final Scope scope;
+    private final ExprInterpreter visitor;
 
     public CompiledFunc(String name, List<Parameter> parameters, Expr expr, ExprInterpreter visitor, Scope scope) {
-        this.name = name;
+        super(name);
         this.parameters = parameters;
         this.expr = expr;
         this.scope = scope;
@@ -55,34 +52,17 @@ public class CompiledFunc extends Func {
     }
 
     @Override
-    public String toString() {
-        return "func" + (name == null ? "" : " " + name) + "(" + getParameters().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(", ")) + ")";
-    }
-
-    @Override
     public Obj invoke(List<Obj> arguments) {
         Scope scope = this.scope.subPool();
         for (int i = 0; i < getArity(); i++) {
             Parameter parameter = parameters.get(i);
 
-            Type type = parameter.getType();
-
             if (i < arguments.size()) {
-                if (arguments.get(i).getType().is(type)) {
-                    scope.declare(parameter.getName(), arguments.get(i));
-                } else if (type == Obj.TYPE) {
-                    scope.declare(parameter.getName(), Undefined.VALUE);
-                } else {
-                    throw typeError(parameters, arguments);
-                }
+                scope.declare(parameter.getName(), arguments.get(i));
             } else if (parameter.hasDefault()) {
                 scope.declare(parameter.getName(), parameter.getDefault());
-            } else if (type == Obj.TYPE) {
-                scope.declare(parameter.getName(), Undefined.VALUE);
             } else {
-                throw typeError(parameters, arguments);
+                scope.declare(parameter.getName(), Undefined.VALUE);
             }
         }
 
@@ -91,19 +71,8 @@ public class CompiledFunc extends Func {
 
             if (lastParam.isRest()) {
                 if (arguments.size() > getArity()) {
-                    Type type = lastParam.getType();
                     List<Obj> sublist = arguments.subList(parameters.size() - 1, arguments.size());
-                    Array array = new Array();
-
-                    for (Obj obj : sublist) {
-                        if (type == Obj.TYPE || obj.getType().is(type)) {
-                            array.add(obj);
-                        } else {
-                            throw typeError(parameters, arguments);
-                        }
-                    }
-
-                    scope.declare(lastParam.getName(), array);
+                    scope.declare(lastParam.getName(), Array.ofList(sublist));
                 } else {
                     scope.declare(lastParam.getName(), new Array());
                 }

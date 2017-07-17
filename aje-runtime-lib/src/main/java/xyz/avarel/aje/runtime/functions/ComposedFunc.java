@@ -26,6 +26,8 @@ public class ComposedFunc extends Func {
     private final Func inner;
 
     public ComposedFunc(Func outer, Func inner) {
+        super(outer.getName() + "<<" + inner.getName());
+
         this.outer = outer;
         this.inner = inner;
 

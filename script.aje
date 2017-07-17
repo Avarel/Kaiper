@@ -1,33 +1,7 @@
 // Test file for FileTest.java
 
-class Meme {
-    constructor(this, let x = 1) {
-        this.upper = 500
-    }
-
-    def toString(this) = "memes * " + this.x
-
-    def memes() = 500
+if (true) {
+    1
+} else {
+    2
 }
-
-/* how to mix scala + python + kotlin + elixir into 1 single bowl of salad
-   this could pass off as an esoteric lang LUL */
-
-class Dank : Meme {
-    constructor(this, x, let y, z) : super(x) {
-        this.level = super.upper + 75
-    }
-
-    def instanceMethod(this) = this.x + 5000
-
-    def toString(this) = String(this.x) + "*" + this.y
-
-    def memes() = 2
-}
-
-let i1 = Meme()
-let i2 = Dank(1,2,3)
-
-def wewLad(x: Meme) = x.toString()
-
-[wewLad(i1), wewLad(i2), String(i2)]

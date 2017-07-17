@@ -16,8 +16,6 @@
 package xyz.avarel.aje.runtime;
 
 import xyz.avarel.aje.exceptions.ComputeException;
-import xyz.avarel.aje.runtime.functions.Func;
-import xyz.avarel.aje.runtime.functions.ReferenceFunc;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.Arrays;
@@ -28,8 +26,8 @@ import java.util.List;
  *
  * @param <J> Java representation of the object.
  */
-public interface Obj<J> {
-    Type<Obj> TYPE = new ObjType();
+public interface Obj {
+    Type<Obj> TYPE = new Type<>("Object");
 
     /**
      * @return The {@link Type} of the object.
@@ -37,9 +35,9 @@ public interface Obj<J> {
     Type getType();
 
     /**
-     * @return The {@link J java} object representation of this AJE object or {@code null}.
+     * @return The Java object representation of this AJE object or {@code null}.
      */
-    default J toJava() {
+    default Object toJava() {
         return null;
     }
 
@@ -264,7 +262,7 @@ public interface Obj<J> {
     }
 
     default Obj set(Obj key, Obj value) {
-        throw unimplemented("set property");
+        throw unimplemented("set");
     }
 
     /**
@@ -276,13 +274,7 @@ public interface Obj<J> {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj getAttr(String name) {
-        Obj obj = getType().getAttr(name);
-
-        if (obj instanceof Func) {
-            return new ReferenceFunc(this, (Func) obj);
-        }
-
-        return obj;
+        throw unimplemented("get attribute");
     }
 
     /**
@@ -299,44 +291,15 @@ public interface Obj<J> {
         throw unimplemented("set attribute");
     }
 
+    // no operator, purely internal
+    @SuppressWarnings("unchecked")
+    default <T extends Obj> T castTo(Type<T> type) {
+        if (getType().is(type)) {
+            return (T) this;
+        }
 
-//    default Obj plus(int other) {
-//        return plus(Int.of(other));
-//    }
-//    default Obj minus(int other) {
-//        return minus(Int.of(other));
-//    }
-//    default Obj times(int other) {
-//        return times(Int.of(other));
-//    }
-//    default Obj divide(int other) {
-//        return divide(Int.of(other));
-//    }
-//    default Obj mod(int other) {
-//        return mod(Int.of(other));
-//    }
-//    default Obj pow(int other) {
-//        return pow(Int.of(other));
-//    }
-//
-//    default Obj plus(double other) {
-//        return plus(Decimal.of(other));
-//    }
-//    default Obj minus(double other) {
-//        return minus(Decimal.of(other));
-//    }
-//    default Obj times(double other) {
-//        return times(Decimal.of(other));
-//    }
-//    default Obj divide(double other) {
-//        return divide(Decimal.of(other));
-//    }
-//    default Obj mod(double other) {
-//        return mod(Decimal.of(other));
-//    }
-//    default Obj pow(double other) {
-//        return pow(Decimal.of(other));
-//    }
+        throw new ComputeException("Type mismatch: " + getType() + " can not be casted to " + type);
+    }
 
     default ComputeException unimplemented(String string) {
         return new ComputeException(getType() + " does not support " + string + " operator");
@@ -344,27 +307,5 @@ public interface Obj<J> {
 
     default ComputeException unimplemented(String string, Obj other) {
         return new ComputeException(getType() + " does not support " + string + " operator with " + other.getType());
-    }
-
-    class ObjType extends Type<Obj> {
-        public ObjType() {
-            super("Object");
-        }
-
-        public void initialize() {
-//            getScope().declare("get", new NativeFunc(Parameter.of("this", this), Parameter.of(this)) {
-//                @Override
-//                protected Obj eval(List<Obj> arguments) {
-//                    return arguments.get(0).get(arguments.get(1));
-//                }
-//            });
-//            getScope().declare("set",
-//                    new NativeFunc(Parameter.of("this", this), Parameter.of(this), Parameter.of(this)) {
-//                @Override
-//                protected Obj eval(List<Obj> arguments) {
-//                    return arguments.get(0).set(arguments.get(1), arguments.get(2));
-//                }
-//            });
-        }
     }
 }

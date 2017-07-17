@@ -10,8 +10,6 @@ import xyz.avarel.aje.ast.flow.ReturnExpr;
 import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.invocation.Invocation;
-import xyz.avarel.aje.ast.oop.ClassNode;
-import xyz.avarel.aje.ast.oop.ConstructorNode;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
@@ -273,26 +271,14 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     @Override
     public DataOutputConsumer visit(DeclarationExpr expr, Void scope) {
         int name = stringConst(expr.getName());
-        int flags = expr.getFlags();
 
         if (expr.getExpr() == null) {
             return out -> {
                 DECLARE.writeInto(out);
                 out.writeShort(name);
-                out.writeByte(flags);
             };
         }
 
         return null; //TODO LATER
-    }
-
-    @Override
-    public DataOutputConsumer visit(ClassNode expr, Void scope) {
-        return null;
-    }
-
-    @Override
-    public DataOutputConsumer visit(ConstructorNode expr, Void scope) {
-        return null;
     }
 }

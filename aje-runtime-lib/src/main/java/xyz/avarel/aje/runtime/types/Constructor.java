@@ -22,6 +22,15 @@ import java.util.stream.Collectors;
 public abstract class Constructor extends Func {
     protected Type targetType;
 
+    protected Constructor() {
+        super("constructor");
+    }
+
+    @Override
+    public String getName() {
+        return targetType + "." + super.getName();
+    }
+
     @Override
     public int getArity() {
         return getParameters().size();

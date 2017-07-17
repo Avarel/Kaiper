@@ -13,13 +13,26 @@
  * under the License.
  */
 
-package xyz.avarel.aje.interpreter.runtime.types;
+package xyz.avarel.aje.runtime.modules;
 
-import xyz.avarel.aje.runtime.types.Type;
-import xyz.avarel.aje.scope.Scope;
+import xyz.avarel.aje.runtime.Obj;
 
-public class CompiledType extends Type<CompiledObj> {
-    public CompiledType(String name, Type parent, Scope scope, CompiledConstructor constructor) {
-        super(parent, name, scope, constructor);
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class NativeModule extends Module {
+    private final Map<String, Obj> map;
+
+    protected NativeModule() {
+        this.map = new HashMap<>();
+    }
+
+    public void declare(String name, Obj obj) {
+        map.put(name, obj);
+    }
+
+    @Override
+    public Obj getAttr(String name) {
+        return map.get(name);
     }
 }

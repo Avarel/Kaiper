@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JavaField extends JavaObject implements Obj<Object> {
+public class JavaField extends JavaObject implements Obj {
     private final JavaObject parent;
     private final String name;
 

@@ -35,8 +35,6 @@ public class FunctionParser implements PrefixParser {
             throw new SyntaxException("Function creation are disabled");
         }
 
-
-
         String name = null;
         if (parser.match(TokenType.IDENTIFIER)) {
             name = parser.getLast().getString();

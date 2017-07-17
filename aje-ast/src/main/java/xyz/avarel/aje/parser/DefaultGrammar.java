@@ -25,10 +25,13 @@ import xyz.avarel.aje.parser.parslets.GroupParser;
 import xyz.avarel.aje.parser.parslets.flow.ForEachParser;
 import xyz.avarel.aje.parser.parslets.flow.IfElseParser;
 import xyz.avarel.aje.parser.parslets.flow.ReturnParser;
-import xyz.avarel.aje.parser.parslets.functional.PipeParser;
-import xyz.avarel.aje.parser.parslets.functions.*;
+import xyz.avarel.aje.parser.parslets.functional.PipeBackwardParser;
+import xyz.avarel.aje.parser.parslets.functional.PipeForwardParser;
+import xyz.avarel.aje.parser.parslets.functions.FunctionParser;
+import xyz.avarel.aje.parser.parslets.functions.ImplicitFunctionParser;
+import xyz.avarel.aje.parser.parslets.functions.InvocationParser;
+import xyz.avarel.aje.parser.parslets.functions.LambdaFunctionParser;
 import xyz.avarel.aje.parser.parslets.nodes.*;
-import xyz.avarel.aje.parser.parslets.oop.ClassParser;
 import xyz.avarel.aje.parser.parslets.operators.BinaryOperatorParser;
 import xyz.avarel.aje.parser.parslets.operators.RangeOperatorParser;
 import xyz.avarel.aje.parser.parslets.operators.UnaryOperatorParser;
@@ -52,13 +55,12 @@ public class DefaultGrammar extends Grammar {
 
         // NODES
         prefix(TokenType.INT, new IntParser());
-        prefix(TokenType.DECIMAL, new DecimalParser());
+        prefix(TokenType.NUMBER, new DecimalParser());
         prefix(TokenType.BOOLEAN, new BoolParser());
         prefix(TokenType.TEXT, new TextParser());
         prefix(TokenType.UNDEFINED, new UndefinedParser());
-//        prefix(TokenType.ATOM, new AtomParser());
 
-        prefix(TokenType.CLASS, new ClassParser());
+
         prefix(TokenType.FUNCTION, new FunctionParser());
         prefix(TokenType.UNDERSCORE, new ImplicitFunctionParser());
         prefix(TokenType.LEFT_BRACE, new LambdaFunctionParser());
@@ -76,17 +78,16 @@ public class DefaultGrammar extends Grammar {
         infix(TokenType.SLASH, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, BinaryOperatorType.DIVIDE));
         infix(TokenType.PERCENT, new BinaryOperatorParser(Precedence.MULTIPLICATIVE, true, BinaryOperatorType.MODULUS));
         infix(TokenType.CARET, new BinaryOperatorParser(Precedence.EXPONENTIAL, false, BinaryOperatorType.POWER));
-
         infix(TokenType.SHIFT_RIGHT, new BinaryOperatorParser(Precedence.SHIFT, true, BinaryOperatorType.SHR));
         infix(TokenType.SHIFT_LEFT, new BinaryOperatorParser(Precedence.SHIFT, true, BinaryOperatorType.SHL));
+        infix(TokenType.RANGE_TO, new RangeOperatorParser());
 
         // RELATIONAL
         infix(TokenType.EQUALS, new BinaryOperatorParser(Precedence.EQUALITY, true, BinaryOperatorType.EQUALS));
         infix(TokenType.NOT_EQUAL, new BinaryOperatorParser(Precedence.EQUALITY, true, BinaryOperatorType.NOT_EQUALS));
         infix(TokenType.GT, new BinaryOperatorParser(Precedence.COMPARISON, true, BinaryOperatorType.GREATER_THAN));
         infix(TokenType.LT, new BinaryOperatorParser(Precedence.COMPARISON, true, BinaryOperatorType.LESS_THAN));
-        infix(TokenType.GTE,
-                new BinaryOperatorParser(Precedence.COMPARISON, true, BinaryOperatorType.GREATER_THAN_EQUAL));
+        infix(TokenType.GTE, new BinaryOperatorParser(Precedence.COMPARISON, true, BinaryOperatorType.GREATER_THAN_EQUAL));
         infix(TokenType.LTE, new BinaryOperatorParser(Precedence.COMPARISON, true, BinaryOperatorType.LESS_THAN_EQUAL));
 
         // Truth
@@ -94,17 +95,14 @@ public class DefaultGrammar extends Grammar {
         infix(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, BinaryOperatorType.AND));
         infix(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, BinaryOperatorType.OR));
 
-        infix(TokenType.RANGE_TO, new RangeOperatorParser());
-
         // Functional
         infix(TokenType.LEFT_PAREN, new InvocationParser());
-        infix(TokenType.LEFT_BRACE, new BlockParameterParser());
+        //infix(TokenType.LEFT_BRACE, new BlockParameterParser());
 
         infix(TokenType.LEFT_BRACKET, new GetSetParser());
         infix(TokenType.DOT, new AttributeParser());
-        //register(TokenType.ASSIGN, new AssignmentParser());
-        PipeParser pipeParser = new PipeParser();
-        infix(TokenType.PIPE_BACKWARD, pipeParser);
-        infix(TokenType.PIPE_FORWARD, pipeParser);
+
+        infix(TokenType.PIPE_BACKWARD, new PipeBackwardParser());
+        infix(TokenType.PIPE_FORWARD, new PipeForwardParser());
     }
 }

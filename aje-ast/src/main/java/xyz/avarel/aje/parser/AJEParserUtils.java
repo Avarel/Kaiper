@@ -95,11 +95,10 @@ public class AJEParserUtils {
 
         String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
 
-        Identifier parameterType = OBJ_ID;
         Single parameterDefault = null;
 
         if (parser.match(TokenType.COLON)) {
-            parameterType = parser.parseIdentifier();
+            parser.parseIdentifier(); // keep as type hint, dont do anything
         }
 
         if (parser.match(TokenType.ASSIGN)) {
@@ -113,6 +112,6 @@ public class AJEParserUtils {
                     parser.peek(0).getPosition());
         }
 
-        return new ParameterData(parameterName, parameterType, parameterDefault, rest);
+        return new ParameterData(parameterName, parameterDefault, rest);
     }
 }

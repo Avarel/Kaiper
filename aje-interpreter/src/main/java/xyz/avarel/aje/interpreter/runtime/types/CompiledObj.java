@@ -59,15 +59,9 @@ public class CompiledObj implements Obj, ScopeContainer {
     public String toString() {
         Obj method = scope.lookup("toString");
         if (method == null) {
-            method = getType().getScope().lookup("toString");
-            if (method == null) {
-                return type.toString() + "$" + hashCode();
-            }
-            return method.invoke(this).toString();
+            return type.toString() + "$" + hashCode();
         } else {
             return method.invoke(this).toString();
         }
-
-
     }
 }

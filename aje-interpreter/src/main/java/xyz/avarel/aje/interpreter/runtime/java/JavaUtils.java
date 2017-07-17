@@ -21,8 +21,8 @@ import xyz.avarel.aje.runtime.Str;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
-import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
+import xyz.avarel.aje.runtime.numbers.Number;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.HashMap;
@@ -160,7 +160,7 @@ public class JavaUtils {
         } else if (result instanceof Integer) {
             return Int.of((Integer) result);
         } else if (result instanceof Double) {
-            return Decimal.of((Double) result);
+            return Number.of((Double) result);
         } else if (result instanceof Boolean) {
             return (Boolean) result ? Bool.TRUE : Bool.FALSE;
         } else if (result instanceof String) {

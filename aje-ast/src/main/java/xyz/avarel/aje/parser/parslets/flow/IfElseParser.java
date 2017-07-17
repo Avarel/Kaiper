@@ -18,6 +18,7 @@ package xyz.avarel.aje.parser.parslets.flow;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
@@ -37,19 +38,27 @@ public class IfElseParser implements PrefixParser {
 
         Expr ifBranch;
 
-        if (parser.match(TokenType.LEFT_BRACE)) {
-            ifBranch = parser.parseStatements();
-            parser.eat(TokenType.RIGHT_BRACE);
+        if (parser.matchSignificant(TokenType.LEFT_BRACE)) {
+            if (!parser.matchSignificant(TokenType.RIGHT_BRACE)) {
+                ifBranch = parser.parseStatements();
+                parser.eat(TokenType.RIGHT_BRACE);
+            } else {
+                ifBranch = UndefinedNode.VALUE;
+            }
         } else {
             ifBranch = parser.parseExpr();
         }
 
         Expr elseBranch = null;
 
-        if (parser.match(TokenType.ELSE)) {
-            if (parser.match(TokenType.LEFT_BRACE)) {
-                elseBranch = parser.parseStatements();
-                parser.eat(TokenType.RIGHT_BRACE);
+        if (parser.matchSignificant(TokenType.ELSE)) {
+            if (parser.matchSignificant(TokenType.LEFT_BRACE)) {
+                if (!parser.matchSignificant(TokenType.RIGHT_BRACE)) {
+                    elseBranch = parser.parseStatements();
+                    parser.eat(TokenType.RIGHT_BRACE);
+                } else {
+                    elseBranch = UndefinedNode.VALUE;
+                }
             } else {
                 elseBranch = parser.parseExpr();
             }

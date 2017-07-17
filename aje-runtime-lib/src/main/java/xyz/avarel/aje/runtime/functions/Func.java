@@ -15,31 +15,28 @@
 
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
-    public static final Type<Func> TYPE = new FunctionType();
+public abstract class Func implements Obj {
+    public static final Type<Func> TYPE = new Type<>("Function");
+    private final String name;
 
-    protected static ComputeException typeError(List<Parameter> parameters, List<Obj> arguments) {
-        StringJoiner argType = new StringJoiner(", ", "(", ")");
-        for (Obj obj : arguments) argType.add(obj.getType().getName());
-
-        StringJoiner funcType = new StringJoiner(", ", "(", ")");
-        for (Parameter param : parameters) funcType.add(param.typeString());
-
-        return new ComputeException(argType + " can not apply to " + funcType);
+    protected Func(String name) {
+        this.name = name;
     }
 
     public abstract int getArity();
 
     public abstract List<Parameter> getParameters();
+
+    public String getName() {
+        return name == null ? "anonymous" : name;
+    }
 
     @Override
     public Type<Func> getType() {
@@ -72,12 +69,12 @@ public abstract class Func implements Obj<Function<List<Obj>, Obj>> {
 
     @Override
     public String toString() {
-        return "func(" + getParameters().stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
-    }
-
-    public static class FunctionType extends Type<Func> {
-        public FunctionType() {
-            super("Function");
+        StringJoiner joiner = new StringJoiner(", ");
+        for (Parameter parameter : getParameters()) {
+            String s = parameter.toString();
+            joiner.add(s);
         }
+
+        return "def " + getName() + "(" + joiner.toString() + ")";
     }
 }

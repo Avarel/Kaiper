@@ -18,14 +18,27 @@ package xyz.avarel.aje.runtime;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
+import xyz.avarel.aje.runtime.modules.Module;
+import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.runtime.types.NativeConstructor;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
 
-public class Str implements Obj<String> {
-    public static final Type<Str> TYPE = new StrType();
+public class Str implements Obj {
+    public static final Type<Str> TYPE = new Type<>("String", new NativeConstructor(Parameter.of("a")) {
+        @Override
+        protected Obj eval(List<Obj> arguments) {
+            Obj obj = arguments.get(0);
+            if (obj instanceof Str) {
+                return obj;
+            }
+            return Str.of(obj.toString());
+        }
+    });
+
+    public static final Module MODULE = new StrModule();
 
     private final String value;
 
@@ -235,79 +248,68 @@ public class Str implements Obj<String> {
         }
     }
 
-    private static class StrType extends Type<Str> {
-        public StrType() {
-            super("String", new NativeConstructor(Obj.TYPE) {
+    private static class StrModule extends NativeModule {
+        public StrModule() {
+            declare("length", new NativeFunc("length", Parameter.of("string")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    Obj obj = arguments.get(0);
-                    if (obj instanceof Str) {
-                        return obj;
-                    }
-                    return Str.of(obj.toString());
+                    return Int.of(arguments.get(0).castTo(Str.TYPE).length());
                 }
             });
 
-            getScope().declare("length", new NativeFunc(Parameter.of("this", this)) {
+            declare("contains", new NativeFunc("contains", Parameter.of("string"), Parameter.of("query")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return Int.of(((Str) arguments.get(0)).length());
+                    return arguments.get(0).castTo(Str.TYPE).contains((Str) arguments.get(1));
                 }
             });
-
-            getScope().declare("contains", new NativeFunc(Parameter.of("this", this), Parameter.of(this)) {
+            declare("indexOf", new NativeFunc("indexOf", Parameter.of("string"), Parameter.of("query")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Str) arguments.get(0)).contains((Str) arguments.get(1));
+                    return arguments.get(0).castTo(Str.TYPE).indexOf((Str) arguments.get(1));
                 }
             });
-            getScope().declare("indexOf", new NativeFunc(Parameter.of("this", this), Parameter.of(this)) {
+            declare("split", new NativeFunc("split", Parameter.of("string"), Parameter.of("query")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Str) arguments.get(0)).indexOf((Str) arguments.get(1));
+                    return arguments.get(0).castTo(Str.TYPE).split((Str) arguments.get(1));
                 }
             });
-            getScope().declare("split", new NativeFunc(Parameter.of("this", this), Parameter.of(this)) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return ((Str) arguments.get(0)).split((Str) arguments.get(1));
-                }
-            });
-            getScope().declare("substring", new NativeFunc(Parameter.of("this", this), Parameter.of(Int.TYPE)) {
+            declare("substring", new NativeFunc("substring", Parameter.of("string"), Parameter.of("index")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
                     if (arguments.size() >= 3) {
                         if (arguments.get(1) instanceof Int) {
-                            return ((Str) arguments.get(0)).substring((Int) arguments.get(1), (Int) arguments.get(2));
+                            return arguments.get(0).castTo(Str.TYPE).substring((Int) arguments.get(1), (Int) arguments.get(2));
                         }
                         return Undefined.VALUE;
                     } else {
-                        return ((Str) arguments.get(0)).substring((Int) arguments.get(1));
+                        return arguments.get(0).castTo(Str.TYPE).substring((Int) arguments.get(1));
                     }
                 }
             });
-            getScope().declare("toVector", new NativeFunc(Parameter.of("this", this)) {
+            declare("toVector", new NativeFunc("toVector", Parameter.of("string")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Str) arguments.get(0)).toVector();
+                    return arguments.get(0).castTo(Str.TYPE).toVector();
                 }
             });
-            getScope().declare("toLowerCase", new NativeFunc(Parameter.of("this", this)) {
+            declare("toLowerCase", new NativeFunc("toLowerCase", Parameter.of("string")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Str) arguments.get(0)).toLowerCase();
+                    return arguments.get(0).castTo(Str.TYPE).toLowerCase();
                 }
             });
-            getScope().declare("toUpperCase", new NativeFunc(Parameter.of("this", this)) {
+            declare("toUpperCase", new NativeFunc("toUpperCase", Parameter.of("string")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Str) arguments.get(0)).toUpperCase();
+                    return arguments.get(0).castTo(Str.TYPE).toUpperCase();
                 }
             });
-            getScope().declare("trim", new NativeFunc(Parameter.of("this", this)) {
+            declare("trim", new NativeFunc("trim", Parameter.of("string")) {
                 @Override
                 protected Obj eval(List<Obj> arguments) {
-                    return ((Str) arguments.get(0)).trim();
+                    return arguments.get(0).castTo(Str.TYPE).trim();
                 }
             });
         }

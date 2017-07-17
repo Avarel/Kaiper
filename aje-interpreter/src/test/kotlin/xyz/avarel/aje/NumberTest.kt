@@ -22,7 +22,7 @@ package xyz.avarel.aje
 import org.junit.Assert
 import org.junit.Test
 
-class DecimalTest {
+class NumberTest {
     @Test
     fun `addition`() {
         Assert.assertEquals(30.0, eval("10.0 + 20").toJava())

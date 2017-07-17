@@ -16,35 +16,24 @@
 package xyz.avarel.aje.ast.functions;
 
 import xyz.avarel.aje.ast.Single;
-import xyz.avarel.aje.ast.variables.Identifier;
 
 public class ParameterData {
     private final String name;
-    private final Identifier type;
     private final Single defaultExpr;
     private final boolean rest;
 
     public ParameterData(String name) {
-        this(name, new Identifier("Object"), null, false);
+        this(name, null, false);
     }
 
-    public ParameterData(String name, Identifier type) {
-        this(name, type, null, false);
-    }
-
-    public ParameterData(String name, Identifier type, Single defaultExpr, boolean rest) {
+    public ParameterData(String name, Single defaultExpr, boolean rest) {
         this.name = name;
-        this.type = type;
         this.defaultExpr = defaultExpr;
         this.rest = rest;
     }
 
     public String getName() {
         return name;
-    }
-
-    public Identifier getTypeExpr() {
-        return type;
     }
 
     public Single getDefault() {

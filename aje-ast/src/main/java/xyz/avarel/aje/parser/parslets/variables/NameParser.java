@@ -18,6 +18,7 @@ package xyz.avarel.aje.parser.parslets.variables;
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
+import xyz.avarel.aje.ast.invocation.Invocation;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.value.UndefinedNode;
@@ -27,6 +28,9 @@ import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.PrefixParser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NameParser implements PrefixParser {
     @Override
@@ -44,6 +48,19 @@ public class NameParser implements PrefixParser {
                     getOp);
         }
 
-        return new Identifier(token.getString());
+        Identifier id = new Identifier(token.getString());
+
+        if (parser.nextIsAny(TokenType.TEXT, TokenType.INT, TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.LEFT_BRACE)) {
+            List<Single> arguments = new ArrayList<>();
+            arguments.add(parser.parseSingle());
+
+            while (parser.match(TokenType.COMMA)) {
+                arguments.add(parser.parseSingle());
+            }
+
+            return new Invocation(id, arguments);
+        }
+
+        return id;
     }
 }

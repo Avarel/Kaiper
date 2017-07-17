@@ -21,11 +21,20 @@ import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
 
-public enum Bool implements Obj<Boolean> {
+public enum Bool implements Obj {
     TRUE(true),
     FALSE(false);
 
-    public static final Type<Bool> TYPE = new BoolType();
+    public static final Type<Bool> TYPE = new Type<>("Boolean", new NativeConstructor() {
+        @Override
+        protected Obj eval(List<Obj> arguments) {
+            Obj obj = arguments.get(0);
+            if (obj instanceof Bool) {
+                return obj;
+            }
+            return Bool.of(Boolean.valueOf(obj.toString()));
+        }
+    });
 
     private final boolean value;
 
@@ -108,21 +117,6 @@ public enum Bool implements Obj<Boolean> {
                 return value ? Int.of(1) : Int.of(0);
             default:
                 return Obj.super.getAttr(name);
-        }
-    }
-
-    private static class BoolType extends Type<Bool> {
-        public BoolType() {
-            super("Boolean", new NativeConstructor() {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    Obj obj = arguments.get(0);
-                    if (obj instanceof Bool) {
-                        return obj;
-                    }
-                    return Bool.of(Boolean.valueOf(obj.toString()));
-                }
-            });
         }
     }
 }

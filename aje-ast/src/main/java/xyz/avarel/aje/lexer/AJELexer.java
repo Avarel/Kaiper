@@ -150,7 +150,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
         char c = advance();
 
-        while (Character.isSpaceChar(c)) c = advance();
+        while (Character.isSpaceChar(c) || c == '\t') c = advance();
 
         switch (c) {
             case '(':
@@ -336,11 +336,11 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
             } else switch (c) {
                 case 'i':
                     back();
-                    return make(TokenType.DECIMAL, sb.toString());
+                    return make(TokenType.NUMBER, sb.toString());
                 case '.':
                     if (point) {
                         back();
-                        return make(TokenType.DECIMAL, sb.toString());
+                        return make(TokenType.NUMBER, sb.toString());
                     }
 
                     if (!Character.isDigit(peek())) {
@@ -356,7 +356,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
                 default:
                     back();
                     if (point) {
-                        return make(TokenType.DECIMAL, sb.toString());
+                        return make(TokenType.NUMBER, sb.toString());
                     } else {
                         return make(TokenType.INT, sb.toString());
                     }
@@ -405,8 +405,11 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
         String value = sb.toString();
         switch (value) {
-            case "class":
-                return make(TokenType.CLASS, "class");
+            case "type":
+                return make(TokenType.TYPE, "type");
+            case "module":
+                return make(TokenType.MODULE, "module");
+
             case "if":
                 return make(TokenType.IF, "if");
             case "else":

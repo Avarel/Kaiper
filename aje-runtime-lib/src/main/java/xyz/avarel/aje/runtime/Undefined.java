@@ -21,7 +21,7 @@ import xyz.avarel.aje.runtime.types.Type;
  * Every operation results in the same
  * instance, NOTHING.
  */
-public enum Undefined implements Obj<Undefined> {
+public enum Undefined implements Obj {
     VALUE;
 
     public static final Type<Undefined> TYPE = new Type<>("Undefined");

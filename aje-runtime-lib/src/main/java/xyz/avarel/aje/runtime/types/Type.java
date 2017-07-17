@@ -17,18 +17,15 @@ package xyz.avarel.aje.runtime.types;
 
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.scope.Scope;
-import xyz.avarel.aje.scope.ScopeContainer;
 
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Type<T> implements Obj<Type>, ScopeContainer {
+public class Type<T> implements Obj {
     public static final Type<Type> TYPE = new TypeObj();
 
     private final Type parent;
     private final String name;
-    private final Scope scope;
     private final Constructor constructor;
 
     public Type(String name) {
@@ -40,17 +37,12 @@ public class Type<T> implements Obj<Type>, ScopeContainer {
     }
 
     public Type(Type parent, String name) {
-        this(parent, name, parent != null ? parent.scope.subPool() : new Scope(), null);
+        this(parent, name, null);
     }
 
     public Type(Type parent, String name, Constructor constructor) {
-        this(parent, name, parent != null ? parent.scope.subPool() : new Scope(), constructor);
-    }
-
-    public Type(Type parent, String name, Scope scope, Constructor constructor) {
         this.parent = parent;
         this.name = name;
-        this.scope = scope;
         this.constructor = constructor;
         if (constructor != null) constructor.targetType = this;
     }
@@ -64,17 +56,9 @@ public class Type<T> implements Obj<Type>, ScopeContainer {
         return false;
     }
 
-    public Scope getScope() {
-        return scope;
-    }
 
     public Constructor getConstructor() {
         return constructor;
-    }
-
-    @Override
-    public Obj getAttr(String name) {
-        return scope.lookup(name);
     }
 
     @Override
@@ -124,8 +108,6 @@ public class Type<T> implements Obj<Type>, ScopeContainer {
     private static class TypeObj extends Type<Type> {
         public TypeObj() {
             super("Type");
-
-
         }
 
         @Override

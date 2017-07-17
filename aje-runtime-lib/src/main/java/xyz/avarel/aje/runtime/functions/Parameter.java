@@ -16,48 +16,32 @@
 package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.types.Type;
 
 public class Parameter {
     private final String name;
-    private final Type type;
     private final Obj defaultObj;
     private final boolean rest;
 
-    private Parameter(String name, Type type, Obj defaultObj, boolean rest) {
+    private Parameter(String name, Obj defaultObj, boolean rest) {
         this.name = name;
-        this.type = type;
         this.defaultObj = defaultObj;
         this.rest = rest;
     }
 
     public static Parameter of(String name) {
-        return Parameter.of(name, Obj.TYPE, null, false);
+        return Parameter.of(name, null, false);
     }
 
-    public static Parameter of(Type type) {
-        return Parameter.of(type, false);
+    public static Parameter of(String name, boolean rest) {
+        return Parameter.of(name, null, rest);
     }
 
-    public static Parameter of(Type type, boolean rest) {
-        return new Parameter(null, type, null, rest);
+    public static Parameter of(String name, Obj defaultExpr, boolean rest) {
+        return new Parameter(name, defaultExpr, rest);
     }
-
-    public static Parameter of(String name, Type type) {
-        return Parameter.of(name, type, null, false);
-    }
-
-    public static Parameter of(String name, Type type, Obj defaultExpr, boolean rest) {
-        return new Parameter(name, type, defaultExpr, rest);
-    }
-
 
     public String getName() {
         return name;
-    }
-
-    public Type getType() {
-        return type;
     }
 
     public boolean hasDefault() {
@@ -73,7 +57,7 @@ public class Parameter {
     }
 
     public String typeString() {
-        return isRest() ? "..." + getType().getName() : getType().getName();
+        return isRest() ? "..." + getName() : getName();
     }
 
     @Override
@@ -86,15 +70,6 @@ public class Parameter {
 
         if (name != null) {
             sb.append(name);
-        }
-
-        if (name != null) {
-            if (type != Obj.TYPE) {
-                sb.append(": ");
-                sb.append(type);
-            }
-        } else {
-            sb.append(type);
         }
 
         if (defaultObj != null) {

@@ -84,6 +84,15 @@ public abstract class Parser {
         return true;
     }
 
+    public boolean matchSignificant(TokenType expected) {
+        Token token = peekSignificant(0);
+        if (token.getType() != expected) {
+            return false;
+        }
+        eat();
+        return true;
+    }
+
     public boolean matchAny(TokenType... tokens) {
         Token token = peek(0);
         for (TokenType expected : tokens) {
@@ -111,6 +120,20 @@ public abstract class Parser {
 
         // Get the queued token.
         return tokens.get(distance);
+    }
+
+    public Token peekSignificant(int distance) {
+        int i = 0;
+        int peek = 0;
+        Token token = null;
+        while (i <= distance) {
+            token = peek(peek);
+            if (token.getType() != TokenType.LINE) {
+                i++;
+            }
+            peek++;
+        }
+        return token;
     }
 
     public boolean nextIs(TokenType... tokens) {

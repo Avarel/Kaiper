@@ -21,7 +21,7 @@ import xyz.avarel.aje.runtime.types.Type;
 
 import java.lang.reflect.Field;
 
-public class JavaObject implements Obj<Object> {
+public class JavaObject implements Obj {
     protected final Type<?> type;
     private final Object object;
 

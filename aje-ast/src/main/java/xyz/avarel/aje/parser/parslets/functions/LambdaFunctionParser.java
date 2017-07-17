@@ -19,14 +19,15 @@ import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.value.UndefinedNode;
-import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.Token;
 import xyz.avarel.aje.lexer.TokenType;
 import xyz.avarel.aje.parser.AJEParser;
+import xyz.avarel.aje.parser.AJEParserUtils;
 import xyz.avarel.aje.parser.PrefixParser;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 public class LambdaFunctionParser implements PrefixParser {
     @Override
@@ -39,7 +40,7 @@ public class LambdaFunctionParser implements PrefixParser {
             return new FunctionNode(Collections.emptyList(), UndefinedNode.VALUE);
         }
 
-        List<ParameterData> parameters = new ArrayList<>();
+        List<ParameterData> parameters = Collections.emptyList();
 
         // Check for arrows.
         int peek = 0;
@@ -62,38 +63,11 @@ public class LambdaFunctionParser implements PrefixParser {
 
         if (hasArrow) {
             if (!parser.match(TokenType.ARROW)) {
-                Set<String> paramNames = new HashSet<>();
-
-                do {
-                    boolean rest = parser.match(TokenType.REST);
-
-                    String parameterName = parser.eat(TokenType.IDENTIFIER).getString();
-
-                    if (paramNames.contains(parameterName)) {
-                        throw new SyntaxException("Duplicate parameter names", parser.getLast().getPosition());
-                    } else {
-                        paramNames.add(parameterName);
-                    }
-
-                    Identifier parameterType = new Identifier("Object");
-
-                    if (parser.match(TokenType.COLON)) {
-                        parameterType = parser.parseIdentifier();
-                    }
-
-                    ParameterData parameter = new ParameterData(parameterName, parameterType, null, rest);
-                    parameters.add(parameter);
-
-                    if (rest && parser.match(TokenType.COMMA)) {
-                        throw new SyntaxException("Rest parameters must be the last parameter",
-                                parser.peek(0).getPosition());
-                    }
-                } while (parser.match(TokenType.COMMA));
-
+                parameters = AJEParserUtils.parseParameters(parser);
                 parser.eat(TokenType.ARROW);
             }
         } else {
-            parameters.add(new ParameterData("it"));
+            parameters = Collections.singletonList(new ParameterData("it"));
         }
 
         Expr expr = parser.parseStatements();

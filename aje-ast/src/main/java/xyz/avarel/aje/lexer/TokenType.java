@@ -34,7 +34,7 @@ public enum TokenType {
 
     // TYPES
     INT,
-    DECIMAL,
+    NUMBER,
     BOOLEAN,
     FUNCTION,
     TEXT,
@@ -81,7 +81,8 @@ public enum TokenType {
     UNDERSCORE,
 
     // SCRIPT
-    CLASS,
+    MODULE,
+    TYPE,
     IDENTIFIER,
     UNDEFINED,
     LET,

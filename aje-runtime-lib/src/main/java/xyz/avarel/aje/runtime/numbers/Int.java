@@ -15,16 +15,36 @@
 
 package xyz.avarel.aje.runtime.numbers;
 
+import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.functions.Parameter;
+import xyz.avarel.aje.runtime.modules.Module;
+import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.types.NativeConstructor;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
 
-public class Int implements Obj<Integer> {
-    public static final Type<Int> TYPE = new IntType();
+public class Int implements Obj {
+    public static final Type<Int> TYPE = new Type<>("Int", new NativeConstructor(Parameter.of("a")) {
+        @Override
+        protected Obj eval(List<Obj> arguments) {
+            Obj obj = arguments.get(0);
+            if (obj instanceof Int) {
+                return obj;
+            } else if (obj instanceof Number) {
+                return Int.of((int) ((Number) obj).value());
+            }
+            try {
+                return Int.of(Integer.parseInt(obj.toString()));
+            } catch (NumberFormatException e) {
+                throw new ComputeException(e);
+            }
+        }
+    });
+
+    public static final Module MODULE = new IntModule();
 
     private final int value;
 
@@ -212,6 +232,16 @@ public class Int implements Obj<Integer> {
         return Int.of(value >> other.value);
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends Obj> T castTo(Type<T> type) {
+        if (type == Number.TYPE) {
+            return (T) Number.of(value);
+        }
+
+        return Obj.super.castTo(type);
+    }
+
     private static class IntCache {
         private static final int LOW = -128;
         private static final int HIGH = 127;
@@ -228,29 +258,12 @@ public class Int implements Obj<Integer> {
         private IntCache() {}
     }
 
-    private static class IntType extends Type<Int> {
-        public IntType() {
-            super(Decimal.TYPE, "Int", new NativeConstructor(Obj.TYPE) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    Obj obj = arguments.get(0);
-                    if (obj instanceof Int) {
-                        return obj;
-                    } else if (obj instanceof Decimal) {
-                        return Int.of((int) ((Decimal) obj).value());
-                    }
-                    try {
-                        return Int.of(Integer.parseInt(obj.toString()));
-                    } catch (NumberFormatException e) {
-                        return Undefined.VALUE;
-                    }
-                }
-            });
-
-            getScope().declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
-            getScope().declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
-            getScope().declare("BYTES", Int.of(Integer.BYTES));
-            getScope().declare("SIZE", Int.of(Integer.SIZE));
+    private static class IntModule extends NativeModule {
+        public IntModule() {
+            declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
+            declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
+            declare("BYTES", Int.of(Integer.BYTES));
+            declare("SIZE", Int.of(Integer.SIZE));
         }
     }
 }

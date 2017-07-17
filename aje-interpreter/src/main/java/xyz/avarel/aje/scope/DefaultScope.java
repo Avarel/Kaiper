@@ -15,18 +15,14 @@
 
 package xyz.avarel.aje.scope;
 
-import xyz.avarel.aje.runtime.Bool;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.Str;
-import xyz.avarel.aje.runtime.Undefined;
+import xyz.avarel.aje.runtime.*;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
 import xyz.avarel.aje.runtime.functions.Func;
-import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.runtime.numbers.MathMethods;
-import xyz.avarel.aje.runtime.numbers.Numeric;
+import xyz.avarel.aje.runtime.numbers.MathModule;
+import xyz.avarel.aje.runtime.numbers.Number;
 import xyz.avarel.aje.runtime.types.Type;
 
 public class DefaultScope extends Scope {
@@ -35,17 +31,10 @@ public class DefaultScope extends Scope {
     private DefaultScope() {
         declare("not", DefaultFunctions.NOT.get());
 
-        // Hack: it works
-        // Explanation, so class loader would load all of
-        // the classes and not treat Obj.TYPE as null :(
-        ((Obj.ObjType) Obj.TYPE).initialize();
-
         declare("Object", Obj.TYPE);
-        declare("Math", MathMethods.TYPE);
         declare("Type", Type.TYPE);
         declare("Int", Int.TYPE);
-        declare("Decimal", Decimal.TYPE);
-        declare("Number", Numeric.TYPE);
+        declare("Number", Number.TYPE);
         declare("Boolean", Bool.TYPE);
         declare("Array", Array.TYPE);
         declare("Range", Range.TYPE);
@@ -53,6 +42,14 @@ public class DefaultScope extends Scope {
         declare("String", Str.TYPE);
         declare("Function", Func.TYPE);
         declare("Undefined", Undefined.TYPE);
+
+        declare("Math", MathModule.INSTANCE);
+        declare("Ints", Int.MODULE);
+        declare("Decimals", Number.MODULE);
+        declare("Arrays", Array.MODULE);
+        declare("Ranges", Range.MODULE);
+        declare("Dictionaries", Dictionary.MODULE);
+        declare("Strings", Str.MODULE);
     }
 
     @Deprecated

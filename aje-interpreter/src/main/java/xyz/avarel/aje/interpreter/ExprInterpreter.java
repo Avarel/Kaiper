@@ -42,8 +42,6 @@ import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.ast.functions.FunctionNode;
 import xyz.avarel.aje.ast.functions.ParameterData;
 import xyz.avarel.aje.ast.invocation.Invocation;
-import xyz.avarel.aje.ast.oop.ClassNode;
-import xyz.avarel.aje.ast.oop.ConstructorNode;
 import xyz.avarel.aje.ast.operations.BinaryOperation;
 import xyz.avarel.aje.ast.operations.SliceOperation;
 import xyz.avarel.aje.ast.operations.UnaryOperation;
@@ -53,8 +51,6 @@ import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.interpreter.runtime.functions.CompiledFunc;
-import xyz.avarel.aje.interpreter.runtime.types.CompiledConstructor;
-import xyz.avarel.aje.interpreter.runtime.types.CompiledType;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Str;
@@ -64,10 +60,8 @@ import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.Parameter;
-import xyz.avarel.aje.runtime.numbers.Decimal;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.runtime.types.Constructor;
-import xyz.avarel.aje.runtime.types.Type;
+import xyz.avarel.aje.runtime.numbers.Number;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.ArrayList;
@@ -111,18 +105,13 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         for (ParameterData data : expr.getParameterExprs()) {
             checkTimeout();
-            Obj obj_type = data.getTypeExpr().accept(this, scope);
-
-            if (!(obj_type instanceof Type)) {
-                throw new ComputeException(obj_type + " is not a valid type");
-            }
 
             Obj defaultObj = null;
             if (data.getDefault() != null) {
                 defaultObj = data.getDefault().accept(this, scope);
             }
 
-            parameters.add(Parameter.of(data.getName(), (Type) obj_type, defaultObj, data.isRest()));
+            parameters.add(Parameter.of(data.getName(), defaultObj, data.isRest()));
         }
 
         checkTimeout();
@@ -170,12 +159,12 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         checkTimeout();
 
         if (left instanceof Int) {
-            if (right instanceof Decimal) {
-                left = Decimal.of(((Int) left).value());
+            if (right instanceof Number) {
+                left = Number.of(((Int) left).value());
             }
-        } else if (left instanceof Decimal) {
+        } else if (left instanceof Number) {
             if (right instanceof Int) {
-                right = Decimal.of(((Int) right).value());
+                right = Number.of(((Int) right).value());
             }
         }
 
@@ -439,7 +428,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     @Override
     public Obj visit(DecimalNode expr, Scope scope) {
-        return Decimal.of(expr.getValue());
+        return Number.of(expr.getValue());
     }
 
     @Override
@@ -456,62 +445,6 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     @Override
     public Obj visit(StringNode stringNode, Scope scope) {
         return Str.of(stringNode.getValue());
-    }
-
-    @Override
-    public Obj visit(ClassNode expr, Scope scope) {
-        Obj parentObj = expr.getParent().accept(this, scope);
-
-        if (!(parentObj instanceof Type)) {
-            throw new ComputeException(parentObj + " is not a valid type");
-        }
-
-        Type parent = (Type) parentObj;
-
-
-        Obj obj = expr.getConstructorNode().accept(this, scope);
-        if (!(obj instanceof Constructor)) {
-            throw new ComputeException("Internal error");
-        }
-
-        CompiledConstructor constructor = (CompiledConstructor) obj;
-
-        Scope classScope = parent.getScope().subPool().combine(scope);
-
-        CompiledType type = new CompiledType(expr.getName(), parent, classScope, constructor);
-
-        scope.declare(expr.getName(), type);
-
-        for (FunctionNode func : expr.getFunctions()) {
-            func.accept(this, classScope);
-        }
-
-        return type;
-    }
-
-    @Override
-    public Obj visit(ConstructorNode expr, Scope scope) {
-        List<Parameter> parameters = new ArrayList<>();
-
-        for (ParameterData data : expr.getParameterExprs()) {
-            checkTimeout();
-            Obj obj_type = data.getTypeExpr().accept(this, scope);
-
-            if (!(obj_type instanceof Type)) {
-                throw new ComputeException(obj_type + " is not a valid type");
-            }
-
-            Obj defaultObj = null;
-            if (data.getDefault() != null) {
-                defaultObj = data.getDefault().accept(this, scope);
-            }
-
-            parameters.add(Parameter.of(data.getName(), (Type) obj_type, defaultObj, data.isRest()));
-        }
-
-        checkTimeout();
-
-        return new CompiledConstructor(parameters, expr.getSuperInvocation(), expr.getExpr(), this, scope);
     }
 
     private void checkTimeout() {
