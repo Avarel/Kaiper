@@ -37,7 +37,7 @@ public class AJERepl {
 
         Evaluator evaluator = new Evaluator();
 
-        evaluator.getScope().declare("print", new NativeFunc("print", Parameter.of("string")) {
+        evaluator.getScope().declare("println", new NativeFunc("print", Parameter.of("string")) {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 System.out.println(arguments.get(0));

@@ -42,7 +42,7 @@ public class FileTest {
 
         Expression exp = new Expression(new FileReader(new File("script.aje")));
 
-        exp.add("print", new NativeFunc("print", Parameter.of("string")) {
+        exp.add("println", new NativeFunc("print", Parameter.of("string")) {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 System.out.println(arguments.get(0));
