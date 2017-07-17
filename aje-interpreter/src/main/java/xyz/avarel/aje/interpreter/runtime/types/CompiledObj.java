@@ -19,16 +19,21 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.types.Type;
 import xyz.avarel.aje.scope.Scope;
-import xyz.avarel.aje.scope.ScopeContainer;
 
-public class CompiledObj implements Obj, ScopeContainer {
-    private final Type type;
+public class CompiledObj implements Obj {
+    private final CompiledType type;
     private final Scope scope;
+    private final CompiledObj parent;
 
     @SuppressWarnings("unchecked")
-    public CompiledObj(Type type, Scope scope) {
+    public CompiledObj(CompiledType type, CompiledObj parent, Scope scope) {
         this.type = type;
+        this.parent = parent;
         this.scope = scope;
+    }
+
+    public Scope getScope() {
+        return scope;
     }
 
     @Override
@@ -39,15 +44,16 @@ public class CompiledObj implements Obj, ScopeContainer {
 
     @Override
     public Obj getAttr(String name) {
-        if (scope.contains(name)) {
-            return scope.lookup(name);
+        Obj obj = scope.directLookup(name);
+
+        if (obj == null) {
+            if (parent != null) {
+                return parent.getAttr(name);
+            }
+            return Undefined.VALUE;
         }
 
-        return Obj.super.getAttr(name);
-    }
-
-    public Scope getScope() {
-        return scope;
+        return obj;
     }
 
     @Override

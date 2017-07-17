@@ -104,4 +104,8 @@ public interface ExprVisitor<R, C> {
     R visit(StringNode stringNode, C scope);
 
     R visit(DeclarationExpr declarationExpr, C scope);
+
+    R visit(ModuleNode moduleNode, C scope);
+
+    R visit(TypeNode typeNode, C scope);
 }

@@ -35,6 +35,10 @@ public class Scope {
         this.parents = parents;
     }
 
+    public Obj directLookup(String key) {
+        return map.get(key);
+    }
+
     public Obj lookup(String key) {
         if (map.containsKey(key)) {
             return map.get(key);
@@ -42,7 +46,6 @@ public class Scope {
             if (parent.contains(key)) {
                 return parent.lookup(key);
             }
-
         }
         return null;
     }

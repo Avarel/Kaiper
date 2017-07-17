@@ -16,6 +16,7 @@
 package xyz.avarel.aje.runtime.modules;
 
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.Undefined;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,6 @@ public abstract class NativeModule extends Module {
 
     @Override
     public Obj getAttr(String name) {
-        return map.get(name);
+        return map.getOrDefault(name, Undefined.VALUE);
     }
 }

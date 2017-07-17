@@ -268,7 +268,7 @@ public interface Obj {
     }
 
     default Obj set(Obj key, Obj value) {
-        throw unimplemented("set");
+        return Undefined.VALUE;
     }
 
     /**
@@ -280,7 +280,7 @@ public interface Obj {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj getAttr(String name) {
-        throw unimplemented("get attribute");
+        return Undefined.VALUE;
     }
 
     /**

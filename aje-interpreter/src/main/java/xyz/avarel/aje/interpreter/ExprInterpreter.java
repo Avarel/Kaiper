@@ -31,9 +31,7 @@
 package xyz.avarel.aje.interpreter;
 
 import xyz.avarel.aje.ReturnException;
-import xyz.avarel.aje.ast.Expr;
-import xyz.avarel.aje.ast.ExprVisitor;
-import xyz.avarel.aje.ast.Single;
+import xyz.avarel.aje.ast.*;
 import xyz.avarel.aje.ast.collections.*;
 import xyz.avarel.aje.ast.flow.ConditionalExpr;
 import xyz.avarel.aje.ast.flow.ForEachExpr;
@@ -51,6 +49,9 @@ import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.interpreter.runtime.functions.CompiledFunc;
+import xyz.avarel.aje.interpreter.runtime.modules.CompiledModule;
+import xyz.avarel.aje.interpreter.runtime.types.CompiledConstructor;
+import xyz.avarel.aje.interpreter.runtime.types.CompiledType;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Str;
@@ -60,8 +61,10 @@ import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
 import xyz.avarel.aje.runtime.functions.Func;
 import xyz.avarel.aje.runtime.functions.Parameter;
+import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.runtime.numbers.Number;
+import xyz.avarel.aje.runtime.types.Type;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.ArrayList;
@@ -319,6 +322,55 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         Obj value = expr.getExpr().accept(this, scope);
         scope.declare(attr, value);
         return Undefined.VALUE;
+    }
+
+    @Override
+    public Obj visit(ModuleNode expr, Scope scope) {
+        String name = expr.getName();
+
+        Scope subscope = scope.subPool();
+
+        checkTimeout();
+        expr.getExpr().accept(this, subscope);
+
+        Module module = new CompiledModule(name, subscope);
+        scope.declare(name, module);
+
+        return module;
+    }
+
+    @Override
+    public Obj visit(TypeNode expr, Scope scope) {
+        String name = expr.getName();
+
+        Scope subscope = scope.subPool();
+
+        checkTimeout();
+        Obj superType = expr.getSuperType().accept(this, scope);
+        if (superType != Obj.TYPE && !(superType instanceof CompiledType)) {
+            throw new ComputeException(superType + " can not be extended");
+        }
+
+        List<Parameter> constructorParameters = new ArrayList<>();
+        for (ParameterData data : expr.getParameterExprs()) {
+            checkTimeout();
+
+            Obj defaultObj = null;
+            if (data.getDefault() != null) {
+                defaultObj = data.getDefault().accept(this, scope);
+            }
+
+            constructorParameters.add(Parameter.of(data.getName(), defaultObj, data.isRest()));
+        }
+
+        CompiledConstructor constructor = new CompiledConstructor(
+                constructorParameters, expr.getSuperParameters(), expr.getExpr(), this, subscope);
+
+        CompiledType type = new CompiledType((Type) superType, name, constructor);
+
+        scope.declare(name, type);
+
+        return type;
     }
 
     @Override

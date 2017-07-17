@@ -35,7 +35,7 @@ import java.util.List;
 
 public class AttributeParser extends BinaryParser {
     public AttributeParser() {
-        super(Precedence.POSTFIX);
+        super(Precedence.DOT);
     }
 
     @Override

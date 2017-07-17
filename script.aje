@@ -1,7 +1,12 @@
 // Test file for FileTest.java
 
-if (true) {
-    1
-} else {
-    2
+type Double(value) {
+    this.value = value // might consider syntax sugar for this
 }
+
+module Doubles {
+    def add(a: Double, b: Double) = Double(a.value + b.value)
+}
+
+let result = Double(2) |> Doubles.add(Double(3))
+result.value

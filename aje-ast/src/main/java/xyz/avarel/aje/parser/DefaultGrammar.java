@@ -19,9 +19,7 @@ import xyz.avarel.aje.Precedence;
 import xyz.avarel.aje.ast.operations.BinaryOperatorType;
 import xyz.avarel.aje.ast.operations.UnaryOperatorType;
 import xyz.avarel.aje.lexer.TokenType;
-import xyz.avarel.aje.parser.parslets.ElvisParser;
-import xyz.avarel.aje.parser.parslets.GetSetParser;
-import xyz.avarel.aje.parser.parslets.GroupParser;
+import xyz.avarel.aje.parser.parslets.*;
 import xyz.avarel.aje.parser.parslets.flow.ForEachParser;
 import xyz.avarel.aje.parser.parslets.flow.IfElseParser;
 import xyz.avarel.aje.parser.parslets.flow.ReturnParser;
@@ -68,6 +66,9 @@ public class DefaultGrammar extends Grammar {
 
         prefix(TokenType.IDENTIFIER, new NameParser());
         prefix(TokenType.LET, new DeclarationParser());
+
+        prefix(TokenType.TYPE, new TypeParser());
+        prefix(TokenType.MODULE, new ModuleParser());
 
         // Numeric
         prefix(TokenType.MINUS, new UnaryOperatorParser(UnaryOperatorType.MINUS));

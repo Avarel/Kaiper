@@ -80,11 +80,11 @@ public class AJEParser extends Parser {
 
     public Identifier parseIdentifier() {
         Position position = peek(0).getPosition();
-        Expr expr = parseExpr(Precedence.POSTFIX - 1);
+        Expr expr = parseExpr(Precedence.DOT - 1);
         if (expr instanceof Identifier) {
             return (Identifier) expr;
         } else {
-            throw new SyntaxException("Expected IDENTIFIER", position);
+            throw new SyntaxException("Expected IDENTIFIER but got " + getLast().getType(), position);
         }
     }
 
