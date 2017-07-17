@@ -22,7 +22,12 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public class Type<T> implements Obj {
-    public static final Type<Type> TYPE = new TypeObj();
+    public static final Type<Type> TYPE = new Type<Type>("Type") {
+        @Override
+        public Type getParent() {
+            return Obj.TYPE;
+        }
+    };
 
     private final Type parent;
     private final String name;
@@ -102,17 +107,6 @@ public class Type<T> implements Obj {
             throw new ComputeException(toString() + " does not support instantiation");
         } else {
             return constructor.invoke(arguments);
-        }
-    }
-
-    private static class TypeObj extends Type<Type> {
-        public TypeObj() {
-            super("Type");
-        }
-
-        @Override
-        public Type getParent() {
-            return Obj.TYPE;
         }
     }
 }

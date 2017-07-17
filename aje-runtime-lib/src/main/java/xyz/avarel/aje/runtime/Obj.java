@@ -16,6 +16,8 @@
 package xyz.avarel.aje.runtime;
 
 import xyz.avarel.aje.exceptions.ComputeException;
+import xyz.avarel.aje.runtime.modules.Module;
+import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.Arrays;
@@ -28,6 +30,9 @@ import java.util.List;
  */
 public interface Obj {
     Type<Obj> TYPE = new Type<>("Object");
+    Module MODULE = new NativeModule() {{
+        declare("TYPE", Obj.TYPE);
+    }};
 
     /**
      * @return The {@link Type} of the object.

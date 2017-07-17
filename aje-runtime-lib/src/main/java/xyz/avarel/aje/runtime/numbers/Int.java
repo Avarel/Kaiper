@@ -18,34 +18,41 @@ package xyz.avarel.aje.runtime.numbers;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.modules.NativeModule;
-import xyz.avarel.aje.runtime.types.NativeConstructor;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
 
 public class Int implements Obj {
-    public static final Type<Int> TYPE = new Type<>("Int", new NativeConstructor(Parameter.of("a")) {
-        @Override
-        protected Obj eval(List<Obj> arguments) {
-            Obj obj = arguments.get(0);
-            if (obj instanceof Int) {
-                return obj;
-            } else if (obj instanceof Number) {
-                return Int.of((int) ((Number) obj).value());
-            }
-            try {
-                return Int.of(Integer.parseInt(obj.toString()));
-            } catch (NumberFormatException e) {
-                throw new ComputeException(e);
-            }
-        }
-    });
+    public static final Type<Int> TYPE = new Type<>("Int");
+    public static final Module MODULE = new NativeModule() {{
+        declare("TYPE", Int.TYPE);
 
-    public static final Module MODULE = new IntModule();
+        declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
+        declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
+        declare("BYTES", Int.of(Integer.BYTES));
+        declare("SIZE", Int.of(Integer.SIZE));
 
+        declare("parse", new NativeFunc("parse", Parameter.of("a")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                Obj obj = arguments.get(0);
+                if (obj instanceof Int) {
+                    return obj;
+                } else if (obj instanceof Number) {
+                    return Int.of((int) ((Number) obj).value());
+                }
+                try {
+                    return Int.of(Integer.parseInt(obj.toString()));
+                } catch (NumberFormatException e) {
+                    throw new ComputeException(e);
+                }
+            }
+        });
+    }};
     private final int value;
 
     private Int(int value) {
@@ -256,14 +263,5 @@ public class Int implements Obj {
         }
 
         private IntCache() {}
-    }
-
-    private static class IntModule extends NativeModule {
-        public IntModule() {
-            declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
-            declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
-            declare("BYTES", Int.of(Integer.BYTES));
-            declare("SIZE", Int.of(Integer.SIZE));
-        }
     }
 }

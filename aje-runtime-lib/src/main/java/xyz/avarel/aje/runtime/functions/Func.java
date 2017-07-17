@@ -16,6 +16,8 @@
 package xyz.avarel.aje.runtime.functions;
 
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.modules.Module;
+import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
@@ -24,6 +26,9 @@ import java.util.function.Function;
 
 public abstract class Func implements Obj {
     public static final Type<Func> TYPE = new Type<>("Function");
+    public static final Module MODULE = new NativeModule() {{
+        declare("TYPE", Func.TYPE);
+    }};
     private final String name;
 
     protected Func(String name) {

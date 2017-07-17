@@ -34,8 +34,16 @@ import java.util.Map;
  */
 public class Dictionary extends HashMap<Obj, Obj> implements Obj {
     public static final Type<Dictionary> TYPE = new Type<>("Dictionary");
+    public static final Module MODULE = new NativeModule() {{
+        declare("TYPE", Dictionary.TYPE);
 
-    public static final Module MODULE = new DictionaryModule();
+        declare("size", new NativeFunc("size", Parameter.of("dict")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                return Int.of(((Dictionary) arguments.get(0)).size());
+            }
+        });
+    }};
 
     /**
      * Creates an empty dictionary.
@@ -84,17 +92,6 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj {
                 return Int.of(size());
             default:
                 return Obj.super.getAttr(name);
-        }
-    }
-
-    private static class DictionaryModule extends NativeModule {
-        public DictionaryModule() {
-            declare("size", new NativeFunc("size", Parameter.of("dict")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return Int.of(((Dictionary) arguments.get(0)).size());
-                }
-            });
         }
     }
 }

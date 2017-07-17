@@ -18,34 +18,44 @@ package xyz.avarel.aje.runtime.numbers;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
 import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.modules.NativeModule;
-import xyz.avarel.aje.runtime.types.NativeConstructor;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
 
 public class Number implements Obj {
-    public static final Type<Number> TYPE = new Type<>("Number", new NativeConstructor(Parameter.of("a")) {
-        @Override
-        protected Obj eval(List<Obj> arguments) {
-            Obj obj = arguments.get(0);
-            if (obj instanceof Number) {
-                return obj;
-            } else if (obj instanceof Int) {
-                return Number.of(((Int) obj).value());
-            }
-            try {
-                return Number.of(Double.parseDouble(obj.toString()));
-            } catch (NumberFormatException e) {
-                throw new ComputeException(e);
-            }
-        }
-    });
+    public static final Type<Number> TYPE = new Type<>("Number");
+    public static final Module MODULE = new NativeModule() {{
+        declare("TYPE", Number.TYPE);
 
-    public static final Module MODULE = new DecimalModule();
+        declare("MAX_VALUE", Number.of(Double.MAX_VALUE));
+        declare("MIN_VALUE", Number.of(Double.MIN_VALUE));
+        declare("NEGATIVE_INFINITY", Number.of(Double.NEGATIVE_INFINITY));
+        declare("POSITIVE_INFINITY", Number.of(Double.POSITIVE_INFINITY));
+        declare("NaN", Number.of(Double.NaN));
+        declare("BYTES", Number.of(Double.BYTES));
+        declare("SIZE", Number.of(Double.SIZE));
 
+        declare("parse", new NativeFunc("parse", Parameter.of("a")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                Obj obj = arguments.get(0);
+                if (obj instanceof Number) {
+                    return obj;
+                } else if (obj instanceof Int) {
+                    return Number.of(((Int) obj).value());
+                }
+                try {
+                    return Number.of(Double.parseDouble(obj.toString()));
+                } catch (NumberFormatException e) {
+                    throw new ComputeException(e);
+                }
+            }
+        });
+    }};
     private final double value;
 
     private Number(double value) {
@@ -199,17 +209,5 @@ public class Number implements Obj {
 
     private Bool lessThan(Number other) {
         return Bool.of(value < other.value);
-    }
-
-    private static class DecimalModule extends NativeModule {
-        public DecimalModule() {
-            declare("MAX_VALUE", Number.of(Double.MAX_VALUE));
-            declare("MIN_VALUE", Number.of(Double.MIN_VALUE));
-            declare("NEGATIVE_INFINITY", Number.of(Double.NEGATIVE_INFINITY));
-            declare("POSITIVE_INFINITY", Number.of(Double.POSITIVE_INFINITY));
-            declare("NaN", Number.of(Double.NaN));
-            declare("BYTES", Number.of(Double.BYTES));
-            declare("SIZE", Number.of(Double.SIZE));
-        }
     }
 }

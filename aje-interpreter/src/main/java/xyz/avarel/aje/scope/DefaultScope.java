@@ -30,26 +30,20 @@ public class DefaultScope extends Scope {
 
     private DefaultScope() {
         declare("not", DefaultFunctions.NOT.get());
+        declare("str", DefaultFunctions.STR.get());
 
-        declare("Object", Obj.TYPE);
-        declare("Type", Type.TYPE);
-        declare("Int", Int.TYPE);
-        declare("Number", Number.TYPE);
-        declare("Boolean", Bool.TYPE);
-        declare("Array", Array.TYPE);
-        declare("Range", Range.TYPE);
-        declare("Dictionary", Dictionary.TYPE);
-        declare("String", Str.TYPE);
-        declare("Function", Func.TYPE);
-        declare("Undefined", Undefined.TYPE);
-
+        declare("Object", Obj.MODULE);
         declare("Math", MathModule.INSTANCE);
-        declare("Ints", Int.MODULE);
-        declare("Decimals", Number.MODULE);
-        declare("Arrays", Array.MODULE);
-        declare("Ranges", Range.MODULE);
-        declare("Dictionaries", Dictionary.MODULE);
-        declare("Strings", Str.MODULE);
+        declare("Type", Type.MODULE);
+        declare("Int", Int.MODULE);
+        declare("Number", Number.MODULE);
+        declare("Boolean", Bool.MODULE);
+        declare("Array", Array.MODULE);
+        declare("Range", Range.MODULE);
+        declare("Dictionary", Dictionary.MODULE);
+        declare("String", Str.MODULE);
+        declare("Function", Func.MODULE);
+        declare("Undefined", Undefined.MODULE);
     }
 
     @Deprecated

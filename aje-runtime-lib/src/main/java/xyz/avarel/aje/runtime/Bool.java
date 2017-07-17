@@ -15,8 +15,10 @@
 
 package xyz.avarel.aje.runtime;
 
-import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.runtime.types.NativeConstructor;
+import xyz.avarel.aje.runtime.functions.NativeFunc;
+import xyz.avarel.aje.runtime.functions.Parameter;
+import xyz.avarel.aje.runtime.modules.Module;
+import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.List;
@@ -25,16 +27,22 @@ public enum Bool implements Obj {
     TRUE(true),
     FALSE(false);
 
-    public static final Type<Bool> TYPE = new Type<>("Boolean", new NativeConstructor() {
-        @Override
-        protected Obj eval(List<Obj> arguments) {
-            Obj obj = arguments.get(0);
-            if (obj instanceof Bool) {
-                return obj;
+    public static final Type<Bool> TYPE = new Type<>("Boolean");
+
+    public static final Module MODULE = new NativeModule() {{
+        declare("TYPE", Bool.TYPE);
+
+        declare("parse", new NativeFunc("parse", Parameter.of("a")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                Obj obj = arguments.get(0);
+                if (obj instanceof Bool) {
+                    return obj;
+                }
+                return Bool.of(Boolean.valueOf(obj.toString()));
             }
-            return Bool.of(Boolean.valueOf(obj.toString()));
-        }
-    });
+        });
+    }};
 
     private final boolean value;
 
@@ -108,15 +116,5 @@ public enum Bool implements Obj {
             return Bool.of(value == ((Bool) other).value);
         }
         return FALSE;
-    }
-
-    @Override
-    public Obj getAttr(String name) {
-        switch (name) {
-            case "int":
-                return value ? Int.of(1) : Int.of(0);
-            default:
-                return Obj.super.getAttr(name);
-        }
     }
 }

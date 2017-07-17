@@ -19,9 +19,18 @@
 
 package xyz.avarel.aje
 
+import org.junit.Test
 import xyz.avarel.aje.runtime.Obj
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.functions
 
 internal fun eval(script: String): Obj {
     val exp = Expression(script)
     return exp.compile().compute()
+}
+
+fun main(args: Array<String>) {
+    println(ArrayTest::class.functions.filter {
+        it.findAnnotation<Test>() != null
+    })
 }

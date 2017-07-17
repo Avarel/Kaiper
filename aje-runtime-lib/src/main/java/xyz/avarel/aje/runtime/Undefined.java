@@ -15,6 +15,8 @@
 
 package xyz.avarel.aje.runtime;
 
+import xyz.avarel.aje.runtime.modules.Module;
+import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.types.Type;
 
 /**
@@ -25,6 +27,9 @@ public enum Undefined implements Obj {
     VALUE;
 
     public static final Type<Undefined> TYPE = new Type<>("Undefined");
+    public static final Module MODULE = new NativeModule() {{
+        declare("TYPE", Undefined.TYPE);
+    }};
 
     @Override
     public String toString() {

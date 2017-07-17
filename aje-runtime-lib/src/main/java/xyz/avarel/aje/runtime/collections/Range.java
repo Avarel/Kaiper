@@ -30,8 +30,23 @@ import java.util.List;
 
 public class Range implements Obj, Iterable<Int> {
     public static final Type<Range> TYPE = new Type<>("Range");
-    public static final Module MODULE = new RangeModule();
-    
+    public static final Module MODULE = new NativeModule() {{
+        declare("TYPE", Range.TYPE);
+
+        declare("length", new NativeFunc("length", Parameter.of("range")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                return Int.of(((Range) arguments.get(0)).size());
+            }
+        });
+
+        declare("lastIndex", new NativeFunc("lastIndex", Parameter.of("range")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                return Int.of(((Range) arguments.get(0)).size() - 1);
+            }
+        });
+    }};
     private final int start;
     private final int end;
 
@@ -110,24 +125,6 @@ public class Range implements Obj, Iterable<Int> {
                 return Int.of(size() - 1);
             default:
                 return Obj.super.getAttr(name);
-        }
-    }
-
-    private static class RangeModule extends NativeModule {
-        public RangeModule() {
-            declare("length", new NativeFunc("length", Parameter.of("range")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return Int.of(((Range) arguments.get(0)).size());
-                }
-            });
-
-            declare("lastIndex", new NativeFunc("lastIndex", Parameter.of("range")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return Int.of(((Range) arguments.get(0)).size() - 1);
-                }
-            });
         }
     }
 

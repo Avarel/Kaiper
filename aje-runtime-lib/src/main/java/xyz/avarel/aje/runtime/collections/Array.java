@@ -24,7 +24,6 @@ import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.numbers.Int;
-import xyz.avarel.aje.runtime.types.NativeConstructor;
 import xyz.avarel.aje.runtime.types.Type;
 
 import java.util.*;
@@ -33,14 +32,85 @@ import java.util.*;
  * AJE wrapper class for a one dimensional list.
  */
 public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
-    public static final Type<Array> TYPE = new Type<>("Array", new NativeConstructor(Parameter.of("elements", true)) {
-        @Override
-        protected Obj eval(List<Obj> arguments) {
-            return Array.ofList(arguments);
-        }
-    });
+    public static final Type<Array> TYPE = new Type<>("Array");
+    public static final Module MODULE = new NativeModule() {{
+        declare("TYPE", Array.TYPE);
 
-    public static final Module MODULE = new ArrayModule();
+        declare("length", new NativeFunc("length", Parameter.of("array")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                return Int.of(arguments.get(0).castTo(Array.TYPE).size());
+            }
+        });
+
+        declare("lastIndex", new NativeFunc("lastIndex", Parameter.of("array")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                return Int.of(arguments.get(0).castTo(Array.TYPE).size() - 1);
+            }
+        });
+
+        declare("append", new NativeFunc("append", Parameter.of("array"), Parameter.of("elements", true)) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                arguments.get(0).castTo(Array.TYPE).addAll(arguments);
+                return arguments.get(0);
+            }
+        });
+
+        declare("each", new NativeFunc("each", Parameter.of("array"), Parameter.of("action")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                Func action = arguments.get(1).castTo(Func.TYPE);
+
+                for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
+                    action.invoke(Collections.singletonList(obj));
+                }
+                return Undefined.VALUE;
+            }
+        });
+
+        declare("map", new NativeFunc("map", Parameter.of("array"), Parameter.of("transform")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                Func transform = arguments.get(1).castTo(Func.TYPE);
+
+                Array array = new Array();
+                for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
+                    array.add(transform.invoke(Collections.singletonList(obj)));
+                }
+                return array;
+            }
+        });
+
+        declare("filter", new NativeFunc("filter", Parameter.of("array"), Parameter.of("predicate")) {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                Func predicate = arguments.get(1).castTo(Func.TYPE);
+
+                Array array = new Array();
+                for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
+                    Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
+                    if (condition == Bool.TRUE) array.add(obj);
+                }
+                return array;
+            }
+        });
+
+        declare("fold",
+                new NativeFunc("fold", Parameter.of("array"), Parameter.of("accumulator"), Parameter.of("operation")) {
+                    @Override
+                    protected Obj eval(List<Obj> arguments) {
+                        Obj accumulator = arguments.get(1);
+                        Func operation = arguments.get(2).castTo(Func.TYPE);
+
+                        for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
+                            accumulator = operation.invoke(accumulator, obj);
+                        }
+                        return accumulator;
+                    }
+                });
+    }};
 
     /**
      * Creates an empty array.
@@ -260,84 +330,5 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
     public Obj shl(Obj other) {
         this.add(other);
         return this;
-    }
-
-    private static class ArrayModule extends NativeModule {
-        public ArrayModule() {
-            declare("length", new NativeFunc("length", Parameter.of("array")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return Int.of(arguments.get(0).castTo(Array.TYPE).size());
-                }
-            });
-
-            declare("lastIndex", new NativeFunc("lastIndex", Parameter.of("array")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    return Int.of(arguments.get(0).castTo(Array.TYPE).size() - 1);
-                }
-            });
-
-            declare("append", new NativeFunc("append", Parameter.of("array"), Parameter.of("elements", true)) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    arguments.get(0).castTo(Array.TYPE).addAll(arguments);
-                    return arguments.get(0);
-                }
-            });
-
-            declare("each", new NativeFunc("each", Parameter.of("array"), Parameter.of("action")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    Func action = arguments.get(1).castTo(Func.TYPE);
-
-                    for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
-                        action.invoke(Collections.singletonList(obj));
-                    }
-                    return Undefined.VALUE;
-                }
-            });
-
-            declare("map", new NativeFunc("map", Parameter.of("array"), Parameter.of("transform")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    Func transform = arguments.get(1).castTo(Func.TYPE);
-
-                    Array array = new Array();
-                    for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
-                        array.add(transform.invoke(Collections.singletonList(obj)));
-                    }
-                    return array;
-                }
-            });
-
-            declare("filter", new NativeFunc("filter", Parameter.of("array"), Parameter.of("predicate")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    Func predicate = arguments.get(1).castTo(Func.TYPE);
-
-                    Array array = new Array();
-                    for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
-                        Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
-                        if (condition == Bool.TRUE) array.add(obj);
-                    }
-                    return array;
-                }
-            });
-
-            declare("fold",
-                    new NativeFunc("fold", Parameter.of("array"), Parameter.of("accumulator"), Parameter.of("operation")) {
-                @Override
-                protected Obj eval(List<Obj> arguments) {
-                    Obj accumulator = arguments.get(1);
-                    Func operation = arguments.get(2).castTo(Func.TYPE);
-
-                    for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
-                        accumulator = operation.invoke(accumulator, obj);
-                    }
-                    return accumulator;
-                }
-            });
-        }
     }
 }
