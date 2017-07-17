@@ -24,7 +24,6 @@ import xyz.avarel.aje.exceptions.AJEException;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.util.List;
 import java.util.Scanner;
@@ -37,7 +36,7 @@ public class AJERepl {
 
         Evaluator evaluator = new Evaluator();
 
-        evaluator.getScope().declare("println", new NativeFunc("print", Parameter.of("string")) {
+        evaluator.getScope().declare("println", new NativeFunc("print", "string") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 System.out.println(arguments.get(0));

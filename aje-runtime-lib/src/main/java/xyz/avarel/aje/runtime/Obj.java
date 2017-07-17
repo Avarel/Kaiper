@@ -299,7 +299,7 @@ public interface Obj {
 
     // no operator, purely internal
     @SuppressWarnings("unchecked")
-    default <T extends Obj> T castTo(Type<T> type) {
+    default <T extends Obj> T as(Type<T> type) {
         if (getType().is(type)) {
             return (T) this;
         }

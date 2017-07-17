@@ -33,8 +33,16 @@ public abstract class NativeFunc extends Func {
 
     public NativeFunc(String name, Parameter... parameters) {
         super(name);
-        this.parameters = new ArrayList<>();
-        this.parameters.addAll(Arrays.asList(parameters));
+        this.parameters = Arrays.asList(parameters);
+    }
+
+    public NativeFunc(String name, String... params) {
+        super(name);
+        this.parameters = new ArrayList<>(params.length);
+        for (String param : params) {
+            Parameter of = Parameter.of(param);
+            parameters.add(of);
+        }
     }
 
     @Override

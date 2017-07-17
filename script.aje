@@ -1,12 +1,7 @@
 // Test file for FileTest.java
 
-type Double(value) {
-    this.value = value // might consider syntax sugar for this
+def factorial(x, n = x - 1) {
+    return if (n == 0) x else factorial(x * n, n - 1)
 }
 
-module Doubles {
-    def add(a: Double, b: Double) = Double(a.value + b.value)
-}
-
-let result = Double(2) |> Doubles.add(Double(3))
-result.value
+[factorial(5), factorial]

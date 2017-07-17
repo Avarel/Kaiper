@@ -18,7 +18,6 @@ package xyz.avarel.aje.runtime.collections;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -33,14 +32,14 @@ public class Range implements Obj, Iterable<Int> {
     public static final Module MODULE = new NativeModule() {{
         declare("TYPE", Range.TYPE);
 
-        declare("length", new NativeFunc("length", Parameter.of("range")) {
+        declare("length", new NativeFunc("length", "range") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 return Int.of(((Range) arguments.get(0)).size());
             }
         });
 
-        declare("lastIndex", new NativeFunc("lastIndex", Parameter.of("range")) {
+        declare("lastIndex", new NativeFunc("lastIndex", "range") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 return Int.of(((Range) arguments.get(0)).size() - 1);

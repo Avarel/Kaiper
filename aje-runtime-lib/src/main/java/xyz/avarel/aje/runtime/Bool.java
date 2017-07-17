@@ -16,7 +16,6 @@
 package xyz.avarel.aje.runtime;
 
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.types.Type;
@@ -32,7 +31,7 @@ public enum Bool implements Obj {
     public static final Module MODULE = new NativeModule() {{
         declare("TYPE", Bool.TYPE);
 
-        declare("parse", new NativeFunc("parse", Parameter.of("a")) {
+        declare("parse", new NativeFunc("parse", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj obj = arguments.get(0);

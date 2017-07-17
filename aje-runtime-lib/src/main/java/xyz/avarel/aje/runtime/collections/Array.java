@@ -36,60 +36,60 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
     public static final Module MODULE = new NativeModule() {{
         declare("TYPE", Array.TYPE);
 
-        declare("length", new NativeFunc("length", Parameter.of("array")) {
+        declare("length", new NativeFunc("length", "array") {
             @Override
             protected Obj eval(List<Obj> arguments) {
-                return Int.of(arguments.get(0).castTo(Array.TYPE).size());
+                return Int.of(arguments.get(0).as(Array.TYPE).size());
             }
         });
 
-        declare("lastIndex", new NativeFunc("lastIndex", Parameter.of("array")) {
+        declare("lastIndex", new NativeFunc("lastIndex", "array") {
             @Override
             protected Obj eval(List<Obj> arguments) {
-                return Int.of(arguments.get(0).castTo(Array.TYPE).size() - 1);
+                return Int.of(arguments.get(0).as(Array.TYPE).size() - 1);
             }
         });
 
         declare("append", new NativeFunc("append", Parameter.of("array"), Parameter.of("elements", true)) {
             @Override
             protected Obj eval(List<Obj> arguments) {
-                arguments.get(0).castTo(Array.TYPE).addAll(arguments);
+                arguments.get(0).as(Array.TYPE).addAll(arguments);
                 return arguments.get(0);
             }
         });
 
-        declare("each", new NativeFunc("each", Parameter.of("array"), Parameter.of("action")) {
+        declare("each", new NativeFunc("each", "array", "action") {
             @Override
             protected Obj eval(List<Obj> arguments) {
-                Func action = arguments.get(1).castTo(Func.TYPE);
+                Func action = arguments.get(1).as(Func.TYPE);
 
-                for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
+                for (Obj obj : arguments.get(0).as(Array.TYPE)) {
                     action.invoke(Collections.singletonList(obj));
                 }
                 return Undefined.VALUE;
             }
         });
 
-        declare("map", new NativeFunc("map", Parameter.of("array"), Parameter.of("transform")) {
+        declare("map", new NativeFunc("map", "array", "transform") {
             @Override
             protected Obj eval(List<Obj> arguments) {
-                Func transform = arguments.get(1).castTo(Func.TYPE);
+                Func transform = arguments.get(1).as(Func.TYPE);
 
                 Array array = new Array();
-                for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
+                for (Obj obj : arguments.get(0).as(Array.TYPE)) {
                     array.add(transform.invoke(Collections.singletonList(obj)));
                 }
                 return array;
             }
         });
 
-        declare("filter", new NativeFunc("filter", Parameter.of("array"), Parameter.of("predicate")) {
+        declare("filter", new NativeFunc("filter", "array", "predicate") {
             @Override
             protected Obj eval(List<Obj> arguments) {
-                Func predicate = arguments.get(1).castTo(Func.TYPE);
+                Func predicate = arguments.get(1).as(Func.TYPE);
 
                 Array array = new Array();
-                for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
+                for (Obj obj : arguments.get(0).as(Array.TYPE)) {
                     Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
                     if (condition == Bool.TRUE) array.add(obj);
                 }
@@ -98,13 +98,13 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         });
 
         declare("fold",
-                new NativeFunc("fold", Parameter.of("array"), Parameter.of("accumulator"), Parameter.of("operation")) {
+                new NativeFunc("fold", "array", "accumulator", "operation") {
                     @Override
                     protected Obj eval(List<Obj> arguments) {
                         Obj accumulator = arguments.get(1);
-                        Func operation = arguments.get(2).castTo(Func.TYPE);
+                        Func operation = arguments.get(2).as(Func.TYPE);
 
-                        for (Obj obj : arguments.get(0).castTo(Array.TYPE)) {
+                        for (Obj obj : arguments.get(0).as(Array.TYPE)) {
                             accumulator = operation.invoke(accumulator, obj);
                         }
                         return accumulator;

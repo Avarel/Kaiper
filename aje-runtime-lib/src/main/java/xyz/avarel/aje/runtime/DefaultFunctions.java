@@ -31,12 +31,11 @@
 package xyz.avarel.aje.runtime;
 
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.util.List;
 
 public enum DefaultFunctions {
-    STR(new NativeFunc("str", Parameter.of("a")) {
+    STR(new NativeFunc("str", "a") {
         @Override
         protected Obj eval(List<Obj> arguments) {
             Obj obj = arguments.get(0);
@@ -47,7 +46,7 @@ public enum DefaultFunctions {
         }
     }),
 
-    NOT(new NativeFunc("not", Parameter.of("function")) {
+    NOT(new NativeFunc("not", "function") {
         @Override
         protected Obj eval(List<Obj> arguments) {
             return new NativeFunc("not") {

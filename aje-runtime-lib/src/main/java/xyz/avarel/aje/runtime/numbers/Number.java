@@ -19,7 +19,6 @@ import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.types.Type;
@@ -39,7 +38,7 @@ public class Number implements Obj {
         declare("BYTES", Number.of(Double.BYTES));
         declare("SIZE", Number.of(Double.SIZE));
 
-        declare("parse", new NativeFunc("parse", Parameter.of("a")) {
+        declare("parse", new NativeFunc("parse", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj obj = arguments.get(0);

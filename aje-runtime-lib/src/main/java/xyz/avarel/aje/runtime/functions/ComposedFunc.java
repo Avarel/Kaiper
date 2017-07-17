@@ -42,7 +42,7 @@ public class ComposedFunc extends Func {
     }
 
     @Override
-    public List<Parameter> getParameters() {
+    public List<? extends Parameter> getParameters() {
         return inner.getParameters();
     }
 

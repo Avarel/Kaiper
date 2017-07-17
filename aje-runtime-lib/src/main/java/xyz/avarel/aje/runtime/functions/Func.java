@@ -37,7 +37,7 @@ public abstract class Func implements Obj {
 
     public abstract int getArity();
 
-    public abstract List<Parameter> getParameters();
+    public abstract List<? extends Parameter> getParameters();
 
     public String getName() {
         return name == null ? "anonymous" : name;

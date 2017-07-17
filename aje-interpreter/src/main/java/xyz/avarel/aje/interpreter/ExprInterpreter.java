@@ -49,6 +49,7 @@ import xyz.avarel.aje.ast.variables.DeclarationExpr;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.interpreter.runtime.functions.CompiledFunc;
+import xyz.avarel.aje.interpreter.runtime.functions.CompiledParameter;
 import xyz.avarel.aje.interpreter.runtime.modules.CompiledModule;
 import xyz.avarel.aje.interpreter.runtime.types.CompiledConstructor;
 import xyz.avarel.aje.interpreter.runtime.types.CompiledType;
@@ -60,7 +61,6 @@ import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
 import xyz.avarel.aje.runtime.functions.Func;
-import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.runtime.numbers.Number;
@@ -104,17 +104,12 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     // func print(str: String, n: Int) { for (x in 0..n) { print(str) } }
     @Override
     public Obj visit(FunctionNode expr, Scope scope) {
-        List<Parameter> parameters = new ArrayList<>();
+        List<CompiledParameter> parameters = new ArrayList<>();
 
         for (ParameterData data : expr.getParameterExprs()) {
             checkTimeout();
 
-            Obj defaultObj = null;
-            if (data.getDefault() != null) {
-                defaultObj = data.getDefault().accept(this, scope);
-            }
-
-            parameters.add(Parameter.of(data.getName(), defaultObj, data.isRest()));
+            parameters.add(new CompiledParameter(data.getName(), data.getDefault(), data.isRest()));
         }
 
         checkTimeout();
@@ -351,16 +346,10 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             throw new ComputeException(superType + " can not be extended");
         }
 
-        List<Parameter> constructorParameters = new ArrayList<>();
+        List<CompiledParameter> constructorParameters = new ArrayList<>();
         for (ParameterData data : expr.getParameterExprs()) {
             checkTimeout();
-
-            Obj defaultObj = null;
-            if (data.getDefault() != null) {
-                defaultObj = data.getDefault().accept(this, scope);
-            }
-
-            constructorParameters.add(Parameter.of(data.getName(), defaultObj, data.isRest()));
+            constructorParameters.add(new CompiledParameter(data.getName(), data.getDefault(), data.isRest()));
         }
 
         CompiledConstructor constructor = new CompiledConstructor(

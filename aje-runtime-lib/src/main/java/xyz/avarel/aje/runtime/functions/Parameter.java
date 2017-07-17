@@ -15,49 +15,29 @@
 
 package xyz.avarel.aje.runtime.functions;
 
-import xyz.avarel.aje.runtime.Obj;
-
 public class Parameter {
     private final String name;
-    private final Obj defaultObj;
     private final boolean rest;
 
-    private Parameter(String name, Obj defaultObj, boolean rest) {
+    protected Parameter(String name, boolean rest) {
         this.name = name;
-        this.defaultObj = defaultObj;
         this.rest = rest;
     }
 
     public static Parameter of(String name) {
-        return Parameter.of(name, null, false);
+        return Parameter.of(name, false);
     }
 
     public static Parameter of(String name, boolean rest) {
-        return Parameter.of(name, null, rest);
-    }
-
-    public static Parameter of(String name, Obj defaultExpr, boolean rest) {
-        return new Parameter(name, defaultExpr, rest);
+        return new Parameter(name, rest);
     }
 
     public String getName() {
         return name;
     }
 
-    public boolean hasDefault() {
-        return defaultObj != null;
-    }
-
-    public Obj getDefault() {
-        return defaultObj;
-    }
-
     public boolean isRest() {
         return rest;
-    }
-
-    public String typeString() {
-        return isRest() ? "..." + getName() : getName();
     }
 
     @Override
@@ -72,9 +52,6 @@ public class Parameter {
             sb.append(name);
         }
 
-        if (defaultObj != null) {
-            sb.append(" = ").append(defaultObj);
-        }
         return sb.toString();
     }
 }

@@ -19,7 +19,6 @@ import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.runtime.Bool;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.types.Type;
@@ -36,7 +35,7 @@ public class Int implements Obj {
         declare("BYTES", Int.of(Integer.BYTES));
         declare("SIZE", Int.of(Integer.SIZE));
 
-        declare("parse", new NativeFunc("parse", Parameter.of("a")) {
+        declare("parse", new NativeFunc("parse", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj obj = arguments.get(0);
@@ -241,12 +240,12 @@ public class Int implements Obj {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Obj> T castTo(Type<T> type) {
+    public <T extends Obj> T as(Type<T> type) {
         if (type == Number.TYPE) {
             return (T) Number.of(value);
         }
 
-        return Obj.super.castTo(type);
+        return Obj.super.as(type);
     }
 
     private static class IntCache {

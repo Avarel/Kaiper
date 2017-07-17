@@ -24,7 +24,6 @@ import xyz.avarel.aje.Expression;
 import xyz.avarel.aje.lexer.AJELexer;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 
 import java.io.File;
 import java.io.FileReader;
@@ -42,7 +41,7 @@ public class FileTest {
 
         Expression exp = new Expression(new FileReader(new File("script.aje")));
 
-        exp.add("println", new NativeFunc("print", Parameter.of("string")) {
+        exp.add("println", new NativeFunc("print","string") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 System.out.println(arguments.get(0));

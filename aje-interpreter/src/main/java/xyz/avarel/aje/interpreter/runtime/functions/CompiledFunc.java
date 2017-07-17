@@ -22,18 +22,17 @@ import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.functions.Func;
-import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.scope.Scope;
 
 import java.util.List;
 
 public class CompiledFunc extends Func {
-    private final List<Parameter> parameters;
+    private final List<CompiledParameter> parameters;
     private final Expr expr;
     private final Scope scope;
     private final ExprInterpreter visitor;
 
-    public CompiledFunc(String name, List<Parameter> parameters, Expr expr, ExprInterpreter visitor, Scope scope) {
+    public CompiledFunc(String name, List<CompiledParameter> parameters, Expr expr, ExprInterpreter visitor, Scope scope) {
         super(name);
         this.parameters = parameters;
         this.expr = expr;
@@ -47,7 +46,7 @@ public class CompiledFunc extends Func {
         return parameters.get(parameters.size() - 1).isRest() ? parameters.size() - 1 : parameters.size();
     }
 
-    public List<Parameter> getParameters() {
+    public List<CompiledParameter> getParameters() {
         return parameters;
     }
 
@@ -55,19 +54,19 @@ public class CompiledFunc extends Func {
     public Obj invoke(List<Obj> arguments) {
         Scope scope = this.scope.subPool();
         for (int i = 0; i < getArity(); i++) {
-            Parameter parameter = parameters.get(i);
+            CompiledParameter parameter = parameters.get(i);
 
             if (i < arguments.size()) {
                 scope.declare(parameter.getName(), arguments.get(i));
             } else if (parameter.hasDefault()) {
-                scope.declare(parameter.getName(), parameter.getDefault());
+                scope.declare(parameter.getName(), parameter.getDefaultExpr().accept(visitor, scope));
             } else {
                 scope.declare(parameter.getName(), Undefined.VALUE);
             }
         }
 
         if (!parameters.isEmpty()) {
-            Parameter lastParam = parameters.get(parameters.size() - 1);
+            CompiledParameter lastParam = parameters.get(parameters.size() - 1);
 
             if (lastParam.isRest()) {
                 if (arguments.size() > getArity()) {

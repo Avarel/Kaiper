@@ -18,7 +18,6 @@ package xyz.avarel.aje.runtime.collections;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.functions.NativeFunc;
-import xyz.avarel.aje.runtime.functions.Parameter;
 import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.modules.NativeModule;
 import xyz.avarel.aje.runtime.numbers.Int;
@@ -37,7 +36,7 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj {
     public static final Module MODULE = new NativeModule() {{
         declare("TYPE", Dictionary.TYPE);
 
-        declare("size", new NativeFunc("size", Parameter.of("dict")) {
+        declare("size", new NativeFunc("size", "dict") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 return Int.of(((Dictionary) arguments.get(0)).size());

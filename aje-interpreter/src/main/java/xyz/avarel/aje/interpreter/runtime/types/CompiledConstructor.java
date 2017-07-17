@@ -4,6 +4,7 @@ import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.Single;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.interpreter.ExprInterpreter;
+import xyz.avarel.aje.interpreter.runtime.functions.CompiledParameter;
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Array;
@@ -15,13 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompiledConstructor extends Constructor {
-    private final List<Parameter> parameters;
+    private final List<CompiledParameter> parameters;
     private final List<Single> superParameters;
     private final ExprInterpreter visitor;
     private final Scope scope;
     private final Expr expr;
 
-    public CompiledConstructor(List<Parameter> parameters, List<Single> superParameters, Expr expr, ExprInterpreter visitor, Scope scope) {
+    public CompiledConstructor(List<CompiledParameter> parameters, List<Single> superParameters, Expr expr, ExprInterpreter visitor, Scope scope) {
         this.parameters = parameters;
         this.superParameters = superParameters;
         this.visitor = visitor;
@@ -30,7 +31,7 @@ public class CompiledConstructor extends Constructor {
     }
 
     @Override
-    public List<Parameter> getParameters() {
+    public List<CompiledParameter> getParameters() {
         return parameters;
     }
 
@@ -47,12 +48,12 @@ public class CompiledConstructor extends Constructor {
         Scope constructorScope = scope.subPool();
 
         for (int i = 0; i < getArity(); i++) {
-            Parameter parameter = parameters.get(i);
+            CompiledParameter parameter = parameters.get(i);
 
             if (i < arguments.size()) {
                 constructorScope.declare(parameter.getName(), arguments.get(i));
             } else if (parameter.hasDefault()) {
-                constructorScope.declare(parameter.getName(), parameter.getDefault());
+                constructorScope.declare(parameter.getName(), parameter.getDefaultExpr().accept(visitor, scope));
             } else {
                 constructorScope.declare(parameter.getName(), Undefined.VALUE);
             }

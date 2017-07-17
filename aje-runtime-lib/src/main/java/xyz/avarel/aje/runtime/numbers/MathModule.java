@@ -29,61 +29,61 @@ public class MathModule extends NativeModule {
         declare("PI", Number.of(Math.PI));
         declare("E", Number.of(Math.E));
 
-        declare("sqrt", new NativeFunc("sqrt", Parameter.of("a")) {
+        declare("sqrt", new NativeFunc("sqrt", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                double value = a.castTo(Number.TYPE).toJava();
+                double value = a.as(Number.TYPE).toJava();
                 return Number.of(Math.sqrt(value));
             }
         });
-        declare("cbrt", new NativeFunc("cbrt", Parameter.of("a")) {
+        declare("cbrt", new NativeFunc("cbrt", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.cbrt(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.cbrt(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("exp", new NativeFunc("exp", Parameter.of("a")) {
+        declare("exp", new NativeFunc("exp", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.exp(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.exp(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("log", new NativeFunc("log", Parameter.of("a")) {
+        declare("log", new NativeFunc("log", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.log10(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.log10(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("ln", new NativeFunc("ln", Parameter.of("a")) {
+        declare("ln", new NativeFunc("ln", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.log(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.log(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("round", new NativeFunc("round", Parameter.of("a")) {
+        declare("round", new NativeFunc("round", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.round(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.round(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("floor", new NativeFunc("floor", Parameter.of("a")) {
+        declare("floor", new NativeFunc("floor", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.floor(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.floor(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("ceil", new NativeFunc("ceiling", Parameter.of("a")) {
+        declare("ceil", new NativeFunc("ceiling", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.ceil(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.ceil(a.as(Number.TYPE).toJava()));
             }
         });
 
@@ -111,86 +111,86 @@ public class MathModule extends NativeModule {
             }
         });
 
-        declare("sin", new NativeFunc("sin", Parameter.of("a")) {
+        declare("sin", new NativeFunc("sin", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.sin(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.sin(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("cos", new NativeFunc("cos", Parameter.of("a")) {
+        declare("cos", new NativeFunc("cos", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.cos(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.cos(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("tan", new NativeFunc("tan", Parameter.of("a")) {
+        declare("tan", new NativeFunc("tan", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.tan(a.castTo(Number.TYPE).toJava()));
-            }
-        });
-
-        declare("sinh", new NativeFunc("sinh", Parameter.of("a")) {
-            @Override
-            protected Obj eval(List<Obj> arguments) {
-                Obj a = arguments.get(0);
-                return Number.of(Math.sinh(a.castTo(Number.TYPE).toJava()));
-            }
-        });
-        declare("cosh", new NativeFunc("cosh", Parameter.of("a")) {
-            @Override
-            protected Obj eval(List<Obj> arguments) {
-                Obj a = arguments.get(0);
-                return Number.of(Math.cosh(a.castTo(Number.TYPE).toJava()));
-            }
-        });
-        declare("tanh", new NativeFunc("tanh", Parameter.of("a")) {
-            @Override
-            protected Obj eval(List<Obj> arguments) {
-                Obj a = arguments.get(0);
-                return Number.of(Math.tanh(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.tan(a.as(Number.TYPE).toJava()));
             }
         });
 
-        declare("asin", new NativeFunc("asin", Parameter.of("a")) {
+        declare("sinh", new NativeFunc("sinh", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.asin(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.sinh(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("acos", new NativeFunc("acos", Parameter.of("a")) {
+        declare("cosh", new NativeFunc("cosh", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.acos(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.cosh(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("atan", new NativeFunc("atan", Parameter.of("a")) {
+        declare("tanh", new NativeFunc("tanh", "a") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
-                return Number.of(Math.atan(a.castTo(Number.TYPE).toJava()));
+                return Number.of(Math.tanh(a.as(Number.TYPE).toJava()));
             }
         });
-        declare("atan2", new NativeFunc("atan2", Parameter.of("y"), Parameter.of("x")) {
+
+        declare("asin", new NativeFunc("asin", "a") {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                Obj a = arguments.get(0);
+                return Number.of(Math.asin(a.as(Number.TYPE).toJava()));
+            }
+        });
+        declare("acos", new NativeFunc("acos", "a") {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                Obj a = arguments.get(0);
+                return Number.of(Math.acos(a.as(Number.TYPE).toJava()));
+            }
+        });
+        declare("atan", new NativeFunc("atan", "a") {
+            @Override
+            protected Obj eval(List<Obj> arguments) {
+                Obj a = arguments.get(0);
+                return Number.of(Math.atan(a.as(Number.TYPE).toJava()));
+            }
+        });
+        declare("atan2", new NativeFunc("atan2", "y", "x") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 Obj a = arguments.get(0);
                 Obj b = arguments.get(1);
                 return Number.of(Math.atan2(
-                        a.castTo(Number.TYPE).toJava(),
+                        a.as(Number.TYPE).toJava(),
                         ((Number) Number.TYPE.invoke(b)).toJava()));
             }
         });
 
-        declare("factorial", new NativeFunc("factorial", Parameter.of("integer")) {
+        declare("factorial", new NativeFunc("factorial", "integer") {
             @Override
             protected Obj eval(List<Obj> arguments) {
-                int arg = arguments.get(0).castTo(Int.TYPE).toJava();
+                int arg = arguments.get(0).as(Int.TYPE).toJava();
                 int result = arg;
 
                 for (int i = arg - 1; i > 0; i--) {
