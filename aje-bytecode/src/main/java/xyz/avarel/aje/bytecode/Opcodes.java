@@ -13,11 +13,8 @@
  * under the License.
  */
 
-package xyz.avarel.aje.compiler;
+package xyz.avarel.aje.bytecode;
 
-import xyz.avarel.aje.ast.collections.RangeNode;
-import xyz.avarel.aje.ast.operations.BinaryOperatorType;
-import xyz.avarel.aje.ast.operations.UnaryOperatorType;
 import xyz.avarel.aje.exceptions.InvalidBytecodeException;
 
 import java.io.DataOutput;
@@ -121,20 +118,35 @@ public enum Opcodes implements DataOutputConsumer {
      * </ul>
      * <b>Action:</b>
      * <ul>
-     * <li>Retrieves the Top-most Object on the stack ({@link RangeNode#getRight()});</li>
-     * <li>Retrieves the Top-most Object on the stack ({@link RangeNode#getLeft()});</li>
+     * <li>Pushes 2 Objects from the stack (right, left);</li>
      * <li>Pushes the new {@code Range} into the stack.</li>
      * </ul>
      */
     NEW_RANGE,
+    NEW_FUNCTION,
+    FUNCTION_DEF_PARAM,
+    /**
+     * {@code NEW_RANGE;}
+     * <p>Creates a Range.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     * <li>{@code pCount} - The Parameter count.</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     * <li>Pushes {@code pCount + 1} Objects from the stack (left, args);</li>
+     * <li>Execute the Invocation on it;</li>
+     * <li>Pushes the new Result into the stack.</li>
+     * </ul>
+     */
     INVOKE,
-    DECLARE,
+    DECLARE, //TODO DOC
     /**
      * {@code UNARY_OPERATION type;}
      * <p>Executes a Unary Operation.</p>
      * <b>Parameters:</b>
      * <ul>
-     * <li>{@code type} - The {@link UnaryOperatorType} index.</li>
+     * <li>{@code type} - The UnaryOperatorType index.</li>
      * </ul>
      * <b>Action:</b>
      * <ul>
@@ -149,7 +161,7 @@ public enum Opcodes implements DataOutputConsumer {
      * <p>Executes a Binary Operation.</p>
      * <b>Parameters:</b>
      * <ul>
-     * <li>{@code type} - The {@link BinaryOperatorType} index.</li>
+     * <li>{@code type} - The BinaryOperatorType index.</li>
      * </ul>
      * <b>Action:</b>
      * <ul>
@@ -204,10 +216,14 @@ public enum Opcodes implements DataOutputConsumer {
      * </ul>
      */
     SET,
+    IDENTIFIER,
+    ASSIGN,
+    CONDITIONAL,
+    FOR_EACH,
 
-    DUP, SWAP, POP;
+    DUP, POP;
 
-    public static Opcodes byID(byte id) {
+    public static Opcodes byId(int id) {
         Opcodes[] values = values();
         if (id < values.length) return values[id];
         throw new InvalidBytecodeException("Invalid Instruction");

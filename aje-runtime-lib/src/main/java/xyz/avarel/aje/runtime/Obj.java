@@ -193,7 +193,7 @@ public interface Obj {
     }
 
     /**
-     * And operator in AJE. Default symbol is {@code &&}.
+     * Left Shift operator in AJE. Default symbol is {@code <<}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param other Right {@link Obj} operand.
@@ -204,14 +204,15 @@ public interface Obj {
     }
 
     /**
-     * And operator in AJE. Default symbol is {@code &&}.
-     * <br> Implementation should default to error if not implemented.
+     * Right Shift operator in AJE. Default symbol is {@code >>}.
+     * <br> Implementation should default to check the left-shift of the other object.
      *
      * @param other Right {@link Obj} operand.
      * @return The {@link Obj} result of the operation.
      */
     default Obj shr(Obj other) {
-        throw unimplemented("shift right", other);
+        return other.shl(this);
+        //throw unimplemented("shift right", other);
     }
 
     /**

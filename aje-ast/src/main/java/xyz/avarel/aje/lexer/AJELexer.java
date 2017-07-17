@@ -274,7 +274,8 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
 
             case '"':
                 return nextString('"');
-
+            case '\'':
+                return nextString('\'');
             case '\r':
                 match('\n');
             case '\n':

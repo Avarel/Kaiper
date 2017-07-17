@@ -25,7 +25,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 group = 'xyz.avarel'
 archivesBaseName = 'AJE'
-version = new Version(major: 3, minor: 5, revision: 0)
+version = new Version(major: 1, minor: 0, revision: 0)
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -35,7 +35,6 @@ repositories {
 }
 
 dependencies {
-    compile project(":aje-ast")
     compile project(":aje-bytecode")
     //testCompile group: 'junit', name: 'junit', version: '4.12'
 }
@@ -130,12 +129,18 @@ task wrapper(type: Wrapper) {
 
 
 build {
+    dependsOn clean
     dependsOn jar
     dependsOn javadocJar
     dependsOn sourcesJar
     dependsOn shadowJar
 
     dependsOn test
+
+    jar.mustRunAfter clean
+    javadocJar.mustRunAfter jar
+    sourcesJar.mustRunAfter javadocJar
+    shadowJar.mustRunAfter sourcesJar
 }
 
 bintrayUpload {

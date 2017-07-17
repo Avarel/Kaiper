@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.aje.compiler;
+package xyz.avarel.aje.bytecode;
 
 import java.io.DataOutput;
 import java.io.IOException;
