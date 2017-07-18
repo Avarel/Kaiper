@@ -23,7 +23,6 @@ public class AJEBytecodeTest {
 
     public static void main(String[] args) throws IOException {
         // Base expression.
-        //language=TEXT
         String code = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]";
         System.out.println("Code: " + code);
         System.out.println();

@@ -1,2 +1,2 @@
-rootProject.name = 'AJE'
-include 'aje-common', 'aje-runtime-lib', 'aje-ast', 'aje-interpreter', 'aje-bytecode', 'aje-compiler', 'aje-vm', 'aje-tools'
+rootProject.name = 'Kaiper'
+include 'Kaiper-Common', 'Kaiper-Runtime-Lib', 'Kaiper-AST', 'Kaiper-Interpreter', 'Kaiper-Bytecode', 'Kaiper-Compiler', 'Kaiper-VM', 'Kaiper-Tools'
