@@ -50,8 +50,6 @@ class ExprTest {
         eval("[[1, 2, 3], [1, 5, 8, 9, 10], [1..50]] |> Array.map(_.size)")
         eval("Array.map([1..10], _ ^ 2) == [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]")
 
-        eval("Math.sqrt(-1)")
-
         eval("[1,2,3][1]")
         eval("let x = [50..60]; x[5]")
         eval("let x = [100..200]; x[25:30]")

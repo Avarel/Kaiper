@@ -26,8 +26,7 @@ import xyz.avarel.aje.parser.AJEParser;
 import xyz.avarel.aje.parser.AJEParserUtils;
 import xyz.avarel.aje.parser.PrefixParser;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class LambdaFunctionParser implements PrefixParser {
     @Override
@@ -39,8 +38,6 @@ public class LambdaFunctionParser implements PrefixParser {
         if (parser.match(TokenType.RIGHT_BRACE)) {
             return new FunctionNode(Collections.emptyList(), UndefinedNode.VALUE);
         }
-
-        List<ParameterData> parameters = Collections.emptyList();
 
         // Check for arrows.
         int peek = 0;
@@ -61,9 +58,36 @@ public class LambdaFunctionParser implements PrefixParser {
             }
         }
 
+        List<ParameterData> parameters = Collections.emptyList();
+
         if (hasArrow) {
             if (!parser.match(TokenType.ARROW)) {
-                parameters = AJEParserUtils.parseParameters(parser);
+                parameters = new ArrayList<>();
+                Set<String> paramNames = new HashSet<>();
+                boolean requireDef = false;
+
+                do {
+                    boolean rest = parser.match(TokenType.REST);
+                    ParameterData parameter = AJEParserUtils.parseParameter(parser, requireDef);
+
+                    if (parameter.getDefault() != null) {
+                        requireDef = true;
+                    }
+
+                    if (paramNames.contains(parameter.getName())) {
+                        throw new SyntaxException("Duplicate parameter name", parser.getLast().getPosition());
+                    } else {
+                        paramNames.add(parameter.getName());
+                    }
+
+                    if (rest && parser.match(TokenType.COMMA)) {
+                        throw new SyntaxException("Rest parameters must be the last parameter",
+                                parser.peek(0).getPosition());
+                    }
+
+                    parameters.add(parameter);
+                } while (parser.match(TokenType.COMMA));
+
                 parser.eat(TokenType.ARROW);
             }
         } else {
