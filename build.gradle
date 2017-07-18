@@ -51,7 +51,7 @@ task sourcesForRelease(type: Copy) {
     from 'src/main/java'
     into 'build/prepared-src'
     filter(ReplaceTokens, tokens: [
-            version: version.toString()
+            version: version
     ])
 }
 sourcesForRelease.dependsOn clearPrepared
@@ -73,7 +73,7 @@ jar {
 }
 
 shadowJar {
-    classifier = "withDependencies"
+    classifier = 'withDependencies'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -84,23 +84,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
-}
-
-bintray {
-    user = bintrayUsername
-    key = bintrayApiKey
-    publications = ["BintrayRelease"]
-    pkg {
-        repo = 'maven'
-        name = 'AJE'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/Avarel/AJE.git'
-        publish = true
-        version {
-            name = project.version
-            released = new Date()
-        }
-    }
 }
 
 publishing {
@@ -116,12 +99,25 @@ publishing {
     }
 }
 
-String getProjectProperty(String propertyName) {
-    String property = ""
-    if (hasProperty(propertyName)) {
-        property = this.properties[propertyName]
+bintray {
+    user = getProjectProperty 'bintrayUsername'
+    key = getProjectProperty 'bintrayApiKey'
+    publications = ['BintrayRelease']
+    pkg {
+        repo = 'maven'
+        name = 'AJE'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/Avarel/AJE.git'
+        publish = true
+        version {
+            name = project.version
+            released = new Date()
+        }
     }
-    return property
+}
+
+String getProjectProperty(String propertyName) {
+    hasProperty(propertyName) ? this.properties[propertyName] : ''
 }
 
 task wrapper(type: Wrapper) {
@@ -141,13 +137,12 @@ build {
 bintrayUpload {
     dependsOn build
 
-    onlyIf { !getProjectProperty("bintrayUsername").empty }
-    onlyIf { !getProjectProperty("bintrayApiKey").empty }
+    onlyIf { !getProjectProperty('bintrayUsername').empty }
+    onlyIf { !getProjectProperty('bintrayApiKey').empty }
 }
 
 class Version {
     String major, minor, revision
-
 
     String toString() {
         "${major}.${minor}.${revision}"
