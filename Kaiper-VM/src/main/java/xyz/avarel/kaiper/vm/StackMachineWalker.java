@@ -130,7 +130,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
         String name = stringPool.get(input.readUnsignedShort());
 
         Scope moduleScope = scope.subPool();
-        reader.walkInsts(input, this, stringPool, depth + 1);
+        reader.walkInsts(input, new StackMachineWalker(moduleScope), stringPool, depth + 1);
 
         Module module = new CompiledModule(name, moduleScope);
         scope.declare(name, module);
