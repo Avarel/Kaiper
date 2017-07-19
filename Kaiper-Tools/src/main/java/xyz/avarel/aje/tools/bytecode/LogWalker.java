@@ -144,6 +144,16 @@ public class LogWalker implements BytecodeWalker {
     }
 
     @Override
+    public void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        //TODO
+    }
+
+    @Override
+    public void opcodeNewType(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        //TODO
+    }
+
+    @Override
     public void opcodeInvoke(DataInput input) throws IOException {
         int pCount = input.readByte();
         beginLine();

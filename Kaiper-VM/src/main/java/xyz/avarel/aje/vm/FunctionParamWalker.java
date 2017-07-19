@@ -1,17 +1,21 @@
 package xyz.avarel.aje.vm;
 
+import xyz.avarel.aje.bytecode.walker.BufferWalker;
 import xyz.avarel.aje.bytecode.walker.BytecodeBatchReader;
 import xyz.avarel.aje.bytecode.walker.BytecodeWalkerAdapter;
-import xyz.avarel.aje.runtime.Obj;
-import xyz.avarel.aje.runtime.functions.Parameter;
+import xyz.avarel.aje.scope.Scope;
+import xyz.avarel.aje.vm.compiled.CompiledScopedExecution;
+import xyz.avarel.aje.vm.runtime.functions.CompiledParameter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 class FunctionParamWalker extends BytecodeWalkerAdapter {
-    LinkedList<Parameter> parameters = new LinkedList<>();
+    LinkedList<CompiledParameter> parameters = new LinkedList<>();
 
     private StackMachineWalker parentWalker;
 
@@ -27,12 +31,14 @@ class FunctionParamWalker extends BytecodeWalkerAdapter {
         boolean isRest = (modifiers & 2) == 2;
 
         if ((modifiers & 1) == 1) {
-            reader.walkInsts(input, parentWalker, stringPool, depth + 1);
-            Obj defaultValue = parentWalker.stack.pop();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            reader.walkInsts(input, new BufferWalker(new DataOutputStream(buffer)), stringPool, depth + 1);
+            byte[] bytecode = buffer.toByteArray();
+            Scope scope = parentWalker.getScope().subPool();
 
-            parameters.push(Parameter.of(name, defaultValue, isRest));
+            parameters.push(new CompiledParameter(name, new CompiledScopedExecution(bytecode, reader, stringPool, depth, scope), isRest));
         } else {
-            parameters.push(Parameter.of(name, isRest));
+            parameters.push(new CompiledParameter(name, null, isRest));
         }
     }
 }

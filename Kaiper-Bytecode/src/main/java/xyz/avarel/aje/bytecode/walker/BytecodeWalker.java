@@ -31,6 +31,10 @@ public interface BytecodeWalker {
 
     void opcodeDefineFunctionParam(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException;
 
+    void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException;
+
+    void opcodeNewType(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException;
+
     void opcodeInvoke(DataInput input) throws IOException;
 
     void opcodeDeclare(DataInput input, List<String> stringPool) throws IOException;

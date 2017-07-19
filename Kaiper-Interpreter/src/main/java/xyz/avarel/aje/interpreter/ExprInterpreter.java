@@ -50,7 +50,7 @@ import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.ComputeException;
 import xyz.avarel.aje.interpreter.runtime.functions.CompiledFunc;
 import xyz.avarel.aje.interpreter.runtime.functions.CompiledParameter;
-import xyz.avarel.aje.interpreter.runtime.modules.CompiledModule;
+import xyz.avarel.aje.runtime.modules.CompiledModule;
 import xyz.avarel.aje.interpreter.runtime.types.CompiledConstructor;
 import xyz.avarel.aje.interpreter.runtime.types.CompiledType;
 import xyz.avarel.aje.runtime.Bool;

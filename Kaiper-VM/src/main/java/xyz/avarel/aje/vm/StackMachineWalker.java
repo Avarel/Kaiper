@@ -16,9 +16,16 @@ import xyz.avarel.aje.runtime.Undefined;
 import xyz.avarel.aje.runtime.collections.Array;
 import xyz.avarel.aje.runtime.collections.Dictionary;
 import xyz.avarel.aje.runtime.collections.Range;
+import xyz.avarel.aje.runtime.modules.CompiledModule;
+import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.runtime.numbers.Int;
 import xyz.avarel.aje.runtime.numbers.Number;
+import xyz.avarel.aje.runtime.types.Type;
 import xyz.avarel.aje.scope.Scope;
+import xyz.avarel.aje.vm.compiled.CompiledExecution;
+import xyz.avarel.aje.vm.runtime.functions.CompiledFunc;
+import xyz.avarel.aje.vm.runtime.types.CompiledConstructor;
+import xyz.avarel.aje.vm.runtime.types.CompiledType;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -27,14 +34,14 @@ import java.util.Stack;
 
 import static xyz.avarel.aje.bytecode.BytecodeUtils.toHex;
 
-class StackMachineWalker extends BytecodeWalkerAdapter {
+public class StackMachineWalker extends BytecodeWalkerAdapter {
     private static final DummyWalker dummyWalker = new DummyWalker();
 
     private final Scope scope;
 
     Stack<Obj> stack = new Stack<>();
 
-    StackMachineWalker(Scope scope) {
+    public StackMachineWalker(Scope scope) {
         this.scope = scope;
     }
 
@@ -108,17 +115,79 @@ class StackMachineWalker extends BytecodeWalkerAdapter {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         reader.walkInsts(input, new BufferWalker(new DataOutputStream(buffer)), stringPool, depth + 1);
 
-        stack.push(new CompiledFunc(name.isEmpty() ? null : name, paramWalker.parameters, buffer.toByteArray(), scope.subPool(), reader, stringPool, depth + 1));
+        stack.push(
+                new CompiledFunc(
+                        name.isEmpty() ? null : name,
+                        paramWalker.parameters,
+                        new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1),
+                        scope.copy()
+                )
+        );
+    }
+
+    @Override
+    public void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        String name = stringPool.get(input.readUnsignedShort());
+
+        Scope moduleScope = scope.subPool();
+        reader.walkInsts(input, this, stringPool, depth + 1);
+
+        Module module = new CompiledModule(name, moduleScope);
+        scope.declare(name, module);
+
+        stack.push(module);
+    }
+
+    @Override
+    public void opcodeNewType(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        String name = stringPool.get(input.readUnsignedShort());
+
+        Scope typeScope = scope.subPool();
+
+        //Block 1: Parameters
+        FunctionParamWalker paramWalker = new FunctionParamWalker(this);
+        reader.walkInsts(input, paramWalker, stringPool, depth + 1);
+
+        //Block 2: SuperType
+        reader.walkInsts(input, this, stringPool, depth + 1);
+        Obj superType = stack.pop();
+
+        if (superType != Obj.TYPE && !(superType instanceof CompiledType)) {
+            throw new ComputeException(superType + " can not be extended");
+        }
+
+        //Block 3: SuperParameters
+        int size = stack.size();
+        reader.walkInsts(input, this, stringPool, depth + 1);
+
+        LinkedList<Obj> superParams = new LinkedList<>();
+        for (int i = stack.size(); i > size; i--) {
+            superParams.push(stack.pop());
+        }
+
+        //Block 4: Inner
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        reader.walkInsts(input, new BufferWalker(new DataOutputStream(buffer)), stringPool, depth + 1);
+
+        //Building
+        CompiledConstructor constructor = new CompiledConstructor(
+                paramWalker.parameters, superParams, new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1), typeScope
+        );
+
+        CompiledType type = new CompiledType((Type) superType, name, constructor);
+
+        scope.declare(name, type);
+
+        stack.push(type);
     }
 
     @Override
     public void opcodeInvoke(DataInput input) throws IOException {
         byte pCount = input.readByte();
 
-
         LinkedList<Obj> parameters = new LinkedList<>();
         for (byte i = 0; i < pCount; i++) {
-            parameters.push(stack.pop());
+            parameters.add(stack.pop());
         }
 
         Obj left = stack.pop();
@@ -348,5 +417,13 @@ class StackMachineWalker extends BytecodeWalkerAdapter {
     @Override
     public void opcodePop() throws IOException {
         stack.pop();
+    }
+
+    public Stack<Obj> getStack() {
+        return stack;
+    }
+
+    public Scope getScope() {
+        return scope;
     }
 }

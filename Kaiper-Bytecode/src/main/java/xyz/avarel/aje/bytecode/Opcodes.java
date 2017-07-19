@@ -160,6 +160,8 @@ public enum Opcodes implements DataOutputConsumer {
      */
     NEW_RANGE,
     NEW_FUNCTION,
+    NEW_MODULE,
+    NEW_TYPE,
     FUNCTION_DEF_PARAM,
     /**
      * {@code NEW_RANGE;}

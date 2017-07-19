@@ -1,8 +1,7 @@
-package xyz.avarel.aje.interpreter.runtime.modules;
+package xyz.avarel.aje.runtime.modules;
 
 import xyz.avarel.aje.runtime.Obj;
 import xyz.avarel.aje.runtime.Undefined;
-import xyz.avarel.aje.runtime.modules.Module;
 import xyz.avarel.aje.scope.Scope;
 
 public class CompiledModule extends Module {

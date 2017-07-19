@@ -51,6 +51,12 @@ public class BytecodeBatchReader {
             case NEW_FUNCTION:
                 walker.opcodeNewFunction(input, this, stringPool, depth);
                 break;
+            case NEW_MODULE:
+                walker.opcodeNewModule(input, this, stringPool, depth);
+                break;
+            case NEW_TYPE:
+                walker.opcodeNewType(input, this, stringPool, depth);
+                break;
             case FUNCTION_DEF_PARAM:
                 walker.opcodeDefineFunctionParam(input, this, stringPool, depth);
                 break;

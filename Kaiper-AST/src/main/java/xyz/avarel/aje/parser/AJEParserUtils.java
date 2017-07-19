@@ -17,8 +17,8 @@ package xyz.avarel.aje.parser;
 
 import xyz.avarel.aje.ast.Expr;
 import xyz.avarel.aje.ast.Single;
-import xyz.avarel.aje.ast.flow.Statements;
 import xyz.avarel.aje.ast.functions.ParameterData;
+import xyz.avarel.aje.ast.value.UndefinedNode;
 import xyz.avarel.aje.ast.variables.Identifier;
 import xyz.avarel.aje.exceptions.SyntaxException;
 import xyz.avarel.aje.lexer.TokenType;
@@ -33,7 +33,7 @@ public class AJEParserUtils {
     public static final Identifier OBJ_ID = new Identifier("Object");
 
     public static Expr parseBlock(AJEParser parser) {
-        Expr expr = new Statements();
+        Expr expr = UndefinedNode.VALUE;
         parser.eat(TokenType.LEFT_BRACE);
         if (!parser.match(TokenType.RIGHT_BRACE)) {
             expr = parser.parseStatements();

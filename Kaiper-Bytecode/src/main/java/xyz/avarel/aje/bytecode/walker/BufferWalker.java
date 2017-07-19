@@ -105,6 +105,25 @@ public class BufferWalker implements BytecodeWalker {
     }
 
     @Override
+    public void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        NEW_MODULE.writeInto(out);
+        out.writeShort(input.readShort());
+
+        reader.walkInsts(input, this, stringPool, depth + 1);
+    }
+
+    @Override
+    public void opcodeNewType(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        NEW_TYPE.writeInto(out);
+        out.writeShort(input.readShort());
+
+        reader.walkInsts(input, this, stringPool, depth + 1);
+        reader.walkInsts(input, this, stringPool, depth + 1);
+        reader.walkInsts(input, this, stringPool, depth + 1);
+        reader.walkInsts(input, this, stringPool, depth + 1);
+    }
+
+    @Override
     public void opcodeInvoke(DataInput input) throws IOException {
         INVOKE.writeInto(out);
         out.writeByte(input.readByte());

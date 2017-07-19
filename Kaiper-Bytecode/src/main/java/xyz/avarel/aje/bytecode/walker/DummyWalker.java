@@ -78,6 +78,24 @@ public class DummyWalker implements BytecodeWalker {
         }
     }
 
+
+    @Override
+    public void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        input.readShort();
+
+        reader.walkInsts(input, this, stringPool, depth + 1);
+    }
+
+    @Override
+    public void opcodeNewType(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        input.readShort();
+
+        reader.walkInsts(input, this, stringPool, depth + 1);
+        reader.walkInsts(input, this, stringPool, depth + 1);
+        reader.walkInsts(input, this, stringPool, depth + 1);
+        reader.walkInsts(input, this, stringPool, depth + 1);
+    }
+
     @Override
     public void opcodeInvoke(DataInput input) throws IOException {
         input.readByte();

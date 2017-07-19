@@ -79,6 +79,16 @@ public abstract class BytecodeWalkerAdapter implements BytecodeWalker {
     }
 
     @Override
+    public void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        throw new InvalidBytecodeException("Illegal NEW_MODULE Instruction");
+    }
+
+    @Override
+    public void opcodeNewType(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        throw new InvalidBytecodeException("Illegal NEW_TYPE Instruction");
+    }
+
+    @Override
     public void opcodeInvoke(DataInput input) throws IOException {
         throw new InvalidBytecodeException("Illegal INVOKE Instruction");
     }
