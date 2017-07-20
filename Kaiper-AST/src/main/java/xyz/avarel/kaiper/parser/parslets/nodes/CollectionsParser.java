@@ -29,14 +29,14 @@ import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 import java.util.*;
 
 public class CollectionsParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Token token) {
+    public Expr parse(KaiperParser parser, Token token) {
         // EMPTY DICTIONARY
         if (parser.match(TokenType.COLON)) {
             if (!parser.getParserFlags().allowDictionary()) {
@@ -69,7 +69,7 @@ public class CollectionsParser implements PrefixParser {
         }
     }
 
-    private Expr parseVector(AJEParser parser, Token token, Single initItem) {
+    private Expr parseVector(KaiperParser parser, Token token, Single initItem) {
         List<Single> items = new ArrayList<>();
 
         items.add(initItem);
@@ -113,7 +113,7 @@ public class CollectionsParser implements PrefixParser {
         return new ArrayNode(items);
     }
 
-    private Expr parseDictionary(AJEParser parser, Token token, Single initKey) {
+    private Expr parseDictionary(KaiperParser parser, Token token, Single initKey) {
         Map<Single, Single> map = new HashMap<>();
 
         if (initKey instanceof Identifier) {

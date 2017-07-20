@@ -17,9 +17,10 @@ package xyz.avarel.kaiper;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.exceptions.ComputeException;
+import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
-import xyz.avarel.kaiper.lexer.AJELexer;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.lexer.KaiperLexer;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.ParserFlags;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.DefaultScope;
@@ -28,12 +29,12 @@ import xyz.avarel.kaiper.scope.Scope;
 import java.io.Reader;
 
 /**
- * Used to preset values and functions using {@link #add}, compile and compute an AJE expression. All values are stored
+ * Used to preset values and functions using {@link #add}, compile and compute an Kaiper expression. All values are stored
  * in the {@link #scope}. The expression not compiled until the invocation of either {@link #compile()} or
- * {@link #compute()} explicitly; {@link xyz.avarel.kaiper.exceptions.AJEException} and its derivatives would not be thrown until then.
+ * {@link #compute()} explicitly; {@link KaiperException} and its derivatives would not be thrown until then.
  */
 public class Expression {
-    private final AJEParser parser;
+    private final KaiperParser parser;
     private final Scope scope;
     private CompiledExpr expr;
 
@@ -43,7 +44,7 @@ public class Expression {
      * {@link Expression#Expression(String, Scope) Expression(String, DefaultScope.INSTANCE.copy())}
      *
      * @param   script
-     *          The {@link String string} of AJE expression.
+     *          The {@link String string} of Kaiper expression.
      */
     public Expression(String script) {
         this(script, DefaultScope.INSTANCE.copy());
@@ -55,7 +56,7 @@ public class Expression {
      * {@link Expression#Expression(Reader, Scope) Expression(Reader, DefaultScope.INSTANCE.copy())}
      *
      * @param   reader
-     *          The {@link Reader reader} instance that reads AJE expressions.\
+     *          The {@link Reader reader} instance that reads Kaiper expressions.\
      */
     public Expression(Reader reader) {
         this(reader, DefaultScope.INSTANCE.copy());
@@ -65,36 +66,36 @@ public class Expression {
      * Creates an expression based on a string.
      *
      * @param   script
-     *          The {@link String string} of AJE expression.
+     *          The {@link String string} of Kaiper expression.
      * @param   scope
      *          The {@link Scope scope} to evaluate the expression from.
      */
     public Expression(String script, Scope scope) {
-        this(new AJELexer(script), scope);
+        this(new KaiperLexer(script), scope);
     }
 
     /**
      * Creates an expression based on the character stream from a reader.
      *
      * @param   reader
-     *          The {@link Reader reader} instance that reads AJE expressions.
+     *          The {@link Reader reader} instance that reads Kaiper expressions.
      * @param   scope
      *          The {@link Scope scope} to evaluate the expression from.
      */
     public Expression(Reader reader, Scope scope) {
-        this(new AJELexer(reader), scope);
+        this(new KaiperLexer(reader), scope);
     }
 
     /**
      * Creates an expression based on a stream of tokens from a lexer.
      *
      * @param   lexer
-     *          The {@link AJELexer lexer} object that outputs AJE tokens.
+     *          The {@link KaiperLexer lexer} object that outputs Kaiper tokens.
      * @param   scope
      *          The {@link Scope scope} to evaluate the expression from.
      */
-    public Expression(AJELexer lexer, Scope scope) {
-        this.parser = new AJEParser(lexer);
+    public Expression(KaiperLexer lexer, Scope scope) {
+        this.parser = new KaiperParser(lexer);
         this.scope = scope;
     }
 
@@ -161,7 +162,7 @@ public class Expression {
     }
 
     /**
-     * Sets the parser flags, which controls what features of AJE are enabled for this expression.
+     * Sets the parser flags, which controls what features of Kaiper are enabled for this expression.
      * Useful for limiting end-user's abilities to ensure that performance-expensive features are not abused.
      *
      * @param flags The flags to be set

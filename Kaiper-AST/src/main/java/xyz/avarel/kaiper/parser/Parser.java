@@ -16,7 +16,7 @@
 package xyz.avarel.kaiper.parser;
 
 import xyz.avarel.kaiper.exceptions.SyntaxException;
-import xyz.avarel.kaiper.lexer.AJELexer;
+import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 
@@ -25,17 +25,17 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Parser {
-    private final AJELexer lexer;
+    private final KaiperLexer lexer;
     private final List<Token> tokens;
     private final Grammar grammar;
 
     private Token last;
 
-    public Parser(AJELexer lexer) {
+    public Parser(KaiperLexer lexer) {
         this(lexer, new Grammar());
     }
 
-    public Parser(AJELexer lexer, Grammar grammar) {
+    public Parser(KaiperLexer lexer, Grammar grammar) {
         this.lexer = lexer;
         this.tokens = new ArrayList<>();
         this.grammar = grammar;
@@ -63,7 +63,7 @@ public abstract class Parser {
         return tokens;
     }
 
-    public AJELexer getLexer() {
+    public KaiperLexer getLexer() {
         return lexer;
     }
 

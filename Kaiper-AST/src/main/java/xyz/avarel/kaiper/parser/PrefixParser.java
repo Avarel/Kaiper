@@ -19,5 +19,5 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.lexer.Token;
 
 public interface PrefixParser {
-    Expr parse(AJEParser parser, Token token);
+    Expr parse(KaiperParser parser, Token token);
 }

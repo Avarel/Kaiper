@@ -17,7 +17,7 @@ package xyz.avarel.kaiper.exceptions;
 
 import xyz.avarel.kaiper.lexer.Position;
 
-public class SyntaxException extends AJEException {
+public class SyntaxException extends KaiperException {
     public SyntaxException(String msg) {
         super(msg);
     }

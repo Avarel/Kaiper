@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class AJELexer implements Iterator<Token>, Iterable<Token> {
+public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
     private Reader reader;
     private List<Token> tokens;
 
@@ -36,19 +36,19 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     private long line;
     private char current;
 
-    public AJELexer(InputStream inputStream) {
+    public KaiperLexer(InputStream inputStream) {
         this(new InputStreamReader(inputStream));
     }
 
-    public AJELexer(String s) {
+    public KaiperLexer(String s) {
         this(new StringReader(s));
     }
 
-    public AJELexer(Reader reader) {
+    public KaiperLexer(Reader reader) {
         this(reader, 2);
     }
 
-    public AJELexer(Reader reader, int historyBuffer) {
+    public KaiperLexer(Reader reader, int historyBuffer) {
         this.reader = reader.markSupported()
                 ? reader
                 : new BufferedReader(reader);
@@ -737,7 +737,7 @@ public class AJELexer implements Iterator<Token>, Iterable<Token> {
     }
 
     /**
-     * Make a printable string of this AJELexer.
+     * Make a printable string of this KaiperLexer.
      *
      * @return " at {index} [character {character} line {line}]"
      */

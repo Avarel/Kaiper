@@ -38,14 +38,14 @@ public interface Obj {
     Type getType();
 
     /**
-     * @return The Java object representation of this AJE object or {@code null}.
+     * @return The Java object representation of this Kaiper object or {@code null}.
      */
     default Object toJava() {
         return null;
     }
 
     /**
-     * Addition operator in AJE. Default symbol is {@code +}.
+     * Addition operator in Kaiper. Default symbol is {@code +}.
      * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
@@ -57,7 +57,7 @@ public interface Obj {
     }
     
     /**
-     * Subtraction operator in AJE. Default symbol is {@code -}.
+     * Subtraction operator in Kaiper. Default symbol is {@code -}.
      * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
@@ -69,7 +69,7 @@ public interface Obj {
     }
     
     /**
-     * Multiplication operator in AJE. Default symbol is {@code *}.
+     * Multiplication operator in Kaiper. Default symbol is {@code *}.
      * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
@@ -81,7 +81,7 @@ public interface Obj {
     }
     
     /**
-     * Division operator in AJE. Default symbol is {@code /}.
+     * Division operator in Kaiper. Default symbol is {@code /}.
      * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
@@ -93,7 +93,7 @@ public interface Obj {
     }
     
     /**
-     * Modulus operator in AJE. Default symbol is {@code %}.
+     * Modulus operator in Kaiper. Default symbol is {@code %}.
      * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
@@ -105,7 +105,7 @@ public interface Obj {
     }
     
     /**
-     * Exponentiation operator in AJE. Default symbol is {@code ^}.
+     * Exponentiation operator in Kaiper. Default symbol is {@code ^}.
      * <br> Implementation should default to error if not implemented.
      * 
      * @param   other 
@@ -117,7 +117,7 @@ public interface Obj {
     }
     
     /**
-     * Negative numeric unary operator in AJE. Default symbol is {@code -}.
+     * Negative numeric unary operator in Kaiper. Default symbol is {@code -}.
      *
      * @return  The {@link Obj} result of the operation.
      */
@@ -126,7 +126,7 @@ public interface Obj {
     }
 
     /**
-     * Negation operator in AJE. Default symbol is {@code !}.
+     * Negation operator in Kaiper. Default symbol is {@code !}.
      *
      * @return  The {@link Obj} result of the operation.
      */
@@ -135,7 +135,7 @@ public interface Obj {
     }
 
     /**
-     * Equality operator in AJE. Default symbol is {@code ==}.
+     * Equality operator in Kaiper. Default symbol is {@code ==}.
      * <br> Implementation should defaults to returning {@link Bool} representation of {@link Object#equals(Object)}
      * if not implemented.
      *
@@ -148,7 +148,7 @@ public interface Obj {
     }
 
     /**
-     * Greater than operator in AJE. Default symbol is {@code >}.
+     * Greater than operator in Kaiper. Default symbol is {@code >}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param   other
@@ -160,7 +160,7 @@ public interface Obj {
     }
 
     /**
-     * Less than operator in AJE. Default symbol is {@code <}.
+     * Less than operator in Kaiper. Default symbol is {@code <}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param   other
@@ -172,7 +172,7 @@ public interface Obj {
     }
 
     /**
-     * Or operator in AJE. Default symbol is {@code ||}.
+     * Or operator in Kaiper. Default symbol is {@code ||}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param   other
@@ -184,7 +184,7 @@ public interface Obj {
     }
 
     /**
-     * And operator in AJE. Default symbol is {@code &&}.
+     * And operator in Kaiper. Default symbol is {@code &&}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param   other
@@ -196,7 +196,7 @@ public interface Obj {
     }
 
     /**
-     * Left Shift operator in AJE. Default symbol is {@code <<}.
+     * Left Shift operator in Kaiper. Default symbol is {@code <<}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param other Right {@link Obj} operand.
@@ -207,7 +207,7 @@ public interface Obj {
     }
 
     /**
-     * Right Shift operator in AJE. Default symbol is {@code >>}.
+     * Right Shift operator in Kaiper. Default symbol is {@code >>}.
      * <br> Implementation should default to check the left-shift of the other object.
      *
      * @param other Right {@link Obj} operand.
@@ -219,7 +219,7 @@ public interface Obj {
     }
 
     /**
-     * Invcoation operator in AJE. Default symbol is {@code a(b, c...)}.
+     * Invcoation operator in Kaiper. Default symbol is {@code a(b, c...)}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param   arguments
@@ -231,7 +231,7 @@ public interface Obj {
     }
 
     /**
-     * Invcoation operator in AJE. Default symbol is {@code a(b, c...)}.
+     * Invcoation operator in Kaiper. Default symbol is {@code a(b, c...)}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param   arguments
@@ -254,7 +254,7 @@ public interface Obj {
     }
 
     /**
-     * Get operator in AJE. Default symbol is {@code a[b]}.
+     * Get operator in Kaiper. Default symbol is {@code a[b]}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param   key
@@ -270,7 +270,7 @@ public interface Obj {
     }
 
     /**
-     * Attribute operator in AJE. Default symbol is {@code a.b}.
+     * Attribute operator in Kaiper. Default symbol is {@code a.b}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param   name
@@ -282,7 +282,7 @@ public interface Obj {
     }
 
     /**
-     * Set attribute operator in AJE. Default symbol is {@code a.b = c}.
+     * Set attribute operator in Kaiper. Default symbol is {@code a.b = c}.
      * <br> Implementation should default to error if not implemented.
      *
      * @param   name

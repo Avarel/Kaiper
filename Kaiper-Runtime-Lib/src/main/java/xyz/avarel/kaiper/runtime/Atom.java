@@ -13,7 +13,7 @@
 // * under the License.
 // */
 //
-//package xyz.avarel.aje.runtime;
+//package xyz.avarel.kaiper.runtime;
 //
 //public class Atom implements Obj<Atom> {
 //    public static final Type<Atom> TYPE = new Type<>("Atom");

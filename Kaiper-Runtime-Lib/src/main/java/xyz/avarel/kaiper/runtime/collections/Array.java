@@ -29,7 +29,7 @@ import xyz.avarel.kaiper.runtime.types.Type;
 import java.util.*;
 
 /**
- * AJE wrapper class for a one dimensional list.
+ * Kaiper wrapper class for a one dimensional list.
  */
 public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
     public static final Type<Array> TYPE = new Type<>("Array");
@@ -136,7 +136,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
      * Creates an array of items from a native {@link Collection collection}.
      *
      * @param   collection
-     *          Native {@link Collection collection} of {@link Obj AJE objects}.
+     *          Native {@link Collection collection} of {@link Obj Kaiper objects}.
      * @return The created {@link Array}.
      */
     public static Array ofList(Collection<Obj> collection) {

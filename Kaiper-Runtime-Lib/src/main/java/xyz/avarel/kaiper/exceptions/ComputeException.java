@@ -15,7 +15,7 @@
 
 package xyz.avarel.kaiper.exceptions;
 
-public class ComputeException extends AJEException {
+public class ComputeException extends KaiperException {
     public ComputeException(String msg) {
         super(msg);
     }

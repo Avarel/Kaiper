@@ -141,7 +141,7 @@ public class JavaUtils {
         return toClass.isAssignableFrom(cls);
     }
 
-    static boolean hasAJETypeEquivalent(Object result) {
+    static boolean hasKaiperTypeEquivalent(Object result) {
         return result == null
                 || result instanceof Integer
                 || result instanceof Double
@@ -152,7 +152,7 @@ public class JavaUtils {
     }
 
     @SuppressWarnings("unchecked")
-    static Obj mapJavaToAJEType(Object result) {
+    static Obj mapJavaToKaiperType(Object result) {
         if (result == null) {
             return Undefined.VALUE;
         } else if (result instanceof Obj) {
@@ -168,7 +168,7 @@ public class JavaUtils {
         } else if (result instanceof List) {
             Array array = new Array();
             for (Object o : ((List<Object>) result)) {
-                array.add(mapJavaToAJEType(o));
+                array.add(mapJavaToKaiperType(o));
             }
             return array;
         } else if (result instanceof Map) {
@@ -176,7 +176,7 @@ public class JavaUtils {
 
             Map<Object, Object> map = (Map<Object, Object>) result;
             for (Map.Entry<Object, Object> entry : map.entrySet()) {
-                dict.put(mapJavaToAJEType(entry.getKey()), mapJavaToAJEType(entry.getValue()));
+                dict.put(mapJavaToKaiperType(entry.getKey()), mapJavaToKaiperType(entry.getValue()));
             }
 
             return dict;

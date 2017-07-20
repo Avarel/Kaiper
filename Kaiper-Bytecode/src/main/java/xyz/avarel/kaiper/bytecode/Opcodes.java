@@ -21,7 +21,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * The Bytecode Instructions of the AJE Bytecode.
+ * The Bytecode Instructions of the Kaiper Bytecode.
  *
  * @author AdrianTodt
  */

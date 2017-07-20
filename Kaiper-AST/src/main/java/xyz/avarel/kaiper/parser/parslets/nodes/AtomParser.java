@@ -13,18 +13,18 @@
 // * under the License.
 // */
 //
-//package xyz.avarel.aje.parser.parslets.nodes;
+//package xyz.avarel.kaiper.parser.parslets.nodes;
 //
-//import xyz.avarel.aje.ast.Expr;
-//import xyz.avarel.aje.ast.value.ValueNode;
-//import xyz.avarel.aje.parser.AJEParser;
-//import xyz.avarel.aje.parser.PrefixParser;
-//import xyz.avarel.aje.parser.lexer.Token;
-//import xyz.avarel.aje.runtime.Atom;
+//import xyz.avarel.kaiper.ast.Expr;
+//import xyz.avarel.kaiper.ast.value.ValueNode;
+//import xyz.avarel.kaiper.parser.KaiperParser;
+//import xyz.avarel.kaiper.parser.PrefixParser;
+//import xyz.avarel.kaiper.parser.lexer.Token;
+//import xyz.avarel.kaiper.runtime.Atom;
 //
 //public class AtomParser implements PrefixParser {
 //    @Override
-//    public Expr parse(AJEParser parser, Token token) {
+//    public Expr parse(KaiperParser parser, Token token) {
 //        return new ValueNode(Atom.of(token.getString()));
 //    }
 //}

@@ -22,7 +22,7 @@ package xyz.avarel.kaiper.others;
 import xyz.avarel.kaiper.Expression;
 import xyz.avarel.kaiper.runtime.Obj;
 
-class AJETest {
+class KaiperTest {
     public static void main(String[] args) {
         // Base expression.
         Expression exp = new Expression("random(20)");
@@ -51,11 +51,11 @@ class AJETest {
 //            }
 //        });
 
-        // Calculate into AJE object.
+        // Calculate into Kaiper object.
         Obj result = exp.compute();
 
         // Get the native representation of the object.
-        // Each AJE object is mapped to a native object.
+        // Each Kaiper object is mapped to a native object.
         Object obj = result.toJava();
 
         // Prints the result.

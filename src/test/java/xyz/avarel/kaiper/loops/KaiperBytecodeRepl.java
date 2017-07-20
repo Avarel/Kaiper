@@ -19,23 +19,23 @@
 
 package xyz.avarel.kaiper.loops;
 
-import xyz.avarel.kaiper.AJECompiler;
-import xyz.avarel.kaiper.exceptions.AJEException;
-import xyz.avarel.kaiper.lexer.AJELexer;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.KaiperCompiler;
+import xyz.avarel.kaiper.exceptions.KaiperException;
+import xyz.avarel.kaiper.lexer.KaiperLexer;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
-import xyz.avarel.kaiper.vm.VirtualMachine;
+import xyz.avarel.kaiper.vm.KaiperVM;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-public class AJEBytecodeRepl {
+public class KaiperBytecodeRepl {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -67,8 +67,8 @@ public class AJEBytecodeRepl {
                 Obj result;
 
                 try {
-                    result = new VirtualMachine().executeCompressedBytecode(new AJECompiler().compileCompressed(new AJEParser(new AJELexer(input)).compile()), scope);
-                } catch (AJEException | IOException e) {
+                    result = new KaiperVM().executeCompressedBytecode(new KaiperCompiler().compileCompressed(new KaiperParser(new KaiperLexer(input)).compile()), scope);
+                } catch (KaiperException | IOException e) {
                     System.out.println("! " + e.getMessage());
                     e.printStackTrace();
                     result = Undefined.VALUE;

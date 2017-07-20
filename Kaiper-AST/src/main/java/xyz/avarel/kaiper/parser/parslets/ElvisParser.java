@@ -23,7 +23,7 @@ import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.ast.value.UndefinedNode;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.BinaryParser;
 
 public class ElvisParser extends BinaryParser {
@@ -32,7 +32,7 @@ public class ElvisParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Single left, Token token) {
         return new ConditionalExpr(
                 new BinaryOperation(
                         left,

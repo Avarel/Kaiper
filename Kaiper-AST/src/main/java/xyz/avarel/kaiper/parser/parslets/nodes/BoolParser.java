@@ -19,12 +19,12 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.value.BooleanNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 public class BoolParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Token token) {
+    public Expr parse(KaiperParser parser, Token token) {
         switch (token.getString()) {
             case "true":
                 return BooleanNode.TRUE;

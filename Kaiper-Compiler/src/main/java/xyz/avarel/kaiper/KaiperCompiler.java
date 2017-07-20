@@ -1,16 +1,16 @@
 package xyz.avarel.kaiper;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.bytecode.AJEBytecode;
+import xyz.avarel.kaiper.bytecode.KaiperBytecode;
 import xyz.avarel.kaiper.bytecode.DataOutputConsumer;
 import xyz.avarel.kaiper.compiler.ExprCompiler;
 
 import java.io.*;
 import java.util.zip.GZIPOutputStream;
 
-public class AJECompiler {
+public class KaiperCompiler {
     public void compile(Expr expr, DataOutput out) throws IOException {
-        AJEBytecode.initialize(out);
+        KaiperBytecode.initialize(out);
 
         ExprCompiler compiler = new ExprCompiler();
         DataOutputConsumer bytecode = expr.accept(compiler, null);
@@ -18,7 +18,7 @@ public class AJECompiler {
         compiler.stringPool().writeInto(out);
         bytecode.writeInto(out);
 
-        AJEBytecode.finalize(out);
+        KaiperBytecode.finalize(out);
     }
 
     public void compile(Expr expr, OutputStream out) throws IOException {

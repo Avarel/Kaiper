@@ -1,6 +1,6 @@
 package xyz.avarel.kaiper.vm;
 
-import xyz.avarel.kaiper.bytecode.AJEBytecode;
+import xyz.avarel.kaiper.bytecode.KaiperBytecode;
 import xyz.avarel.kaiper.bytecode.walker.BytecodeBatchReader;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-public class VirtualMachine {
+public class KaiperVM {
     //region DELEGATES
 
     public Obj executeBytecode(DataInput input, Scope scope) throws IOException {
@@ -61,8 +61,8 @@ public class VirtualMachine {
     //region HEADERS
 
     private void versionHeaderAndCheck(DataInput input) throws IOException {
-        AJEBytecode.validateInit(input);
-        AJEBytecode.validateVersion(input);
+        KaiperBytecode.validateInit(input);
+        KaiperBytecode.validateVersion(input);
     }
 
     private List<String> stringPool(DataInput input) throws IOException {

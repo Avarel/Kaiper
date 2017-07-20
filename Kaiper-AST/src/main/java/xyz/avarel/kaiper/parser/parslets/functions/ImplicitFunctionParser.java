@@ -22,7 +22,7 @@ import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.InfixParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
@@ -33,7 +33,7 @@ import java.util.Set;
 
 public class ImplicitFunctionParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Token token) {
+    public Expr parse(KaiperParser parser, Token token) {
         if (!parser.getParserFlags().allowFunctionCreation()) {
             throw new SyntaxException("Function creation are disabled");
         }
@@ -51,12 +51,12 @@ public class ImplicitFunctionParser implements PrefixParser {
         return new FunctionNode(list, expr);
     }
 
-    private static final class ParserProxy extends AJEParser {
+    private static final class ParserProxy extends KaiperParser {
         private final Set<String> parameters = new LinkedHashSet<>();
-        private final AJEParser proxy;
-        private AJEParser current;
+        private final KaiperParser proxy;
+        private KaiperParser current;
 
-        private ParserProxy(AJEParser proxy, Token token) {
+        private ParserProxy(KaiperParser proxy, Token token) {
             super(proxy);
 
             this.proxy = proxy;

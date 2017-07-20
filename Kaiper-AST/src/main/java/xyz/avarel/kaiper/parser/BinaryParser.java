@@ -34,14 +34,14 @@ public abstract class BinaryParser implements InfixParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Expr left, Token token) {
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
         if (!(left instanceof Single)) {
             throw new SyntaxException("Internal compiler error", token.getPosition());
         }
         return parse(parser, (Single) left, token);
     }
 
-    public abstract Expr parse(AJEParser parser, Single left, Token token);
+    public abstract Expr parse(KaiperParser parser, Single left, Token token);
 
     @Override
     public int getPrecedence() {

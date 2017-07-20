@@ -18,12 +18,12 @@ package xyz.avarel.kaiper.parser.parslets;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 public class GroupParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Token token) {
+    public Expr parse(KaiperParser parser, Token token) {
         Expr expr = parser.parseExpr();
         parser.eat(TokenType.RIGHT_PAREN);
         return expr;

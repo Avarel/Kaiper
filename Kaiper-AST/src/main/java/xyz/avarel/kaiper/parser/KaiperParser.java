@@ -21,21 +21,21 @@ import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.value.UndefinedNode;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
-import xyz.avarel.kaiper.lexer.AJELexer;
+import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 
 import java.util.Objects;
 
-public class AJEParser extends Parser {
+public class KaiperParser extends Parser {
     private ParserFlags parserFlags = ParserFlags.ALL_FLAGS;
 
-    public AJEParser(AJELexer tokens) {
+    public KaiperParser(KaiperLexer tokens) {
         super(tokens, DefaultGrammar.INSTANCE);
     }
 
-    public AJEParser(AJEParser proxy) {
+    public KaiperParser(KaiperParser proxy) {
         super(proxy);
     }
 

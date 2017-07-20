@@ -56,8 +56,8 @@ public class JavaField extends JavaObject implements Obj {
     @Override
     public Type getType() {
         Object field = getField();
-        if (JavaUtils.hasAJETypeEquivalent(field)) {
-            return JavaUtils.mapJavaToAJEType(field).getType();
+        if (JavaUtils.hasKaiperTypeEquivalent(field)) {
+            return JavaUtils.mapJavaToKaiperType(field).getType();
         }
 
         return type;
@@ -66,8 +66,8 @@ public class JavaField extends JavaObject implements Obj {
     @Override
     public Object toJava() {
         Object field = getField();
-        if (JavaUtils.hasAJETypeEquivalent(field)) {
-            return JavaUtils.mapJavaToAJEType(field).toJava();
+        if (JavaUtils.hasKaiperTypeEquivalent(field)) {
+            return JavaUtils.mapJavaToKaiperType(field).toJava();
         }
 
         return getField();
@@ -129,7 +129,7 @@ public class JavaField extends JavaObject implements Obj {
             return parent;
         }
 
-        return JavaUtils.mapJavaToAJEType(result);
+        return JavaUtils.mapJavaToKaiperType(result);
     }
 
     @Override
@@ -142,8 +142,8 @@ public class JavaField extends JavaObject implements Obj {
 
         Object field = getField();
 
-        if (JavaUtils.hasAJETypeEquivalent(field)) {
-            return JavaUtils.mapJavaToAJEType(field).equals(obj);
+        if (JavaUtils.hasKaiperTypeEquivalent(field)) {
+            return JavaUtils.mapJavaToKaiperType(field).equals(obj);
         }
 
         return getObject() == obj;
@@ -152,8 +152,8 @@ public class JavaField extends JavaObject implements Obj {
     @Override
     public String toString() {
         Object field = getField();
-        if (JavaUtils.hasAJETypeEquivalent(field)) {
-            return JavaUtils.mapJavaToAJEType(field).toString();
+        if (JavaUtils.hasKaiperTypeEquivalent(field)) {
+            return JavaUtils.mapJavaToKaiperType(field).toString();
         }
 
         return getField().toString();
@@ -162,8 +162,8 @@ public class JavaField extends JavaObject implements Obj {
     @Override
     public int hashCode() {
         Object field = getField();
-        if (JavaUtils.hasAJETypeEquivalent(field)) {
-            return JavaUtils.mapJavaToAJEType(field).hashCode();
+        if (JavaUtils.hasKaiperTypeEquivalent(field)) {
+            return JavaUtils.mapJavaToKaiperType(field).hashCode();
         }
 
         return getField().hashCode();

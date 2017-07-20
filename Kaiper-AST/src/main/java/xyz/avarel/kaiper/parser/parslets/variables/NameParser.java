@@ -26,7 +26,7 @@ import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import java.util.List;
 
 public class NameParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Token token) {
+    public Expr parse(KaiperParser parser, Token token) {
         if (parser.match(TokenType.ASSIGN)) {
             return new AssignmentExpr(token.getString(), parser.parseSingle());
         } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {

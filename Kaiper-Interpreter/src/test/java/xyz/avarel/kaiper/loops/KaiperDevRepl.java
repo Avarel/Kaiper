@@ -30,9 +30,9 @@ import xyz.avarel.kaiper.scope.Scope;
 import java.util.List;
 import java.util.Scanner;
 
-public class AJEDevRepl {
+public class KaiperDevRepl {
     public static void main(String[] args) {
-        System.out.println("AJE REPL - Developer");
+        System.out.println("Kaiper REPL - Developer");
         System.out.println();
 
         Scanner sc = new Scanner(System.in);

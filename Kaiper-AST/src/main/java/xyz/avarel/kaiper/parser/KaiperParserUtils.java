@@ -28,11 +28,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AJEParserUtils {
+public class KaiperParserUtils {
     public static final Identifier THIS_ID = new Identifier("this");
     public static final Identifier OBJ_ID = new Identifier("Object");
 
-    public static Expr parseBlock(AJEParser parser) {
+    public static Expr parseBlock(KaiperParser parser) {
         Expr expr = UndefinedNode.VALUE;
         parser.eat(TokenType.LEFT_BRACE);
         if (!parser.match(TokenType.RIGHT_BRACE)) {
@@ -42,7 +42,7 @@ public class AJEParserUtils {
         return expr;
     }
 
-    public static List<Single> parseArguments(AJEParser parser) {
+    public static List<Single> parseArguments(KaiperParser parser) {
         List<Single> arguments = new ArrayList<>();
 
         parser.eat(TokenType.LEFT_PAREN);
@@ -56,7 +56,7 @@ public class AJEParserUtils {
         return arguments;
     }
 
-    public static List<ParameterData> parseParameters(AJEParser parser) {
+    public static List<ParameterData> parseParameters(KaiperParser parser) {
         List<ParameterData> parameters = new ArrayList<>();
 
         parser.eat(TokenType.LEFT_PAREN);
@@ -90,7 +90,7 @@ public class AJEParserUtils {
         return parameters;
     }
 
-    public static ParameterData parseParameter(AJEParser parser, boolean requireDef) {
+    public static ParameterData parseParameter(KaiperParser parser, boolean requireDef) {
         boolean rest = parser.match(TokenType.REST);
 
         String parameterName = parser.eat(TokenType.IDENTIFIER).getString();

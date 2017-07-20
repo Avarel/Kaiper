@@ -26,8 +26,8 @@ import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
 /**
  * @author AdrianTodt
  */
-public class AJEBytecode {
-    public static byte[] IDENTIFIER = {'A', 'J', 'E'};
+public class KaiperBytecode {
+    public static byte[] IDENTIFIER = {'K', 'a', 'i'};
     public static byte BYTECODE_VERSION_MAJOR = 1, BYTECODE_VERSION_MINOR = 0;
 
     public static void initialize(DataOutput output) throws IOException {
@@ -37,13 +37,13 @@ public class AJEBytecode {
     }
 
     public static void validateInit(DataInput input) throws IOException {
-        byte a = input.readByte(), j = input.readByte(), e = input.readByte();
+        byte k = input.readByte(), a = input.readByte(), i = input.readByte();
 
-        if (a != 'A' || j != 'J' || e != 'E') {
-            String hexAJE = "0x" + toHex(new byte[]{a, j, e});
+        if (k != 'K' || a != 'a' || i != 'i') {
+            String hexKaiper = "0x" + toHex(new byte[]{k, a, i});
             String rightHex = "0x" + toHex(IDENTIFIER);
 
-            throw new InvalidBytecodeException("Invalid Header " + hexAJE + ", was expecting " + rightHex + " (AJE)");
+            throw new InvalidBytecodeException("Invalid Header " + hexKaiper + ", was expecting " + rightHex + " (Kai)");
         }
     }
 
@@ -64,7 +64,7 @@ public class AJEBytecode {
 
         int versionMajor = input.readByte(), versionMinor = input.readByte();
 
-        return "AJE" + versionMajor + "." + versionMinor;
+        return "Kai" + versionMajor + "." + versionMinor;
     }
 
     public static void finalize(DataOutput output) throws IOException {

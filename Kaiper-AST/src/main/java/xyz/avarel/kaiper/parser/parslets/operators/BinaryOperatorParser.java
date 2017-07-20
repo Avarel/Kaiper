@@ -27,7 +27,7 @@ import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.BinaryParser;
 
 public class BinaryOperatorParser extends BinaryParser {
@@ -39,7 +39,7 @@ public class BinaryOperatorParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Single left, Token token) {
         if (left instanceof Identifier) {
             if (parser.match(TokenType.ASSIGN)) {
                 if (parser.getLast().getPosition().getIndex() - token.getPosition().getIndex() != 2) {
@@ -65,7 +65,7 @@ public class BinaryOperatorParser extends BinaryParser {
         return new BinaryOperation(left, right, operator);
     }
 
-    private Single optimizeArithmetic(AJEParser parser, Single left, Single right, BinaryOperatorType operator) {
+    private Single optimizeArithmetic(KaiperParser parser, Single left, Single right, BinaryOperatorType operator) {
         boolean endInt = left instanceof IntNode && right instanceof IntNode;
         double leftValue;
         if (left instanceof IntNode) {

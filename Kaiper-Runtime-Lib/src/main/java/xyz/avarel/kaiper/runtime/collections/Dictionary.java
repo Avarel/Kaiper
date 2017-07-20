@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * AJE wrapper class for a map.
+ * Kaiper wrapper class for a map.
  */
 public class Dictionary extends HashMap<Obj, Obj> implements Obj {
     public static final Type<Dictionary> TYPE = new Type<>("Dictionary");

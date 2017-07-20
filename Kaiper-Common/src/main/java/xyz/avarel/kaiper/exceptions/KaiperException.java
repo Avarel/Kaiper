@@ -15,16 +15,16 @@
 
 package xyz.avarel.kaiper.exceptions;
 
-public class AJEException extends RuntimeException {
-    public AJEException(String msg) {
+public class KaiperException extends RuntimeException {
+    public KaiperException(String msg) {
         super(msg);
     }
 
-    public AJEException(String s, Throwable throwable) {
+    public KaiperException(String s, Throwable throwable) {
         super(s, throwable);
     }
 
-    public AJEException(Throwable throwable) {
+    public KaiperException(Throwable throwable) {
         super(throwable);
     }
 }

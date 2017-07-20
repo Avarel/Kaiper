@@ -18,7 +18,7 @@ package xyz.avarel.kaiper;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.flow.Statements;
-import xyz.avarel.kaiper.exceptions.AJEException;
+import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
@@ -50,7 +50,7 @@ public class CompiledExpr implements Expr {
             return expr.accept(visitor, scope);
         } catch (ReturnException re) {
             return (R) re.getValue();
-        } catch (AJEException re) {
+        } catch (KaiperException re) {
             throw re;
         } catch (RuntimeException re) {
             throw new ComputeException(re);

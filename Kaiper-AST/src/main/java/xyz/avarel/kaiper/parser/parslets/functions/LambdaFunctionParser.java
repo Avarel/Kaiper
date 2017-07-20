@@ -22,15 +22,15 @@ import xyz.avarel.kaiper.ast.value.UndefinedNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.AJEParser;
-import xyz.avarel.kaiper.parser.AJEParserUtils;
+import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.KaiperParserUtils;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 import java.util.*;
 
 public class LambdaFunctionParser implements PrefixParser {
     @Override
-    public Expr parse(AJEParser parser, Token token) {
+    public Expr parse(KaiperParser parser, Token token) {
         if (!parser.getParserFlags().allowFunctionCreation()) {
             throw new SyntaxException("Function creation are disabled");
         }
@@ -68,7 +68,7 @@ public class LambdaFunctionParser implements PrefixParser {
 
                 do {
                     boolean rest = parser.match(TokenType.REST);
-                    ParameterData parameter = AJEParserUtils.parseParameter(parser, requireDef);
+                    ParameterData parameter = KaiperParserUtils.parseParameter(parser, requireDef);
 
                     if (parameter.getDefault() != null) {
                         requireDef = true;

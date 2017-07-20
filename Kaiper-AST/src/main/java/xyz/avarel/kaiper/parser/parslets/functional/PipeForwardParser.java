@@ -23,7 +23,7 @@ import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.BinaryParser;
 
 import java.util.Collections;
@@ -34,7 +34,7 @@ public class PipeForwardParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Single left, Token token) {
         if (!parser.getParserFlags().allowInvocation()) {
             throw new SyntaxException("Function invocation are disabled");
         }

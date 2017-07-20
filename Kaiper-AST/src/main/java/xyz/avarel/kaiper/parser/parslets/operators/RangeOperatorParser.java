@@ -21,7 +21,7 @@ import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.collections.RangeNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.BinaryParser;
 
 public class RangeOperatorParser extends BinaryParser {
@@ -30,7 +30,7 @@ public class RangeOperatorParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Single left, Token token) {
         if (!parser.getParserFlags().allowRanges()) {
             throw new SyntaxException("Ranges are disabled");
         }

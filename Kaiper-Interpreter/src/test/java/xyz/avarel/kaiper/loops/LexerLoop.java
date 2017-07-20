@@ -19,7 +19,7 @@
 
 package xyz.avarel.kaiper.loops;
 
-import xyz.avarel.kaiper.lexer.AJELexer;
+import xyz.avarel.kaiper.lexer.KaiperLexer;
 
 import java.util.Scanner;
 
@@ -44,7 +44,7 @@ public class LexerLoop {
                         continue;
                 }
 
-                AJELexer lexer = new AJELexer(input);
+                KaiperLexer lexer = new KaiperLexer(input);
 
                 System.out.println(lexer.tokensToString());
 

@@ -20,7 +20,7 @@
 package xyz.avarel.kaiper.loops;
 
 import xyz.avarel.kaiper.Evaluator;
-import xyz.avarel.kaiper.exceptions.AJEException;
+import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
@@ -28,7 +28,7 @@ import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import java.util.List;
 import java.util.Scanner;
 
-public class AJERepl {
+public class KaiperRepl {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -61,7 +61,7 @@ public class AJERepl {
 
                 try {
                     result = evaluator.eval(input);
-                } catch (AJEException e) {
+                } catch (KaiperException e) {
                     System.out.println("! " + e.getMessage());
                     e.printStackTrace();
                     result = Undefined.VALUE;

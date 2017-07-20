@@ -15,13 +15,13 @@
 
 package xyz.avarel.kaiper;
 
-import xyz.avarel.kaiper.exceptions.AJEException;
+import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.lexer.AJELexer;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.lexer.KaiperLexer;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.scope.DefaultScope;
@@ -30,7 +30,7 @@ import xyz.avarel.kaiper.scope.Scope;
 import java.io.*;
 
 /**
- * Used to programmatically evaluate AJE scripts in a read-eval-print-loop manner. Each call to {@link #eval} will
+ * Used to programmatically evaluate Kaiper scripts in a read-eval-print-loop manner. Each call to {@link #eval} will
  * affect the state of the evaluator and the following calls. All of the changes to the evaluator are accumulated in the
  * {@link #scope} field.
  */
@@ -74,7 +74,7 @@ public class Evaluator {
      * This method changes the state of the scope.
      *
      * @param   script
-     *          The {@link String string} of AJE expressions.
+     *          The {@link String string} of Kaiper expressions.
      * @return  The {@link Obj} answer to the script.
      *
      * @throws  ComputeException
@@ -91,7 +91,7 @@ public class Evaluator {
      * This method changes the state of the scope.
      *
      * @param   file
-     *          The {@link File file} containing AJE expressions.
+     *          The {@link File file} containing Kaiper expressions.
      * @return  The {@link Obj} answer to the script.
      *
      * @throws  ComputeException
@@ -113,7 +113,7 @@ public class Evaluator {
      * This method changes the state of the scope.
      *
      * @param   reader
-     *          The {@link Reader reader} instance that reads AJE expressions.
+     *          The {@link Reader reader} instance that reads Kaiper expressions.
      * @return  The {@link Obj} answer to the script.
      *
      * @throws  ComputeException
@@ -122,14 +122,14 @@ public class Evaluator {
      *          Error during the lexing or parsing process of the expression.
      */
     public Obj eval(Reader reader) {
-        return eval(new AJELexer(reader));
+        return eval(new KaiperLexer(reader));
     }
 
     /**
      * Evaluates a stream of tokens from a lexer. This method changes the state of the scope.
      *
      * @param   lexer
-     *          The {@link AJELexer lexer} object that outputs AJE tokens.
+     *          The {@link KaiperLexer lexer} object that outputs Kaiper tokens.
      * @return  The {@link Obj} answer to the script.
      *
      * @throws  ComputeException
@@ -137,13 +137,13 @@ public class Evaluator {
      * @throws  SyntaxException
      *          Error during the lexing or parsing process of the expression.
      */
-    public Obj eval(AJELexer lexer) {
+    public Obj eval(KaiperLexer lexer) {
         try {
             visitor.resetTimeout();
-            return answer = new AJEParser(lexer).compile().accept(visitor, scope);
+            return answer = new KaiperParser(lexer).compile().accept(visitor, scope);
         } catch (ReturnException re) {
             return answer = re.getValue();
-        } catch (AJEException re) {
+        } catch (KaiperException re) {
             throw re;
         } catch (RuntimeException re) {
             throw new ComputeException(re);

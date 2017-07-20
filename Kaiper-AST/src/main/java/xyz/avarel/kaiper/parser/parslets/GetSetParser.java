@@ -28,7 +28,7 @@ import xyz.avarel.kaiper.ast.value.UndefinedNode;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.BinaryParser;
 
 public class GetSetParser extends BinaryParser {
@@ -37,7 +37,7 @@ public class GetSetParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(AJEParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Single left, Token token) {
         if (parser.match(TokenType.COLON)) {
             return parseEnd(parser, token.getPosition(), left, UndefinedNode.VALUE);
         }
@@ -70,7 +70,7 @@ public class GetSetParser extends BinaryParser {
         return new GetOperation(left, key);
     }
 
-    public Single parseEnd(AJEParser parser, Position position, Single left, Single start) {
+    public Single parseEnd(KaiperParser parser, Position position, Single left, Single start) {
         if (parser.match(TokenType.COLON)) {
             return parseStep(parser, position, left, start, UndefinedNode.VALUE);
         } else if (parser.match(TokenType.RIGHT_BRACKET)) {
@@ -87,7 +87,7 @@ public class GetSetParser extends BinaryParser {
         return new SliceOperation(left, start, end, UndefinedNode.VALUE);
     }
 
-    public Single parseStep(AJEParser parser, Position position, Single left, Single start, Single end) {
+    public Single parseStep(KaiperParser parser, Position position, Single left, Single start, Single end) {
         if (parser.match(TokenType.RIGHT_BRACKET)) {
             return new SliceOperation(left, start, end, UndefinedNode.VALUE);
         }

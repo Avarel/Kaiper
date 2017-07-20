@@ -1,6 +1,6 @@
 <img align="right" src="http://i.imgur.com/5w07wFy.png" height="250" width="250">
 
-Kaiper [![Build Status](https://travis-ci.org/Avarel/AJE.svg?branch=master)](https://travis-ci.org/Avarel/AJE)
+Kaiper [![Build Status](https://travis-ci.org/Avarel/Kaiper.svg?branch=master)](https://travis-ci.org/Avarel/Kaiper)
 ===
 **What is Kaiper?** 
 Kaiper is an in-development, dynamic, and functional scripting language for the Java programming language.

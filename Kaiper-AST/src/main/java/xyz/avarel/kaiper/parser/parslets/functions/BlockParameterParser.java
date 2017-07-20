@@ -23,7 +23,7 @@ import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.BinaryParser;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class BlockParameterParser extends BinaryParser {
     }
 
     @Override // [1..10] |> fold(0) { a, b -> a + b } // [1..10] |> filter { it -> it % 2 == 0 }
-    public Expr parse(AJEParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Single left, Token token) {
         if (!parser.getParserFlags().allowFunctionCreation()) {
             throw new SyntaxException("Function creation are disabled");
         }

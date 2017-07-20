@@ -21,7 +21,7 @@ package xyz.avarel.kaiper.others;
 
 import xyz.avarel.kaiper.CompiledExpr;
 import xyz.avarel.kaiper.Expression;
-import xyz.avarel.kaiper.lexer.AJELexer;
+import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 
@@ -34,12 +34,12 @@ import java.util.concurrent.TimeUnit;
 
 public class FileTest {
     public static void main(String[] args) throws Exception {
-        System.out.println("AJE FILE");
+        System.out.println("Kaiper FILE");
         System.out.println();
 
-        System.out.println(new AJELexer(new FileReader(new File("script.aje"))).tokensToString());
+        System.out.println(new KaiperLexer(new FileReader(new File("script.kp"))).tokensToString());
 
-        Expression exp = new Expression(new FileReader(new File("script.aje")));
+        Expression exp = new Expression(new FileReader(new File("script.kp")));
 
         exp.add("println", new NativeFunc("print","string") {
             @Override

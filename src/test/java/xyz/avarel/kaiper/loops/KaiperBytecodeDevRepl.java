@@ -19,24 +19,24 @@
 
 package xyz.avarel.kaiper.loops;
 
-import xyz.avarel.kaiper.AJECompiler;
-import xyz.avarel.kaiper.lexer.AJELexer;
-import xyz.avarel.kaiper.parser.AJEParser;
+import xyz.avarel.kaiper.KaiperCompiler;
+import xyz.avarel.kaiper.lexer.KaiperLexer;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.tools.bytecode.BytecodeOutliner;
-import xyz.avarel.kaiper.vm.VirtualMachine;
+import xyz.avarel.kaiper.vm.KaiperVM;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-public class AJEBytecodeDevRepl {
+public class KaiperBytecodeDevRepl {
     public static void main(String[] args) {
-        System.out.println("AJE REPL - Developer/Bytecode");
+        System.out.println("Kaiper REPL - Developer/Bytecode");
         System.out.println();
 
         Scanner sc = new Scanner(System.in);
@@ -65,9 +65,9 @@ public class AJEBytecodeDevRepl {
                         continue;
                 }
 
-                byte[] bytecode = new AJECompiler().compile(new AJEParser(new AJELexer(input)).compile());
+                byte[] bytecode = new KaiperCompiler().compile(new KaiperParser(new KaiperLexer(input)).compile());
                 long start = System.nanoTime();
-                Obj result = new VirtualMachine().executeBytecode(bytecode, scope);
+                Obj result = new KaiperVM().executeBytecode(bytecode, scope);
                 long end = System.nanoTime();
 
                 long ns = (end - start);

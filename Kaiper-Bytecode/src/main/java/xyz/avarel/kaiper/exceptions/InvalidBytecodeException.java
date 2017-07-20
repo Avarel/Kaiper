@@ -1,6 +1,6 @@
 package xyz.avarel.kaiper.exceptions;
 
-public class InvalidBytecodeException extends AJEException {
+public class InvalidBytecodeException extends KaiperException {
     public InvalidBytecodeException(String msg) {
         super(msg);
     }

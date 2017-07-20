@@ -16,7 +16,7 @@
 package xyz.avarel.kaiper;
 
 /**
- * Default precedence table for the AJE parser.
+ * Default precedence table for the Kaiper parser.
  */
 public class Precedence {
     public static final int DOT = 14;

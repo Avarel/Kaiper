@@ -27,8 +27,7 @@ plugins {
 }
 
 group = 'xyz.avarel'
-archivesBaseName = 'AJE'
-version = new Version(major: 3, minor: 5, revision: 0)
+version = new Version(major: 1, minor: 0, revision: 0)
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -37,108 +36,123 @@ repositories {
     jcenter()
 }
 
+if (!hasProperty('bintrayUsername')) bintrayUsername = ''
+if (!hasProperty('bintrayApiKey')) bintrayApiKey = ''
+
 dependencies {
     project.childProjects.values().each { compile it }
     //testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-task clearPrepared(type: Delete) {
-    delete 'build/prepared-src'
-}
+allprojects {
+    apply plugin: 'java'
+    if (hasProperty('requiresKotlin')) apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
-//Task for the versioning system
-task sourcesForRelease(type: Copy) {
-    from 'src/main/java'
-    into 'build/prepared-src'
-    filter(ReplaceTokens, tokens: [
-            version: version
-    ])
-}
-sourcesForRelease.dependsOn clearPrepared
+    group = 'xyz.avarel.kaiper'
 
-compileJava {
-    source = sourcesForRelease.destinationDir
-    classpath = sourceSets.main.compileClasspath
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
-    options.encoding = 'UTF-8'
-
-    dependsOn sourcesForRelease
-}
-
-jar {
-    baseName = project.name
-    manifest {
-        attributes 'Implementation-Version': version
+    task clearPrepared(type: Delete) {
+        delete 'build/prepared-src'
     }
-}
 
-shadowJar {
-    classifier = 'withDependencies'
-}
+    //Task for the versioning system
+    task sourcesForRelease(type: Copy) {
+        from 'src/main/java'
+        into 'build/prepared-src'
+        filter(ReplaceTokens, tokens: [
+                version: project.version
+        ])
+    }
+    sourcesForRelease.dependsOn clearPrepared
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourcesForRelease.destinationDir
-}
+    compileJava {
+        source = sourcesForRelease.destinationDir
+        classpath = sourceSets.main.compileClasspath
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
+        options.encoding = 'UTF-8'
 
-publishing {
-    publications {
-        BintrayRelease(MavenPublication) {
-            from components.java
-            groupId group
-            artifactId archivesBaseName
-            version version
-            artifact javadocJar
-            artifact sourcesJar
+        dependsOn sourcesForRelease
+    }
+
+    jar {
+        baseName = project.name
+        manifest {
+            attributes 'Implementation-Version': project.version
         }
     }
-}
 
-bintray {
-    user = getProjectProperty 'bintrayUsername'
-    key = getProjectProperty 'bintrayApiKey'
-    publications = ['BintrayRelease']
-    pkg {
-        repo = 'maven'
-        name = 'AJE'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/Avarel/AJE.git'
-        publish = true
-        version {
-            name = project.version
-            released = new Date()
+    shadowJar {
+        classifier = 'withDependencies'
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourcesForRelease.destinationDir
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    publishing {
+        publications {
+            BintrayRelease(MavenPublication) {
+                from components.java
+                groupId group
+                artifactId project.name
+                version project.version
+                artifact javadocJar
+                artifact sourcesJar
+            }
         }
     }
-}
 
-String getProjectProperty(String propertyName) {
-    hasProperty(propertyName) ? this.properties[propertyName] : ''
-}
+    task wrapper(type: Wrapper) {
+        gradleVersion = '3.5'
+    }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
-}
+    build {
+        dependsOn jar, javadocJar, sourcesJar, shadowJar
+    }
 
+    artifacts {
+        archives javadocJar, sourcesJar, shadowJar
+    }
 
-build {
-    dependsOn jar
-    dependsOn javadocJar
-    dependsOn sourcesJar
-    dependsOn shadowJar
+    test {
+        dependsOn assemble
+    }
 
-    dependsOn test
-}
+    bintray {
+        user = bintrayUsername
+        key = bintrayApiKey
+        publications = ['BintrayRelease']
+        pkg {
+            repo = 'maven'
+            name = 'Kaiper'
+            licenses = ['Apache-2.0']
+            vcsUrl = 'https://github.com/Avarel/Kaiper.git'
+            publish = true
+            version {
+                name = project.version
+                released = new Date()
+            }
+        }
+    }
 
-bintrayUpload {
-    dependsOn build
+    bintrayUpload {
+        dependsOn build
 
-    onlyIf { !getProjectProperty('bintrayUsername').empty }
-    onlyIf { !getProjectProperty('bintrayApiKey').empty }
+        onlyIf { !bintrayUsername.empty }
+        onlyIf { !bintrayApiKey.empty }
+    }
 }
 
 class Version {

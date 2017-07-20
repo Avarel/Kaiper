@@ -2,14 +2,14 @@ package xyz.avarel.kaiper.tools.bytecode;
 
 import xyz.avarel.kaiper.bytecode.BytecodeUtils;
 import xyz.avarel.kaiper.bytecode.walker.BytecodeBatchReader;
-import xyz.avarel.kaiper.exceptions.AJEException;
+import xyz.avarel.kaiper.exceptions.KaiperException;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-import static xyz.avarel.kaiper.bytecode.AJEBytecode.*;
+import static xyz.avarel.kaiper.bytecode.KaiperBytecode.*;
 
 public class BytecodeOutliner {
     public static final OutlineOptions DEFAULT_OPTIONS = new OutlineOptions();
@@ -120,19 +120,19 @@ public class BytecodeOutliner {
     //region HEADERS
 
     private void headerCheck(DataInput input, PrintWriter out) throws IOException {
+        byte k = input.readByte();
         byte a = input.readByte();
-        byte j = input.readByte();
-        byte e = input.readByte();
+        byte i = input.readByte();
 
         if (options.skipHeaderChecking()) return;
 
-        if (a != 'A' || j != 'J' || e != 'E') {
-            String hexAJE = "0x" + BytecodeUtils.toHex(new byte[]{a, j, e});
+        if (k != 'K' || a != 'a' || i != 'i') {
+            String hexKaiper = "0x" + BytecodeUtils.toHex(new byte[]{k, a, i});
 
-            if (!options.dontExitOnHeaderError()) throw new AJEException("Invalid Header " + hexAJE + "");
+            if (!options.dontExitOnHeaderError()) throw new KaiperException("Invalid Header " + hexKaiper + "");
 
             String rightHex = "0x" + BytecodeUtils.toHex(IDENTIFIER);
-            out.println("(Invalid Header " + hexAJE + ", was expecting " + rightHex + " (AJE))");
+            out.println("(Invalid Header " + hexKaiper + ", was expecting " + rightHex + " (Kai))");
             out.println();
         }
     }
@@ -141,7 +141,7 @@ public class BytecodeOutliner {
         int versionMajor = input.readByte(), versionMinor = input.readByte();
 
         //Skip Header
-        if (!options.skipVersionHeader()) out.print("Version: AJE" + versionMajor + "." + versionMinor);
+        if (!options.skipVersionHeader()) out.print("Version: Kai" + versionMajor + "." + versionMinor);
 
         //Skip Check
         if (!options.skipVersionChecking()) {
