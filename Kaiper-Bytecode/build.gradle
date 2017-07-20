@@ -24,12 +24,3 @@ dependencies {
     compile project(':Kaiper-Common')
     //testCompile group: 'junit', name: 'junit', version: '4.12'
 }
-
-class Version {
-    String major, minor, revision
-
-
-    String toString() {
-        "${major}.${minor}.${revision}"
-    }
-}
