@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.kaiper.interpreter.runtime.java;
+package xyz.avarel.kaiper.runtime.java;
 
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Undefined;
@@ -27,8 +27,7 @@ public class JavaObject implements Obj {
 
     public JavaObject(Object object) {
         this.object = object;
-        this.type = JavaUtils.JAVA_PROTOTYPES.computeIfAbsent(object.getClass(),
-                cls -> new Type(cls.getSimpleName()));
+        this.type = JavaUtils.JAVA_PROTOTYPES.computeIfAbsent(object.getClass(), JavaType::new);
     }
 
     public Object getObject() {
@@ -71,6 +70,10 @@ public class JavaObject implements Obj {
             return object.equals(((JavaField) obj).getField());
         } else if (obj instanceof JavaObject) {
             return object.equals(((JavaObject) obj).getObject());
+        } else if (obj instanceof JavaType) {
+            return object.equals(((JavaType) obj).getWrappedClass());
+        } else if (obj instanceof JavaStaticField) {
+            return object.equals(((JavaStaticField) obj).getParent().getWrappedClass());
         }
         return object.equals(obj);
     }

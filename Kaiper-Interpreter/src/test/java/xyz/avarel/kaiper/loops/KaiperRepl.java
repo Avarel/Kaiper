@@ -21,10 +21,14 @@ package xyz.avarel.kaiper.loops;
 
 import xyz.avarel.kaiper.Evaluator;
 import xyz.avarel.kaiper.exceptions.KaiperException;
+import xyz.avarel.kaiper.interop.IJavaModel;
+import xyz.avarel.kaiper.interop.JavaModel;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
+import xyz.avarel.kaiper.runtime.java.JavaType;
 
+import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Scanner;
 
@@ -43,6 +47,11 @@ public class KaiperRepl {
                 return null;
             }
         });
+
+        evaluator.getScope().declare("IJavaModel", new JavaType(IJavaModel.class));
+        evaluator.getScope().declare("JavaClass", new JavaType(Class.class));
+        evaluator.getScope().declare("JavaModel", new JavaType(JavaModel.class));
+        evaluator.getScope().declare("Gambiarra", new JavaType(Proxy.getProxyClass(KaiperRepl.class.getClassLoader(), IJavaModel.class, Runnable.class)));
 
         while (running) {
             try {

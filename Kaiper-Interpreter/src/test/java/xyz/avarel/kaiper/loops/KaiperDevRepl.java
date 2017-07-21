@@ -21,9 +21,12 @@ package xyz.avarel.kaiper.loops;
 
 import xyz.avarel.kaiper.CompiledExpr;
 import xyz.avarel.kaiper.Expression;
+import xyz.avarel.kaiper.interop.JavaModel;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
+import xyz.avarel.kaiper.runtime.java.JavaType;
+import xyz.avarel.kaiper.runtime.java.JavaUtils;
 import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -48,6 +51,8 @@ public class KaiperDevRepl {
                 return null;
             }
         });
+
+        scope.declare("JavaModel", JavaUtils.JAVA_PROTOTYPES.computeIfAbsent(JavaModel.class, JavaType::new));
 
         while (running) {
             try {

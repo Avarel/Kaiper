@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.kaiper.interpreter.runtime.java;
+package xyz.avarel.kaiper.runtime.java;
 
 import xyz.avarel.kaiper.runtime.Bool;
 import xyz.avarel.kaiper.runtime.Obj;
@@ -70,6 +70,7 @@ public class JavaUtils {
         return wrapperPrimitiveMap.get(cls);
     }
 
+
     static boolean isAssignable(Class<?> cls, final Class<?> toClass) {
         if (toClass == null) {
             return false;
@@ -85,6 +86,7 @@ public class JavaUtils {
                 return false;
             }
         }
+
         if (toClass.isPrimitive() && !cls.isPrimitive()) {
             cls = wrapperToPrimitive(cls);
             if (cls == null) {
@@ -180,6 +182,8 @@ public class JavaUtils {
             }
 
             return dict;
+        } else if (result instanceof Class) {
+            return JAVA_PROTOTYPES.computeIfAbsent(((Class) result), JavaType::new);
         } else {
             return new JavaObject(result);
         }

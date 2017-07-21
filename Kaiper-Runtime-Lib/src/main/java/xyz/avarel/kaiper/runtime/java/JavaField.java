@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.kaiper.interpreter.runtime.java;
+package xyz.avarel.kaiper.runtime.java;
 
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Undefined;
@@ -99,10 +99,11 @@ public class JavaField extends JavaObject implements Obj {
 
         List<Object> nativeArgs = arguments.stream()
                 .map(Obj::toJava)
+                .map(o -> o != Undefined.VALUE ? o : null)
                 .collect(Collectors.toList());
 
         List<Class<?>> classes = nativeArgs.stream()
-                .map(Object::getClass)
+                .map(o -> o != null ? o.getClass() : null)
                 .collect(Collectors.toList());
 
         Object result = null;
@@ -121,6 +122,7 @@ public class JavaField extends JavaObject implements Obj {
 
             try {
                 result = method.invoke(getObject(), nativeArgs.toArray());
+                break;
             } catch (IllegalAccessException | InvocationTargetException ignore) {}
         }
 

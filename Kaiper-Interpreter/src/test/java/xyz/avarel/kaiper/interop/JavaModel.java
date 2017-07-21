@@ -18,7 +18,7 @@ package xyz.avarel.kaiper.interop;
 import java.util.Arrays;
 import java.util.List;
 
-public class JavaModel {
+public class JavaModel implements IJavaModel {
     public final JavaModel me;
 
     public String name;
@@ -36,10 +36,12 @@ public class JavaModel {
     }
 
 
+    @Override
     public Object getNull() {
         return null;
     }
 
+    @Override
     public String name() {
         return name + "IM SPECIA";
     }
