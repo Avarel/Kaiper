@@ -13,9 +13,7 @@
  * under the License.
  */
 
-version = new Version(major: 1, minor: 0, revision: 0)
 project.properties.requiresKotlin = true
-
 
 repositories {
     jcenter()

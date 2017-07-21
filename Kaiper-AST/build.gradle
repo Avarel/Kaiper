@@ -13,13 +13,6 @@
  * under the License.
  */
 
-version = new Version(major: 1, minor: 0, revision: 0)
-
-repositories {
-    jcenter()
-}
-
 dependencies {
     compile project(':Kaiper-Common')
-    //testCompile group: 'junit', name: 'junit', version: '4.12'
 }
