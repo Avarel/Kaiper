@@ -141,7 +141,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
                 new CompiledFunc(
                         name.isEmpty() ? null : name,
                         paramWalker.parameters,
-                        new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1, parent),
+                        new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1, this),
                         scope.copy()
                 )
         );
@@ -200,7 +200,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
         //Building
         CompiledConstructor constructor = new CompiledConstructor(
-                paramWalker.parameters, superParams, new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1, parent), typeScope
+                paramWalker.parameters, superParams, new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1, this), typeScope
         );
 
         CompiledType type = new CompiledType((Type) superType, name, constructor);
