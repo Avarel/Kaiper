@@ -15,16 +15,18 @@ public class CompiledExecution {
     private final BytecodeBatchReader reader;
     private final List<String> stringPool;
     private final int depth;
+    private StackMachineWalker parent;
 
-    public CompiledExecution(byte[] bytecode, BytecodeBatchReader reader, List<String> stringPool, int depth) {
+    public CompiledExecution(byte[] bytecode, BytecodeBatchReader reader, List<String> stringPool, int depth, StackMachineWalker parent) {
         this.bytecode = bytecode;
         this.reader = reader;
         this.stringPool = stringPool;
         this.depth = depth;
+        this.parent = parent;
     }
 
     public Obj executeWithScope(Scope scope) throws IOException {
-        StackMachineWalker walker = new StackMachineWalker(scope);
+        StackMachineWalker walker = new StackMachineWalker(parent, scope);
         reader.walkInsts(new DataInputStream(new ByteArrayInputStream(bytecode)), walker, stringPool, depth);
         return walker.getStack().pop();
     }

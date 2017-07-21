@@ -35,6 +35,8 @@ import java.util.Stack;
 import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
 
 public class StackMachineWalker extends BytecodeWalkerAdapter {
+    private long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
+
     private static final DummyWalker dummyWalker = new DummyWalker();
 
     private final Scope scope;
@@ -45,59 +47,76 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
         this.scope = scope;
     }
 
+    public StackMachineWalker(StackMachineWalker parent, Scope scope) {
+        this.timeout = parent.timeout;
+        this.scope = scope;
+    }
+
     @Override
     public void opcodeReturn() throws IOException {
+        checkTimeout();
         throw new ReturnException(stack.pop());
     }
 
     @Override
     public void opcodeUndefinedConstant() throws IOException {
+        checkTimeout();
         stack.push(Undefined.VALUE);
     }
 
     @Override
     public void opcodeBooleanConstantTrue() throws IOException {
+        checkTimeout();
         stack.push(Bool.TRUE);
     }
 
     @Override
     public void opcodeBooleanConstantFalse() throws IOException {
+        checkTimeout();
         stack.push(Bool.FALSE);
     }
 
     @Override
     public void opcodeIntConstant(DataInput input) throws IOException {
+        checkTimeout();
         stack.push(Int.of(input.readInt()));
     }
 
     @Override
     public void opcodeDecimalConstant(DataInput input) throws IOException {
+        checkTimeout();
         stack.push(Number.of(input.readDouble()));
     }
 
     @Override
     public void opcodeStringConstant(DataInput input, List<String> stringPool) throws IOException {
+        checkTimeout();
         stack.push(Str.of(stringPool.get(input.readUnsignedShort())));
     }
 
     @Override
     public void opcodeNewArray() throws IOException {
+        checkTimeout();
         stack.push(new Array());
     }
 
     @Override
     public void opcodeNewDictionary() throws IOException {
+        checkTimeout();
         stack.push(new Dictionary());
     }
 
     @Override
     public void opcodeNewRange() throws IOException {
+        checkTimeout();
         Obj endObj = stack.pop();
         Obj startObj = stack.pop();
 
         if (startObj instanceof Int && endObj instanceof Int) {
             int start = ((Int) startObj).value();
             int end = ((Int) endObj).value();
+
+            GlobalVisitorSettings.checkSizeLimit(Math.abs(end - start));
 
             stack.push(new Range(start, end));
         } else {
@@ -107,19 +126,22 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeNewFunction(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        checkTimeout();
         String name = stringPool.get(input.readUnsignedShort());
 
         FunctionParamWalker paramWalker = new FunctionParamWalker(this);
         reader.walkInsts(input, paramWalker, stringPool, depth + 1);
+        checkTimeout();
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         reader.walkInsts(input, new BufferWalker(new DataOutputStream(buffer)), stringPool, depth + 1);
+        checkTimeout();
 
         stack.push(
                 new CompiledFunc(
                         name.isEmpty() ? null : name,
                         paramWalker.parameters,
-                        new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1),
+                        new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1, parent),
                         scope.copy()
                 )
         );
@@ -127,10 +149,12 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        checkTimeout();
         String name = stringPool.get(input.readUnsignedShort());
 
         Scope moduleScope = scope.subPool();
-        reader.walkInsts(input, new StackMachineWalker(moduleScope), stringPool, depth + 1);
+        reader.walkInsts(input, new StackMachineWalker(this, moduleScope), stringPool, depth + 1);
+        checkTimeout();
 
         Module module = new CompiledModule(name, moduleScope);
         scope.declare(name, module);
@@ -140,6 +164,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeNewType(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        checkTimeout();
         String name = stringPool.get(input.readUnsignedShort());
 
         Scope typeScope = scope.subPool();
@@ -147,9 +172,11 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
         //Block 1: Parameters
         FunctionParamWalker paramWalker = new FunctionParamWalker(this);
         reader.walkInsts(input, paramWalker, stringPool, depth + 1);
+        checkTimeout();
 
         //Block 2: SuperType
         reader.walkInsts(input, this, stringPool, depth + 1);
+        checkTimeout();
         Obj superType = stack.pop();
 
         if (superType != Obj.TYPE && !(superType instanceof CompiledType)) {
@@ -159,6 +186,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
         //Block 3: SuperParameters
         int size = stack.size();
         reader.walkInsts(input, this, stringPool, depth + 1);
+        checkTimeout();
 
         LinkedList<Obj> superParams = new LinkedList<>();
         for (int i = stack.size(); i > size; i--) {
@@ -168,10 +196,11 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
         //Block 4: Inner
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         reader.walkInsts(input, new BufferWalker(new DataOutputStream(buffer)), stringPool, depth + 1);
+        checkTimeout();
 
         //Building
         CompiledConstructor constructor = new CompiledConstructor(
-                paramWalker.parameters, superParams, new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1), typeScope
+                paramWalker.parameters, superParams, new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1, parent), typeScope
         );
 
         CompiledType type = new CompiledType((Type) superType, name, constructor);
@@ -183,6 +212,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeInvoke(DataInput input) throws IOException {
+        checkTimeout();
         byte pCount = input.readByte();
 
         LinkedList<Obj> parameters = new LinkedList<>();
@@ -197,6 +227,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeDeclare(DataInput input, List<String> stringPool) throws IOException {
+        checkTimeout();
         String name = stringPool.get(input.readUnsignedShort());
 
         Obj value = stack.pop();
@@ -206,6 +237,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeUnaryOperation(DataInput input) throws IOException {
+        checkTimeout();
         byte type = input.readByte();
 
         UnaryOperatorType[] values = UnaryOperatorType.values();
@@ -230,6 +262,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeBinaryOperation(DataInput input) throws IOException {
+        checkTimeout();
         byte type = input.readByte();
 
         BinaryOperatorType[] values = BinaryOperatorType.values();
@@ -303,6 +336,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeSliceOperation() throws IOException {
+        checkTimeout();
         Obj step = stack.pop();
         Obj end = stack.pop();
         Obj start = stack.pop();
@@ -313,6 +347,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeGet() throws IOException {
+        checkTimeout();
         Obj key = stack.pop();
         Obj left = stack.pop();
 
@@ -321,6 +356,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeSet() throws IOException {
+        checkTimeout();
         Obj value = stack.pop();
         Obj key = stack.pop();
         Obj left = stack.pop();
@@ -330,6 +366,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeIdentifier(DataInput input, List<String> stringPool) throws IOException {
+        checkTimeout();
         boolean parented = input.readBoolean();
         String name = stringPool.get(input.readUnsignedShort());
 
@@ -346,6 +383,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeAssign(DataInput input, List<String> stringPool) throws IOException {
+        checkTimeout();
         boolean parented = input.readBoolean();
         String name = stringPool.get(input.readUnsignedShort());
 
@@ -365,14 +403,18 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeConditional(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        checkTimeout();
         boolean hasElseBranch = input.readBoolean();
         reader.walkInsts(input, this, stringPool, depth + 1);
+        checkTimeout();
 
         if (stack.pop() == Bool.TRUE) {
             reader.walkInsts(input, this, stringPool, depth + 1);
+            checkTimeout();
             if (hasElseBranch) reader.walkInsts(input, dummyWalker, stringPool, depth + 1);
         } else {
             reader.walkInsts(input, dummyWalker, stringPool, depth + 1);
+            checkTimeout();
             if (hasElseBranch) reader.walkInsts(input, this, stringPool, depth + 1);
             else stack.push(Undefined.VALUE);
         }
@@ -380,9 +422,11 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeForEach(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        checkTimeout();
         String variant = stringPool.get(input.readUnsignedShort());
 
         reader.walkInsts(input, this, stringPool, depth + 1);
+        checkTimeout();
         Obj iterObj = stack.pop();
 
         if (!(iterObj instanceof Iterable)) {
@@ -394,16 +438,22 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         reader.walkInsts(input, new BufferWalker(new DataOutputStream(buffer)), stringPool, depth + 1);
+        checkTimeout();
         byte[] bytecode = buffer.toByteArray();
 
+        int iter = 0;
         for (Object var : iterable) {
+            GlobalVisitorSettings.checkIterationLimit(iter);
+
             if (!(var instanceof Obj)) {
                 throw new ComputeException("Items in iterable do not implement Obj interface");
             }
 
             Scope copy = scope.subPool();
             copy.declare(variant, (Obj) var);
-            reader.walkInsts(new DataInputStream(new ByteArrayInputStream(bytecode)), new StackMachineWalker(copy), stringPool, depth + 1);
+            reader.walkInsts(new DataInputStream(new ByteArrayInputStream(bytecode)), new StackMachineWalker(this, copy), stringPool, depth + 1);
+            checkTimeout();
+            iter++;
         }
 
         stack.push(Undefined.VALUE);
@@ -411,11 +461,13 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     @Override
     public void opcodeDup() throws IOException {
+        checkTimeout();
         stack.push(stack.peek());
     }
 
     @Override
     public void opcodePop() throws IOException {
+        checkTimeout();
         stack.pop();
     }
 
@@ -425,5 +477,13 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
     public Scope getScope() {
         return scope;
+    }
+
+    public void resetTimeout() {
+        timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
+    }
+
+    void checkTimeout() {
+        GlobalVisitorSettings.checkTimeout(timeout);
     }
 }

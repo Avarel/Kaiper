@@ -17,14 +17,15 @@ import java.util.List;
 class FunctionParamWalker extends BytecodeWalkerAdapter {
     LinkedList<CompiledParameter> parameters = new LinkedList<>();
 
-    private StackMachineWalker parentWalker;
+    private StackMachineWalker parent;
 
-    FunctionParamWalker(StackMachineWalker parentWalker) {
-        this.parentWalker = parentWalker;
+    FunctionParamWalker(StackMachineWalker parent) {
+        this.parent = parent;
     }
 
     @Override
     public void opcodeDefineFunctionParam(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        parent.checkTimeout();
         int modifiers = input.readByte();
         String name = stringPool.get(input.readUnsignedShort());
 
@@ -34,9 +35,9 @@ class FunctionParamWalker extends BytecodeWalkerAdapter {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             reader.walkInsts(input, new BufferWalker(new DataOutputStream(buffer)), stringPool, depth + 1);
             byte[] bytecode = buffer.toByteArray();
-            Scope scope = parentWalker.getScope().subPool();
+            Scope scope = parent.getScope().subPool();
 
-            parameters.push(new CompiledParameter(name, new CompiledScopedExecution(bytecode, reader, stringPool, depth, scope), isRest));
+            parameters.push(new CompiledParameter(name, new CompiledScopedExecution(bytecode, reader, stringPool, depth, scope, parent), isRest));
         } else {
             parameters.push(new CompiledParameter(name, null, isRest));
         }
