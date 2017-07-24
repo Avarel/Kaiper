@@ -2,10 +2,21 @@ package xyz.avarel.kaiper
 
 tailrec fun factorial(x: Int, n: Int = x - 1): Int {
     println("meme")
-    return if (n != 0) {
+    if (n != 0) {
         println("lol")
-        factorial(x * n, n - 1)
+        return factorial(x * n, n - 1)
     } else {
-        x
+        println("wew")
+        return x
+    }
+}
+
+tailrec fun factorial2(x: Int, n: Int = x - 1): Int {
+
+
+    if (n != 0) {
+        return factorial2(x * n, n - 1)
+    } else {
+        return x
     }
 }

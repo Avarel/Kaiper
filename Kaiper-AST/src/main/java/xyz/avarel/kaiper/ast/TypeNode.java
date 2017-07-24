@@ -2,20 +2,22 @@ package xyz.avarel.kaiper.ast;
 
 import xyz.avarel.kaiper.ast.functions.ParameterData;
 import xyz.avarel.kaiper.ast.variables.Identifier;
+import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TypeNode implements Single {
+public class TypeNode extends Single {
     private final String name;
     private final List<ParameterData> parameters;
     private final Identifier superType;
     private final List<Single> superParameters;
     private final Expr expr;
 
-    public TypeNode(String name, List<ParameterData> parameters,
+    public TypeNode(Position position, String name, List<ParameterData> parameters,
                     Identifier superType, List<Single> superParameters,
                     Expr expr) {
+        super(position);
         this.name = name;
         this.parameters = parameters;
         this.superType = superType;

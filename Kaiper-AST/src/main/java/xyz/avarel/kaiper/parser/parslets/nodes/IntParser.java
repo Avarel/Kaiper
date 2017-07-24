@@ -24,6 +24,6 @@ import xyz.avarel.kaiper.parser.PrefixParser;
 public class IntParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
-        return new IntNode(Integer.parseInt(token.getString()));
+        return new IntNode(token.getPosition(), Integer.parseInt(token.getString()));
     }
 }

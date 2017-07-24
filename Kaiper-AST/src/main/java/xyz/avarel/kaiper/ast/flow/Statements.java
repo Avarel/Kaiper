@@ -22,17 +22,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Statements implements Expr, Iterable<Expr> {
+public class Statements extends Expr implements Iterable<Expr> {
     private final List<Expr> statements;
 
-    public Statements() {
-        this.statements = new ArrayList<>();
-    }
-
     public Statements(Expr before, Expr after) {
-        this();
-        statements.add(before);
-        statements.add(after);
+        super(before.getPosition());
+
+        this.statements = new ArrayList<>();
+        this.statements.add(before);
+        this.statements.add(after);
     }
 
     @Override

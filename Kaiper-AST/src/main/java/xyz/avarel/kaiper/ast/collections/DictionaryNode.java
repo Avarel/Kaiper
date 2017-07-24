@@ -32,13 +32,15 @@ package xyz.avarel.kaiper.ast.collections;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.Map;
 
-public class DictionaryNode implements Single {
+public class DictionaryNode extends Single {
     private final Map<Single, Single> map;
 
-    public DictionaryNode(Map<Single, Single> map) {
+    public DictionaryNode(Position position, Map<Single, Single> map) {
+        super(position);
         this.map = map;
     }
 

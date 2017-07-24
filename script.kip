@@ -3,15 +3,17 @@
 def memes(x) {
     if (x > 5) {
         return "wew"
+        println "should not do this at all"
     } else if (x < 0) {
         return "meme"
+        println "should not do this at all"
     } else {
         if (x == 2) {
-            println "wew"
             return "ugh"
-            println "wew"
+            println "should not do this at all"
         }
         return "whatever"
+        println "should not do this at all"
     }
 }
 

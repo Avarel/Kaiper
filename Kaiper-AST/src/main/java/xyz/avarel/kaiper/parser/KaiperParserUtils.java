@@ -19,7 +19,6 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.functions.ParameterData;
 import xyz.avarel.kaiper.ast.value.UndefinedNode;
-import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.TokenType;
 
@@ -29,9 +28,6 @@ import java.util.List;
 import java.util.Set;
 
 public class KaiperParserUtils {
-    public static final Identifier THIS_ID = new Identifier("this");
-    public static final Identifier OBJ_ID = new Identifier("Object");
-
     public static Expr parseBlock(KaiperParser parser) {
         Expr expr = UndefinedNode.VALUE;
         parser.eat(TokenType.LEFT_BRACE);

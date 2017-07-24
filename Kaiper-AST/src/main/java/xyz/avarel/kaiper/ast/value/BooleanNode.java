@@ -18,9 +18,13 @@ package xyz.avarel.kaiper.ast.value;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
 
-public enum BooleanNode implements Single {
-    TRUE,
-    FALSE;
+public class BooleanNode extends Single {
+    public static final BooleanNode TRUE = new BooleanNode();
+    public static final BooleanNode FALSE = new BooleanNode();
+
+    public BooleanNode() {
+        super(null);
+    }
 
     public static BooleanNode of(boolean bool) {
         return bool ? TRUE : FALSE;

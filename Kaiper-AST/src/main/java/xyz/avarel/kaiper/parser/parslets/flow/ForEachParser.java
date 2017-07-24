@@ -58,6 +58,6 @@ public class ForEachParser implements PrefixParser {
         }
 
 
-        return new ForEachExpr(variant, iterable, expr);
+        return new ForEachExpr(token.getPosition(), variant, iterable, expr);
     }
 }

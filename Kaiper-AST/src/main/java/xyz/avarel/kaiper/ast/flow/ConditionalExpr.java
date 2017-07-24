@@ -18,13 +18,15 @@ package xyz.avarel.kaiper.ast.flow;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
-public class ConditionalExpr implements Single {
+public class ConditionalExpr extends Single {
     private final Single condition;
     private final Expr ifBranch;
     private final Expr elseBranch;
 
-    public ConditionalExpr(Single condition, Expr ifBranch, Expr elseBranch) {
+    public ConditionalExpr(Position position, Single condition, Expr ifBranch, Expr elseBranch) {
+        super(position);
         this.condition = condition;
         this.ifBranch = ifBranch;
         this.elseBranch = elseBranch;

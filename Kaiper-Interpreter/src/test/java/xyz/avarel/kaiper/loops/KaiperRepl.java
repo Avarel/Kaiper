@@ -19,7 +19,7 @@
 
 package xyz.avarel.kaiper.loops;
 
-import xyz.avarel.kaiper.KaiperREPLEngine;
+import xyz.avarel.kaiper.KaiperREPL;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.interop.IJavaModel;
 import xyz.avarel.kaiper.interop.JavaModel;
@@ -38,7 +38,7 @@ public class KaiperRepl {
 
         boolean running = true;
 
-        KaiperREPLEngine interpreter = new KaiperREPLEngine();
+        KaiperREPL interpreter = new KaiperREPL();
 
         interpreter.getScope().declare("println", new NativeFunc("print", "string") {
             @Override
@@ -72,7 +72,7 @@ public class KaiperRepl {
                     result = interpreter.eval(input);
                 } catch (KaiperException e) {
                     System.out.println("! " + e.getMessage());
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     result = Undefined.VALUE;
                 }
 

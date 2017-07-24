@@ -36,7 +36,7 @@ public class LambdaFunctionParser implements PrefixParser {
         }
 
         if (parser.match(TokenType.RIGHT_BRACE)) {
-            return new FunctionNode(Collections.emptyList(), UndefinedNode.VALUE);
+            return new FunctionNode(token.getPosition(), Collections.emptyList(), UndefinedNode.VALUE);
         }
 
         // Check for arrows.
@@ -98,6 +98,6 @@ public class LambdaFunctionParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACE);
 
-        return new FunctionNode(parameters, expr);
+        return new FunctionNode(token.getPosition(), parameters, expr);
     }
 }

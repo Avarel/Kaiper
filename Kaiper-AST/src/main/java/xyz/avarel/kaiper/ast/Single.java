@@ -15,5 +15,10 @@
 
 package xyz.avarel.kaiper.ast;
 
-public interface Single extends Expr {
+import xyz.avarel.kaiper.lexer.Position;
+
+public abstract class Single extends Expr {
+    protected Single(Position position) {
+        super(position);
+    }
 }

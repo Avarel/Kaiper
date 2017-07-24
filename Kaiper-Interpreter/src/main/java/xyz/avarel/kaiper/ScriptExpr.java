@@ -25,14 +25,12 @@ import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 
-public class
-
-
-ScriptExpr implements Expr {
+public class ScriptExpr extends Expr {
     private final Expr expr;
     private Scope scope;
 
     public ScriptExpr(Scope scope, Expr expr) {
+        super(expr.getPosition());
         this.scope = scope;
         this.expr = expr;
     }

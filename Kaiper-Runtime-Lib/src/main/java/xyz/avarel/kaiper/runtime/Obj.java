@@ -266,7 +266,7 @@ public interface Obj {
     }
 
     default Obj set(Obj key, Obj value) {
-        return Undefined.VALUE;
+        throw unimplemented("set");
     }
 
     /**
@@ -278,7 +278,7 @@ public interface Obj {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj getAttr(String name) {
-        return Undefined.VALUE;
+        throw new ComputeException("Can not read attribute " + name + " of " + toString());
     }
 
     /**
@@ -292,7 +292,7 @@ public interface Obj {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj setAttr(String name, Obj value) {
-        throw unimplemented("set attribute");
+        throw new ComputeException("Can not set attribute " + name + " for " + toString());
     }
 
     // no operator, purely internal

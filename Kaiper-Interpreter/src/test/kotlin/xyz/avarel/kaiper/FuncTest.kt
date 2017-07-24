@@ -23,7 +23,7 @@ import org.junit.Assert
 import org.junit.Test
 
 class FuncTest {
-    val evaluator = KaiperInterpreter().apply {
+    val evaluator = KaiperREPL().apply {
         eval("def isEven0(x) { x % 2 == 0 }")
         eval("def isEven1(x) { x % 2 == 0 }")
         eval("def isEven2(x) = x % 2 == 0")

@@ -17,12 +17,14 @@ package xyz.avarel.kaiper.ast.collections;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
-public class RangeNode implements Single {
+public class RangeNode extends Single {
     private final Single left;
     private final Single right;
 
-    public RangeNode(Single left, Single right) {
+    public RangeNode(Position position, Single left, Single right) {
+        super(position);
         this.left = left;
         this.right = right;
     }

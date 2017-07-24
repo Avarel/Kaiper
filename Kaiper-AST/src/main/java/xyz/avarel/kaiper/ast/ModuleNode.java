@@ -1,10 +1,13 @@
 package xyz.avarel.kaiper.ast;
 
-public class ModuleNode implements Single {
+import xyz.avarel.kaiper.lexer.Position;
+
+public class ModuleNode extends Single {
     private final String name;
     private final Expr expr;
 
-    public ModuleNode(String name, Expr expr) {
+    public ModuleNode(Position position, String name, Expr expr) {
+        super(position);
         this.name = name;
         this.expr = expr;
     }

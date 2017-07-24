@@ -23,8 +23,8 @@ import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.BinaryParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 
 import java.util.Collections;
 
@@ -45,7 +45,7 @@ public class PipeBackwardParser extends BinaryParser {
             ((Invocation) left).getArguments().add(0, left);
             return left;
         } else if (left instanceof FunctionNode || left instanceof Identifier) {
-            return new Invocation(left, Collections.singletonList(right));
+            return new Invocation(token.getPosition(), left, Collections.singletonList(right));
         }
 
         throw new SyntaxException(

@@ -16,9 +16,9 @@
 package xyz.avarel.kaiper.parser;
 
 import xyz.avarel.kaiper.Precedence;
+import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.operations.UnaryOperatorType;
-import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.parslets.*;
 import xyz.avarel.kaiper.parser.parslets.flow.ForEachParser;
 import xyz.avarel.kaiper.parser.parslets.flow.IfElseParser;
@@ -26,7 +26,6 @@ import xyz.avarel.kaiper.parser.parslets.flow.ReturnParser;
 import xyz.avarel.kaiper.parser.parslets.functional.PipeBackwardParser;
 import xyz.avarel.kaiper.parser.parslets.functional.PipeForwardParser;
 import xyz.avarel.kaiper.parser.parslets.functions.FunctionParser;
-import xyz.avarel.kaiper.parser.parslets.functions.ImplicitFunctionParser;
 import xyz.avarel.kaiper.parser.parslets.functions.InvocationParser;
 import xyz.avarel.kaiper.parser.parslets.functions.LambdaFunctionParser;
 import xyz.avarel.kaiper.parser.parslets.nodes.*;
@@ -60,7 +59,6 @@ public class DefaultGrammar extends Grammar {
 
 
         prefix(TokenType.FUNCTION, new FunctionParser());
-        prefix(TokenType.UNDERSCORE, new ImplicitFunctionParser());
         prefix(TokenType.LEFT_BRACE, new LambdaFunctionParser());
 
 

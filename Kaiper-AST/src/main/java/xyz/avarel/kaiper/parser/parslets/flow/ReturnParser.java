@@ -38,6 +38,6 @@ public class ReturnParser implements PrefixParser {
         } else {
             expr = parser.parseSingle();
         }
-        return new ReturnExpr(expr);
+        return new ReturnExpr(token.getPosition(), expr);
     }
 }

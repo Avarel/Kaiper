@@ -18,13 +18,15 @@ package xyz.avarel.kaiper.ast.flow;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
-public class ForEachExpr implements Single {
+public class ForEachExpr extends Single {
     private final String variant;
     private final Single iterable;
     private final Expr action;
 
-    public ForEachExpr(String variant, Single iterable, Expr action) {
+    public ForEachExpr(Position position, String variant, Single iterable, Expr action) {
+        super(position);
         this.variant = variant;
         this.iterable = iterable;
         this.action = action;

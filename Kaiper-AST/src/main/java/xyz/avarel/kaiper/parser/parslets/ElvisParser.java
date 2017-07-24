@@ -20,11 +20,11 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.ast.value.UndefinedNode;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.parser.BinaryParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 
 public class ElvisParser extends BinaryParser {
     public ElvisParser() {
@@ -34,7 +34,9 @@ public class ElvisParser extends BinaryParser {
     @Override
     public Expr parse(KaiperParser parser, Single left, Token token) {
         return new ConditionalExpr(
+                token.getPosition(),
                 new BinaryOperation(
+                        token.getPosition(),
                         left,
                         UndefinedNode.VALUE,
                         BinaryOperatorType.EQUALS),

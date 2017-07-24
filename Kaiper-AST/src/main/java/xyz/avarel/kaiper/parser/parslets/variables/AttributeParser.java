@@ -21,14 +21,14 @@ import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.ast.value.UndefinedNode;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.parser.BinaryParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,20 +43,29 @@ public class AttributeParser extends BinaryParser {
         Token name = parser.eat(TokenType.IDENTIFIER);
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(left, name.getString(), parser.parseSingle());
-        } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
-            Single getOp = new Identifier(left, token.getString());
-
-            return new ConditionalExpr(
-                    new BinaryOperation(
-                            getOp,
-                            UndefinedNode.VALUE,
-                            BinaryOperatorType.EQUALS),
-                    new AssignmentExpr(left, name.getString(), parser.parseSingle()),
-                    getOp);
+            return new AssignmentExpr(token.getPosition(), left, name.getString(), parser.parseSingle());
         }
 
-        Identifier id = new Identifier(left, name.getString());
+        Identifier id = new Identifier(token.getPosition(), left, name.getString());
+
+        if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
+
+            return new ConditionalExpr(
+                    parser.getLast().getPosition(),
+                    new BinaryOperation(
+                            parser.getLast().getPosition(),
+                            id,
+                            UndefinedNode.VALUE,
+                            BinaryOperatorType.EQUALS),
+                    new AssignmentExpr(
+                            parser.getLast().getPosition(),
+                            left,
+                            name.getString(),
+                            parser.parseSingle()
+                    ),
+                    id
+            );
+        }
 
         if (parser.nextIsAny(TokenType.TEXT, TokenType.INT, TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.LEFT_BRACE)) {
             List<Single> arguments = new ArrayList<>();
@@ -66,7 +75,7 @@ public class AttributeParser extends BinaryParser {
                 arguments.add(parser.parseSingle());
             }
 
-            return new Invocation(id, arguments);
+            return new Invocation(token.getPosition(), id, arguments);
         }
 
         return id;

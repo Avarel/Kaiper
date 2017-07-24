@@ -22,8 +22,8 @@ import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.BinaryParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +48,6 @@ public class InvocationParser extends BinaryParser {
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return new Invocation(left, arguments);
+        return new Invocation(token.getPosition(), left, arguments);
     }
 }

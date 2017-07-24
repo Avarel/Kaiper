@@ -17,14 +17,16 @@ package xyz.avarel.kaiper.ast.operations;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
-public class SliceOperation implements Single {
+public class SliceOperation extends Single {
     private final Single left;
     private final Single start;
     private final Single end;
     private final Single step;
 
-    public SliceOperation(Single left, Single start, Single end, Single step) {
+    public SliceOperation(Position position, Single left, Single start, Single end, Single step) {
+        super(position);
         this.left = left;
         this.start = start;
         this.end = end;

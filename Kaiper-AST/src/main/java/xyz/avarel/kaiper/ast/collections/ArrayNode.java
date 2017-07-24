@@ -32,13 +32,15 @@ package xyz.avarel.kaiper.ast.collections;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.List;
 
-public class ArrayNode implements Single {
+public class ArrayNode extends Single {
     private final List<Single> items;
 
-    public ArrayNode(List<Single> items) {
+    public ArrayNode(Position position, List<Single> items) {
+        super(position);
         this.items = items;
     }
 

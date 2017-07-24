@@ -31,7 +31,14 @@ public class TypeParser implements PrefixParser {
             parameters = KaiperParserUtils.parseParameters(parser);
         }
 
-        Identifier superType = new Identifier(new Identifier("Object"), "TYPE");
+        Identifier superType = new Identifier(
+                token.getPosition(),
+                new Identifier(
+                        token.getPosition(),
+                        "Object"
+                ),
+                "TYPE"
+        );
         List<Single> superParameters = Collections.emptyList();
         if (parser.match(TokenType.COLON)) {
             superType = parser.parseIdentifier();
@@ -46,6 +53,6 @@ public class TypeParser implements PrefixParser {
             constructorExpr = KaiperParserUtils.parseBlock(parser);
         }
 
-        return new TypeNode(name, parameters, superType, superParameters, constructorExpr);
+        return new TypeNode(token.getPosition(), name, parameters, superType, superParameters, constructorExpr);
     }
 }

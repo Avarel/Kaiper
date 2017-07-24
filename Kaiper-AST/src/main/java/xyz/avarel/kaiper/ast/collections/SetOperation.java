@@ -17,12 +17,13 @@ package xyz.avarel.kaiper.ast.collections;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
 public class SetOperation extends GetOperation {
     private final Single expr;
 
-    public SetOperation(Single left, Single key, Single expr) {
-        super(left, key);
+    public SetOperation(Position position, Single left, Single key, Single expr) {
+        super(position, left, key);
         this.expr = expr;
     }
 

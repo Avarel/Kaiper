@@ -17,14 +17,16 @@ package xyz.avarel.kaiper.ast.operations;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 
-public class BinaryOperation implements Single {
+public class BinaryOperation extends Single {
     private final Single left;
     private final Single right;
     private final BinaryOperatorType operator;
 
-    public BinaryOperation(Single left, Single right, BinaryOperatorType operator) {
+    public BinaryOperation(Position position, Single left, Single right, BinaryOperatorType operator) {
+        super(position);
         this.left = left;
         this.right = right;
         this.operator = operator;

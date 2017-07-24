@@ -56,6 +56,6 @@ public class FunctionParser implements PrefixParser {
             }
         }
 
-        return new FunctionNode(name, parameters, expr);
+        return new FunctionNode(token.getPosition(), name, parameters, expr);
     }
 }

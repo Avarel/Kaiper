@@ -17,14 +17,16 @@ package xyz.avarel.kaiper.ast.invocation;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.List;
 
-public class Invocation implements Single {
+public class Invocation extends Single {
     private final Single left;
     private final List<Single> arguments;
 
-    public Invocation(Single left, List<Single> arguments) {
+    public Invocation(Position position, Single left, List<Single> arguments) {
+        super(position);
         this.left = left;
         this.arguments = arguments;
     }

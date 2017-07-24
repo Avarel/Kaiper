@@ -17,11 +17,13 @@ package xyz.avarel.kaiper.ast.flow;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
-public class ReturnExpr implements Single {
+public class ReturnExpr extends Single {
     private final Single expr;
 
-    public ReturnExpr(Single expr) {
+    public ReturnExpr(Position position, Single expr) {
+        super(position);
         this.expr = expr;
     }
 

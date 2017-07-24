@@ -64,6 +64,6 @@ public class IfElseParser implements PrefixParser {
             }
         }
 
-        return new ConditionalExpr(condition, ifBranch, elseBranch);
+        return new ConditionalExpr(token.getPosition(), condition, ifBranch, elseBranch);
     }
 }

@@ -19,8 +19,8 @@ import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
-import xyz.avarel.kaiper.operations.UnaryOperatorType;
 import xyz.avarel.kaiper.lexer.Token;
+import xyz.avarel.kaiper.operations.UnaryOperatorType;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
@@ -34,6 +34,6 @@ public class UnaryOperatorParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
         Single left = parser.parseSingle(Precedence.PREFIX);
-        return new UnaryOperation(left, operator);
+        return new UnaryOperation(token.getPosition(), left, operator);
     }
 }

@@ -24,6 +24,6 @@ public class ModuleParser implements PrefixParser {
             }
         }
 
-        return new ModuleNode(name, expr);
+        return new ModuleNode(token.getPosition(), name, expr);
     }
 }

@@ -17,12 +17,14 @@ package xyz.avarel.kaiper.ast.variables;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
-public class DeclarationExpr implements Single {
+public class DeclarationExpr extends Single {
     private final String name;
     private final Single expr;
 
-    public DeclarationExpr(String name, Single expr) {
+    public DeclarationExpr(Position position, String name, Single expr) {
+        super(position);
         this.name = name;
         this.expr = expr;
     }

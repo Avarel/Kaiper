@@ -17,12 +17,14 @@ package xyz.avarel.kaiper.ast.collections;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
-public class GetOperation implements Single {
+public class GetOperation extends Single {
     private final Single left;
     private final Single key;
 
-    public GetOperation(Single left, Single key) {
+    public GetOperation(Position position, Single left, Single key) {
+        super(position);
         this.left = left;
         this.key = key;
     }

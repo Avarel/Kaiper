@@ -17,16 +17,18 @@ package xyz.avarel.kaiper.ast.variables;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
-public class Identifier implements Single {
+public class Identifier extends Single {
     private final Single parent;
     private final String name;
 
-    public Identifier(String name) {
-        this(null, name);
+    public Identifier(Position position, String name) {
+        this(position, null, name);
     }
 
-    public Identifier(Single parent, String name) {
+    public Identifier(Position position, Single parent, String name) {
+        super(position);
         this.parent = parent;
         this.name = name;
     }
@@ -61,7 +63,7 @@ public class Identifier implements Single {
             builder.append('\n');
             builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append(name);
         } else {
-            Single.super.ast(builder, indent, isTail);
+            super.ast(builder, indent, isTail);
         }
     }
 }

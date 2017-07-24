@@ -40,6 +40,6 @@ public class Position {
 
     @Override
     public String toString() {
-        return " at " + this.index + " [line " + this.line + " : char " + this.lineIndex + "]";
+        return " at " + this.index + " [" + this.line + ":" + this.lineIndex + "]";
     }
 }

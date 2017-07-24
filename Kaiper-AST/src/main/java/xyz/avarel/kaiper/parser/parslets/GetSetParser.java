@@ -22,14 +22,14 @@ import xyz.avarel.kaiper.ast.collections.GetOperation;
 import xyz.avarel.kaiper.ast.collections.SetOperation;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.value.UndefinedNode;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.parser.BinaryParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 
 public class GetSetParser extends BinaryParser {
     public GetSetParser() {
@@ -53,28 +53,53 @@ public class GetSetParser extends BinaryParser {
         // SET
         if (parser.match(TokenType.ASSIGN)) {
             Single value = parser.parseSingle();
-            return new SetOperation(left, key, value);
-        } else if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
+            return new SetOperation(
+                    token.getPosition(),
+                    left,
+                    key,
+                    value
+            );
+        }
+
+        Single getOp = new GetOperation(token.getPosition(),
+                left,
+                key
+        );
+
+        if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
             Single value = parser.parseSingle();
 
-            Single getOp = new GetOperation(left, key);
             return new ConditionalExpr(
+                    parser.getLast().getPosition(),
                     new BinaryOperation(
+                            parser.getLast().getPosition(),
                             getOp,
                             UndefinedNode.VALUE,
                             BinaryOperatorType.EQUALS),
-                    new SetOperation(left, key, value),
-                    getOp);
+                    new SetOperation(
+                            parser.getLast().getPosition(),
+                            left,
+                            key,
+                            value
+                    ),
+                    getOp
+            );
         }
 
-        return new GetOperation(left, key);
+        return getOp;
     }
 
     public Single parseEnd(KaiperParser parser, Position position, Single left, Single start) {
         if (parser.match(TokenType.COLON)) {
             return parseStep(parser, position, left, start, UndefinedNode.VALUE);
         } else if (parser.match(TokenType.RIGHT_BRACKET)) {
-            return new SliceOperation(left, start, UndefinedNode.VALUE, UndefinedNode.VALUE);
+            return new SliceOperation(
+                    position,
+                    left,
+                    start,
+                    UndefinedNode.VALUE,
+                    UndefinedNode.VALUE
+            );
         }
 
         Single end = parser.parseSingle();
@@ -84,17 +109,35 @@ public class GetSetParser extends BinaryParser {
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
-        return new SliceOperation(left, start, end, UndefinedNode.VALUE);
+        return new SliceOperation(
+                position,
+                left,
+                start,
+                end,
+                UndefinedNode.VALUE
+        );
     }
 
     public Single parseStep(KaiperParser parser, Position position, Single left, Single start, Single end) {
         if (parser.match(TokenType.RIGHT_BRACKET)) {
-            return new SliceOperation(left, start, end, UndefinedNode.VALUE);
+            return new SliceOperation(
+                    position,
+                    left,
+                    start,
+                    end,
+                    UndefinedNode.VALUE
+            );
         }
 
         Single step = parser.parseSingle();
 
         parser.eat(TokenType.RIGHT_BRACKET);
-        return new SliceOperation(left, start, end, step);
+        return new SliceOperation(
+                position,
+                left,
+                start,
+                end,
+                step
+        );
     }
 }

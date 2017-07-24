@@ -47,6 +47,7 @@ import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.ComputeException;
+import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.runtime.functions.CompiledFunc;
 import xyz.avarel.kaiper.interpreter.runtime.functions.CompiledParameter;
@@ -72,6 +73,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
+    private int recursionDepth = 0;
     private long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
 
     public void resetTimeout() {
@@ -85,12 +87,10 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         if (exprs.isEmpty()) return Undefined.VALUE;
 
         for (int i = 0; i < exprs.size() - 1; i++) {
-            checkTimeout();
-            exprs.get(i).accept(this, scope);
+            resultOf(exprs.get(i), scope);
         }
 
-        checkTimeout();
-        return exprs.get(exprs.size() - 1).accept(this, scope);
+        return resultOf(exprs.get(exprs.size() - 1), scope);
     }
 
     // func print(str: String, n: Int) { for (x in 0..n) { print(str) } }
@@ -99,12 +99,9 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         List<CompiledParameter> parameters = new ArrayList<>();
 
         for (ParameterData data : expr.getParameterExprs()) {
-            checkTimeout();
-
             parameters.add(new CompiledParameter(data.getName(), data.getDefault(), data.isRest()));
         }
 
-        checkTimeout();
         Func func = new CompiledFunc(expr.getName(), parameters, expr.getExpr(), this, scope.subPool());
         if (expr.getName() != null) scope.declare(expr.getName(), func);
         return func;
@@ -113,40 +110,40 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     @Override
     public Obj visit(Identifier expr, Scope scope) {
         if (expr.getParent() != null) {
-            checkTimeout();
-            return expr.getParent().accept(this, scope).getAttr(expr.getName());
+            return resultOf(expr.getParent(), scope).getAttr(expr.getName());
         }
 
         if (scope.contains(expr.getName())) {
             return scope.lookup(expr.getName());
         }
 
-        throw new ComputeException(expr.getName() + " is not defined");
+        throw new InterpreterException(expr.getName() + " is not defined", expr.getPosition());
     }
 
     @Override
     public Obj visit(Invocation expr, Scope scope) {
-        checkTimeout();
-        Obj target = expr.getLeft().accept(this, scope);
+        GlobalVisitorSettings.checkRecursionDepthLimit(recursionDepth);
+
+        Obj target = resultOf(expr.getLeft(), scope);
 
         List<Obj> arguments = new ArrayList<>();
 
         for (Expr arg : expr.getArguments()) {
-            checkTimeout();
-            arguments.add(arg.accept(this, scope));
+            arguments.add(resultOf(arg, scope));
         }
 
-        checkTimeout();
-        return target.invoke(arguments);
+
+        recursionDepth++;
+        Obj result = target.invoke(arguments);
+        recursionDepth--;
+
+        return result;
     }
 
     @Override
     public Obj visit(BinaryOperation expr, Scope scope) {
-        checkTimeout();
-        Obj left = expr.getLeft().accept(this, scope);
-        checkTimeout();
-        Obj right = expr.getRight().accept(this, scope);
-        checkTimeout();
+        Obj left = resultOf(expr.getLeft(), scope);
+        Obj right = resultOf(expr.getRight(), scope);
 
         if (left instanceof Int) {
             if (right instanceof Number) {
@@ -196,15 +193,13 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
                 return left.shr(right);
 
             default:
-                throw new ComputeException("Unknown binary operator");
+                throw new InterpreterException("Unknown binary operator", expr.getPosition());
         }
     }
 
     @Override
     public Obj visit(UnaryOperation expr, Scope scope) {
-        checkTimeout();
-        Obj operand = expr.getTarget().accept(this, scope);
-        checkTimeout();
+        Obj operand = resultOf(expr.getTarget(), scope);
 
         switch (expr.getOperator()) {
             case PLUS:
@@ -214,16 +209,14 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             case NEGATE:
                 return operand.negate();
             default:
-                throw new ComputeException("Unknown unary operator");
+                throw new InterpreterException("Unknown unary operator", expr.getPosition());
         }
     }
 
     @Override
     public Obj visit(RangeNode expr, Scope scope) {
-        checkTimeout();
-        Obj startObj = expr.getLeft().accept(this, scope);
-        checkTimeout();
-        Obj endObj = expr.getRight().accept(this, scope);
+        Obj startObj = resultOf(expr.getLeft(), scope);
+        Obj endObj = resultOf(expr.getRight(), scope);
 
         if (startObj instanceof Int && endObj instanceof Int) {
             int start = ((Int) startObj).value();
@@ -231,12 +224,10 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
             GlobalVisitorSettings.checkSizeLimit(Math.abs(end - start));
 
-            checkTimeout();
             return new Range(start, end);
         }
 
         return Undefined.VALUE;
-        //throw new ComputeException("Start and end of range must be integers", expr.getPosition());
     }
 
     @Override
@@ -244,8 +235,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         Array array = new Array();
 
         for (Expr itemExpr : expr.getItems()) {
-            checkTimeout();
-            Obj item = itemExpr.accept(this, scope);
+            Obj item = resultOf(itemExpr, scope);
 
             if (item instanceof Range) {
                 for (Int i : (Range) item) {
@@ -267,14 +257,10 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     @Override
     public Obj visit(SliceOperation expr, Scope scope) {
-        checkTimeout();
-        Obj obj = expr.getLeft().accept(this, scope);
-        checkTimeout();
-        Obj start = expr.getStart().accept(this, scope);
-        checkTimeout();
-        Obj end = expr.getEnd().accept(this, scope);
-        checkTimeout();
-        Obj step = expr.getStep().accept(this, scope);
+        Obj obj = resultOf(expr.getLeft(), scope);
+        Obj start = resultOf(expr.getStart(), scope);
+        Obj end = resultOf(expr.getEnd(), scope);
+        Obj step = resultOf(expr.getStep(), scope);
 
         return obj.slice(start, end, step);
     }
@@ -284,19 +270,16 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         String attr = expr.getName();
 
         if (expr.getParent() != null) {
-            checkTimeout();
-            Obj target = expr.getParent().accept(this, scope);
-            checkTimeout();
-            Obj value = expr.getExpr().accept(this, scope);
+            Obj target = resultOf(expr.getParent(), scope);
+            Obj value = resultOf(expr.getExpr(), scope);
             return target.setAttr(attr, value);
         }
 
         if (!scope.contains(expr.getName())) {
-            throw new ComputeException(expr.getName() + " is not defined");
+            throw new InterpreterException(expr.getName() + " is not defined", expr.getPosition());
         }
 
-        checkTimeout();
-        Obj value = expr.getExpr().accept(this, scope);
+        Obj value = resultOf(expr.getExpr(), scope);
         scope.assign(attr, value);
         return value;
     }
@@ -305,8 +288,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     public Obj visit(DeclarationExpr expr, Scope scope) {
         String attr = expr.getName();
 
-        checkTimeout();
-        Obj value = expr.getExpr().accept(this, scope);
+        Obj value = resultOf(expr.getExpr(), scope);
         scope.declare(attr, value);
         return Undefined.VALUE;
     }
@@ -317,8 +299,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         Scope subscope = scope.subPool();
 
-        checkTimeout();
-        expr.getExpr().accept(this, subscope);
+        resultOf(expr.getExpr(), subscope);
 
         Module module = new CompiledModule(name, subscope);
         scope.declare(name, module);
@@ -332,15 +313,13 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         Scope subscope = scope.subPool();
 
-        checkTimeout();
-        Obj superType = expr.getSuperType().accept(this, scope);
+        Obj superType = resultOf(expr.getSuperType(), scope);
         if (superType != Obj.TYPE && !(superType instanceof CompiledType)) {
-            throw new ComputeException(superType + " can not be extended");
+            throw new InterpreterException(superType + " can not be extended", expr.getPosition());
         }
 
         List<CompiledParameter> constructorParameters = new ArrayList<>();
         for (ParameterData data : expr.getParameterExprs()) {
-            checkTimeout();
             constructorParameters.add(new CompiledParameter(data.getName(), data.getDefault(), data.isRest()));
         }
 
@@ -356,46 +335,37 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     @Override
     public Obj visit(GetOperation expr, Scope scope) {
-        checkTimeout();
-        Obj target = expr.getLeft().accept(this, scope);
-        checkTimeout();
-        Obj key = expr.getKey().accept(this, scope);
+        Obj target = resultOf(expr.getLeft(), scope);
+        Obj key = resultOf(expr.getKey(), scope);
 
         return target.get(key);
     }
 
     @Override
     public Obj visit(SetOperation expr, Scope scope) {
-        checkTimeout();
-        Obj target = expr.getLeft().accept(this, scope);
-        checkTimeout();
-        Obj key = expr.getKey().accept(this, scope);
-        checkTimeout();
-        Obj value = expr.getExpr().accept(this, scope);
+        Obj target = resultOf(expr.getLeft(), scope);
+        Obj key = resultOf(expr.getKey(), scope);
+        Obj value = resultOf(expr.getExpr(), scope);
 
         return target.set(key, value);
     }
 
     @Override
     public Obj visit(ReturnExpr expr, Scope scope) {
-        checkTimeout();
-        Obj obj = expr.getExpr().accept(this, scope);
+        Obj obj = resultOf(expr.getExpr(), scope);
 
         throw new ReturnException(obj);
     }
 
     @Override
     public Obj visit(ConditionalExpr expr, Scope scope) {
-        checkTimeout();
-        Obj condition = expr.getCondition().accept(this, scope.subPool());
+        Obj condition = resultOf(expr.getCondition(), scope.subPool());
 
         if (condition instanceof Bool && condition == Bool.TRUE) {
-            checkTimeout();
-            return expr.getIfBranch().accept(this, scope.subPool());
+            return resultOf(expr.getIfBranch(), scope.subPool());
         }
         if (expr.getElseBranch() != null) {
-            checkTimeout();
-            return expr.getElseBranch().accept(this, scope.subPool());
+            return resultOf(expr.getElseBranch(), scope.subPool());
         }
 
         return Undefined.VALUE;
@@ -403,8 +373,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     @Override
     public Obj visit(ForEachExpr expr, Scope scope) {
-        checkTimeout();
-        Obj iterExpr = expr.getIterable().accept(this, scope);
+        Obj iterExpr = resultOf(expr.getIterable(), scope);
 
         if (iterExpr instanceof Iterable) {
             Iterable iterable = (Iterable) iterExpr;
@@ -419,11 +388,10 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
                 if (var instanceof Obj) {
                     Scope copy = scope.subPool();
                     copy.declare(variant, (Obj) var);
-                    checkTimeout();
-                    loopExpr.accept(this, copy);
+                    resultOf(loopExpr, copy);
                     iter++;
                 } else {
-                    throw new ComputeException("Items in iterable do not implement Obj interface");
+                    throw new InterpreterException("Items in iterable do not implement Obj interface");
                 }
             }
         }
@@ -433,16 +401,13 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     @Override
     public Obj visit(DictionaryNode expr, Scope scope) {
-        checkTimeout();
         Map<Single, Single> map = expr.getMap();
 
         Dictionary dict = new Dictionary();
 
         for (Map.Entry<Single, Single> entry : map.entrySet()) {
-            checkTimeout();
-            Obj key = entry.getKey().accept(this, scope);
-            checkTimeout();
-            Obj value = entry.getValue().accept(this, scope);
+            Obj key = resultOf(entry.getKey(), scope);
+            Obj value = resultOf(entry.getValue(), scope);
             dict.put(key, value);
         }
 
@@ -466,18 +431,25 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     @Override
     public Obj visit(BooleanNode expr, Scope scope) {
-        switch (expr) {
-            case TRUE:
-                return Bool.TRUE;
-            case FALSE:
-            default:
-                return Bool.FALSE;
+        if (expr == BooleanNode.TRUE) {
+            return Bool.TRUE;
+        } else {
+            return Bool.FALSE;
         }
     }
 
     @Override
     public Obj visit(StringNode stringNode, Scope scope) {
         return Str.of(stringNode.getValue());
+    }
+
+    private Obj resultOf(Expr expr, Scope scope) {
+        checkTimeout();
+        try {
+            return expr.accept(this, scope);
+        } catch (ComputeException e) {
+            throw new InterpreterException(e.getMessage(), expr.getPosition());
+        }
     }
 
     private void checkTimeout() {

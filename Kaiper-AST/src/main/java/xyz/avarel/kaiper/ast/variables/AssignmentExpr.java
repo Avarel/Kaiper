@@ -17,17 +17,19 @@ package xyz.avarel.kaiper.ast.variables;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
-public class AssignmentExpr implements Single {
+public class AssignmentExpr extends Single {
     private final Single parent;
     private final String name;
     private final Single expr;
 
-    public AssignmentExpr(String name, Single expr) {
-        this(null, name, expr);
+    public AssignmentExpr(Position position, String name, Single expr) {
+        this(position, null, name, expr);
     }
 
-    public AssignmentExpr(Single parent, String name, Single expr) {
+    public AssignmentExpr(Position position, Single parent, String name, Single expr) {
+        super(position);
         this.parent = parent;
         this.name = name;
         this.expr = expr;

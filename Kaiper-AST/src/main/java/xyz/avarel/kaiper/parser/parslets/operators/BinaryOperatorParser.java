@@ -18,17 +18,14 @@ package xyz.avarel.kaiper.parser.parslets.operators;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.ast.value.BooleanNode;
 import xyz.avarel.kaiper.ast.value.DecimalNode;
 import xyz.avarel.kaiper.ast.value.IntNode;
-import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
-import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.parser.BinaryParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 
 public class BinaryOperatorParser extends BinaryParser {
     private final BinaryOperatorType operator;
@@ -40,32 +37,17 @@ public class BinaryOperatorParser extends BinaryParser {
 
     @Override
     public Expr parse(KaiperParser parser, Single left, Token token) {
-        if (left instanceof Identifier) {
-            if (parser.match(TokenType.ASSIGN)) {
-                if (parser.getLast().getPosition().getIndex() - token.getPosition().getIndex() != 2) {
-                    throw new SyntaxException("Compound assignment requires assign token directly next to operator",
-                            parser.getLast().getPosition());
-                }
-
-                Single right = parser.parseSingle();
-                return new AssignmentExpr(
-                        ((Identifier) left).getName(),
-                        new BinaryOperation(left, right, operator)
-                );
-            }
-        }
-
         Single right = parser.parseSingle(getPrecedence() - (isLeftAssoc() ? 0 : 1));
 
         if ((left instanceof IntNode || left instanceof DecimalNode)
                 && (right instanceof IntNode || right instanceof DecimalNode)) {
-            return optimizeArithmetic(parser, left, right, operator);
+            return optimizeArithmetic(parser, token, left, right, operator);
         }
 
-        return new BinaryOperation(left, right, operator);
+        return new BinaryOperation(token.getPosition(), left, right, operator);
     }
 
-    private Single optimizeArithmetic(KaiperParser parser, Single left, Single right, BinaryOperatorType operator) {
+    private Single optimizeArithmetic(KaiperParser parser, Token token, Single left, Single right, BinaryOperatorType operator) {
         boolean endInt = left instanceof IntNode && right instanceof IntNode;
         double leftValue;
         if (left instanceof IntNode) {
@@ -120,13 +102,13 @@ public class BinaryOperatorParser extends BinaryParser {
                 return BooleanNode.of(leftValue <= rightValue);
 
             default:
-                return new BinaryOperation(left, right, operator);
+                return new BinaryOperation(token.getPosition(), left, right, operator);
         }
 
         if (endInt) {
-            return new IntNode((int) finalValue);
+            return new IntNode(token.getPosition(), (int) finalValue);
         }
 
-        return new DecimalNode(finalValue);
+        return new DecimalNode(token.getPosition(), finalValue);
     }
 }

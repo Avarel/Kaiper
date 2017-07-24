@@ -18,20 +18,22 @@ package xyz.avarel.kaiper.ast.functions;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FunctionNode implements Single {
+public class FunctionNode extends Single {
     private final String name;
     private final List<ParameterData> parameters;
     private final Expr expr;
 
-    public FunctionNode(List<ParameterData> parameters, Expr expr) {
-        this(null, parameters, expr);
+    public FunctionNode(Position position, List<ParameterData> parameters, Expr expr) {
+        this(position, null, parameters, expr);
     }
 
-    public FunctionNode(String name, List<ParameterData> parameters, Expr expr) {
+    public FunctionNode(Position position, String name, List<ParameterData> parameters, Expr expr) {
+        super(position);
         this.name = name;
         this.parameters = parameters;
         this.expr = expr;

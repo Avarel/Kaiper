@@ -16,10 +16,7 @@
 package xyz.avarel.kaiper;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.exceptions.ComputeException;
-import xyz.avarel.kaiper.exceptions.KaiperException;
-import xyz.avarel.kaiper.exceptions.ReturnException;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
+import xyz.avarel.kaiper.exceptions.*;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.parser.KaiperParser;
@@ -35,7 +32,7 @@ import java.io.*;
  * affect the state of the evaluator and the following calls. All of the changes to the evaluator are accumulated in the
  * {@link #scope} field.
  */
-public class KaiperREPLEngine {
+public class KaiperREPL {
     private final ExprInterpreter visitor;
     private final Scope scope;
     private Obj answer;
@@ -43,7 +40,7 @@ public class KaiperREPLEngine {
     /**
      * Creates a new Evaluator instantiated with default values and functions copied from {@link DefaultScope}.
      */
-    public KaiperREPLEngine() {
+    public KaiperREPL() {
         this(DefaultScope.INSTANCE.copy());
     }
 
@@ -53,7 +50,7 @@ public class KaiperREPLEngine {
      * @param   scope
      *          The initial {@link Scope} values to copy from.
      */
-    public KaiperREPLEngine(Scope scope) {
+    public KaiperREPL(Scope scope) {
         this.scope = scope;
         this.visitor = new ExprInterpreter();
         this.answer = Undefined.VALUE;
@@ -64,9 +61,9 @@ public class KaiperREPLEngine {
      * affect the parent evaluator.
      *
      * @param   parent
-     *          The parent {@link KaiperREPLEngine}.
+     *          The parent {@link KaiperREPL}.
      */
-    public KaiperREPLEngine(KaiperREPLEngine parent) {
+    public KaiperREPL(KaiperREPL parent) {
         this(parent.scope.subPool());
     }
 
@@ -180,10 +177,12 @@ public class KaiperREPLEngine {
             return answer = expr.accept(visitor, scope);
         } catch (ReturnException re) {
             return answer = re.getValue();
+        } catch (ComputeException re) {
+            throw new InterpreterException(re.getMessage(), expr.getPosition());
         } catch (KaiperException re) {
             throw re;
         } catch (RuntimeException re) {
-            throw new ComputeException(re);
+            throw new InterpreterException(re);
         }
     }
 

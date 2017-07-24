@@ -19,12 +19,7 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.collections.ArrayNode;
 import xyz.avarel.kaiper.ast.collections.DictionaryNode;
-import xyz.avarel.kaiper.ast.collections.GetOperation;
-import xyz.avarel.kaiper.ast.flow.Statements;
-import xyz.avarel.kaiper.ast.value.IntNode;
 import xyz.avarel.kaiper.ast.value.StringNode;
-import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
-import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -43,7 +38,7 @@ public class CollectionsParser implements PrefixParser {
                 throw new SyntaxException("Dictionaries are disabled");
             }
             parser.eat(TokenType.RIGHT_BRACKET);
-            return new DictionaryNode(Collections.emptyMap());
+            return new DictionaryNode(token.getPosition(), Collections.emptyMap());
         }
 
         // EMPTY ARRAY
@@ -51,7 +46,7 @@ public class CollectionsParser implements PrefixParser {
             if (!parser.getParserFlags().allowArray()) {
                 throw new SyntaxException("Arrays are disabled");
             }
-            return new ArrayNode(Collections.emptyList());
+            return new ArrayNode(token.getPosition(), Collections.emptyList());
         }
 
         Single expr = parser.parseSingle();
@@ -80,44 +75,44 @@ public class CollectionsParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
-        if (parser.match(TokenType.ASSIGN)) {
-            for (Expr expr : items) {
-                if (!(expr instanceof Identifier)) {
-                    throw new SyntaxException("Invalid left-hand side in assignment expression", token.getPosition());
-                }
-            }
+//        if (parser.match(TokenType.ASSIGN)) {
+//            for (Expr expr : items) {
+//                if (!(expr instanceof Identifier)) {
+//                    throw new SyntaxException("Invalid left-hand side in assignment expression", token.getPosition());
+//                }
+//            }
+//
+//            Single target = parser.parseSingle();
+//
+//            Statements statements = new Statements();
+//
+//            statements.getExprs().add(new DeclarationExpr("$TEMP", target));
+//
+//            for (int i = 0; i < items.size(); i++) {
+//                Expr expr = items.get(i);
+//                Identifier id = (Identifier) expr;
+//                statements.getExprs().add(
+//                        new AssignmentExpr(
+//                                id.getParent(),
+//                                id.getName(),
+//                                new GetOperation(new Identifier("$TEMP"), new IntNode(i))
+//                        )
+//                );
+//            }
+//
+//            statements.getExprs().add(new Identifier("$TEMP"));
+//
+//            return statements;
+//        }
 
-            Single target = parser.parseSingle();
-
-            Statements statements = new Statements();
-
-            statements.getExprs().add(new DeclarationExpr("$TEMP", target));
-
-            for (int i = 0; i < items.size(); i++) {
-                Expr expr = items.get(i);
-                Identifier id = (Identifier) expr;
-                statements.getExprs().add(
-                        new AssignmentExpr(
-                                id.getParent(),
-                                id.getName(),
-                                new GetOperation(new Identifier("$TEMP"), new IntNode(i))
-                        )
-                );
-            }
-
-            statements.getExprs().add(new Identifier("$TEMP"));
-
-            return statements;
-        }
-
-        return new ArrayNode(items);
+        return new ArrayNode(token.getPosition(), items);
     }
 
     private Expr parseDictionary(KaiperParser parser, Token token, Single initKey) {
         Map<Single, Single> map = new HashMap<>();
 
         if (initKey instanceof Identifier) {
-            initKey = new StringNode(((Identifier) initKey).getName());
+            initKey = new StringNode(initKey.getPosition(), ((Identifier) initKey).getName());
         }
 
         map.put(initKey, parser.parseSingle());
@@ -132,6 +127,6 @@ public class CollectionsParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
-        return new DictionaryNode(map);
+        return new DictionaryNode(token.getPosition(), map);
     }
 }

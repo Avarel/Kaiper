@@ -21,8 +21,8 @@ import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.collections.RangeNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.BinaryParser;
+import xyz.avarel.kaiper.parser.KaiperParser;
 
 public class RangeOperatorParser extends BinaryParser {
     public RangeOperatorParser() {
@@ -36,6 +36,6 @@ public class RangeOperatorParser extends BinaryParser {
         }
 
         Single right = parser.parseSingle(getPrecedence());
-        return new RangeNode(left, right);
+        return new RangeNode(token.getPosition(), left, right);
     }
 }

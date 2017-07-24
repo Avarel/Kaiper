@@ -18,8 +18,12 @@ package xyz.avarel.kaiper.ast.value;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
 
-public enum UndefinedNode implements Single {
-    VALUE;
+public class UndefinedNode extends Single {
+    public static final UndefinedNode VALUE = new UndefinedNode();
+
+    public UndefinedNode() {
+        super(null);
+    }
 
     @Override
     public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
