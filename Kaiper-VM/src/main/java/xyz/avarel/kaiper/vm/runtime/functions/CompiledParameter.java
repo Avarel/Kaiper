@@ -1,12 +1,12 @@
 package xyz.avarel.kaiper.vm.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.functions.Parameter;
-import xyz.avarel.kaiper.vm.compiled.CompiledScopedExecution;
+import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
 
 public class CompiledParameter extends Parameter {
-    private final CompiledScopedExecution defaultValue;
+    private final CompiledExecution defaultValue;
 
-    public CompiledParameter(String name, CompiledScopedExecution defaultValue, boolean rest) {
+    public CompiledParameter(String name, CompiledExecution defaultValue, boolean rest) {
         super(name,rest);
         this.defaultValue = defaultValue;
     }
@@ -15,7 +15,7 @@ public class CompiledParameter extends Parameter {
         return defaultValue != null;
     }
 
-    public CompiledScopedExecution getDefaultValue() {
+    public CompiledExecution getDefaultValue() {
         return defaultValue;
     }
 }

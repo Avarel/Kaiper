@@ -28,7 +28,7 @@ import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
  */
 public class KaiperBytecode {
     public static byte[] IDENTIFIER = {'K', 'a', 'i'};
-    public static byte BYTECODE_VERSION_MAJOR = 1, BYTECODE_VERSION_MINOR = 0;
+    public static byte BYTECODE_VERSION_MAJOR = 1, BYTECODE_VERSION_MINOR = 1;
 
     public static void initialize(DataOutput output) throws IOException {
         output.write(IDENTIFIER);

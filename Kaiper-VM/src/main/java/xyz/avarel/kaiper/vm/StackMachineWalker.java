@@ -135,12 +135,11 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
         reader.walkInsts(input, new BufferWalker(new DataOutputStream(buffer)), stringPool, depth + 1);
         checkTimeout();
 
-
         Func func = new CompiledFunc(
                 name.isEmpty() ? null : name,
                 paramWalker.parameters,
                 new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1, this),
-                scope.copy()
+                scope.subPool()
         );
 
         if (func.getName() != null) scope.declare(func.getName(), func);
@@ -218,7 +217,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
         LinkedList<Obj> parameters = new LinkedList<>();
         for (byte i = 0; i < pCount; i++) {
-            parameters.add(stack.pop());
+            parameters.push(stack.pop());
         }
 
         Obj left = stack.pop();

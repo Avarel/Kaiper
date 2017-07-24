@@ -52,7 +52,7 @@ public class CompiledConstructor extends Constructor {
                 if (i < arguments.size()) {
                     constructorScope.declare(parameter.getName(), arguments.get(i));
                 } else if (parameter.hasDefault()) {
-                    constructorScope.declare(parameter.getName(), parameter.getDefaultValue().execute());
+                    constructorScope.declare(parameter.getName(), parameter.getDefaultValue().executeWithScope(scope));
                 } else {
                     constructorScope.declare(parameter.getName(), Undefined.VALUE);
                 }

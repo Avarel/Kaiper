@@ -46,7 +46,7 @@ public class CompiledFunc extends Func {
                 if (i < arguments.size()) {
                     scope.declare(parameter.getName(), arguments.get(i));
                 } else if (parameter.hasDefault()) {
-                    scope.declare(parameter.getName(), parameter.getDefaultValue().execute());
+                    scope.declare(parameter.getName(), parameter.getDefaultValue().executeWithScope(scope));
                 } else {
                     scope.declare(parameter.getName(), Undefined.VALUE);
                 }

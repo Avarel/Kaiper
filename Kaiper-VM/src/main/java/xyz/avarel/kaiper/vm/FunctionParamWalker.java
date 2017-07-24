@@ -4,7 +4,7 @@ import xyz.avarel.kaiper.bytecode.walker.BufferWalker;
 import xyz.avarel.kaiper.bytecode.walker.BytecodeBatchReader;
 import xyz.avarel.kaiper.bytecode.walker.BytecodeWalkerAdapter;
 import xyz.avarel.kaiper.scope.Scope;
-import xyz.avarel.kaiper.vm.compiled.CompiledScopedExecution;
+import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
 import xyz.avarel.kaiper.vm.runtime.functions.CompiledParameter;
 
 import java.io.ByteArrayOutputStream;
@@ -37,9 +37,9 @@ class FunctionParamWalker extends BytecodeWalkerAdapter {
             byte[] bytecode = buffer.toByteArray();
             Scope scope = parent.getScope().subPool();
 
-            parameters.push(new CompiledParameter(name, new CompiledScopedExecution(bytecode, reader, stringPool, depth, scope, parent), isRest));
+            parameters.add(new CompiledParameter(name, new CompiledExecution(bytecode, reader, stringPool, depth + 1, parent), isRest));
         } else {
-            parameters.push(new CompiledParameter(name, null, isRest));
+            parameters.add(new CompiledParameter(name, null, isRest));
         }
     }
 }

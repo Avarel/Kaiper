@@ -1,7 +1,8 @@
 // Test file for FileTest.java
 
 def factorial(x, n = x - 1) {
+    println [x,n]
     return if (n == 0) x else factorial(x * n, n - 1)
 }
 
-[factorial(5), factorial]
+[factorial(3), factorial]

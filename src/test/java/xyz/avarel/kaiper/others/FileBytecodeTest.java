@@ -19,11 +19,16 @@
 
 package xyz.avarel.kaiper.others;
 
-import xyz.avarel.kaiper.CompiledExpr;
-import xyz.avarel.kaiper.Expression;
+import xyz.avarel.kaiper.KaiperCompiler;
+import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
+import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
+import xyz.avarel.kaiper.scope.DefaultScope;
+import xyz.avarel.kaiper.scope.Scope;
+import xyz.avarel.kaiper.vm.KaiperVM;
 
 import java.io.File;
 import java.io.FileReader;
@@ -32,16 +37,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-public class FileTest {
+public class FileBytecodeTest {
     public static void main(String[] args) throws Exception {
         System.out.println("Kaiper FILE");
         System.out.println();
 
         System.out.println(new KaiperLexer(new FileReader(new File("script.kip"))).tokensToString());
 
-        Expression exp = new Expression(new FileReader(new File("script.kip")));
+        Scope scope = DefaultScope.INSTANCE.copy();
 
-        exp.add("println", new NativeFunc("print","string") {
+        scope.declare("println", new NativeFunc("print","string") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 System.out.println(arguments.get(0));
@@ -49,13 +54,23 @@ public class FileTest {
             }
         });
 
-        CompiledExpr expr = exp.compile();
+        Expr expr = new KaiperParser(new KaiperLexer(new FileReader(new File("script.kip")))).compile();
 
         StringBuilder sb = new StringBuilder();
         expr.ast(sb, "", true);
         System.out.println(sb);
 
-        Future<Obj> future = CompletableFuture.supplyAsync(expr::compute);
+        Future<Obj> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                return new KaiperVM().executeBytecode(new KaiperCompiler().compile(expr), scope);
+            } catch (ReturnException r) {
+                return r.getValue();
+            } catch (RuntimeException re) {
+                throw re;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         System.out.println("\n\t\tRESULT |> " + future.get(500, TimeUnit.MILLISECONDS));
     }
