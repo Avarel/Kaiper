@@ -16,6 +16,7 @@ import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
+import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -35,13 +36,10 @@ import java.util.Stack;
 import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
 
 public class StackMachineWalker extends BytecodeWalkerAdapter {
-    private long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
-
     private static final DummyWalker dummyWalker = new DummyWalker();
-
     private final Scope scope;
-
     Stack<Obj> stack = new Stack<>();
+    private long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
 
     public StackMachineWalker(Scope scope) {
         this.scope = scope;
@@ -137,14 +135,17 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
         reader.walkInsts(input, new BufferWalker(new DataOutputStream(buffer)), stringPool, depth + 1);
         checkTimeout();
 
-        stack.push(
-                new CompiledFunc(
-                        name.isEmpty() ? null : name,
-                        paramWalker.parameters,
-                        new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1, this),
-                        scope.copy()
-                )
+
+        Func func = new CompiledFunc(
+                name.isEmpty() ? null : name,
+                paramWalker.parameters,
+                new CompiledExecution(buffer.toByteArray(), reader, stringPool, depth + 1, this),
+                scope.copy()
         );
+
+        if (func.getName() != null) scope.declare(func.getName(), func);
+
+        stack.push(func);
     }
 
     @Override
