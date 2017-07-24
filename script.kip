@@ -1,8 +1,18 @@
 // Test file for FileTest.java
 
-def factorial(x, n = x - 1) {
-    println [x,n]
-    return if (n == 0) x else factorial(x * n, n - 1)
+def memes(x) {
+    if (x > 5) {
+        return "wew"
+    } else if (x < 0) {
+        return "meme"
+    } else {
+        if (x == 2) {
+            println "wew"
+            return "ugh"
+            println "wew"
+        }
+        return "whatever"
+    }
 }
 
-[factorial(3), factorial]
+[-5..10] |> Array.map(memes)

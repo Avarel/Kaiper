@@ -19,16 +19,16 @@
 
 package xyz.avarel.kaiper.others;
 
-import xyz.avarel.kaiper.Expression;
+import xyz.avarel.kaiper.KaiperScript;
 import xyz.avarel.kaiper.runtime.Obj;
 
 class KaiperTest {
     public static void main(String[] args) {
         // Base expression.
-        Expression exp = new Expression("random(20)");
+        KaiperScript exp = new KaiperScript("random(20)");
 
         // Add a constant.
-        exp.add("tau", new Expression("2 * pi"));
+        exp.add("tau", new KaiperScript("2 * pi"));
 
 //        // Add a normal function.
 //        exp.add("double", new NativeFunction(Numeric.TYPE) {

@@ -1,7 +1,7 @@
 package xyz.avarel.kaiper.bytecode;
 
 import xyz.avarel.kaiper.KaiperCompiler;
-import xyz.avarel.kaiper.Expression;
+import xyz.avarel.kaiper.KaiperScript;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.tools.bytecode.BytecodeOutliner;
 import xyz.avarel.kaiper.tools.bytecode.OutlineOptions;
@@ -14,14 +14,14 @@ public class KaiperBytecodeTest {
         String code = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]";
         System.out.println("Code: " + code);
         System.out.println();
-        Expression exp = new Expression(code);
+        KaiperScript exp = new KaiperScript(code);
         Expr expCompiled = exp.compile();
 
-        byte[] bytecode = new KaiperCompiler().compile(expCompiled);
+        byte[] bytecode = KaiperCompiler.compile(expCompiled);
 
         System.out.println("Bytecode: " + bytecode.length + " bytes");
 
-        byte[] compressedBytecode = new KaiperCompiler().compileCompressed(expCompiled);
+        byte[] compressedBytecode = KaiperCompiler.compileCompressed(expCompiled);
 
         System.out.println("Compressed Bytecode: "  + compressedBytecode.length + " bytes");
 

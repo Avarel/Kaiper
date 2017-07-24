@@ -30,7 +30,6 @@
 
 package xyz.avarel.kaiper.interpreter;
 
-import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.ast.*;
 import xyz.avarel.kaiper.ast.collections.*;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
@@ -48,9 +47,9 @@ import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.ComputeException;
+import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.runtime.functions.CompiledFunc;
 import xyz.avarel.kaiper.interpreter.runtime.functions.CompiledParameter;
-import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.interpreter.runtime.types.CompiledConstructor;
 import xyz.avarel.kaiper.interpreter.runtime.types.CompiledType;
 import xyz.avarel.kaiper.runtime.Bool;
@@ -61,6 +60,7 @@ import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
 import xyz.avarel.kaiper.runtime.functions.Func;
+import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
@@ -86,19 +86,11 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         for (int i = 0; i < exprs.size() - 1; i++) {
             checkTimeout();
-            try {
-                exprs.get(i).accept(this, scope);
-            } catch (ReturnException re) {
-                return re.getValue();
-            }
+            exprs.get(i).accept(this, scope);
         }
 
         checkTimeout();
-        try {
-            return exprs.get(exprs.size() - 1).accept(this, scope);
-        } catch (ReturnException re) {
-            return re.getValue();
-        }
+        return exprs.get(exprs.size() - 1).accept(this, scope);
     }
 
     // func print(str: String, n: Int) { for (x in 0..n) { print(str) } }

@@ -47,7 +47,7 @@ public class KaiperParser extends Parser {
         this.parserFlags = parserFlags;
     }
 
-    public Expr compile() {
+    public Expr parse() {
         Expr expr = parseStatements();
 
         if (!getTokens().isEmpty()) {

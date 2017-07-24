@@ -33,69 +33,81 @@ import java.io.Reader;
  * in the {@link #scope}. The expression not compiled until the invocation of either {@link #compile()} or
  * {@link #compute()} explicitly; {@link KaiperException} and its derivatives would not be thrown until then.
  */
-public class Expression {
+public class KaiperScript {
     private final KaiperParser parser;
     private final Scope scope;
-    private CompiledExpr expr;
+    private ScriptExpr expr;
 
     /**
-     * Creates an expression based on a string. The expression uses a copy of the {@link DefaultScope default scope}
+     * Creates a script based on a string. The expression uses a copy of the {@link DefaultScope default scope}
      * and its values. This constructor is a shortcut for
-     * {@link Expression#Expression(String, Scope) Expression(String, DefaultScope.INSTANCE.copy())}
+     * {@link KaiperScript#KaiperScript(String, Scope) Expression(String, DefaultScope.INSTANCE.copy())}
      *
      * @param   script
      *          The {@link String string} of Kaiper expression.
      */
-    public Expression(String script) {
+    public KaiperScript(String script) {
         this(script, DefaultScope.INSTANCE.copy());
     }
 
     /**
-     * Creates an expression based on the character stream from a reader. The expression uses a copy of the
+     * Creates a script based on the character stream from a reader. The expression uses a copy of the
      * {@link DefaultScope default scope} and its values. This constructor is a shortcut for
-     * {@link Expression#Expression(Reader, Scope) Expression(Reader, DefaultScope.INSTANCE.copy())}
+     * {@link KaiperScript#KaiperScript(Reader, Scope) Expression(Reader, DefaultScope.INSTANCE.copy())}
      *
      * @param   reader
      *          The {@link Reader reader} instance that reads Kaiper expressions.\
      */
-    public Expression(Reader reader) {
+    public KaiperScript(Reader reader) {
         this(reader, DefaultScope.INSTANCE.copy());
     }
 
     /**
-     * Creates an expression based on a string.
+     * Creates a script based on a string.
      *
      * @param   script
      *          The {@link String string} of Kaiper expression.
      * @param   scope
-     *          The {@link Scope scope} to evaluate the expression from.
+     *          The {@link Scope scope} to evaluate the script from.
      */
-    public Expression(String script, Scope scope) {
+    public KaiperScript(String script, Scope scope) {
         this(new KaiperLexer(script), scope);
     }
 
     /**
-     * Creates an expression based on the character stream from a reader.
+     * Creates a script based on the character stream from a reader.
      *
      * @param   reader
      *          The {@link Reader reader} instance that reads Kaiper expressions.
      * @param   scope
-     *          The {@link Scope scope} to evaluate the expression from.
+     *          The {@link Scope scope} to evaluate the script from.
      */
-    public Expression(Reader reader, Scope scope) {
+    public KaiperScript(Reader reader, Scope scope) {
         this(new KaiperLexer(reader), scope);
     }
 
     /**
-     * Creates an expression based on a stream of tokens from a lexer.
+     * Creates a script based on a stream of tokens from a lexer.
      *
      * @param   lexer
      *          The {@link KaiperLexer lexer} object that outputs Kaiper tokens.
      * @param   scope
-     *          The {@link Scope scope} to evaluate the expression from.
+     *          The {@link Scope scope} to evaluate the script from.
      */
-    public Expression(KaiperLexer lexer, Scope scope) {
-        this.parser = new KaiperParser(lexer);
+    public KaiperScript(KaiperLexer lexer, Scope scope) {
+        this(new KaiperParser(lexer), scope);
+    }
+
+    /**
+     * Creates a script based on a stream of tokens from a lexer.
+     *
+     * @param   parser
+     *          The {@link KaiperParser parser} object that parses Kaiper scripts.
+     * @param   scope
+     *          The {@link Scope scope} to evaluate the script from.
+     */
+    public KaiperScript(KaiperParser parser, Scope scope) {
+        this.parser = parser;
         this.scope = scope;
     }
 
@@ -106,26 +118,26 @@ public class Expression {
      *          The name of the variable to assign the value to.
      * @param   object
      *          The {@link Obj} value.
-     * @return  The current {@link Expression} builder instance. Useful for chaining.
+     * @return  The current {@link KaiperScript} builder instance. Useful for chaining.
      */
-    public Expression add(String name, Obj object) {
+    public KaiperScript add(String name, Obj object) {
         scope.declare(name, object);
         return this;
     }
 
     /**
-     * Declare a variable with the name and the {@link Obj} value from the evaluated {@link Expression}. Note that
-     * the {@link Expression} parameter has its own {@link Scope} and can not access any values of the current
+     * Declare a variable with the name and the {@link Obj} value from the evaluated {@link KaiperScript}. Note that
+     * the {@link KaiperScript} parameter has its own {@link Scope} and can not access any values of the current
      * expression.
      *
      * @param   name
      *          The name of the variable to assign the value to.
-     * @param   object
-     *          The {@link Expression} value which is then computed as an {@link Obj}.
-     * @return  The current {@link Expression} builder instance. Useful for chaining.
+     * @param   script
+     *          The {@link KaiperScript} value which is then computed as an {@link Obj}.
+     * @return  The current {@link KaiperScript} builder instance. Useful for chaining.
      */
-    public Expression add(String name, Expression object) {
-        scope.declare(name, object.compute());
+    public KaiperScript add(String name, KaiperScript script) {
+        scope.declare(name, new KaiperScript(script.parser, script.scope.combine(scope)).compute());
         return this;
     }
 
@@ -136,9 +148,9 @@ public class Expression {
      * @throws  SyntaxException
      *          Error during the lexing or parsing process of the expression.
      */
-    public CompiledExpr compile() {
+    public ScriptExpr compile() {
         if (expr == null) {
-            expr = new CompiledExpr(scope, parser.compile());
+            expr = new ScriptExpr(scope, parser.parse());
         }
         return expr;
     }
@@ -157,6 +169,10 @@ public class Expression {
         return compile().compute();
     }
 
+    public KaiperParser getParser() {
+        return parser;
+    }
+
     public Scope getScope() {
         return scope;
     }
@@ -171,5 +187,4 @@ public class Expression {
     public void setParserFlags(short flags) {
         parser.setParserFlags(new ParserFlags(flags));
     }
-
 }

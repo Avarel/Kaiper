@@ -15,8 +15,9 @@
 
 package xyz.avarel.kaiper;
 
-import xyz.avarel.kaiper.exceptions.KaiperException;
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.exceptions.ComputeException;
+import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
@@ -34,7 +35,7 @@ import java.io.*;
  * affect the state of the evaluator and the following calls. All of the changes to the evaluator are accumulated in the
  * {@link #scope} field.
  */
-public class Evaluator {
+public class KaiperREPLEngine {
     private final ExprInterpreter visitor;
     private final Scope scope;
     private Obj answer;
@@ -42,7 +43,7 @@ public class Evaluator {
     /**
      * Creates a new Evaluator instantiated with default values and functions copied from {@link DefaultScope}.
      */
-    public Evaluator() {
+    public KaiperREPLEngine() {
         this(DefaultScope.INSTANCE.copy());
     }
 
@@ -52,7 +53,7 @@ public class Evaluator {
      * @param   scope
      *          The initial {@link Scope} values to copy from.
      */
-    public Evaluator(Scope scope) {
+    public KaiperREPLEngine(Scope scope) {
         this.scope = scope;
         this.visitor = new ExprInterpreter();
         this.answer = Undefined.VALUE;
@@ -63,9 +64,9 @@ public class Evaluator {
      * affect the parent evaluator.
      *
      * @param   parent
-     *          The parent {@link Evaluator}.
+     *          The parent {@link KaiperREPLEngine}.
      */
-    public Evaluator(Evaluator parent) {
+    public KaiperREPLEngine(KaiperREPLEngine parent) {
         this(parent.scope.subPool());
     }
 
@@ -126,7 +127,25 @@ public class Evaluator {
     }
 
     /**
-     * Evaluates a stream of tokens from a lexer. This method changes the state of the scope.
+     * Evaluates the script object.
+     * This method changes the state of the scope.
+     *
+     * @param   script
+     *          The {@link KaiperScript Kaiper script} object.
+     * @return  The {@link Obj} answer to the script.
+     *
+     * @throws  ComputeException
+     *          Error during the execution of the expression.
+     * @throws  SyntaxException
+     *          Error during the lexing or parsing process of the expression.
+     */
+    public Obj eval(KaiperScript script) {
+        return eval(new KaiperScript(script.getParser(), getScope().combine(scope)).compile());
+    }
+
+    /**
+     * Evaluates a stream of tokens from a lexer.
+     * This method changes the state of the scope.
      *
      * @param   lexer
      *          The {@link KaiperLexer lexer} object that outputs Kaiper tokens.
@@ -138,9 +157,27 @@ public class Evaluator {
      *          Error during the lexing or parsing process of the expression.
      */
     public Obj eval(KaiperLexer lexer) {
+        return eval(new KaiperParser(lexer).parse());
+    }
+
+    // comment
+    /**
+     * Evaluates an AST node.
+     * This method changes the state of the scope.
+     *
+     * @param   expr
+     *          The {@link Expr expression} object.
+     * @return  The {@link Obj} answer to the script.
+     *
+     * @throws  ComputeException
+     *          Error during the execution of the expression.
+     * @throws  SyntaxException
+     *          Error during the lexing or parsing process of the expression.
+     */
+    public Obj eval(Expr expr) {
         try {
             visitor.resetTimeout();
-            return answer = new KaiperParser(lexer).compile().accept(visitor, scope);
+            return answer = expr.accept(visitor, scope);
         } catch (ReturnException re) {
             return answer = re.getValue();
         } catch (KaiperException re) {
@@ -148,8 +185,6 @@ public class Evaluator {
         } catch (RuntimeException re) {
             throw new ComputeException(re);
         }
-
-        //return answer = Undefined.VALUE;
     }
 
     /**

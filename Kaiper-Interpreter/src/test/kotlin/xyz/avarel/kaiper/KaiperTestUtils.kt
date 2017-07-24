@@ -25,7 +25,7 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 
 internal fun eval(script: String): Obj {
-    val exp = Expression(script)
+    val exp = KaiperScript(script)
     return exp.compile().compute()
 }
 

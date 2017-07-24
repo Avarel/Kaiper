@@ -19,8 +19,8 @@
 
 package xyz.avarel.kaiper.loops;
 
-import xyz.avarel.kaiper.CompiledExpr;
-import xyz.avarel.kaiper.Expression;
+import xyz.avarel.kaiper.KaiperScript;
+import xyz.avarel.kaiper.ScriptExpr;
 import xyz.avarel.kaiper.interop.JavaModel;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
@@ -66,8 +66,8 @@ public class KaiperDevRepl {
                         continue;
                 }
 
-                Expression exp = new Expression(input, scope);
-                CompiledExpr expr = exp.compile();
+                KaiperScript exp = new KaiperScript(input, scope);
+                ScriptExpr expr = exp.compile();
                 long start = System.nanoTime();
                 Obj result = expr.compute();
                 long end = System.nanoTime();

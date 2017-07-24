@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import static xyz.avarel.kaiper.bytecode.Opcodes.*;
 
 public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
-    private static final DataOutputConsumer NO_OP_CONSUMER = out -> {
-    };
+    private static final DataOutputConsumer NO_OP_CONSUMER = out -> {};
+
     private final List<String> stringPool = new LinkedList<>();
     private int regionId = 0;
 

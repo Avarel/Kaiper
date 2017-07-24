@@ -67,7 +67,7 @@ public class KaiperBytecodeRepl {
                 Obj result;
 
                 try {
-                    result = new KaiperVM().executeCompressedBytecode(new KaiperCompiler().compileCompressed(new KaiperParser(new KaiperLexer(input)).compile()), scope);
+                    result = new KaiperVM().executeCompressedBytecode(KaiperCompiler.compileCompressed(new KaiperParser(new KaiperLexer(input)).parse()), scope);
                 } catch (KaiperException | IOException e) {
                     System.out.println("! " + e.getMessage());
                     e.printStackTrace();

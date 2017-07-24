@@ -65,7 +65,7 @@ public class KaiperBytecodeDevRepl {
                         continue;
                 }
 
-                byte[] bytecode = new KaiperCompiler().compile(new KaiperParser(new KaiperLexer(input)).compile());
+                byte[] bytecode = KaiperCompiler.compile(new KaiperParser(new KaiperLexer(input)).parse());
                 long start = System.nanoTime();
                 Obj result = new KaiperVM().executeBytecode(bytecode, scope);
                 long end = System.nanoTime();

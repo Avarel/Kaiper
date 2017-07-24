@@ -19,8 +19,8 @@
 
 package xyz.avarel.kaiper.others;
 
-import xyz.avarel.kaiper.CompiledExpr;
-import xyz.avarel.kaiper.Expression;
+import xyz.avarel.kaiper.KaiperScript;
+import xyz.avarel.kaiper.ScriptExpr;
 
 public class SpeedTester {
     public static void main(String[] args) {
@@ -40,9 +40,9 @@ public class SpeedTester {
     }
 
     private static long testPrecompiledSpeed(String script, long tests) {
-        Expression exp = new Expression(script);
+        KaiperScript exp = new KaiperScript(script);
 
-        CompiledExpr expr = exp.compile();
+        ScriptExpr expr = exp.compile();
 
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
@@ -56,8 +56,8 @@ public class SpeedTester {
     private static long testRecompileSpeed(String script, long tests) {
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
-            Expression exp = new Expression(script);
-            CompiledExpr expr = exp.compile();
+            KaiperScript exp = new KaiperScript(script);
+            ScriptExpr expr = exp.compile();
             expr.compute();
         }
         long end = System.nanoTime();

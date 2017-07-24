@@ -54,7 +54,7 @@ public class FileBytecodeTest {
             }
         });
 
-        Expr expr = new KaiperParser(new KaiperLexer(new FileReader(new File("script.kip")))).compile();
+        Expr expr = new KaiperParser(new KaiperLexer(new FileReader(new File("script.kip")))).parse();
 
         StringBuilder sb = new StringBuilder();
         expr.ast(sb, "", true);

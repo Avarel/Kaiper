@@ -19,8 +19,8 @@
 
 package xyz.avarel.kaiper.others;
 
-import xyz.avarel.kaiper.CompiledExpr;
-import xyz.avarel.kaiper.Expression;
+import xyz.avarel.kaiper.KaiperScript;
+import xyz.avarel.kaiper.ScriptExpr;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
@@ -39,7 +39,7 @@ public class FileTest {
 
         System.out.println(new KaiperLexer(new FileReader(new File("script.kip"))).tokensToString());
 
-        Expression exp = new Expression(new FileReader(new File("script.kip")));
+        KaiperScript exp = new KaiperScript(new FileReader(new File("script.kip")));
 
         exp.add("println", new NativeFunc("print","string") {
             @Override
@@ -49,7 +49,7 @@ public class FileTest {
             }
         });
 
-        CompiledExpr expr = exp.compile();
+        ScriptExpr expr = exp.compile();
 
         StringBuilder sb = new StringBuilder();
         expr.ast(sb, "", true);

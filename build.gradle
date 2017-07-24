@@ -135,7 +135,7 @@ allprojects {
         key = bintrayApiKey
         publications = ['BintrayRelease']
         pkg {
-            repo = 'maven'
+            repo = 'kaiper'
             name = project.name
             licenses = ['Apache-2.0']
             vcsUrl = 'https://github.com/Avarel/Kaiper.git'

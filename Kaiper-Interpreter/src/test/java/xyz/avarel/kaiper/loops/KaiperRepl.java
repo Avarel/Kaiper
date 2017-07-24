@@ -19,7 +19,7 @@
 
 package xyz.avarel.kaiper.loops;
 
-import xyz.avarel.kaiper.Evaluator;
+import xyz.avarel.kaiper.KaiperREPLEngine;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.interop.IJavaModel;
 import xyz.avarel.kaiper.interop.JavaModel;
@@ -38,9 +38,9 @@ public class KaiperRepl {
 
         boolean running = true;
 
-        Evaluator evaluator = new Evaluator();
+        KaiperREPLEngine interpreter = new KaiperREPLEngine();
 
-        evaluator.getScope().declare("println", new NativeFunc("print", "string") {
+        interpreter.getScope().declare("println", new NativeFunc("print", "string") {
             @Override
             protected Obj eval(List<Obj> arguments) {
                 System.out.println(arguments.get(0));
@@ -48,10 +48,10 @@ public class KaiperRepl {
             }
         });
 
-        evaluator.getScope().declare("IJavaModel", new JavaType(IJavaModel.class));
-        evaluator.getScope().declare("JavaClass", new JavaType(Class.class));
-        evaluator.getScope().declare("JavaModel", new JavaType(JavaModel.class));
-        evaluator.getScope().declare("Gambiarra", new JavaType(Proxy.getProxyClass(KaiperRepl.class.getClassLoader(), IJavaModel.class, Runnable.class)));
+        interpreter.getScope().declare("IJavaModel", new JavaType(IJavaModel.class));
+        interpreter.getScope().declare("JavaClass", new JavaType(Class.class));
+        interpreter.getScope().declare("JavaModel", new JavaType(JavaModel.class));
+        interpreter.getScope().declare("Gambiarra", new JavaType(Proxy.getProxyClass(KaiperRepl.class.getClassLoader(), IJavaModel.class, Runnable.class)));
 
         while (running) {
             try {
@@ -69,7 +69,7 @@ public class KaiperRepl {
                 Obj result;
 
                 try {
-                    result = evaluator.eval(input);
+                    result = interpreter.eval(input);
                 } catch (KaiperException e) {
                     System.out.println("! " + e.getMessage());
                     e.printStackTrace();

@@ -18,18 +18,21 @@ package xyz.avarel.kaiper;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.flow.Statements;
-import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ComputeException;
+import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 
-public class CompiledExpr implements Expr {
+public class
+
+
+ScriptExpr implements Expr {
     private final Expr expr;
     private Scope scope;
 
-    public CompiledExpr(Scope scope, Expr expr) {
+    public ScriptExpr(Scope scope, Expr expr) {
         this.scope = scope;
         this.expr = expr;
     }
@@ -40,7 +43,7 @@ public class CompiledExpr implements Expr {
             ((Statements) expr).getExprs().add(after);
             return this;
         }
-        return new CompiledExpr(scope, new Statements(expr, after));
+        return new ScriptExpr(scope, new Statements(expr, after));
     }
 
     @Override
