@@ -16,4 +16,5 @@
 dependencies {
     compile project(':Kaiper-AST')
     compile project(':Kaiper-Bytecode')
+    compile project(':Kaiper-VM')
 }
