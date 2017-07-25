@@ -62,7 +62,7 @@ public class FileBytecodeTest {
 
         Future<Obj> future = CompletableFuture.supplyAsync(() -> {
             try {
-                return new KaiperVM().executeBytecode(new KaiperCompiler().compile(expr), scope);
+                return new KaiperVM().executeBytecode(KaiperCompiler.compile(expr), scope);
             } catch (ReturnException r) {
                 return r.getValue();
             } catch (RuntimeException re) {
