@@ -6,3 +6,6 @@ before_install:
   - chmod +x gradlew
 
 script: ./gradlew clean build --no-daemon --parallel --max-workers 7
+
+notifications:
+  email: false
