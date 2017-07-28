@@ -1,6 +1,4 @@
-package xyz.avarel.kaiper.interpreter.runtime.types;
-
-import xyz.avarel.kaiper.runtime.types.Type;
+package xyz.avarel.kaiper.runtime.types;
 
 public class CompiledType extends Type {
     public CompiledType(Type parent, String name, CompiledConstructor constructor) {

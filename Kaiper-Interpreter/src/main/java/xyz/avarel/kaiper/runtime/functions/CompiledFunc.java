@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.kaiper.interpreter.runtime.functions;
+package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.exceptions.ReturnException;
@@ -21,7 +21,6 @@ import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.collections.Array;
-import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.scope.Scope;
 
 import java.util.List;

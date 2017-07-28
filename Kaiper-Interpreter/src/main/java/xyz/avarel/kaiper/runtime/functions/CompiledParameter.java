@@ -1,7 +1,6 @@
-package xyz.avarel.kaiper.interpreter.runtime.functions;
+package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.runtime.functions.Parameter;
 
 public class CompiledParameter extends Parameter {
     private final Expr defaultExpr;

@@ -489,7 +489,7 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     @Override
-    public DataOutputConsumer visit(WhileExpr whileExpr, Void scope) {
+    public DataOutputConsumer visit(WhileExpr expr, Void scope) {
         return null;
     }
 }

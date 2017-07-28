@@ -46,10 +46,6 @@ import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
-import xyz.avarel.kaiper.interpreter.runtime.functions.CompiledFunc;
-import xyz.avarel.kaiper.interpreter.runtime.functions.CompiledParameter;
-import xyz.avarel.kaiper.interpreter.runtime.types.CompiledConstructor;
-import xyz.avarel.kaiper.interpreter.runtime.types.CompiledType;
 import xyz.avarel.kaiper.runtime.Bool;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
@@ -57,11 +53,15 @@ import xyz.avarel.kaiper.runtime.Str;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
+import xyz.avarel.kaiper.runtime.functions.CompiledFunc;
+import xyz.avarel.kaiper.runtime.functions.CompiledParameter;
 import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
+import xyz.avarel.kaiper.runtime.types.CompiledConstructor;
+import xyz.avarel.kaiper.runtime.types.CompiledType;
 import xyz.avarel.kaiper.runtime.types.Type;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -78,8 +78,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(Statements statements, Scope scope) {
-        List<Expr> exprs = statements.getExprs();
+    public Obj visit(Statements expr, Scope scope) {
+        List<Expr> exprs = expr.getExprs();
 
         if (exprs.isEmpty()) return Null.VALUE;
 
@@ -458,8 +458,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(StringNode stringNode, Scope scope) {
-        return Str.of(stringNode.getValue());
+    public Obj visit(StringNode expr, Scope scope) {
+        return Str.of(expr.getValue());
     }
 
     private Obj resultOf(Expr expr, Scope scope) {

@@ -13,11 +13,10 @@
  * under the License.
  */
 
-package xyz.avarel.kaiper.interpreter.runtime.types;
+package xyz.avarel.kaiper.runtime.types;
 
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.types.Type;
 import xyz.avarel.kaiper.scope.Scope;
 
 public class CompiledObj implements Obj {

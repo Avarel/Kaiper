@@ -58,7 +58,7 @@ import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 
 public interface ExprVisitor<R, C> {
-    R visit(Statements statements, C scope);
+    R visit(Statements expr, C scope);
 
     R visit(FunctionNode expr, C scope);
 
@@ -90,21 +90,21 @@ public interface ExprVisitor<R, C> {
 
     R visit(DictionaryNode expr, C scope);
 
-    R visit(NullNode nullNode, C scope);
+    R visit(NullNode expr, C scope);
 
-    R visit(IntNode intNode, C scope);
+    R visit(IntNode expr, C scope);
 
-    R visit(DecimalNode decimalNode, C scope);
+    R visit(DecimalNode expr, C scope);
 
-    R visit(BooleanNode booleanNode, C scope);
+    R visit(BooleanNode expr, C scope);
 
-    R visit(StringNode stringNode, C scope);
+    R visit(StringNode expr, C scope);
 
-    R visit(DeclarationExpr declarationExpr, C scope);
+    R visit(DeclarationExpr expr, C scope);
 
-    R visit(ModuleNode moduleNode, C scope);
+    R visit(ModuleNode expr, C scope);
 
-    R visit(TypeNode typeNode, C scope);
+    R visit(TypeNode expr, C scope);
 
-    R visit(WhileExpr whileExpr, C scope);
+    R visit(WhileExpr expr, C scope);
 }
