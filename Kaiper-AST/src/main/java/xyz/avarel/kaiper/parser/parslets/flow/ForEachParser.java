@@ -18,7 +18,7 @@ package xyz.avarel.kaiper.parser.parslets.flow;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.flow.ForEachExpr;
-import xyz.avarel.kaiper.ast.value.UndefinedNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
@@ -51,7 +51,7 @@ public class ForEachParser implements PrefixParser {
                 expr = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);
             } else {
-                expr = UndefinedNode.VALUE;
+                expr = NullNode.VALUE;
             }
         } else {
             expr = parser.parseExpr();

@@ -15,8 +15,8 @@
 
 package xyz.avarel.kaiper.vm.runtime.types;
 
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.types.Type;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -39,7 +39,7 @@ public class CompiledObj implements Obj {
     @Override
     public Obj setAttr(String name, Obj value) {
         scope.declare(name, value);
-        return Undefined.VALUE;
+        return Null.VALUE;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class CompiledObj implements Obj {
             if (parent != null) {
                 return parent.getAttr(name);
             }
-            return Undefined.VALUE;
+            return Null.VALUE;
         }
 
         return obj;

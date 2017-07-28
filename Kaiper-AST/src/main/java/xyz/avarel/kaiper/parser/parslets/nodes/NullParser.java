@@ -16,14 +16,14 @@
 package xyz.avarel.kaiper.parser.parslets.nodes;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.value.UndefinedNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
-public class UndefinedParser implements PrefixParser {
+public class NullParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
-        return UndefinedNode.VALUE;
+        return NullNode.VALUE;
     }
 }

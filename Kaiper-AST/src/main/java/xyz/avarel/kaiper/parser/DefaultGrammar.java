@@ -54,8 +54,8 @@ public class DefaultGrammar extends Grammar {
         prefix(TokenType.INT, new IntParser());
         prefix(TokenType.NUMBER, new DecimalParser());
         prefix(TokenType.BOOLEAN, new BoolParser());
-        prefix(TokenType.TEXT, new TextParser());
-        prefix(TokenType.UNDEFINED, new UndefinedParser());
+        prefix(TokenType.STRING, new StrParser());
+        prefix(TokenType.NULL, new NullParser());
 
 
         prefix(TokenType.FUNCTION, new FunctionParser());

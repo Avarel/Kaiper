@@ -16,8 +16,8 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +68,7 @@ public abstract class NativeFunc extends Func {
         }
 
         Obj result = eval(arguments);
-        return result != null ? result : Undefined.VALUE;
+        return result != null ? result : Null.VALUE;
     }
 
     protected abstract Obj eval(List<Obj> arguments);

@@ -17,7 +17,6 @@ package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 
 import java.util.List;
 
@@ -53,10 +52,6 @@ public class ComposedFunc extends Func {
 
     @Override
     public Obj invoke(List<Obj> arguments) {
-        if (arguments.size() != getArity()) {
-            return Undefined.VALUE;
-        }
-
         return outer.invoke(inner.invoke(arguments));
     }
 }

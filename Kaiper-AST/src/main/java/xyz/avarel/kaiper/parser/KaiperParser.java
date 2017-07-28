@@ -18,7 +18,7 @@ package xyz.avarel.kaiper.parser;
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
-import xyz.avarel.kaiper.ast.value.UndefinedNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
@@ -61,7 +61,7 @@ public class KaiperParser extends Parser {
     }
 
     public Expr parseStatements() {
-        if (match(TokenType.EOF)) return UndefinedNode.VALUE;
+        if (match(TokenType.EOF)) return NullNode.VALUE;
 
         Expr any = parseExpr();
 

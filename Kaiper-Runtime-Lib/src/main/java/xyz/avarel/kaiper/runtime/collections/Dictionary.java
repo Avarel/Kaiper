@@ -15,8 +15,8 @@
 
 package xyz.avarel.kaiper.runtime.collections;
 
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
@@ -75,7 +75,7 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj {
 
     @Override
     public Obj get(Obj key) {
-        return getOrDefault(key, Undefined.VALUE);
+        return getOrDefault(key, Null.VALUE);
     }
 
     @Override

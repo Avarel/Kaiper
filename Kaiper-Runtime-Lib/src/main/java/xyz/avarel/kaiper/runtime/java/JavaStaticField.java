@@ -15,8 +15,8 @@
 
 package xyz.avarel.kaiper.runtime.java;
 
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.lang.reflect.Field;
@@ -71,10 +71,10 @@ public class JavaStaticField implements Obj {
                 field.set(getField(), val);
                 return value;
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
-        return Undefined.VALUE;
+        return Null.VALUE;
     }
 
     @Override
@@ -84,11 +84,11 @@ public class JavaStaticField implements Obj {
 
     @Override
     public Obj invoke(List<Obj> arguments) {
-        if (name == null) return Undefined.VALUE;
+        if (name == null) return Null.VALUE;
 
         List<Object> nativeArgs = arguments.stream()
                 .map(Obj::toJava)
-                .map(o -> o != Undefined.VALUE ? o : null)
+                .map(o -> o != Null.VALUE ? o : null)
                 .collect(Collectors.toList());
 
         List<Class<?>> classes = nativeArgs.stream()

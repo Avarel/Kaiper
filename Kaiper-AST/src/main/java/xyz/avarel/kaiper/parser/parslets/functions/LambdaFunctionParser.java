@@ -18,7 +18,7 @@ package xyz.avarel.kaiper.parser.parslets.functions;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.functions.ParameterData;
-import xyz.avarel.kaiper.ast.value.UndefinedNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
@@ -36,7 +36,7 @@ public class LambdaFunctionParser implements PrefixParser {
         }
 
         if (parser.match(TokenType.RIGHT_BRACE)) {
-            return new FunctionNode(token.getPosition(), Collections.emptyList(), UndefinedNode.VALUE);
+            return new FunctionNode(token.getPosition(), Collections.emptyList(), NullNode.VALUE);
         }
 
         // Check for arrows.

@@ -16,8 +16,8 @@
 package xyz.avarel.kaiper.runtime.collections;
 
 import xyz.avarel.kaiper.runtime.Bool;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
@@ -66,7 +66,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
                 for (Obj obj : arguments.get(0).as(Array.TYPE)) {
                     action.invoke(Collections.singletonList(obj));
                 }
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         });
 
@@ -191,7 +191,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         int end;
         int step;
 
-        if (startObj == Undefined.VALUE) {
+        if (startObj == Null.VALUE) {
             start = 0;
         } else {
             if (startObj instanceof Int) {
@@ -200,11 +200,11 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
                     start += size();
                 }
             } else {
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
 
-        if (endObj == Undefined.VALUE) {
+        if (endObj == Null.VALUE) {
             end = size();
         } else {
             if (endObj instanceof Int) {
@@ -213,17 +213,17 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
                     end += size();
                 }
             } else {
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
 
-        if (stepObj == Undefined.VALUE) {
+        if (stepObj == Null.VALUE) {
             step = 1;
         } else {
             if (stepObj instanceof Int) {
                 step = ((Int) stepObj).value();
             } else {
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
 
@@ -247,7 +247,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
 
                 return newArray;
             } else { // step == 0
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
     }
@@ -257,7 +257,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         if (key instanceof Int) {
             return get((Int) key);
         }
-        return Undefined.VALUE;
+        return Null.VALUE;
     }
 
     @Override
@@ -265,7 +265,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         if (key instanceof Int) {
             return set((Int) key, value);
         }
-        return Undefined.VALUE;
+        return Null.VALUE;
     }
 
     private Obj set(Int index, Obj element) {
@@ -279,10 +279,10 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         }
 
         if (index < 0) {
-            return Undefined.VALUE;
+            return Null.VALUE;
         } else if (index >= size()) {
             for (int i = size(); i <= index; i++) {
-                super.add(Undefined.VALUE);
+                super.add(Null.VALUE);
             }
         }
 
@@ -307,7 +307,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
             index += size();
         }
         if (index < 0 || index >= size()) {
-            return Undefined.VALUE;
+            return Null.VALUE;
         }
         return super.get(index);
     }

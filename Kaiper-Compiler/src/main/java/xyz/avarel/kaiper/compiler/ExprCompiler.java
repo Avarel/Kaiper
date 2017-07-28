@@ -2,10 +2,7 @@ package xyz.avarel.kaiper.compiler;
 
 import xyz.avarel.kaiper.ast.*;
 import xyz.avarel.kaiper.ast.collections.*;
-import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
-import xyz.avarel.kaiper.ast.flow.ForEachExpr;
-import xyz.avarel.kaiper.ast.flow.ReturnExpr;
-import xyz.avarel.kaiper.ast.flow.Statements;
+import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.functions.ParameterData;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
@@ -379,7 +376,7 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     }
 
     @Override
-    public DataOutputConsumer visit(UndefinedNode expr, Void scope) {
+    public DataOutputConsumer visit(NullNode expr, Void scope) {
         return U_CONST;
     }
 
@@ -489,5 +486,10 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
             END.writeInto(out);
             out.writeShort(id);
         });
+    }
+
+    @Override
+    public DataOutputConsumer visit(WhileExpr whileExpr, Void scope) {
+        return null;
     }
 }

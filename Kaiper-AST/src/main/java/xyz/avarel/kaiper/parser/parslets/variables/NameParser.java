@@ -20,7 +20,7 @@ import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.value.UndefinedNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
@@ -47,7 +47,7 @@ public class NameParser implements PrefixParser {
                     new BinaryOperation(
                             parser.getLast().getPosition(),
                             id,
-                            UndefinedNode.VALUE,
+                            NullNode.VALUE,
                             BinaryOperatorType.EQUALS),
                     new AssignmentExpr(
                             parser.getLast().getPosition(),
@@ -57,7 +57,7 @@ public class NameParser implements PrefixParser {
                     id);
         }
 
-        if (parser.nextIsAny(TokenType.TEXT, TokenType.INT, TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.LEFT_BRACE)) {
+        if (parser.nextIsAny(TokenType.STRING, TokenType.INT, TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.LEFT_BRACE)) {
             List<Single> arguments = new ArrayList<>();
             arguments.add(parser.parseSingle());
 

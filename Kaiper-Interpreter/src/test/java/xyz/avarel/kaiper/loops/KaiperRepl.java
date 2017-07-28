@@ -23,8 +23,8 @@ import xyz.avarel.kaiper.KaiperREPL;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.interop.IJavaModel;
 import xyz.avarel.kaiper.interop.JavaModel;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.java.JavaType;
 
@@ -73,7 +73,7 @@ public class KaiperRepl {
                 } catch (KaiperException e) {
                     System.out.println("! " + e.getMessage());
                     //e.printStackTrace();
-                    result = Undefined.VALUE;
+                    result = Null.VALUE;
                 }
 
                 System.out.println("\u25c0 " + result + " : " + result.getType());

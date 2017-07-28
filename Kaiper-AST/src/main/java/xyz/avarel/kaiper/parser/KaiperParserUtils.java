@@ -18,7 +18,7 @@ package xyz.avarel.kaiper.parser;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.functions.ParameterData;
-import xyz.avarel.kaiper.ast.value.UndefinedNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.TokenType;
 
@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class KaiperParserUtils {
     public static Expr parseBlock(KaiperParser parser) {
-        Expr expr = UndefinedNode.VALUE;
+        Expr expr = NullNode.VALUE;
         parser.eat(TokenType.LEFT_BRACE);
         if (!parser.match(TokenType.RIGHT_BRACE)) {
             expr = parser.parseStatements();

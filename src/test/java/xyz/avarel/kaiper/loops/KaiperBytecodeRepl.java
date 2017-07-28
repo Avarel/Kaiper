@@ -23,8 +23,8 @@ import xyz.avarel.kaiper.KaiperCompiler;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.scope.DefaultScope;
@@ -71,7 +71,7 @@ public class KaiperBytecodeRepl {
                 } catch (KaiperException | IOException e) {
                     System.out.println("! " + e.getMessage());
                     e.printStackTrace();
-                    result = Undefined.VALUE;
+                    result = Null.VALUE;
                 }
 
                 System.out.println("\u25c0 " + result + " : " + result.getType());

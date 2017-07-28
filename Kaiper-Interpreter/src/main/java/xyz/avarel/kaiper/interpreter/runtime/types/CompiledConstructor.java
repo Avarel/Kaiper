@@ -5,8 +5,8 @@ import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.interpreter.runtime.functions.CompiledParameter;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.runtime.types.Constructor;
@@ -55,7 +55,7 @@ public class CompiledConstructor extends Constructor {
             } else if (parameter.hasDefault()) {
                 constructorScope.declare(parameter.getName(), parameter.getDefaultExpr().accept(visitor, scope));
             } else {
-                constructorScope.declare(parameter.getName(), Undefined.VALUE);
+                constructorScope.declare(parameter.getName(), Null.VALUE);
             }
         }
 

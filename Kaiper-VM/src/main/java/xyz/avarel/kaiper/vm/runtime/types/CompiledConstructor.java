@@ -1,8 +1,8 @@
 package xyz.avarel.kaiper.vm.runtime.types;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.runtime.types.Constructor;
@@ -54,7 +54,7 @@ public class CompiledConstructor extends Constructor {
                 } else if (parameter.hasDefault()) {
                     constructorScope.declare(parameter.getName(), parameter.getDefaultValue().executeWithScope(scope));
                 } else {
-                    constructorScope.declare(parameter.getName(), Undefined.VALUE);
+                    constructorScope.declare(parameter.getName(), Null.VALUE);
                 }
             }
 

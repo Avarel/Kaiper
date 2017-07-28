@@ -10,9 +10,9 @@ import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.operations.UnaryOperatorType;
 import xyz.avarel.kaiper.runtime.Bool;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Str;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
@@ -59,7 +59,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
     @Override
     public void opcodeUndefinedConstant() throws IOException {
         checkTimeout();
-        stack.push(Undefined.VALUE);
+        stack.push(Null.VALUE);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
             stack.push(new Range(start, end));
         } else {
-            stack.push(Undefined.VALUE);
+            stack.push(Null.VALUE);
         }
     }
 
@@ -232,7 +232,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
 
         Obj value = stack.pop();
         scope.declare(name, value);
-        stack.push(Undefined.VALUE);
+        stack.push(Null.VALUE);
     }
 
     @Override
@@ -416,7 +416,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
             reader.walkInsts(input, dummyWalker, stringPool, depth + 1);
             checkTimeout();
             if (hasElseBranch) reader.walkInsts(input, this, stringPool, depth + 1);
-            else stack.push(Undefined.VALUE);
+            else stack.push(Null.VALUE);
         }
     }
 
@@ -430,7 +430,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
         Obj iterObj = stack.pop();
 
         if (!(iterObj instanceof Iterable)) {
-            stack.push(Undefined.VALUE);
+            stack.push(Null.VALUE);
             return;
         }
 
@@ -456,7 +456,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
             iter++;
         }
 
-        stack.push(Undefined.VALUE);
+        stack.push(Null.VALUE);
     }
 
     @Override

@@ -18,7 +18,7 @@ package xyz.avarel.kaiper.parser.parslets.functions;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.functions.ParameterData;
-import xyz.avarel.kaiper.ast.value.UndefinedNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
@@ -49,7 +49,7 @@ public class FunctionParser implements PrefixParser {
         } else {
             parser.eat(TokenType.LEFT_BRACE);
             if (parser.match(TokenType.RIGHT_BRACE)) {
-                expr = UndefinedNode.VALUE;
+                expr = NullNode.VALUE;
             } else {
                 expr = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);

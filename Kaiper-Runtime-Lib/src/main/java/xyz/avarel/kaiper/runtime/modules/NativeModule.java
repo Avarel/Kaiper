@@ -15,8 +15,8 @@
 
 package xyz.avarel.kaiper.runtime.modules;
 
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +34,6 @@ public abstract class NativeModule extends Module {
 
     @Override
     public Obj getAttr(String name) {
-        return map.getOrDefault(name, Undefined.VALUE);
+        return map.getOrDefault(name, Null.VALUE);
     }
 }

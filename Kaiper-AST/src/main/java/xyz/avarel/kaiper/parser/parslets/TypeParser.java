@@ -4,7 +4,7 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.TypeNode;
 import xyz.avarel.kaiper.ast.functions.ParameterData;
-import xyz.avarel.kaiper.ast.value.UndefinedNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
@@ -48,7 +48,7 @@ public class TypeParser implements PrefixParser {
             }
         }
 
-        Expr constructorExpr = UndefinedNode.VALUE;
+        Expr constructorExpr = NullNode.VALUE;
         if (parser.nextIs(TokenType.LEFT_BRACE)) {
             constructorExpr = KaiperParserUtils.parseBlock(parser);
         }

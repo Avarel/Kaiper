@@ -16,9 +16,9 @@
 package xyz.avarel.kaiper.runtime.java;
 
 import xyz.avarel.kaiper.runtime.Bool;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Str;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -156,7 +156,7 @@ public class JavaUtils {
     @SuppressWarnings("unchecked")
     static Obj mapJavaToKaiperType(Object result) {
         if (result == null) {
-            return Undefined.VALUE;
+            return Null.VALUE;
         } else if (result instanceof Obj) {
             return (Obj) result;
         } else if (result instanceof Integer) {

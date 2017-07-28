@@ -15,8 +15,8 @@
 
 package xyz.avarel.kaiper.runtime.collections;
 
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
@@ -94,14 +94,14 @@ public class Range implements Obj, Iterable<Int> {
         if (key instanceof Int) {
             return get((Int) key);
         }
-        return Undefined.VALUE;
+        return Obj.super.get(key);
     }
 
     public Obj get(Int index) {
         if (index.value() < size()) {
             return Int.of(start + index.value());
         }
-        return Undefined.VALUE;
+        return Null.VALUE;
     }
 
     @Override

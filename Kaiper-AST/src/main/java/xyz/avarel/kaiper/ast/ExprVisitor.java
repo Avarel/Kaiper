@@ -46,10 +46,7 @@
 package xyz.avarel.kaiper.ast;
 
 import xyz.avarel.kaiper.ast.collections.*;
-import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
-import xyz.avarel.kaiper.ast.flow.ForEachExpr;
-import xyz.avarel.kaiper.ast.flow.ReturnExpr;
-import xyz.avarel.kaiper.ast.flow.Statements;
+import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
@@ -93,7 +90,7 @@ public interface ExprVisitor<R, C> {
 
     R visit(DictionaryNode expr, C scope);
 
-    R visit(UndefinedNode undefinedNode, C scope);
+    R visit(NullNode nullNode, C scope);
 
     R visit(IntNode intNode, C scope);
 
@@ -108,4 +105,6 @@ public interface ExprVisitor<R, C> {
     R visit(ModuleNode moduleNode, C scope);
 
     R visit(TypeNode typeNode, C scope);
+
+    R visit(WhileExpr whileExpr, C scope);
 }

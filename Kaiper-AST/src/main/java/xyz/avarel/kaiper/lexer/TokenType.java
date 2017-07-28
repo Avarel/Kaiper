@@ -37,7 +37,7 @@ public enum TokenType {
     NUMBER,
     BOOLEAN,
     FUNCTION,
-    TEXT,
+    STRING,
     ATOM,
 
     // ARITHMETIC
@@ -84,7 +84,7 @@ public enum TokenType {
     MODULE,
     TYPE,
     IDENTIFIER,
-    UNDEFINED,
+    NULL,
     LET,
     RETURN,
     IF,

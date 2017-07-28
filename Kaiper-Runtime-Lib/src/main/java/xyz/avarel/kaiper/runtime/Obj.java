@@ -214,8 +214,7 @@ public interface Obj {
      * @return The {@link Obj} result of the operation.
      */
     default Obj shr(Obj other) {
-        return other.shl(this);
-        //throw unimplemented("shift right", other);
+        throw unimplemented("shift right", other);
     }
 
     /**
@@ -306,10 +305,10 @@ public interface Obj {
     }
 
     default ComputeException unimplemented(String string) {
-        return new ComputeException(getType() + " does not support " + string + " operator");
+        return new ComputeException("Operator `" + string + "` can not be applied to " + getType());
     }
 
     default ComputeException unimplemented(String string, Obj other) {
-        return new ComputeException(getType() + " does not support " + string + " operator with " + other.getType());
+        return new ComputeException("Operator `" + string + "` can not be applied to " + getType() + " and " + other.getType());
     }
 }

@@ -20,24 +20,18 @@ import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-public class ForEachExpr extends Single {
-    private final String variant;
-    private final Single iterable;
+public class WhileExpr extends Single {
+    private final Single condition;
     private final Expr action;
 
-    public ForEachExpr(Position position, String variant, Single iterable, Expr action) {
+    public WhileExpr(Position position, Single condition, Expr action) {
         super(position);
-        this.variant = variant;
-        this.iterable = iterable;
+        this.condition = condition;
         this.action = action;
     }
 
-    public String getVariant() {
-        return variant;
-    }
-
-    public Single getIterable() {
-        return iterable;
+    public Single getCondition() {
+        return condition;
     }
 
     public Expr getAction() {
@@ -51,13 +45,10 @@ public class ForEachExpr extends Single {
 
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("for each");
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("while");
 
         builder.append('\n');
-        builder.append(indent).append(isTail ? "    " : "│   ").append("├── variant: ").append(variant);
-
-        builder.append('\n');
-        iterable.ast("iterable", builder, indent + (isTail ? "    " : "│   "), false);
+        condition.ast("condition", builder, indent + (isTail ? "    " : "│   "), false);
 
         builder.append('\n');
         action.ast("action", builder, indent + (isTail ? "    " : "│   "), true);

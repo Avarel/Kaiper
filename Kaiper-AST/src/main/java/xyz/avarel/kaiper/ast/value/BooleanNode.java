@@ -22,7 +22,7 @@ public class BooleanNode extends Single {
     public static final BooleanNode TRUE = new BooleanNode();
     public static final BooleanNode FALSE = new BooleanNode();
 
-    public BooleanNode() {
+    private BooleanNode() {
         super(null);
     }
 

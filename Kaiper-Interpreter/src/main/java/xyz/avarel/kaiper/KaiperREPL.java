@@ -20,8 +20,8 @@ import xyz.avarel.kaiper.exceptions.*;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -53,7 +53,7 @@ public class KaiperREPL {
     public KaiperREPL(Scope scope) {
         this.scope = scope;
         this.visitor = new ExprInterpreter();
-        this.answer = Undefined.VALUE;
+        this.answer = Null.VALUE;
     }
 
     /**
@@ -102,7 +102,7 @@ public class KaiperREPL {
             return eval(new FileReader(file));
         } catch (FileNotFoundException e) {
             //e.printStackTrace();
-            return answer = Undefined.VALUE;
+            return answer = Null.VALUE;
         }
     }
 

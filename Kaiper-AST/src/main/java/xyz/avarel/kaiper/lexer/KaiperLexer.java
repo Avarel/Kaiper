@@ -421,8 +421,8 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
                 return make(TokenType.LET, "let");
             case "for":
                 return make(TokenType.FOR, "for");
-            case "undefined":
-                return make(TokenType.UNDEFINED, "undefined");
+            case "null":
+                return make(TokenType.NULL, "null");
 
             case "fn":
             case "def":
@@ -484,7 +484,7 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
                     break;
                 default:
                     if (c == quote) {
-                        return make(TokenType.TEXT, sb.toString());
+                        return make(TokenType.STRING, sb.toString());
                     }
                     sb.append(c);
             }

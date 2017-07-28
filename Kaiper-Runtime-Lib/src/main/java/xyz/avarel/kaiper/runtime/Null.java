@@ -23,21 +23,21 @@ import xyz.avarel.kaiper.runtime.types.Type;
  * Every operation results in the same
  * instance, NOTHING.
  */
-public enum Undefined implements Obj {
+public enum Null implements Obj {
     VALUE;
 
-    public static final Type<Undefined> TYPE = new Type<>("Undefined");
+    public static final Type<Null> TYPE = new Type<>("Null");
     public static final Module MODULE = new NativeModule() {{
-        declare("TYPE", Undefined.TYPE);
+        declare("TYPE", Null.TYPE);
     }};
 
     @Override
     public String toString() {
-        return "undefined";
+        return "null";
     }
 
     @Override
-    public Undefined toJava() {
+    public Null toJava() {
         return this;
     }
 

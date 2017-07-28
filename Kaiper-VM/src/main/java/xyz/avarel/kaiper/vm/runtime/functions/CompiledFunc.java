@@ -1,8 +1,8 @@
 package xyz.avarel.kaiper.vm.runtime.functions;
 
 import xyz.avarel.kaiper.exceptions.ReturnException;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
@@ -48,7 +48,7 @@ public class CompiledFunc extends Func {
                 } else if (parameter.hasDefault()) {
                     scope.declare(parameter.getName(), parameter.getDefaultValue().executeWithScope(scope));
                 } else {
-                    scope.declare(parameter.getName(), Undefined.VALUE);
+                    scope.declare(parameter.getName(), Null.VALUE);
                 }
             }
 

@@ -15,8 +15,8 @@
 
 package xyz.avarel.kaiper.runtime.java;
 
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.lang.reflect.Field;
@@ -53,10 +53,10 @@ public class JavaObject implements Obj {
                 field.set(object, val);
                 return value;
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
-        return Undefined.VALUE;
+        return Null.VALUE;
     }
 
     @Override

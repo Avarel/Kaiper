@@ -13,17 +13,20 @@
  * under the License.
  */
 
-package xyz.avarel.kaiper.parser.parslets.nodes;
+package xyz.avarel.kaiper.ast.value;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.value.StringNode;
-import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.parser.KaiperParser;
-import xyz.avarel.kaiper.parser.PrefixParser;
+import xyz.avarel.kaiper.ast.ExprVisitor;
+import xyz.avarel.kaiper.ast.Single;
 
-public class TextParser implements PrefixParser {
+public class NullNode extends Single {
+    public static final NullNode VALUE = new NullNode();
+
+    private NullNode() {
+        super(null);
+    }
+
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
-        return new StringNode(token.getPosition(), token.getString());
+    public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
+        return visitor.visit(this, scope);
     }
 }

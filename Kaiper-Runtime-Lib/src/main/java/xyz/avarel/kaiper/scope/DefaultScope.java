@@ -43,7 +43,7 @@ public class DefaultScope extends Scope {
         declare("Dictionary", Dictionary.MODULE);
         declare("String", Str.MODULE);
         declare("Function", Func.MODULE);
-        declare("Undefined", Undefined.MODULE);
+        declare("Undefined", Null.MODULE);
     }
 
     @Deprecated

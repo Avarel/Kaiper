@@ -61,7 +61,7 @@ public class Str implements Obj {
                     if (arguments.get(1) instanceof Int) {
                         return arguments.get(0).as(Str.TYPE).substring((Int) arguments.get(1), (Int) arguments.get(2));
                     }
-                    return Undefined.VALUE;
+                    return Null.VALUE;
                 } else {
                     return arguments.get(0).as(Str.TYPE).substring((Int) arguments.get(1));
                 }
@@ -144,7 +144,7 @@ public class Str implements Obj {
             i += length();
         }
         if (i < 0 || i >= length()) {
-            return Undefined.VALUE;
+            return Null.VALUE;
         }
         return Str.of(value().substring(i, i + 1));
     }
@@ -159,7 +159,7 @@ public class Str implements Obj {
         int end;
         int step;
 
-        if (startObj == Undefined.VALUE) {
+        if (startObj == Null.VALUE) {
             start = 0;
         } else {
             if (startObj instanceof Int) {
@@ -168,11 +168,11 @@ public class Str implements Obj {
                     start += length();
                 }
             } else {
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
 
-        if (endObj == Undefined.VALUE) {
+        if (endObj == Null.VALUE) {
             end = length();
         } else {
             if (endObj instanceof Int) {
@@ -181,17 +181,17 @@ public class Str implements Obj {
                     end += length();
                 }
             } else {
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
 
-        if (stepObj == Undefined.VALUE) {
+        if (stepObj == Null.VALUE) {
             step = 1;
         } else {
             if (stepObj instanceof Int) {
                 step = ((Int) stepObj).value();
             } else {
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
 
@@ -215,7 +215,7 @@ public class Str implements Obj {
 
                 return Str.of(buffer.toString());
             } else { // step == 0
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
     }

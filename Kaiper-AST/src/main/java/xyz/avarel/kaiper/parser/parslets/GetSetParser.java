@@ -23,7 +23,7 @@ import xyz.avarel.kaiper.ast.collections.SetOperation;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
-import xyz.avarel.kaiper.ast.value.UndefinedNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
@@ -39,7 +39,7 @@ public class GetSetParser extends BinaryParser {
     @Override
     public Expr parse(KaiperParser parser, Single left, Token token) {
         if (parser.match(TokenType.COLON)) {
-            return parseEnd(parser, token.getPosition(), left, UndefinedNode.VALUE);
+            return parseEnd(parser, token.getPosition(), left, NullNode.VALUE);
         }
 
         Single key = parser.parseSingle();
@@ -74,7 +74,7 @@ public class GetSetParser extends BinaryParser {
                     new BinaryOperation(
                             parser.getLast().getPosition(),
                             getOp,
-                            UndefinedNode.VALUE,
+                            NullNode.VALUE,
                             BinaryOperatorType.EQUALS),
                     new SetOperation(
                             parser.getLast().getPosition(),
@@ -91,14 +91,14 @@ public class GetSetParser extends BinaryParser {
 
     public Single parseEnd(KaiperParser parser, Position position, Single left, Single start) {
         if (parser.match(TokenType.COLON)) {
-            return parseStep(parser, position, left, start, UndefinedNode.VALUE);
+            return parseStep(parser, position, left, start, NullNode.VALUE);
         } else if (parser.match(TokenType.RIGHT_BRACKET)) {
             return new SliceOperation(
                     position,
                     left,
                     start,
-                    UndefinedNode.VALUE,
-                    UndefinedNode.VALUE
+                    NullNode.VALUE,
+                    NullNode.VALUE
             );
         }
 
@@ -114,7 +114,7 @@ public class GetSetParser extends BinaryParser {
                 left,
                 start,
                 end,
-                UndefinedNode.VALUE
+                NullNode.VALUE
         );
     }
 
@@ -125,7 +125,7 @@ public class GetSetParser extends BinaryParser {
                     left,
                     start,
                     end,
-                    UndefinedNode.VALUE
+                    NullNode.VALUE
             );
         }
 

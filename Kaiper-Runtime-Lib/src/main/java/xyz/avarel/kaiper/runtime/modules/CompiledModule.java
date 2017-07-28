@@ -1,7 +1,7 @@
 package xyz.avarel.kaiper.runtime.modules;
 
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.scope.Scope;
 
 public class CompiledModule extends Module {
@@ -20,7 +20,7 @@ public class CompiledModule extends Module {
     @Override
     public Obj getAttr(String name) {
         Obj obj = scope.directLookup(name);
-        return obj == null ? Undefined.VALUE : obj;
+        return obj == null ? Null.VALUE : obj;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package xyz.avarel.kaiper.runtime.java;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.types.Type;
 
@@ -34,10 +34,10 @@ public class JavaType extends Type<JavaObject> {
                 field.set(null, val);
                 return null;
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                return Undefined.VALUE;
+                return Null.VALUE;
             }
         }
-        return Undefined.VALUE;
+        return Null.VALUE;
     }
 
     @Override

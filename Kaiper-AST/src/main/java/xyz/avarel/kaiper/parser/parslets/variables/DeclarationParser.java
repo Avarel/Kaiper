@@ -16,7 +16,7 @@
 package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.value.UndefinedNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -37,6 +37,6 @@ public class DeclarationParser implements PrefixParser {
             return new DeclarationExpr(token.getPosition(), name.getString(), parser.parseSingle());
         }
 
-        return new DeclarationExpr(token.getPosition(), name.getString(), UndefinedNode.VALUE);
+        return new DeclarationExpr(token.getPosition(), name.getString(), NullNode.VALUE);
     }
 }

@@ -32,10 +32,7 @@ package xyz.avarel.kaiper.interpreter;
 
 import xyz.avarel.kaiper.ast.*;
 import xyz.avarel.kaiper.ast.collections.*;
-import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
-import xyz.avarel.kaiper.ast.flow.ForEachExpr;
-import xyz.avarel.kaiper.ast.flow.ReturnExpr;
-import xyz.avarel.kaiper.ast.flow.Statements;
+import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.functions.ParameterData;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
@@ -54,9 +51,9 @@ import xyz.avarel.kaiper.interpreter.runtime.functions.CompiledParameter;
 import xyz.avarel.kaiper.interpreter.runtime.types.CompiledConstructor;
 import xyz.avarel.kaiper.interpreter.runtime.types.CompiledType;
 import xyz.avarel.kaiper.runtime.Bool;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Str;
-import xyz.avarel.kaiper.runtime.Undefined;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
@@ -84,7 +81,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     public Obj visit(Statements statements, Scope scope) {
         List<Expr> exprs = statements.getExprs();
 
-        if (exprs.isEmpty()) return Undefined.VALUE;
+        if (exprs.isEmpty()) return Null.VALUE;
 
         for (int i = 0; i < exprs.size() - 1; i++) {
             resultOf(exprs.get(i), scope);
@@ -227,7 +224,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             return new Range(start, end);
         }
 
-        return Undefined.VALUE;
+        return Null.VALUE;
     }
 
     @Override
@@ -290,7 +287,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         Obj value = resultOf(expr.getExpr(), scope);
         scope.declare(attr, value);
-        return Undefined.VALUE;
+        return Null.VALUE;
     }
 
     @Override
@@ -368,7 +365,29 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             return resultOf(expr.getElseBranch(), scope.subPool());
         }
 
-        return Undefined.VALUE;
+        return Null.VALUE;
+    }
+
+    @Override
+    public Obj visit(WhileExpr expr, Scope scope) {
+        int iteration = 0;
+        Expr loopExpr = expr.getAction();
+
+        while (true) {
+            GlobalVisitorSettings.checkIterationLimit(iteration);
+
+            Obj condition = resultOf(expr.getCondition(), scope.subPool());
+            if (condition instanceof Bool && condition == Bool.TRUE) {
+                Scope copy = scope.subPool();
+                resultOf(loopExpr, copy);
+            } else {
+                break;
+            }
+
+            iteration++;
+        }
+
+        return Null.VALUE;
     }
 
     @Override
@@ -381,22 +400,22 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             String variant = expr.getVariant();
             Expr loopExpr = expr.getAction();
 
-            int iter = 0;
+            int iteration = 0;
             for (Object var : iterable) {
-                GlobalVisitorSettings.checkIterationLimit(iter);
+                GlobalVisitorSettings.checkIterationLimit(iteration);
 
                 if (var instanceof Obj) {
                     Scope copy = scope.subPool();
                     copy.declare(variant, (Obj) var);
                     resultOf(loopExpr, copy);
-                    iter++;
+                    iteration++;
                 } else {
                     throw new InterpreterException("Items in iterable do not implement Obj interface");
                 }
             }
         }
 
-        return Undefined.VALUE;
+        return Null.VALUE;
     }
 
     @Override
@@ -415,8 +434,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(UndefinedNode expr, Scope scope) {
-        return Undefined.VALUE;
+    public Obj visit(NullNode expr, Scope scope) {
+        return Null.VALUE;
     }
 
     @Override
