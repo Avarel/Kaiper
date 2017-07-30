@@ -407,31 +407,34 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
         String value = sb.toString();
         switch (value) {
             case "type":
-                return make(TokenType.TYPE, "type");
+                return make(TokenType.TYPE);
             case "module":
-                return make(TokenType.MODULE, "module");
+                return make(TokenType.MODULE);
 
+            case "is":
+                return make(TokenType.IS);
             case "if":
-                return make(TokenType.IF, "if");
+                return make(TokenType.IF);
             case "else":
-                return make(TokenType.ELSE, "else");
+                return make(TokenType.ELSE);
             case "return":
-                return make(TokenType.RETURN, "return");
+                return make(TokenType.RETURN);
             case "let":
-                return make(TokenType.LET, "let");
+                return make(TokenType.LET);
             case "for":
-                return make(TokenType.FOR, "for");
+                return make(TokenType.FOR);
             case "null":
-                return make(TokenType.NULL, "null");
+                return make(TokenType.NULL);
 
             case "fn":
             case "def":
                 return make(TokenType.FUNCTION);
 
             case "true":
-                return make(TokenType.BOOLEAN, "true");
+                return make(TokenType.BOOLEAN);
             case "false":
-                return make(TokenType.BOOLEAN, "false");
+                return make(TokenType.BOOLEAN);
+
             default:
                 return make(TokenType.IDENTIFIER, value);
         }

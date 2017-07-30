@@ -9,6 +9,8 @@ import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
+import xyz.avarel.kaiper.ast.tuples.TupleEntry;
+import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
@@ -490,6 +492,16 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
 
     @Override
     public DataOutputConsumer visit(WhileExpr expr, Void scope) {
+        return null;
+    }
+
+    @Override
+    public DataOutputConsumer visit(TupleExpr expr, Void scope) {
+        return null;
+    }
+
+    @Override
+    public DataOutputConsumer visit(TupleEntry expr, Void scope) {
         return null;
     }
 }

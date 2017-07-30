@@ -18,21 +18,15 @@ package xyz.avarel.kaiper.ast;
 import xyz.avarel.kaiper.ast.flow.Statements;
 import xyz.avarel.kaiper.lexer.Position;
 
-public abstract class Expr {
-    private final Position position;
-
+public abstract class Expr extends Positional {
     protected Expr(Position position) {
-        this.position = position;
+        super(position);
     }
 
     public abstract <R, C> R accept(ExprVisitor<R, C> visitor, C scope);
 
     public Expr andThen(Expr after) {
         return new Statements(this, after);
-    }
-
-    public Position getPosition() {
-        return position;
     }
 
     public void ast(StringBuilder builder, String indent, boolean isTail) {

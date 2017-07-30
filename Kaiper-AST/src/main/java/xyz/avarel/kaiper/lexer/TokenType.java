@@ -87,6 +87,7 @@ public enum TokenType {
     NULL,
     LET,
     RETURN,
+    IS,
     IF,
     ELSE,
     FOR,

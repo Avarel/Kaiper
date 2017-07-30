@@ -15,12 +15,11 @@
 
 package xyz.avarel.kaiper.parser.parslets.nodes;
 
+import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.collections.ArrayNode;
 import xyz.avarel.kaiper.ast.collections.DictionaryNode;
-import xyz.avarel.kaiper.ast.value.StringNode;
-import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
@@ -49,7 +48,7 @@ public class CollectionsParser implements PrefixParser {
             return new ArrayNode(token.getPosition(), Collections.emptyList());
         }
 
-        Single expr = parser.parseSingle();
+        Single expr = parser.parseSingle(Precedence.TUPLE_PAIR);
 
         if (parser.match(TokenType.COLON)) {
             if (!parser.getParserFlags().allowDictionary()) {
@@ -70,40 +69,10 @@ public class CollectionsParser implements PrefixParser {
         items.add(initItem);
 
         while (parser.match(TokenType.COMMA)) {
-            items.add(parser.parseSingle());
+            items.add(parser.parseSingle(Precedence.TUPLE_PAIR));
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
-
-//        if (parser.match(TokenType.ASSIGN)) {
-//            for (Expr expr : items) {
-//                if (!(expr instanceof Identifier)) {
-//                    throw new SyntaxException("Invalid left-hand side in assignment expression", token.getPosition());
-//                }
-//            }
-//
-//            Single target = parser.parseSingle();
-//
-//            Statements statements = new Statements();
-//
-//            statements.getExprs().add(new DeclarationExpr("$TEMP", target));
-//
-//            for (int i = 0; i < items.size(); i++) {
-//                Expr expr = items.get(i);
-//                Identifier id = (Identifier) expr;
-//                statements.getExprs().add(
-//                        new AssignmentExpr(
-//                                id.getParent(),
-//                                id.getName(),
-//                                new GetOperation(new Identifier("$TEMP"), new IntNode(i))
-//                        )
-//                );
-//            }
-//
-//            statements.getExprs().add(new Identifier("$TEMP"));
-//
-//            return statements;
-//        }
 
         return new ArrayNode(token.getPosition(), items);
     }
@@ -111,16 +80,12 @@ public class CollectionsParser implements PrefixParser {
     private Expr parseDictionary(KaiperParser parser, Token token, Single initKey) {
         Map<Single, Single> map = new HashMap<>();
 
-        if (initKey instanceof Identifier) {
-            initKey = new StringNode(initKey.getPosition(), ((Identifier) initKey).getName());
-        }
-
-        map.put(initKey, parser.parseSingle());
+        map.put(initKey, parser.parseSingle(Precedence.TUPLE_PAIR));
 
         while (parser.match(TokenType.COMMA)) {
-            Single key = parser.parseSingle();
+            Single key = parser.parseSingle(Precedence.TUPLE_PAIR);
             parser.eat(TokenType.COLON);
-            Single value = parser.parseSingle();
+            Single value = parser.parseSingle(Precedence.TUPLE_PAIR);
 
             map.put(key, value);
         }

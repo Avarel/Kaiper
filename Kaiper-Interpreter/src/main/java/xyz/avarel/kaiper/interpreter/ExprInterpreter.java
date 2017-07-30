@@ -39,6 +39,8 @@ import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
+import xyz.avarel.kaiper.ast.tuples.TupleEntry;
+import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
@@ -46,10 +48,7 @@ import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
-import xyz.avarel.kaiper.runtime.Bool;
-import xyz.avarel.kaiper.runtime.Null;
-import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Str;
+import xyz.avarel.kaiper.runtime.*;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
@@ -65,9 +64,7 @@ import xyz.avarel.kaiper.runtime.types.CompiledType;
 import xyz.avarel.kaiper.runtime.types.Type;
 import xyz.avarel.kaiper.scope.Scope;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     private int recursionDepth = 0;
@@ -460,6 +457,24 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     @Override
     public Obj visit(StringNode expr, Scope scope) {
         return Str.of(expr.getValue());
+    }
+
+    @Override
+    public Obj visit(TupleEntry expr, Scope scope) {
+        Obj value = resultOf(expr.getExpr(), scope);
+        return new Tuple(Collections.singletonMap(expr.getName(), value));
+    }
+
+    @Override
+    public Obj visit(TupleExpr expr, Scope scope) {
+        Map<String, Obj> map = new LinkedHashMap<>();
+
+        for (TupleEntry entry : expr.getEntries()) {
+            Obj value = resultOf(entry.getExpr(), scope);
+            map.put(entry.getName(), value);
+        }
+
+        return new Tuple(map);
     }
 
     private Obj resultOf(Expr expr, Scope scope) {
