@@ -12,54 +12,59 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PatternParser {
-    public static PatternSet parsePatternSet(KaiperParser parser) {
+    private final KaiperParser parser;
+    private boolean requireName;
+
+    public PatternParser(KaiperParser parser) {
+        this.parser = parser;
+    }
+
+    public PatternCase parsePatternSet() {
         List<Pattern> patterns = new ArrayList<>();
 
         do {
-            patterns.add(parsePattern(parser));
+            patterns.add(parsePattern());
         } while (parser.match(TokenType.COMMA));
 
-        return new PatternSet(patterns);
+        return new PatternCase(patterns);
     }
 
-    private static Pattern parsePattern(KaiperParser parser) {
+    private Pattern parsePattern() {
         Pattern basePattern;
 
         if (parser.nextIs(TokenType.IDENTIFIER)) {
+            requireName = true;
+
             Identifier id = parser.parseIdentifier();
 
             if (parser.match(TokenType.COLON)) {
-                Pattern pattern = parseSimplePattern(parser);
+                Pattern pattern = parseSimplePattern();
                 basePattern = new TuplePattern(id.getPosition(), id.getName(), pattern);
-            } else if (parser.match(TokenType.IS)) {
-                Single type = parser.parseSingle();
-                Pattern pattern = new TypePattern(type.getPosition(), type);
-                basePattern = new VariablePattern(id.getPosition(), id.getName(), pattern);
             } else {
-                basePattern = new VariablePattern(id.getPosition(), id.getName(), null);
+                basePattern = new VariablePattern(id.getPosition(), id.getName());
+            }
+
+            if (parser.match(TokenType.ASSIGN)) {
+                Single def = parser.parseSingle(Precedence.TUPLE_PAIR);
+                basePattern = new DefaultPattern(parser.getLast().getPosition(), (NamedPattern) basePattern, def);
             }
         } else {
-            basePattern = parseSimplePattern(parser);
-        }
-
-        if (parser.match(TokenType.ASSIGN)) {
-            Single def = parser.parseSingle(Precedence.TUPLE_PAIR);
-            basePattern = new DefaultPattern(parser.getLast().getPosition(), basePattern, def);
+            if (requireName) {
+                throw mixException();
+            }
+            basePattern = parseSimplePattern();
         }
 
         return basePattern;
     }
 
-    private static Pattern parseSimplePattern(KaiperParser parser) {
+    private Pattern parseSimplePattern() {
         if (parser.nextIsAny(
                 TokenType.INT, TokenType.NUMBER, TokenType.STRING,
                 TokenType.NULL, TokenType.BOOLEAN, TokenType.LEFT_BRACKET
         ) || parser.match(TokenType.EQUALS)) {
             Single value = parser.parseSingle(Precedence.TUPLE);
             return new ValuePattern(value.getPosition(), value);
-        } else if (parser.match(TokenType.IS)) {
-            Single type = parser.parseSingle(Precedence.TUPLE);
-            return new TypePattern(type.getPosition(), type);
         } else if (parser.match(TokenType.UNDERSCORE)) {
             return WildcardPattern.INSTANCE;
         } else {
@@ -68,7 +73,7 @@ public class PatternParser {
         }
     }
 
-    private static SyntaxException mixException(KaiperParser parser) {
+    private SyntaxException mixException() {
         return new SyntaxException("Can not mix positional and named patterns", parser.peek(0).getPosition());
     }
 }

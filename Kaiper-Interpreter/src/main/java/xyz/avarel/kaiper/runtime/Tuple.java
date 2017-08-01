@@ -53,6 +53,11 @@ public class Tuple implements Obj {
     }
 
     @Override
+    public boolean hasAttr(String name) {
+        return map.containsKey(name);
+    }
+
+    @Override
     public Obj getAttr(String name) {
         return map.get(name);
     }
@@ -60,6 +65,10 @@ public class Tuple implements Obj {
     @Override
     public Type getType() {
         return TYPE;
+    }
+
+    public int size() {
+        return map.size();
     }
 
     @Override

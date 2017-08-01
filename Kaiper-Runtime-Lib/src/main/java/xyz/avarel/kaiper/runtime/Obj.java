@@ -268,6 +268,10 @@ public interface Obj {
         throw unimplemented("set");
     }
 
+    default boolean hasAttr(String name) {
+        return false;
+    }
+
     /**
      * Attribute operator in Kaiper. Default symbol is {@code a.b}.
      * <br> Implementation should default to error if not implemented.

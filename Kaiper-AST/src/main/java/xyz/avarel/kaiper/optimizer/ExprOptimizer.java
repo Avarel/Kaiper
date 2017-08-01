@@ -16,6 +16,7 @@ import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
+import xyz.avarel.kaiper.ast.variables.DestructuringDeclarationExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 
 
@@ -153,6 +154,11 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
 
     @Override
     public Expr visit(TupleEntry expr, Void scope) {
+        return null;
+    }
+
+    @Override
+    public Expr visit(DestructuringDeclarationExpr destructuringDeclarationExpr, Void scope) {
         return null;
     }
 }

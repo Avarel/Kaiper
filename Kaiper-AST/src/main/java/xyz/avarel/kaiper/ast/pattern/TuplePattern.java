@@ -6,18 +6,13 @@ import xyz.avarel.kaiper.lexer.Position;
 // a: is Int
 // a: 2
 // a: x
-public class TuplePattern extends Pattern {
-    private final String name;
+// a: (2, meme: 2, dank: 3)
+public class TuplePattern extends NamedPattern {
     private final Pattern pattern;
 
     public TuplePattern(Position position, String name, @NotNull Pattern pattern) {
-        super(position);
-        this.name = name;
+        super(position, name);
         this.pattern = pattern;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Pattern getPattern() {
@@ -31,6 +26,6 @@ public class TuplePattern extends Pattern {
 
     @Override
     public String toString() {
-        return name + ": " + pattern;
+        return getName() + ": " + pattern;
     }
 }

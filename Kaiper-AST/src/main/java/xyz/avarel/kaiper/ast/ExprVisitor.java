@@ -57,6 +57,7 @@ import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
+import xyz.avarel.kaiper.ast.variables.DestructuringDeclarationExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 
 public interface ExprVisitor<R, C> {
@@ -113,4 +114,6 @@ public interface ExprVisitor<R, C> {
     R visit(TupleExpr expr, C scope);
 
     R visit(TupleEntry expr, C scope);
+
+    R visit(DestructuringDeclarationExpr destructuringDeclarationExpr, C scope);
 }

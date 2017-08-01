@@ -5,16 +5,16 @@ import xyz.avarel.kaiper.lexer.Position;
 
 // (delegate) = (defaultExpr)
 public class DefaultPattern extends Pattern {
-    private final Pattern delegate;
+    private final NamedPattern delegate;
     private final Single defaultExpr;
 
-    public DefaultPattern(Position position, Pattern delegate, Single defaultExpr) {
+    public DefaultPattern(Position position, NamedPattern delegate, Single defaultExpr) {
         super(position);
         this.delegate = delegate;
         this.defaultExpr = defaultExpr;
     }
 
-    public Pattern getDelegate() {
+    public NamedPattern getDelegate() {
         return delegate;
     }
 

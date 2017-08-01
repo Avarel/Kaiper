@@ -3,10 +3,11 @@ package xyz.avarel.kaiper.ast.pattern;
 import java.util.Iterator;
 import java.util.List;
 
-public class PatternSet {
+public class PatternCase {
     private final List<Pattern> patterns;
 
-    public PatternSet(List<Pattern> patterns) {
+    public PatternCase(List<Pattern> patterns) {
+//        super(patterns.get(0).getPosition());
         this.patterns = patterns;
     }
 
@@ -30,4 +31,9 @@ public class PatternSet {
 
         return sb.toString();
     }
+//
+//    @Override
+//    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
+//        return visitor.accept(this, scope);
+//    }
 }

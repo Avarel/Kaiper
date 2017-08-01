@@ -44,6 +44,7 @@ import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
+import xyz.avarel.kaiper.ast.variables.DestructuringDeclarationExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
@@ -475,6 +476,23 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         }
 
         return new Tuple(map);
+    }
+
+    @Override
+    public Obj visit(DestructuringDeclarationExpr expr, Scope scope) {
+        Obj value = resultOf(expr.getExpr(), scope);
+
+        if (!(value instanceof Tuple)) {
+            value = new Tuple(Collections.singletonMap("_0", value));
+        }
+
+        boolean result = PatternBinder.bind(this, expr.getPatternCase(), (Tuple) value, scope);
+
+        if (!result) {
+            throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());
+        }
+
+        return Null.VALUE;
     }
 
     private Obj resultOf(Expr expr, Scope scope) {

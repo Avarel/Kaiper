@@ -16,9 +16,10 @@
 package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.pattern.PatternSet;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
+import xyz.avarel.kaiper.ast.variables.DestructuringDeclarationExpr;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
@@ -34,13 +35,13 @@ public class DeclarationParser implements PrefixParser {
         }
 
         if (parser.match(TokenType.LEFT_PAREN)) {
-            PatternSet patternSet = PatternParser.parsePatternSet(parser);
+            PatternCase patternCase = new PatternParser(parser).parsePatternSet();
 
             parser.match(TokenType.RIGHT_PAREN);
 
-            System.out.println(patternSet.toString());
+            parser.eat(TokenType.ASSIGN);
 
-            throw new SyntaxException("WIP FEATURE");
+            return new DestructuringDeclarationExpr(token.getPosition(), patternCase, parser.parseSingle());
         }
 
         Token name = parser.eat(TokenType.IDENTIFIER);
