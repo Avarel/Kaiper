@@ -19,46 +19,48 @@ package xyz.avarel.kaiper;
  * Default precedence table for the Kaiper parser.
  */
 public class Precedence {
-    public static final int DOT = 15;
+    public static final int DOT = 16;
 
     /* a(b) */
-    public static final int POSTFIX = 14;
+    public static final int POSTFIX = 15;
 
     /* a ^ b */
-    public static final int EXPONENTIAL = 13;
+    public static final int EXPONENTIAL = 14;
 
     /* -a | +a | !a | ~a */
-    public static final int PREFIX = 12;
+    public static final int PREFIX = 13;
 
     /* a * b | a / b | a % b */
-    public static final int MULTIPLICATIVE = 11;
+    public static final int MULTIPLICATIVE = 12;
 
     /* a + b | a - b */
-    public static final int ADDITIVE = 10;
+    public static final int ADDITIVE = 11;
 
-    public static final int SHIFT = 9;
+    public static final int SHIFT = 10;
 
     /* a..b */
-    public static final int RANGE_TO = 8;
+    public static final int RANGE_TO = 9;
 
-    /* Unused */
-    public static final int INFIX = 7;
+    /* is */
+    public static final int INFIX = 8;
 
     /* a > b | a < b | a >= b | a <= b */
-    public static final int COMPARISON = 6;
+    public static final int COMPARISON = 7;
 
     /* a == b | a != b */
-    public static final int EQUALITY = 5;
+    public static final int EQUALITY = 6;
 
     /* a && b */
-    public static final int CONJUNCTION = 4;
+    public static final int CONJUNCTION = 5;
 
     /* a || b */
-    public static final int DISJUNCTION = 3;
+    public static final int DISJUNCTION = 4;
 
     /* a: b */
-    public static final int TUPLE_PAIR = 2;
+    public static final int TUPLE_PAIR = 3;
 
     /* a, b */
-    public static final int TUPLE = 1;
+    public static final int TUPLE = 2;
+
+    public static final int ASSIGNMENT = 1;
 }

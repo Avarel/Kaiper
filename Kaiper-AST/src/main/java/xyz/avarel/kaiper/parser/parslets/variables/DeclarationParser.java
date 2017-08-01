@@ -16,12 +16,14 @@
 package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.pattern.PatternSet;
 import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 public class DeclarationParser implements PrefixParser {
@@ -29,6 +31,16 @@ public class DeclarationParser implements PrefixParser {
     public Expr parse(KaiperParser parser, Token token) {
         if (!parser.getParserFlags().allowVariables()) {
             throw new SyntaxException("Variables are disabled");
+        }
+
+        if (parser.match(TokenType.LEFT_PAREN)) {
+            PatternSet patternSet = PatternParser.parsePatternSet(parser);
+
+            parser.match(TokenType.RIGHT_PAREN);
+
+            System.out.println(patternSet.toString());
+
+            throw new SyntaxException("WIP FEATURE");
         }
 
         Token name = parser.eat(TokenType.IDENTIFIER);

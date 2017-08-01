@@ -4,7 +4,7 @@ import xyz.avarel.kaiper.ast.Positional;
 import xyz.avarel.kaiper.lexer.Position;
 
 public abstract class Pattern extends Positional {
-    protected Pattern(Position position) {
+    public Pattern(Position position) {
         super(position);
     }
 

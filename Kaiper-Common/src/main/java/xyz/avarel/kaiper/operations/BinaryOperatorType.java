@@ -32,4 +32,6 @@ public enum BinaryOperatorType {
     OR,
     SHL,
     SHR,
+
+    IS
 }

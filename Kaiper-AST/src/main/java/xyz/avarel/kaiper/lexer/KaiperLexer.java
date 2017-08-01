@@ -228,10 +228,7 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
                         ? make(TokenType.OR)
                         : make(TokenType.BACKSLASH);
 
-            case ':':
-                return Character.isLetter(peek())
-                        ? nextAtom()
-                        : make(TokenType.COLON);
+            case ':': return make(TokenType.COLON);
 
 
             case '=':

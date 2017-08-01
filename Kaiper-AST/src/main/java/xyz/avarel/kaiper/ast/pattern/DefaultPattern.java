@@ -1,29 +1,34 @@
 package xyz.avarel.kaiper.ast.pattern;
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
 // (delegate) = (defaultExpr)
 public class DefaultPattern extends Pattern {
-    private final Pattern pattern;
-    private final Expr defaultExpr;
+    private final Pattern delegate;
+    private final Single defaultExpr;
 
-    protected DefaultPattern(Position position, Pattern delegate, Expr defaultExpr) {
+    public DefaultPattern(Position position, Pattern delegate, Single defaultExpr) {
         super(position);
-        this.pattern = delegate;
+        this.delegate = delegate;
         this.defaultExpr = defaultExpr;
     }
 
-    public Pattern getPattern() {
-        return pattern;
+    public Pattern getDelegate() {
+        return delegate;
     }
 
-    public Expr getDefaultExpr() {
+    public Single getDefaultExpr() {
         return defaultExpr;
     }
 
     @Override
     public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.accept(this, scope);
+    }
+
+    @Override
+    public String toString() {
+        return delegate + " = " + defaultExpr;
     }
 }

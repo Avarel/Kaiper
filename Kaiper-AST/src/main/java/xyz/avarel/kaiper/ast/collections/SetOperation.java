@@ -27,6 +27,10 @@ public class SetOperation extends GetOperation {
         this.expr = expr;
     }
 
+    public SetOperation(Position position, GetOperation getOp, Single expr) {
+        this(position, getOp.getLeft(), getOp.getKey(), expr);
+    }
+
     public Single getExpr() {
         return expr;
     }

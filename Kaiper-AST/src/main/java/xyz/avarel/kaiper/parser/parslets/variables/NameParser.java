@@ -17,15 +17,10 @@ package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
-import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
-import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.value.NullNode;
-import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
@@ -35,27 +30,7 @@ import java.util.List;
 public class NameParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
-        if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(parser.getLast().getPosition(), token.getString(), parser.parseSingle());
-        }
-
         Identifier id = new Identifier(token.getPosition(), token.getString());
-
-        if (parser.match(TokenType.OPTIONAL_ASSIGN)) {
-            return new ConditionalExpr(
-                    parser.getLast().getPosition(),
-                    new BinaryOperation(
-                            parser.getLast().getPosition(),
-                            id,
-                            NullNode.VALUE,
-                            BinaryOperatorType.EQUALS),
-                    new AssignmentExpr(
-                            parser.getLast().getPosition(),
-                            token.getString(),
-                            parser.parseSingle()
-                    ),
-                    id);
-        }
 
         if (parser.nextIsAny(TokenType.STRING, TokenType.INT, TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.LEFT_BRACE)) {
             List<Single> arguments = new ArrayList<>();

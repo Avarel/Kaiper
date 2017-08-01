@@ -35,6 +35,10 @@ public class AssignmentExpr extends Single {
         this.expr = expr;
     }
 
+    public AssignmentExpr(Position position, Identifier identifier, Single expr) {
+        this(position, identifier.getParent(), identifier.getName(), expr);
+    }
+
     public Single getParent() {
         return parent;
     }

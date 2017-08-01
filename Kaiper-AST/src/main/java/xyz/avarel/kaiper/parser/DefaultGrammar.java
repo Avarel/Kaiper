@@ -34,9 +34,7 @@ import xyz.avarel.kaiper.parser.parslets.operators.RangeOperatorParser;
 import xyz.avarel.kaiper.parser.parslets.operators.UnaryOperatorParser;
 import xyz.avarel.kaiper.parser.parslets.tuples.TupleColonParser;
 import xyz.avarel.kaiper.parser.parslets.tuples.TupleCommaParser;
-import xyz.avarel.kaiper.parser.parslets.variables.AttributeParser;
-import xyz.avarel.kaiper.parser.parslets.variables.DeclarationParser;
-import xyz.avarel.kaiper.parser.parslets.variables.NameParser;
+import xyz.avarel.kaiper.parser.parslets.variables.*;
 
 public class DefaultGrammar extends Grammar {
     public static final Grammar INSTANCE = new DefaultGrammar();
@@ -71,6 +69,9 @@ public class DefaultGrammar extends Grammar {
         prefix(TokenType.IDENTIFIER, new NameParser());
         prefix(TokenType.LET, new DeclarationParser());
 
+        infix(TokenType.ASSIGN, new AssignmentParser());
+        infix(TokenType.OPTIONAL_ASSIGN, new OptAssignmentParser());
+
         prefix(TokenType.TYPE, new TypeParser());
         prefix(TokenType.MODULE, new ModuleParser());
 
@@ -99,6 +100,8 @@ public class DefaultGrammar extends Grammar {
         prefix(TokenType.BANG, new UnaryOperatorParser(UnaryOperatorType.NEGATE));
         infix(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, BinaryOperatorType.AND));
         infix(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, BinaryOperatorType.OR));
+
+        infix(TokenType.IS, new BinaryOperatorParser(Precedence.INFIX, true, BinaryOperatorType.IS));
 
         // Functional
         infix(TokenType.LEFT_PAREN, new InvocationParser());

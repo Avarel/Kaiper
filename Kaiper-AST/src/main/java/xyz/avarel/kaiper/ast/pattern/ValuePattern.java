@@ -1,23 +1,28 @@
 package xyz.avarel.kaiper.ast.pattern;
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
 // literally literals
 public class ValuePattern extends Pattern {
-    private final Expr value;
+    private final Single value;
 
-    protected ValuePattern(Position position, Expr value) {
+    public ValuePattern(Position position, Single value) {
         super(position);
         this.value = value;
     }
 
-    public Expr getValue() {
+    public Single getValue() {
         return value;
     }
 
     @Override
     public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.accept(this, scope);
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
     }
 }

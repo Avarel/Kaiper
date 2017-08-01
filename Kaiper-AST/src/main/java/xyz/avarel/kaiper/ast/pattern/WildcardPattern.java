@@ -12,4 +12,9 @@ public class WildcardPattern extends Pattern {
     public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.accept(this, scope);
     }
+
+    @Override
+    public String toString() {
+        return "_";
+    }
 }
