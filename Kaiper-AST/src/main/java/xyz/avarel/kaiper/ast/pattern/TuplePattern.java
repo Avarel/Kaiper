@@ -1,6 +1,5 @@
 package xyz.avarel.kaiper.ast.pattern;
 
-import com.sun.istack.internal.NotNull;
 import xyz.avarel.kaiper.lexer.Position;
 
 // a: is Int
@@ -10,7 +9,7 @@ import xyz.avarel.kaiper.lexer.Position;
 public class TuplePattern extends NamedPattern {
     private final Pattern pattern;
 
-    public TuplePattern(Position position, String name, @NotNull Pattern pattern) {
+    public TuplePattern(Position position, String name, Pattern pattern) {
         super(position, name);
         this.pattern = pattern;
     }
