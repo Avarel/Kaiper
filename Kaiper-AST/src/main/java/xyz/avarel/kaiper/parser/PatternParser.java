@@ -38,7 +38,15 @@ public class PatternParser {
             String name = id.getString();
 
             if (parser.match(TokenType.COLON)) {
-                Pattern pattern = parseSimplePattern();
+                Pattern pattern;
+                if (parser.nextIs(TokenType.IDENTIFIER)) {
+                    Token innerId = parser.eat(TokenType.IDENTIFIER);
+                    String innerName = innerId.getString();
+                    pattern = new VariablePattern(innerId.getPosition(), innerName);
+                } else {
+                    pattern = parseSimplePattern();
+                }
+
                 basePattern = new TuplePattern(id.getPosition(), name, pattern);
             } else {
                 basePattern = new VariablePattern(id.getPosition(), name);
@@ -82,6 +90,10 @@ public class PatternParser {
             return new ValuePattern(value.getPosition(), value);
         } else if (parser.match(TokenType.UNDERSCORE)) {
             return WildcardPattern.INSTANCE;
+        } else if (parser.match(TokenType.LEFT_PAREN)) {
+            PatternCase nested = parsePatternSet();
+            parser.eat(TokenType.RIGHT_PAREN);
+            return nested;
         } else {
             Token unexpected = parser.peek(0);
             throw new SyntaxException("Unexpected pattern " + unexpected.getType(), unexpected.getPosition());

@@ -483,7 +483,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         Obj value = resultOf(expr.getExpr(), scope);
 
         if (!(value instanceof Tuple)) {
-            value = new Tuple(Collections.singletonMap("_0", value));
+            value = new Tuple(value);
         }
 
         boolean result = new PatternBinder(this, scope).bind(expr.getPatternCase(), (Tuple) value);

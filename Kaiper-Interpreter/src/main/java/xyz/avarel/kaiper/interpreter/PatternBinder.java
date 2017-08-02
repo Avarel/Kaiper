@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Obj> {
-    private static final Pair<String, Obj> TRUE_NO_ASSIGN = new Pair<>(null, null);
+    private static final Pair<String, Obj> SUCCESS_NO_ASSIGNMENT = new Pair<>(null, null);
 
     private final ExprInterpreter interpreter;
     private final Scope scope;
@@ -24,14 +24,12 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Obj> {
     }
 
     public boolean bind(PatternCase patternCase, Tuple tuple) {
-        PatternBinder binder = new PatternBinder(interpreter, scope);
-
         List<Pair<String, Obj>> results = new ArrayList<>();
         for (Pattern pattern : patternCase.getPatterns()) {
-            Pair<String, Obj> result = pattern.accept(binder, tuple);
+            Pair<String, Obj> result = pattern.accept(this, tuple);
 
             if (result != null) {
-                if (result != TRUE_NO_ASSIGN) {
+                if (result != SUCCESS_NO_ASSIGNMENT) {
                     results.add(result);
                 }
             } else {
@@ -47,31 +45,53 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Obj> {
     }
 
     @Override
-    public Pair<String, Obj> accept(WildcardPattern pattern, Obj context) {
-        position++;
-        return TRUE_NO_ASSIGN;
-    }
+    public Pair<String, Obj> visit(PatternCase patternCase, Obj obj) {
+        if (obj.hasAttr("_" + position)) {
+            Obj value = obj.getAttr("_" + position);
 
-    @Override
-    public Pair<String, Obj> accept(ValuePattern pattern, Obj context) {
-        if (context.hasAttr("_" + position)) {
-            Obj value = context.getAttr("_" + position);
-            Obj target = pattern.getValue().accept(interpreter, scope);
             position++;
-            return value.equals(target) ? TRUE_NO_ASSIGN : null;
+
+            Tuple tuple = value instanceof Tuple ? (Tuple) value : new Tuple(value);
+
+            if (new PatternBinder(interpreter, scope).bind(patternCase, tuple)) {
+                return SUCCESS_NO_ASSIGNMENT;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
     }
 
     @Override
-    public Pair<String, Obj> accept(VariablePattern pattern, Obj context) {
+    public Pair<String, Obj> visit(WildcardPattern pattern, Obj obj) {
+        position++;
+        return SUCCESS_NO_ASSIGNMENT;
+    }
+
+    @Override
+    public Pair<String, Obj> visit(ValuePattern pattern, Obj obj) {
+        System.out.println(obj);
+        System.out.println(pattern);
+
+        if (obj.hasAttr("_" + position)) {
+            Obj value = obj.getAttr("_" + position);
+            Obj target = pattern.getValue().accept(interpreter, scope);
+            position++;
+            return value.equals(target) ? SUCCESS_NO_ASSIGNMENT : null;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Pair<String, Obj> visit(VariablePattern pattern, Obj obj) {
         Obj value;
 
-        if (context.hasAttr(pattern.getName())) {
-            value = context.getAttr(pattern.getName());
-        } else if (context.hasAttr("_" + position)) {
-            value = context.getAttr("_" + position);
+        if (obj.hasAttr(pattern.getName())) {
+            value = obj.getAttr(pattern.getName());
+        } else if (obj.hasAttr("_" + position)) {
+            value = obj.getAttr("_" + position);
         } else {
             return null;
         }
@@ -81,8 +101,8 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Obj> {
     }
 
     @Override
-    public Pair<String, Obj> accept(DefaultPattern pattern, Obj context) {
-        Pair<String, Obj> result = pattern.getDelegate().accept(this, context);
+    public Pair<String, Obj> visit(DefaultPattern pattern, Obj obj) {
+        Pair<String, Obj> result = pattern.getDelegate().accept(this, obj);
 
         if (result == null) {
             Obj value = pattern.getDefaultExpr().accept(interpreter, scope);
@@ -93,7 +113,7 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Obj> {
     }
 
     @Override
-    public Pair<String, Obj> accept(RestPattern pattern, Obj obj) {
+    public Pair<String, Obj> visit(RestPattern pattern, Obj obj) {
         Obj value;
 
         if (obj.hasAttr(pattern.getName())) {
@@ -118,7 +138,19 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Obj> {
     }
 
     @Override
-    public Pair<String, Obj> accept(TuplePattern pattern, Obj context) {
-        return null;
+    public Pair<String, Obj> visit(TuplePattern pattern, Obj obj) {
+        Obj value;
+
+        if (obj.hasAttr(pattern.getName())) {
+            value = obj.getAttr(pattern.getName());
+        } else {
+            return null;
+        }
+
+        position++;
+
+        Tuple tuple = new Tuple(value);
+
+        return pattern.getPattern().accept(new PatternBinder(interpreter, scope), tuple);
     }
 }

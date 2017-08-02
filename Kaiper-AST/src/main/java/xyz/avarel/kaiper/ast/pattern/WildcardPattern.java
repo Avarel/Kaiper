@@ -10,7 +10,7 @@ public class WildcardPattern extends Pattern {
 
     @Override
     public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
-        return visitor.accept(this, scope);
+        return visitor.visit(this, scope);
     }
 
     @Override

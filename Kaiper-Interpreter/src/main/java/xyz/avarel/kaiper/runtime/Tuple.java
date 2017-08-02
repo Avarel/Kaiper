@@ -2,6 +2,7 @@ package xyz.avarel.kaiper.runtime;
 
 import xyz.avarel.kaiper.runtime.types.Type;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -48,6 +49,10 @@ public class Tuple implements Obj {
 
     private final Map<String, Obj> map;
 
+    public Tuple(Obj value) {
+        this(Collections.singletonMap("_0", value));
+    }
+
     public Tuple(Map<String, Obj> map) {
        this.map = map;
     }
@@ -79,7 +84,13 @@ public class Tuple implements Obj {
         while (true) {
             Map.Entry<String, Obj> entry = iterator.next();
 
-            builder.append(entry.getKey()).append(": ").append(entry.getValue());
+            builder.append(entry.getKey()).append(": ");
+
+            boolean isTuple = entry.getValue() instanceof Tuple;
+
+            if (isTuple) builder.append('(');
+            builder.append(entry.getValue());
+            if (isTuple) builder.append(')');
 
             if (iterator.hasNext()) {
                 builder.append(", ");
