@@ -179,38 +179,38 @@ public class Int implements Obj {
     }
 
     @Override
-    public Obj isEqualTo(Obj other) {
+    public Bool isEqualTo(Obj other) {
         if (other instanceof Int) {
             return this.isEqualTo((Int) other);
         }
         return Bool.FALSE;
     }
 
-    private Obj isEqualTo(Int other) {
+    private Bool isEqualTo(Int other) {
         return Bool.of(value == other.value);
     }
 
     @Override
-    public Obj greaterThan(Obj other) {
+    public Bool greaterThan(Obj other) {
         if (other instanceof Int) {
             return this.greaterThan((Int) other);
         }
         return Bool.FALSE;
     }
 
-    private Obj greaterThan(Int other) {
+    private Bool greaterThan(Int other) {
         return Bool.of(value > other.value);
     }
 
     @Override
-    public Obj lessThan(Obj other) {
+    public Bool lessThan(Obj other) {
         if (other instanceof Int) {
             return this.lessThan((Int) other);
         }
         return Bool.FALSE;
     }
 
-    private Obj lessThan(Int other) {
+    private Bool lessThan(Int other) {
         return Bool.of(value < other.value);
     }
 

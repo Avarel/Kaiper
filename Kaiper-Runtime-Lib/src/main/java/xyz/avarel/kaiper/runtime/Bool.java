@@ -69,11 +69,11 @@ public enum Bool implements Obj {
     }
 
     @Override
-    public Obj or(Obj other) {
+    public Bool or(Obj other) {
         if (other instanceof Bool) {
             return or((Bool) other);
         }
-        return Obj.super.shr(other);
+        return Obj.super.or(other);
     }
 
     public Bool or(Bool other) {
@@ -81,7 +81,7 @@ public enum Bool implements Obj {
     }
 
     @Override
-    public Obj and(Obj other) {
+    public Bool and(Obj other) {
         if (other instanceof Bool) {
             return and((Bool) other);
         }

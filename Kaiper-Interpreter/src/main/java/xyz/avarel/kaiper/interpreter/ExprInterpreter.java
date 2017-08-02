@@ -137,6 +137,17 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     @Override
     public Obj visit(BinaryOperation expr, Scope scope) {
+        switch (expr.getOperator()) {
+            case OR: {
+                Obj left = resultOf(expr.getLeft(), scope);
+                return left == Bool.TRUE ? Bool.TRUE : resultOf(expr.getRight(), scope);
+            }
+            case AND: {
+                Obj left = resultOf(expr.getLeft(), scope);
+                return left == Bool.FALSE ? Bool.FALSE : resultOf(expr.getRight(), scope);
+            }
+        }
+
         Obj left = resultOf(expr.getLeft(), scope);
         Obj right = resultOf(expr.getRight(), scope);
 
@@ -172,16 +183,14 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
                 return left.greaterThan(right);
             case LESS_THAN:
                 return left.lessThan(right);
-            case GREATER_THAN_EQUAL:
-                return left.greaterThan(right).or(left.isEqualTo(right));
-            case LESS_THAN_EQUAL:
-                return left.lessThan(right).or(left.isEqualTo(right));
-
-            case OR:
-                return left.or(right);
-            case AND:
-                return left.and(right);
-
+            case GREATER_THAN_EQUAL: {
+                Bool result = left.greaterThan(right);
+                return result == Bool.TRUE ? Bool.TRUE : left.isEqualTo(right);
+            }
+            case LESS_THAN_EQUAL: {
+                Bool result = left.lessThan(right);
+                return result == Bool.TRUE ? Bool.TRUE : left.isEqualTo(right);
+            }
             case SHL:
                 return left.shl(right);
             case SHR:

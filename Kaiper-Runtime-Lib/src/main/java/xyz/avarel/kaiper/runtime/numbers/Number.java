@@ -175,31 +175,31 @@ public class Number implements Obj {
     }
 
     @Override
-    public Obj isEqualTo(Obj other) {
+    public Bool isEqualTo(Obj other) {
         if (other instanceof Number) {
             return this.isEqualTo((Number) other);
         }
         return Bool.FALSE;
     }
 
-    private Obj isEqualTo(Number other) {
+    private Bool isEqualTo(Number other) {
         return Bool.of(value == other.value);
     }
 
     @Override
-    public Obj greaterThan(Obj other) {
+    public Bool greaterThan(Obj other) {
         if (other instanceof Number) {
             return this.greaterThan((Number) other);
         }
         return Bool.FALSE;
     }
 
-    private Obj greaterThan(Number other) {
+    private Bool greaterThan(Number other) {
         return Bool.of(value > other.value);
     }
 
     @Override
-    public Obj lessThan(Obj other) {
+    public Bool lessThan(Obj other) {
         if (other instanceof Number) {
             return this.lessThan((Number) other);
         }

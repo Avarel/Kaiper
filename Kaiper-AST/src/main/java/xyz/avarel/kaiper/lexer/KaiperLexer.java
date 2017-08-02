@@ -410,6 +410,8 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
 
             case "is":
                 return make(TokenType.IS);
+            case "match":
+                return make(TokenType.MATCH);
             case "if":
                 return make(TokenType.IF);
             case "else":
@@ -428,9 +430,9 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
                 return make(TokenType.FUNCTION);
 
             case "true":
-                return make(TokenType.BOOLEAN);
+                return make(TokenType.BOOLEAN, "true");
             case "false":
-                return make(TokenType.BOOLEAN);
+                return make(TokenType.BOOLEAN, "false");
 
             default:
                 return make(TokenType.IDENTIFIER, value);

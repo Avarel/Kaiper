@@ -143,7 +143,7 @@ public interface Obj {
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj isEqualTo(Obj other) {
+    default Bool isEqualTo(Obj other) {
         return Bool.of(this.equals(other));
     }
 
@@ -155,7 +155,7 @@ public interface Obj {
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj greaterThan(Obj other) {
+    default Bool greaterThan(Obj other) {
         throw unimplemented("greater than", other);
     }
 
@@ -167,7 +167,7 @@ public interface Obj {
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj lessThan(Obj other) {
+    default Bool lessThan(Obj other) {
         throw unimplemented("less than", other);
     }
 
@@ -179,7 +179,8 @@ public interface Obj {
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj or(Obj other) {
+    @Deprecated
+    default Bool or(Obj other) {
         throw unimplemented("or", other);
     }
 
@@ -191,7 +192,8 @@ public interface Obj {
      *          Right {@link Obj} operand.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj and(Obj other) {
+    @Deprecated
+    default Bool and(Obj other) {
         throw unimplemented("and", other);
     }
 

@@ -81,6 +81,7 @@ public enum TokenType {
     UNDERSCORE,
 
     // SCRIPT
+    MATCH,
     MODULE,
     TYPE,
     IDENTIFIER,
