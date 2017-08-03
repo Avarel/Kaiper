@@ -37,4 +37,8 @@ public class PatternCase extends Pattern {
     public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
     }
+
+    public int size() {
+        return patterns.size();
+    }
 }

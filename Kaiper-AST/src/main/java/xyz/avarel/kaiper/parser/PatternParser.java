@@ -14,6 +14,7 @@ public class PatternParser {
     private final KaiperParser parser;
     private boolean requireName;
     private boolean requireDef;
+    private boolean rest;
 
     public PatternParser(KaiperParser parser) {
         this.parser = parser;
@@ -62,13 +63,15 @@ public class PatternParser {
                         parser.peek(0).getPosition());
             }
         } else if (parser.match(TokenType.REST)) {
+            if (rest) {
+                throw new SyntaxException("Can only have 1 rest pattern", parser.getLast().getPosition());
+            }
+
             requireName = true;
+            rest = true;
+
             Token id = parser.eat(TokenType.IDENTIFIER);
             String name = id.getString();
-
-            if (parser.match(TokenType.COMMA)) {
-                throw new SyntaxException("Rest parameters must be the last parameter", parser.peek(0).getPosition());
-            }
 
             basePattern = new RestPattern(id.getPosition(), name);
         } else {

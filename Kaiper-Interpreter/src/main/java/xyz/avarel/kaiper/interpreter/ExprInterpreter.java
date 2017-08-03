@@ -495,7 +495,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             value = new Tuple(value);
         }
 
-        boolean result = new PatternBinder(this, scope).bind(expr.getPatternCase(), (Tuple) value);
+        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).bind((Tuple) value);
 
         if (!result) {
             throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());

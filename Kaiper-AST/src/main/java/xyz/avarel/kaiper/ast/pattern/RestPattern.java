@@ -11,4 +11,9 @@ public class RestPattern extends NamedPattern {
     public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
     }
+
+    @Override
+    public String toString() {
+        return "..." + getName();
+    }
 }

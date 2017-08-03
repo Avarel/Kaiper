@@ -82,6 +82,7 @@ public enum TokenType {
 
     // SCRIPT
     MATCH,
+    CASE,
     MODULE,
     TYPE,
     IDENTIFIER,

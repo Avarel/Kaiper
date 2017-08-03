@@ -21,30 +21,38 @@ import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.tuples.TupleEntry;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
+import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TupleCommaParser extends BinaryParser {
+    private static final String firstItemName = "_0";
+
     public TupleCommaParser() {
         super(Precedence.TUPLE);
     }
 
     @Override
     public Expr parse(KaiperParser parser, Single left, Token token) {
+        Set<String> fields = new HashSet<>();
         List<TupleEntry> entries = new ArrayList<>();
         boolean named;
 
         if (left instanceof TupleEntry) { // x: 1, __
             TupleEntry tuple = (TupleEntry) left;
             entries.add(tuple);
+            fields.add(tuple.getName());
             named = true;
         } else { // (literal), __
-            entries.add(new TupleEntry(left.getPosition(), "_0", left));
+            fields.add(firstItemName);
+            entries.add(new TupleEntry(left.getPosition(), firstItemName, left));
             named = false;
         }
 
@@ -54,15 +62,33 @@ public class TupleCommaParser extends BinaryParser {
             if (element instanceof TupleEntry) {
                 TupleEntry tuple = (TupleEntry) element;
 
+                String itemName = tuple.getName();
+
+                if (fields.contains(itemName)) {
+                    throw duplicateName(itemName, tuple.getPosition());
+                }
+
                 entries.add(tuple);
+                fields.add(itemName);
                 named = true;
             } else if (named) {
                 throw new SyntaxException("Can not mix positional and named tuples", element.getPosition());
             } else {
-                entries.add(new TupleEntry(element.getPosition(), "_" + entries.size(), element));
+                String itemName = "_" + entries.size();
+
+                if (fields.contains(itemName)) {
+                    throw duplicateName(itemName, element.getPosition());
+                }
+
+                entries.add(new TupleEntry(element.getPosition(), itemName, element));
+                fields.add(itemName);
             }
         } while (parser.match(TokenType.COMMA));
 
         return new TupleExpr(left.getPosition(), entries);
+    }
+
+    private static SyntaxException duplicateName(String name, Position position) {
+        throw new SyntaxException("Duplicate field " + name, position);
     }
 }

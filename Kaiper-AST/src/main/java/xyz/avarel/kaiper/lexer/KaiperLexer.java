@@ -412,6 +412,8 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
                 return make(TokenType.IS);
             case "match":
                 return make(TokenType.MATCH);
+            case "case":
+                return make(TokenType.CASE);
             case "if":
                 return make(TokenType.IF);
             case "else":
