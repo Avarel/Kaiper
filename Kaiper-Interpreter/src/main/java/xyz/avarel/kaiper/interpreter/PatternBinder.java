@@ -1,7 +1,8 @@
 package xyz.avarel.kaiper.interpreter;
 
 import xyz.avarel.kaiper.Pair;
-import xyz.avarel.kaiper.ast.pattern.*;
+import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.pattern.*;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
@@ -11,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
+    // dummy
     private static final Pair<String, Obj> SUCCESS_NO_ASSIGNMENT = new Pair<>(null, null);
 
     private final PatternCase patternCase;
@@ -25,16 +27,13 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
         this.scope = scope;
     }
 
-    public boolean bind(Tuple tuple) {
+    public boolean bindFrom(Tuple tuple) {
         Map<String, Obj> results = new LinkedHashMap<>();
         for (Pattern pattern : patternCase.getPatterns()) {
             Pair<String, Obj> result = pattern.accept(this, tuple);
 
             if (result != null) {
                 if (result != SUCCESS_NO_ASSIGNMENT) {
-//                    if (results.containsKey(result.getFirst())) {
-//                        throw new InterpreterException("Duplicate field matches for " + result.getFirst());
-//                    }
                     results.put(result.getFirst(), result.getSecond());
                 }
             } else {
@@ -58,7 +57,7 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
 
             Tuple tuple = value instanceof Tuple ? (Tuple) value : new Tuple(value);
 
-            if (new PatternBinder(patternCase, interpreter, scope).bind(tuple)) {
+            if (new PatternBinder(patternCase, interpreter, scope).bindFrom(tuple)) {
                 return SUCCESS_NO_ASSIGNMENT;
             } else {
                 return null;
@@ -75,9 +74,9 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
     }
 
     @Override
-    public Pair<String, Obj> visit(ValuePattern pattern, Tuple obj) {
-        System.out.println(obj);
-        System.out.println(pattern);
+    @SuppressWarnings("unchecked")
+    public Pair<String, Obj> visit(ValuePattern _pattern, Tuple obj) {
+        ValuePattern<Single> pattern = (ValuePattern<Single>) _pattern;
 
         if (obj.hasAttr("_" + position)) {
             Obj value = obj.getAttr("_" + position);
@@ -106,7 +105,11 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
     }
 
     @Override
-    public Pair<String, Obj> visit(DefaultPattern pattern, Tuple obj) {
+    @SuppressWarnings("unchecked")
+    public Pair<String, Obj> visit(DefaultPattern<?> _pattern, Tuple obj) {
+        // hope for the best
+        DefaultPattern<Single> pattern = (DefaultPattern<Single>) _pattern;
+
         Pair<String, Obj> result = pattern.getDelegate().accept(this, obj);
 
         if (result == null) {
@@ -127,13 +130,13 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
         } else { // empty
             int endPosition = obj.size() - (patternCase.size() - (patternCase.getPatterns().indexOf(pattern) + 1));
 
-            if (position != endPosition && obj.hasAttr("_" + position)) {
-                Array array = Array.of();
+            if (position != endPosition) {
+                Array array = new Array();
 
                 do {
                     array.add(obj.getAttr("_" + position));
                     position++;
-                } while (position < endPosition && obj.hasAttr("_" + position));
+                } while (position < endPosition);
 
                 value = array;
             } else {

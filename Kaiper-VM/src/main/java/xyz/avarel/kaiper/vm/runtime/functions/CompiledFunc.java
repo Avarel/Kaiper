@@ -3,6 +3,7 @@ package xyz.avarel.kaiper.vm.runtime.functions;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
@@ -37,7 +38,7 @@ public class CompiledFunc extends Func {
     }
 
     @Override
-    public Obj invoke(List<Obj> arguments) {
+    public Obj invoke(Tuple arguments) {
         try {
             Scope scope = this.scope.subPool();
             for (int i = 0; i < getArity(); i++) {

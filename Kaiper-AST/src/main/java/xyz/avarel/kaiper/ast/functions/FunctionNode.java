@@ -18,24 +18,22 @@ package xyz.avarel.kaiper.ast.functions;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.lexer.Position;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class FunctionNode extends Single {
     private final String name;
-    private final List<ParameterData> parameters;
+    private final PatternCase patternCase;
     private final Expr expr;
 
-    public FunctionNode(Position position, List<ParameterData> parameters, Expr expr) {
-        this(position, null, parameters, expr);
+    public FunctionNode(Position position, PatternCase patternCase, Expr expr) {
+        this(position, null, patternCase, expr);
     }
 
-    public FunctionNode(Position position, String name, List<ParameterData> parameters, Expr expr) {
+    public FunctionNode(Position position, String name, PatternCase patternCase, Expr expr) {
         super(position);
         this.name = name;
-        this.parameters = parameters;
+        this.patternCase = patternCase;
         this.expr = expr;
     }
 
@@ -43,8 +41,8 @@ public class FunctionNode extends Single {
         return name;
     }
 
-    public List<ParameterData> getParameterExprs() {
-        return parameters;
+    public PatternCase getPatternCase() {
+        return patternCase;
     }
 
     public Expr getExpr() {
@@ -61,8 +59,7 @@ public class FunctionNode extends Single {
         builder.append(indent).append(isTail ? "└── " : "├── ")
                 .append("func").append(name != null ? " " + name : "")
                 .append('(')
-                .append(getParameterExprs().stream().map(Object::toString)
-                        .collect(Collectors.joining(", ")))
+                .append(patternCase)
                 .append(')');
 
         builder.append('\n');

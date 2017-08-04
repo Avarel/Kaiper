@@ -42,7 +42,7 @@ public class PipeForwardParser extends BinaryParser {
         Single right = parser.parseSingle(getPrecedence());
 
         if (right instanceof Invocation) {
-            ((Invocation) right).getArguments().add(0, left);
+            ((Invocation) right).getArgument().add(0, left);
             return right;
         } else if (right instanceof FunctionNode || right instanceof Identifier) {
             return new Invocation(token.getPosition(), right, Collections.singletonList(left));

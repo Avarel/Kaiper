@@ -16,12 +16,11 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
-import java.util.List;
-import java.util.StringJoiner;
 import java.util.function.Function;
 
 public abstract class Func implements Obj {
@@ -37,8 +36,6 @@ public abstract class Func implements Obj {
 
     public abstract int getArity();
 
-    public abstract List<? extends Parameter> getParameters();
-
     public String getName() {
         return name == null ? "anonymous" : name;
     }
@@ -49,12 +46,12 @@ public abstract class Func implements Obj {
     }
 
     @Override
-    public Function<List<Obj>, Obj> toJava() {
+    public Function<Tuple, Obj> toJava() {
         return this::invoke;
     }
 
     @Override
-    public abstract Obj invoke(List<Obj> arguments);
+    public abstract Obj invoke(Tuple arguments);
 
     @Override
     public Obj shr(Obj other) { // this >> other
@@ -74,12 +71,6 @@ public abstract class Func implements Obj {
 
     @Override
     public String toString() {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (Parameter parameter : getParameters()) {
-            String s = parameter.toString();
-            joiner.add(s);
-        }
-
-        return "def " + getName() + "(" + joiner.toString() + ")";
+        return "def " + getName();
     }
 }

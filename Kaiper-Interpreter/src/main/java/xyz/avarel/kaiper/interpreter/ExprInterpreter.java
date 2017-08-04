@@ -91,13 +91,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     // func print(str: String, n: Int) { for (x in 0..n) { print(str) } }
     @Override
     public Obj visit(FunctionNode expr, Scope scope) {
-        List<CompiledParameter> parameters = new ArrayList<>();
-
-        for (ParameterData data : expr.getParameterExprs()) {
-            parameters.add(new CompiledParameter(data.getName(), data.getDefault(), data.isRest()));
-        }
-
-        Func func = new CompiledFunc(expr.getName(), parameters, expr.getExpr(), this, scope.subPool());
+        Func func = new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope.subPool());
         if (expr.getName() != null) scope.declare(expr.getName(), func);
         return func;
     }
@@ -121,15 +115,12 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         Obj target = resultOf(expr.getLeft(), scope);
 
-        List<Obj> arguments = new ArrayList<>();
+        Obj argument = resultOf(expr.getArgument(), scope);
 
-        for (Expr arg : expr.getArguments()) {
-            arguments.add(resultOf(arg, scope));
-        }
-
+        Tuple tuple = argument instanceof Tuple ? (Tuple) argument : new Tuple(argument);
 
         recursionDepth++;
-        Obj result = target.invoke(arguments);
+        Obj result = target.invoke(tuple);
         recursionDepth--;
 
         return result;
@@ -495,7 +486,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             value = new Tuple(value);
         }
 
-        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).bind((Tuple) value);
+        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).bindFrom((Tuple) value);
 
         if (!result) {
             throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());

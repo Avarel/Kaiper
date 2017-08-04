@@ -32,7 +32,7 @@ import xyz.avarel.kaiper.vm.KaiperVM;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +48,7 @@ public class FileBytecodeTest {
 
         scope.declare("println", new NativeFunc("print","string") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 System.out.println(arguments.get(0));
                 return null;
             }

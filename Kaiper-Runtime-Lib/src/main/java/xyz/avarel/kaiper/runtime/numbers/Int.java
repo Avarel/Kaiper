@@ -23,7 +23,7 @@ import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
-import java.util.List;
+import java.util.Map;
 
 public class Int implements Obj {
     public static final Type<Int> TYPE = new Type<>("Int");
@@ -37,7 +37,7 @@ public class Int implements Obj {
 
         declare("parse", new NativeFunc("parse", "a") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 Obj obj = arguments.get(0);
                 if (obj instanceof Int) {
                     return obj;

@@ -29,7 +29,7 @@ import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.java.JavaType;
 
 import java.lang.reflect.Proxy;
-import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class KaiperRepl {
@@ -42,7 +42,7 @@ public class KaiperRepl {
 
         interpreter.getScope().declare("println", new NativeFunc("print", "string") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 System.out.println(arguments.get(0));
                 return null;
             }

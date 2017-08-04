@@ -19,24 +19,22 @@ import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-import java.util.List;
-
 public class Invocation extends Single {
     private final Single left;
-    private final List<Single> arguments;
+    private final Single argument;
 
-    public Invocation(Position position, Single left, List<Single> arguments) {
+    public Invocation(Position position, Single left, Single argument) {
         super(position);
         this.left = left;
-        this.arguments = arguments;
+        this.argument = argument;
     }
 
     public Single getLeft() {
         return left;
     }
 
-    public List<Single> getArguments() {
-        return arguments;
+    public Single getArgument() {
+        return argument;
     }
 
     @Override
@@ -52,16 +50,6 @@ public class Invocation extends Single {
         left.ast("target", builder, indent + (isTail ? "    " : "│   "), false);
 
         builder.append('\n');
-        if (arguments.isEmpty()) {
-            builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append("*");
-        } else {
-            for (int i = 0; i < arguments.size() - 1; i++) {
-                arguments.get(i).ast(builder, indent + (isTail ? "    " : "│   "), false);
-                builder.append('\n');
-            }
-            if (arguments.size() > 0) {
-                arguments.get(arguments.size() - 1).ast(builder, indent + (isTail ? "    " : "│   "), true);
-            }
-        }
+        argument.ast("argument", builder, indent + (isTail ? "    " : "│   "), false);
     }
 }

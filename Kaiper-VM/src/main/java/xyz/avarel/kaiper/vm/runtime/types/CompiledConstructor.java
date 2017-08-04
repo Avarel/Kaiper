@@ -3,6 +3,7 @@ package xyz.avarel.kaiper.vm.runtime.types;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.runtime.types.Constructor;
@@ -34,7 +35,7 @@ public class CompiledConstructor extends Constructor {
     }
 
     @Override
-    public CompiledObj invoke(List<Obj> arguments) {
+    public CompiledObj invoke(Tuple arguments) {
         return eval(arguments, this.scope);
     }
 

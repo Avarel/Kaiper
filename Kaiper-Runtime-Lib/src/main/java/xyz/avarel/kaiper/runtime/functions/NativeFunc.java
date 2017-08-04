@@ -18,10 +18,9 @@ package xyz.avarel.kaiper.runtime.functions;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public abstract class NativeFunc extends Func {
     //    private final Type receiverType;
@@ -62,14 +61,17 @@ public abstract class NativeFunc extends Func {
     }
 
     @Override
-    public Obj invoke(List<Obj> arguments) {
-        if (arguments.size() < getArity()) {
+    public Obj invoke(Tuple argument) {
+        if (argument.size() < getArity()) {
             throw new ComputeException(getName() + " requires " + getArity() + " arguments");
         }
+
+        // todo make magic
+        Map<String, Obj> arguments = new HashMap<>(getArity());
 
         Obj result = eval(arguments);
         return result != null ? result : Null.VALUE;
     }
 
-    protected abstract Obj eval(List<Obj> arguments);
+    protected abstract Obj eval(Map<String, Obj> arguments);
 }

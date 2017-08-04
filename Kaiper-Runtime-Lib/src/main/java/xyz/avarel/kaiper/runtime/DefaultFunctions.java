@@ -32,12 +32,12 @@ package xyz.avarel.kaiper.runtime;
 
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 
-import java.util.List;
+import java.util.Map;
 
 public enum DefaultFunctions {
     STR(new NativeFunc("str", "a") {
         @Override
-        protected Obj eval(List<Obj> arguments) {
+        protected Obj eval(Map<String, Obj> arguments) {
             Obj obj = arguments.get(0);
             if (obj instanceof Str) {
                 return obj;
@@ -48,10 +48,10 @@ public enum DefaultFunctions {
 
     NOT(new NativeFunc("not", "function") {
         @Override
-        protected Obj eval(List<Obj> arguments) {
+        protected Obj eval(Map<String, Obj> arguments) {
             return new NativeFunc("not") {
                 @Override
-                protected Obj eval(List<Obj> arguments0) {
+                protected Obj eval(Map<String, Obj> arguments0) {
                     return arguments.get(0).invoke(arguments0).negate();
                 }
             };

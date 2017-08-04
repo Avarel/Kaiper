@@ -16,24 +16,28 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.pattern.Pattern;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
+import xyz.avarel.kaiper.ast.pattern.RestPattern;
+import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.runtime.Null;
+import xyz.avarel.kaiper.interpreter.PatternBinder;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.collections.Array;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
 import java.util.List;
 
 public class CompiledFunc extends Func {
-    private final List<CompiledParameter> parameters;
     private final Expr expr;
     private final Scope scope;
     private final ExprInterpreter visitor;
+    private final PatternCase patternCase;
 
-    public CompiledFunc(String name, List<CompiledParameter> parameters, Expr expr, ExprInterpreter visitor, Scope scope) {
+    public CompiledFunc(String name, PatternCase patternCase, Expr expr, ExprInterpreter visitor, Scope scope) {
         super(name);
-        this.parameters = parameters;
+        this.patternCase = patternCase;
         this.expr = expr;
         this.scope = scope;
         this.visitor = visitor;
@@ -41,40 +45,34 @@ public class CompiledFunc extends Func {
 
     @Override
     public int getArity() {
-        if (parameters.isEmpty()) return 0;
-        return parameters.get(parameters.size() - 1).isRest() ? parameters.size() - 1 : parameters.size();
+        boolean rest = false;
+        for (Pattern pattern : patternCase.getPatterns()) {
+            if (pattern instanceof RestPattern) rest = true;
+        }
+
+        return patternCase.size() - (rest ? 1 : 0);
     }
 
     public List<CompiledParameter> getParameters() {
-        return parameters;
+        return null;
     }
 
+    // def fun(x, ...y, z = 5) { println x; println y; println z }
     @Override
-    public Obj invoke(List<Obj> arguments) {
-        Scope scope = this.scope.subPool();
-        for (int i = 0; i < getArity(); i++) {
-            CompiledParameter parameter = parameters.get(i);
-
-            if (i < arguments.size()) {
-                scope.declare(parameter.getName(), arguments.get(i));
-            } else if (parameter.hasDefault()) {
-                scope.declare(parameter.getName(), parameter.getDefaultExpr().accept(visitor, scope));
-            } else {
-                scope.declare(parameter.getName(), Null.VALUE);
-            }
+    public Obj invoke(Tuple arguments) { // todo convert to tuple/obj
+        Tuple tuple;
+        if (!(arguments.get(0) instanceof Tuple)) {
+            tuple = new Tuple(arguments.get(0));
+        } else {
+            tuple = (Tuple) arguments.get(0);
         }
 
-        if (!parameters.isEmpty()) {
-            CompiledParameter lastParam = parameters.get(parameters.size() - 1);
+        Scope scope = this.scope.subPool();
 
-            if (lastParam.isRest()) {
-                if (arguments.size() > getArity()) {
-                    List<Obj> sublist = arguments.subList(parameters.size() - 1, arguments.size());
-                    scope.declare(lastParam.getName(), Array.ofList(sublist));
-                } else {
-                    scope.declare(lastParam.getName(), new Array());
-                }
-            }
+        boolean result = new PatternBinder(patternCase, visitor, scope).bindFrom(tuple);
+
+        if (!result) {
+            throw new InterpreterException("Could not match arguments (" + tuple + ") to " + getName() + "(" + patternCase + ")", expr.getPosition());
         }
 
         try {
@@ -82,5 +80,10 @@ public class CompiledFunc extends Func {
         } catch (ReturnException re) {
             return re.getValue();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "def " + getName() + "(" + patternCase + ")";
     }
 }

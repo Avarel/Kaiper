@@ -17,6 +17,7 @@ package xyz.avarel.kaiper.runtime.types;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
 
 import java.util.ArrayList;
@@ -36,12 +37,8 @@ public abstract class NativeConstructor extends Constructor {
         this.parameters.addAll(Arrays.asList(parameters));
     }
 
-    public List<Parameter> getParameters() {
-        return parameters;
-    }
-
     @Override
-    public Obj invoke(List<Obj> arguments) {
+    public Obj invoke(Tuple arguments) {
         if (arguments.size() < getArity()) {
             throw new ComputeException(targetType + " constructor requires " + getArity() + " arguments");
         }

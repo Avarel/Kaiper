@@ -25,7 +25,6 @@ import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,7 +37,7 @@ public class Dictionary extends HashMap<Obj, Obj> implements Obj {
 
         declare("size", new NativeFunc("size", "dict") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return Int.of(((Dictionary) arguments.get(0)).size());
             }
         });

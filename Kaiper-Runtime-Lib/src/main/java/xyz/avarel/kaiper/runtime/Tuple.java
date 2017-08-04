@@ -4,6 +4,7 @@ import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -57,7 +58,18 @@ public class Tuple implements Obj {
        this.map = map;
     }
 
-    @Override
+    public static Tuple of(Obj... fields) {
+        Map<String, Obj> map = new LinkedHashMap<>();
+
+        int position = 0;
+        for (Obj field : fields) {
+            map.put("_" + position, field);
+            position++;
+        }
+
+        return new Tuple(map);
+    }
+
     public boolean hasAttr(String name) {
         return map.containsKey(name);
     }

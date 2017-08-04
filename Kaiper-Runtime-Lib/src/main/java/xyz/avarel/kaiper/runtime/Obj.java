@@ -20,9 +20,6 @@ import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * An interface containing all natively implemented operations.
  */
@@ -227,7 +224,7 @@ public interface Obj {
      *          List of {@link Obj} arguments.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj invoke(List<Obj> arguments) {
+    default Obj invoke(Tuple arguments) {
         throw unimplemented("invocation");
     }
 
@@ -240,7 +237,7 @@ public interface Obj {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj invoke(Obj... arguments) {
-        return invoke(Arrays.asList(arguments));
+        return invoke(Tuple.of(arguments));
     }
 
     default Obj slice(Obj start, Obj end, Obj step) {
@@ -268,10 +265,6 @@ public interface Obj {
 
     default Obj set(Obj key, Obj value) {
         throw unimplemented("set");
-    }
-
-    default boolean hasAttr(String name) {
-        return false;
     }
 
     /**

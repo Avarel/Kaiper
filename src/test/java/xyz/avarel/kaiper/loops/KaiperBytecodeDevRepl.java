@@ -31,7 +31,7 @@ import xyz.avarel.kaiper.tools.bytecode.BytecodeOutliner;
 import xyz.avarel.kaiper.vm.KaiperVM;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class KaiperBytecodeDevRepl {
@@ -47,7 +47,7 @@ public class KaiperBytecodeDevRepl {
 
         scope.declare("print", new NativeFunc("print", Parameter.of("string")) {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 System.out.println(arguments.get(0));
                 return null;
             }

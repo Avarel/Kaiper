@@ -22,7 +22,7 @@ import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.types.Type;
 
-import java.util.List;
+import java.util.Map;
 
 public class Str implements Obj {
     public static final Type<Str> TYPE = new Type<>("String");
@@ -31,32 +31,32 @@ public class Str implements Obj {
 
         declare("length", new NativeFunc("length", "string") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return Int.of(arguments.get(0).as(Str.TYPE).length());
             }
         });
 
         declare("contains", new NativeFunc("contains", "string", "query") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return arguments.get(0).as(Str.TYPE).contains((Str) arguments.get(1));
             }
         });
         declare("indexOf", new NativeFunc("indexOf", "string", "query") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return arguments.get(0).as(Str.TYPE).indexOf((Str) arguments.get(1));
             }
         });
         declare("split", new NativeFunc("split", "string", "query") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return arguments.get(0).as(Str.TYPE).split((Str) arguments.get(1));
             }
         });
         declare("substring", new NativeFunc("substring", "string", "index") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 if (arguments.size() >= 3) {
                     if (arguments.get(1) instanceof Int) {
                         return arguments.get(0).as(Str.TYPE).substring((Int) arguments.get(1), (Int) arguments.get(2));
@@ -69,25 +69,25 @@ public class Str implements Obj {
         });
         declare("toVector", new NativeFunc("toVector", "string") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return arguments.get(0).as(Str.TYPE).toVector();
             }
         });
         declare("toLowerCase", new NativeFunc("toLowerCase", "string") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return arguments.get(0).as(Str.TYPE).toLowerCase();
             }
         });
         declare("toUpperCase", new NativeFunc("toUpperCase", "string") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return arguments.get(0).as(Str.TYPE).toUpperCase();
             }
         });
         declare("trim", new NativeFunc("trim", "string") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return arguments.get(0).as(Str.TYPE).trim();
             }
         });

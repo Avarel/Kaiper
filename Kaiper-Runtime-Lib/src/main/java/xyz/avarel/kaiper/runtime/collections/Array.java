@@ -38,21 +38,21 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
 
         declare("length", new NativeFunc("length", "array") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return Int.of(arguments.get(0).as(Array.TYPE).size());
             }
         });
 
         declare("lastIndex", new NativeFunc("lastIndex", "array") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return Int.of(arguments.get(0).as(Array.TYPE).size() - 1);
             }
         });
 
         declare("append", new NativeFunc("append", Parameter.of("array"), Parameter.of("elements", true)) {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 arguments.get(0).as(Array.TYPE).addAll(arguments);
                 return arguments.get(0);
             }
@@ -60,7 +60,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
 
         declare("each", new NativeFunc("each", "array", "action") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 Func action = arguments.get(1).as(Func.TYPE);
 
                 for (Obj obj : arguments.get(0).as(Array.TYPE)) {
@@ -72,7 +72,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
 
         declare("map", new NativeFunc("map", "array", "transform") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 Func transform = arguments.get(1).as(Func.TYPE);
 
                 Array array = new Array();
@@ -85,7 +85,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
 
         declare("filter", new NativeFunc("filter", "array", "predicate") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 Func predicate = arguments.get(1).as(Func.TYPE);
 
                 Array array = new Array();
@@ -100,7 +100,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         declare("fold",
                 new NativeFunc("fold", "array", "accumulator", "operation") {
                     @Override
-                    protected Obj eval(List<Obj> arguments) {
+                    protected Obj eval(Map<String, Obj> arguments) {
                         Obj accumulator = arguments.get(1);
                         Func operation = arguments.get(2).as(Func.TYPE);
 

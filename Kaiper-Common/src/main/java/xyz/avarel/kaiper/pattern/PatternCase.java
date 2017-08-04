@@ -1,13 +1,16 @@
-package xyz.avarel.kaiper.ast.pattern;
+package xyz.avarel.kaiper.pattern;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class PatternCase extends Pattern {
+// multiple of patterns
+public class PatternCase implements Pattern {
+    public static final PatternCase EMPTY_CASE = new PatternCase(Collections.emptyList());
+
     private final List<Pattern> patterns;
 
     public PatternCase(List<Pattern> patterns) {
-        super(patterns.get(0).getPosition());
         this.patterns = patterns;
     }
 
@@ -16,7 +19,11 @@ public class PatternCase extends Pattern {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder("(");
+        if (patterns.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
         Iterator<Pattern> iterator = patterns.iterator();
 
         while (true) {
@@ -28,7 +35,6 @@ public class PatternCase extends Pattern {
                 break;
             }
         }
-        sb.append(")");
 
         return sb.toString();
     }

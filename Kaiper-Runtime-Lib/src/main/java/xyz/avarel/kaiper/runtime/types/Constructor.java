@@ -17,8 +17,6 @@ package xyz.avarel.kaiper.runtime.types;
 
 import xyz.avarel.kaiper.runtime.functions.Func;
 
-import java.util.stream.Collectors;
-
 public abstract class Constructor extends Func {
     protected Type targetType;
 
@@ -29,15 +27,5 @@ public abstract class Constructor extends Func {
     @Override
     public String getName() {
         return targetType + "." + super.getName();
-    }
-
-    @Override
-    public int getArity() {
-        return getParameters().size();
-    }
-
-    @Override
-    public String toString() {
-        return "init(" + getParameters().stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
     }
 }

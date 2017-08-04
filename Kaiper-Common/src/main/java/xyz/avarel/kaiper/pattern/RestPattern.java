@@ -1,10 +1,8 @@
-package xyz.avarel.kaiper.ast.pattern;
-
-import xyz.avarel.kaiper.lexer.Position;
+package xyz.avarel.kaiper.pattern;
 
 public class RestPattern extends NamedPattern {
-    public RestPattern(Position position, String name) {
-        super(position, name);
+    public RestPattern(String name) {
+        super(name);
     }
 
     @Override

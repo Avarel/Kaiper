@@ -42,9 +42,7 @@ public class InvocationParser extends BinaryParser {
         List<Single> arguments = new ArrayList<>();
 
         if (!parser.match(TokenType.RIGHT_PAREN)) {
-            do {
-                arguments.add(parser.parseSingle());
-            } while (parser.match(TokenType.COMMA));
+            arguments.add(parser.parseSingle());
             parser.eat(TokenType.RIGHT_PAREN);
         }
 

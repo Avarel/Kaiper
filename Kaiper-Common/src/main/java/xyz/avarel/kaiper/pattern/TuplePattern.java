@@ -1,6 +1,4 @@
-package xyz.avarel.kaiper.ast.pattern;
-
-import xyz.avarel.kaiper.lexer.Position;
+package xyz.avarel.kaiper.pattern;
 
 // a: is Int
 // a: 2
@@ -9,8 +7,8 @@ import xyz.avarel.kaiper.lexer.Position;
 public class TuplePattern extends NamedPattern {
     private final Pattern pattern;
 
-    public TuplePattern(Position position, String name, Pattern pattern) {
-        super(position, name);
+    public TuplePattern(String name, Pattern pattern) {
+        super(name);
         this.pattern = pattern;
     }
 

@@ -2,7 +2,6 @@ package xyz.avarel.kaiper.parser;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Single;
-import xyz.avarel.kaiper.ast.pattern.*;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
@@ -10,14 +9,14 @@ import xyz.avarel.kaiper.lexer.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PatternParser {
-    private final KaiperParser parser;
+public class PatternParser extends KaiperParser {
     private boolean requireName;
     private boolean requireDef;
     private boolean rest;
 
+    // proxy the parser
     public PatternParser(KaiperParser parser) {
-        this.parser = parser;
+        super(parser);
     }
 
     public PatternCase parsePatternSet() {
@@ -25,7 +24,7 @@ public class PatternParser {
 
         do {
             patterns.add(parsePattern());
-        } while (parser.match(TokenType.COMMA));
+        } while (match(TokenType.COMMA));
 
         return new PatternCase(patterns);
     }
@@ -33,50 +32,48 @@ public class PatternParser {
     private Pattern parsePattern() {
         Pattern basePattern;
 
-        if (parser.nextIs(TokenType.IDENTIFIER)) {
+        if (nextIs(TokenType.IDENTIFIER)) {
             requireName = true;
-            Token id = parser.eat(TokenType.IDENTIFIER);
-            String name = id.getString();
+            String name = eat(TokenType.IDENTIFIER).getString();
 
-            if (parser.match(TokenType.COLON)) {
+            if (match(TokenType.COLON)) {
                 Pattern pattern;
-                if (parser.nextIs(TokenType.IDENTIFIER)) {
-                    Token innerId = parser.eat(TokenType.IDENTIFIER);
-                    String innerName = innerId.getString();
-                    pattern = new VariablePattern(innerId.getPosition(), innerName);
+
+                if (nextIs(TokenType.IDENTIFIER)) {
+                    String innerName = eat(TokenType.IDENTIFIER).getString();
+                    pattern = new VariablePattern(innerName);
                 } else {
                     pattern = parseSimplePattern();
                 }
 
-                basePattern = new TuplePattern(id.getPosition(), name, pattern);
-            } else {
-                basePattern = new VariablePattern(id.getPosition(), name);
+                basePattern = new TuplePattern(name, pattern);
+            } else { // x ~= _0: x
+                basePattern = new VariablePattern(name);
             }
 
-            if (parser.match(TokenType.ASSIGN)) {
+            if (match(TokenType.ASSIGN)) {
                 requireDef = true;
 
-                Single def = parser.parseSingle(Precedence.TUPLE_PAIR);
-                basePattern = new DefaultPattern(parser.getLast().getPosition(), (NamedPattern) basePattern, def);
+                Single def = parseSingle(Precedence.TUPLE_PAIR);
+                basePattern = new DefaultPattern((NamedPattern) basePattern, def);
             } else if (requireDef) {
                 throw new SyntaxException("All parameters after the first default requires a default",
-                        parser.peek(0).getPosition());
+                        peek(0).getPosition());
             }
-        } else if (parser.match(TokenType.REST)) {
+        } else if (match(TokenType.REST)) {
             if (rest) {
-                throw new SyntaxException("Can only have 1 rest pattern", parser.getLast().getPosition());
+                throw new SyntaxException("Can only have 1 rest pattern", getLast().getPosition());
             }
 
             requireName = true;
             rest = true;
 
-            Token id = parser.eat(TokenType.IDENTIFIER);
-            String name = id.getString();
+            String name = eat(TokenType.IDENTIFIER).getString();
 
-            basePattern = new RestPattern(id.getPosition(), name);
+            basePattern = new RestPattern(name);
         } else {
             if (requireName) {
-                throw new SyntaxException("Can not mix positional and named patterns", parser.peek(0).getPosition());
+                throw new SyntaxException("Can not mix positional and named patterns", peek(0).getPosition());
             }
             basePattern = parseSimplePattern();
         }
@@ -85,20 +82,20 @@ public class PatternParser {
     }
 
     private Pattern parseSimplePattern() {
-        if (parser.nextIsAny(
+        if (nextIsAny(
                 TokenType.INT, TokenType.NUMBER, TokenType.STRING,
                 TokenType.NULL, TokenType.BOOLEAN, TokenType.LEFT_BRACKET
-        ) || parser.match(TokenType.EQUALS)) {
-            Single value = parser.parseSingle(Precedence.TUPLE);
-            return new ValuePattern(value.getPosition(), value);
-        } else if (parser.match(TokenType.UNDERSCORE)) {
+        ) || match(TokenType.EQUALS)) {
+            Single value = parseSingle(Precedence.TUPLE);
+            return new ValuePattern(value);
+        } else if (match(TokenType.UNDERSCORE)) {
             return WildcardPattern.INSTANCE;
-        } else if (parser.match(TokenType.LEFT_PAREN)) {
+        } else if (match(TokenType.LEFT_PAREN)) {
             PatternCase nested = parsePatternSet();
-            parser.eat(TokenType.RIGHT_PAREN);
+            eat(TokenType.RIGHT_PAREN);
             return nested;
         } else {
-            Token unexpected = parser.peek(0);
+            Token unexpected = peek(0);
             throw new SyntaxException("Unexpected pattern " + unexpected.getType(), unexpected.getPosition());
         }
     }

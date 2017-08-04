@@ -30,7 +30,7 @@ import xyz.avarel.kaiper.runtime.java.JavaUtils;
 import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class KaiperDevRepl {
@@ -46,7 +46,7 @@ public class KaiperDevRepl {
 
         scope.declare("print", new NativeFunc("print", Parameter.of("string")) {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 System.out.println(arguments.get(0));
                 return null;
             }

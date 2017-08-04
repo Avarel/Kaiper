@@ -26,6 +26,7 @@ import xyz.avarel.kaiper.runtime.types.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class Range implements Obj, Iterable<Int> {
     public static final Type<Range> TYPE = new Type<>("Range");
@@ -34,14 +35,14 @@ public class Range implements Obj, Iterable<Int> {
 
         declare("length", new NativeFunc("length", "range") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return Int.of(((Range) arguments.get(0)).size());
             }
         });
 
         declare("lastIndex", new NativeFunc("lastIndex", "range") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
+            protected Obj eval(Map<String, Obj> arguments) {
                 return Int.of(((Range) arguments.get(0)).size() - 1);
             }
         });

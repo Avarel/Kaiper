@@ -17,16 +17,14 @@ package xyz.avarel.kaiper.parser.parslets.functions;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
-import xyz.avarel.kaiper.ast.functions.ParameterData;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
-import xyz.avarel.kaiper.parser.KaiperParserUtils;
+import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
-
-import java.util.List;
 
 public class FunctionParser implements PrefixParser {
     @Override
@@ -40,7 +38,14 @@ public class FunctionParser implements PrefixParser {
             name = parser.getLast().getString();
         }
 
-        List<ParameterData> parameters = KaiperParserUtils.parseParameters(parser);
+        PatternCase patternCase;
+        parser.eat(TokenType.LEFT_PAREN);
+        if (!parser.match(TokenType.RIGHT_PAREN)) {
+            patternCase = new PatternParser(parser).parsePatternSet();
+            parser.eat(TokenType.RIGHT_PAREN);
+        } else {
+            patternCase = PatternCase.EMPTY_CASE;
+        }
 
         Expr expr;
 
@@ -56,6 +61,6 @@ public class FunctionParser implements PrefixParser {
             }
         }
 
-        return new FunctionNode(token.getPosition(), name, parameters, expr);
+        return new FunctionNode(token.getPosition(), name, patternCase, expr);
     }
 }

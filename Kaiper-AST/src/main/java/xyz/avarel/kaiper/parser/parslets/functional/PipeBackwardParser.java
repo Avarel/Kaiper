@@ -42,7 +42,7 @@ public class PipeBackwardParser extends BinaryParser {
         Single right = parser.parseSingle(getPrecedence() - 1);
 
         if (left instanceof Invocation) {
-            ((Invocation) left).getArguments().add(0, left);
+            ((Invocation) left).getArgument().add(0, left);
             return left;
         } else if (left instanceof FunctionNode || left instanceof Identifier) {
             return new Invocation(token.getPosition(), left, Collections.singletonList(right));

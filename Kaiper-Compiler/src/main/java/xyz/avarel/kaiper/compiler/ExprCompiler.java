@@ -149,12 +149,12 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     @Override
     public DataOutputConsumer visit(Invocation expr, Void scope) {
         DataOutputConsumer tmp = expr.getLeft().accept(this, null), args = NO_OP_CONSUMER;
-        for (Single arg : expr.getArguments()) {
+        for (Single arg : expr.getArgument()) {
             args = args.andThen(arg.accept(this, null));
         }
 
         DataOutputConsumer data = tmp.andThen(args);
-        int pCount = expr.getArguments().size();
+        int pCount = expr.getArgument().size();
 
         return out -> {
             data.writeInto(out);
