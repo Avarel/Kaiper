@@ -44,7 +44,7 @@ public class FunctionParser implements PrefixParser {
             patternCase = new PatternParser(parser).parsePatternCase();
             parser.eat(TokenType.RIGHT_PAREN);
         } else {
-            patternCase = PatternCase.EMPTY_CASE;
+            patternCase = PatternCase.EMPTY;
         }
 
         Expr expr;

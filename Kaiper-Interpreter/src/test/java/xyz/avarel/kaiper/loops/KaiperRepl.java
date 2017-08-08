@@ -21,14 +21,10 @@ package xyz.avarel.kaiper.loops;
 
 import xyz.avarel.kaiper.KaiperREPL;
 import xyz.avarel.kaiper.exceptions.KaiperException;
-import xyz.avarel.kaiper.interop.IJavaModel;
-import xyz.avarel.kaiper.interop.JavaModel;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
-import xyz.avarel.kaiper.runtime.java.JavaType;
 
-import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -48,10 +44,10 @@ public class KaiperRepl {
             }
         });
 
-        interpreter.getScope().declare("IJavaModel", new JavaType(IJavaModel.class));
-        interpreter.getScope().declare("JavaClass", new JavaType(Class.class));
-        interpreter.getScope().declare("JavaModel", new JavaType(JavaModel.class));
-        interpreter.getScope().declare("Gambiarra", new JavaType(Proxy.getProxyClass(KaiperRepl.class.getClassLoader(), IJavaModel.class, Runnable.class)));
+//        interpreter.getScope().declare("IJavaModel", new JavaType(IJavaModel.class));
+//        interpreter.getScope().declare("JavaClass", new JavaType(Class.class));
+//        interpreter.getScope().declare("JavaModel", new JavaType(JavaModel.class));
+//        interpreter.getScope().declare("Gambiarra", new JavaType(Proxy.getProxyClass(KaiperRepl.class.getClassLoader(), IJavaModel.class, Runnable.class)));
 
         while (running) {
             try {
@@ -72,7 +68,7 @@ public class KaiperRepl {
                     result = interpreter.eval(input);
                 } catch (KaiperException e) {
                     System.out.println("! " + e.getMessage());
-                    //e.printStackTrace();
+                    e.printStackTrace();
                     result = Null.VALUE;
                 }
 

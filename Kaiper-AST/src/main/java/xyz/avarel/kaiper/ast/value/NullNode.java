@@ -29,4 +29,9 @@ public class NullNode extends Single {
     public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
     }
+
+    @Override
+    public String toString() {
+        return "null";
+    }
 }

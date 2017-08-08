@@ -1,14 +1,19 @@
 package xyz.avarel.kaiper.pattern;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 // multiple of patterns
 public class PatternCase implements Pattern {
-    public static final PatternCase EMPTY_CASE = new PatternCase(Collections.emptyList());
+    public static final PatternCase EMPTY = new PatternCase(Collections.emptyList());
 
     private final List<Pattern> patterns;
+
+    public PatternCase(Pattern... patterns) {
+        this(Arrays.asList(patterns));
+    }
 
     public PatternCase(List<Pattern> patterns) {
         this.patterns = patterns;

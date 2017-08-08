@@ -18,10 +18,18 @@ package xyz.avarel.kaiper.parser.parslets.functional;
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.ast.functions.FunctionNode;
+import xyz.avarel.kaiper.ast.invocation.Invocation;
+import xyz.avarel.kaiper.ast.tuples.TupleEntry;
+import xyz.avarel.kaiper.ast.tuples.TupleExpr;
+import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PipeBackwardParser extends BinaryParser {
     public PipeBackwardParser() {
@@ -36,14 +44,25 @@ public class PipeBackwardParser extends BinaryParser {
 
         Single right = parser.parseSingle(getPrecedence() - 1);
 
-        //fixme
+        if (left instanceof Invocation) {
+            Single argument = ((Invocation) left).getArgument();
 
-//        if (left instanceof Invocation) {
-//            ((Invocation) left).getArgument().add(0, left);
-//            return left;
-//        } else if (left instanceof FunctionNode || left instanceof Identifier) {
-//            return new Invocation(token.getPosition(), left, Collections.singletonList(right));
-//        }
+            TupleExpr tuple = argument instanceof TupleExpr ? (TupleExpr) argument : new TupleExpr(argument);
+            List<TupleEntry> entries = new ArrayList<>(tuple.getEntries());
+
+            for (int i = 0; i < entries.size(); i++) {
+                TupleEntry entry = entries.get(i);
+                if (entry.getName().equals("_" + i)) {
+                    entries.set(i, new TupleEntry(entry.getPosition(), "_" + (i + 1), entry.getExpr()));
+                }
+            }
+
+            entries.add(0, new TupleEntry(right.getPosition(), "_0", right));
+
+            return new Invocation(token.getPosition(), left, new TupleExpr(tuple.getPosition(), entries));
+        } else if (left instanceof FunctionNode || left instanceof Identifier) {
+            return new Invocation(token.getPosition(), left, right);
+        }
 
         throw new SyntaxException(
                 "Pipe-backward requires the left operand to be either: invocation, function, or name",

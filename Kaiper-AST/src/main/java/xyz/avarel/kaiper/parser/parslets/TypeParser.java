@@ -22,7 +22,7 @@ public class TypeParser implements PrefixParser {
     public Expr parse(KaiperParser parser, Token token) {
         String name = parser.eat(TokenType.IDENTIFIER).getString();
 
-        PatternCase patternCase = PatternCase.EMPTY_CASE;
+        PatternCase patternCase = PatternCase.EMPTY;
         if (parser.match(TokenType.LEFT_PAREN)) {
             patternCase = new PatternParser(parser).parsePatternCase();
             parser.eat(TokenType.RIGHT_PAREN);
