@@ -64,4 +64,9 @@ public class ConditionalExpr extends Single {
             elseBranch.ast("false", builder, indent + (isTail ? "    " : "│   "), true);
         }
     }
+
+    @Override
+    public String toString() {
+        return "conditional";
+    }
 }

@@ -50,4 +50,9 @@ public class UnaryOperation extends Single {
         builder.append('\n');
         target.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
+
+    @Override
+    public String toString() {
+        return operator + "(" + target + ")";
+    }
 }

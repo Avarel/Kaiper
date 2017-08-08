@@ -17,6 +17,7 @@ package xyz.avarel.kaiper.ast.functions;
 
 import xyz.avarel.kaiper.ast.Single;
 
+@Deprecated
 public class ParameterData {
     private final String name;
     private final Single defaultExpr;

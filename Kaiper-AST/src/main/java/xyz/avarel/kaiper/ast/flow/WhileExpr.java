@@ -53,4 +53,9 @@ public class WhileExpr extends Single {
         builder.append('\n');
         action.ast("action", builder, indent + (isTail ? "    " : "│   "), true);
     }
+
+    @Override
+    public String toString() {
+        return "while";
+    }
 }

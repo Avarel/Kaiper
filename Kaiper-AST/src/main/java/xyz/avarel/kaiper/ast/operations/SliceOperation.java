@@ -76,4 +76,9 @@ public class SliceOperation extends Single {
             step.ast("step", builder, indent + (isTail ? "    " : "│   "), true);
         }
     }
+
+    @Override
+    public String toString() {
+        return left + "[" + start + ":" + end + ":" + step + "]";
+    }
 }

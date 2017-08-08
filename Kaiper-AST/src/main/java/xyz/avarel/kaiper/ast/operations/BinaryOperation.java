@@ -59,4 +59,9 @@ public class BinaryOperation extends Single {
         builder.append('\n');
         right.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
+
+    @Override
+    public String toString() {
+        return operator + "(" + left + ", " + right + ")";
+    }
 }

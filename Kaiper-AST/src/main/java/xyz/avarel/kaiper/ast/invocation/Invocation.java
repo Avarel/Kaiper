@@ -52,4 +52,9 @@ public class Invocation extends Single {
         builder.append('\n');
         argument.ast("argument", builder, indent + (isTail ? "    " : "│   "), false);
     }
+
+    @Override
+    public String toString() {
+        return left + "(" + argument + ")";
+    }
 }

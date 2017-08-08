@@ -39,4 +39,9 @@ public class DestructuringDeclarationExpr extends Expr {
         builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
+
+    @Override
+    public String toString() {
+        return "destructure";
+    }
 }

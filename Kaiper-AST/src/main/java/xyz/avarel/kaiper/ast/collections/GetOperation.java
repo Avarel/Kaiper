@@ -52,4 +52,9 @@ public class GetOperation extends Single {
         builder.append('\n');
         key.ast("key", builder, indent + (isTail ? "    " : "│   "), true);
     }
+
+    @Override
+    public String toString() {
+        return left + "[" + key + "]";
+    }
 }

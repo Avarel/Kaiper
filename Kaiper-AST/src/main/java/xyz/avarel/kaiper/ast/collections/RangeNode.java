@@ -52,4 +52,9 @@ public class RangeNode extends Single {
         builder.append('\n');
         right.ast("end", builder, indent + (isTail ? "    " : "│   "), true);
     }
+
+    @Override
+    public String toString() {
+        return left + ".." + right;
+    }
 }

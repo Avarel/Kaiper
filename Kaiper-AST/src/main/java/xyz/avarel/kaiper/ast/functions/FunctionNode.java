@@ -57,12 +57,17 @@ public class FunctionNode extends Single {
     @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
         builder.append(indent).append(isTail ? "└── " : "├── ")
-                .append("func").append(name != null ? " " + name : "")
+                .append("def").append(name != null ? " " + name : "")
                 .append('(')
                 .append(patternCase)
                 .append(')');
 
         builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
+    }
+
+    @Override
+    public String toString() {
+        return "def" + (name != null ? " " + name : "") + "(" + patternCase + ")";
     }
 }

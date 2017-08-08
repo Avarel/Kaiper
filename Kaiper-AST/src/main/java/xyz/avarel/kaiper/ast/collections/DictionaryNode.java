@@ -57,4 +57,9 @@ public class DictionaryNode extends Single {
     public void ast(StringBuilder builder, String indent, boolean isTail) {
         builder.append(indent).append(isTail ? "└── " : "├── ").append("dictionary");
     }
+
+    @Override
+    public String toString() {
+        return map.toString();
+    }
 }

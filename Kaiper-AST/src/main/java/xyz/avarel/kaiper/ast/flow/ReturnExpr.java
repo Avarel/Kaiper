@@ -40,4 +40,9 @@ public class ReturnExpr extends Single {
     public void ast(StringBuilder builder, String indent, boolean isTail) {
         expr.ast("return", builder, indent, true);
     }
+
+    @Override
+    public String toString() {
+        return "return " + expr;
+    }
 }

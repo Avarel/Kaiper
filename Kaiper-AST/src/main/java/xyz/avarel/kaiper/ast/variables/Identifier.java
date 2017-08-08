@@ -47,12 +47,6 @@ public class Identifier extends Single {
     }
 
     @Override
-    public String toString() {
-
-        return name;
-    }
-
-    @Override
     public void ast(StringBuilder builder, String indent, boolean isTail) {
         if (parent != null) {
             builder.append(indent).append(isTail ? "└── " : "├── ").append("attribute");
@@ -65,5 +59,10 @@ public class Identifier extends Single {
         } else {
             super.ast(builder, indent, isTail);
         }
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -65,4 +65,9 @@ public class ArrayNode extends Single {
             items.get(items.size() - 1).ast(builder, indent + (isTail ? "    " : "│   "), true);
         }
     }
+
+    @Override
+    public String toString() {
+        return items.toString();
+    }
 }

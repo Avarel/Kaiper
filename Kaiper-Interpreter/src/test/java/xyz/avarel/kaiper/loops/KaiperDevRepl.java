@@ -67,6 +67,11 @@ public class KaiperDevRepl {
 
                 KaiperScript exp = new KaiperScript(input, scope);
                 ScriptExpr expr = exp.compile();
+
+                StringBuilder builder = new StringBuilder();
+                expr.ast(builder, "\t\t ", true);
+                System.out.println("   AST > +\n" + builder);
+
                 long start = System.nanoTime();
                 Obj result = expr.compute();
                 long end = System.nanoTime();
@@ -77,11 +82,7 @@ public class KaiperDevRepl {
                 System.out.println("RESULT | " + result + " : " + result.getType());
                 System.out.println("  TIME | " + ms + "ms " + ns + "ns" );
 
-                StringBuilder builder = new StringBuilder();
 
-                expr.ast(builder, "\t\t ", true);
-
-                System.out.println("   AST > +\n" + builder);
 
                 System.out.println();
             } catch (RuntimeException e) {

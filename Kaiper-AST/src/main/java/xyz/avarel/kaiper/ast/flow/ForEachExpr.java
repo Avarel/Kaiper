@@ -62,4 +62,9 @@ public class ForEachExpr extends Single {
         builder.append('\n');
         action.ast("action", builder, indent + (isTail ? "    " : "│   "), true);
     }
+
+    @Override
+    public String toString() {
+        return "foreach";
+    }
 }

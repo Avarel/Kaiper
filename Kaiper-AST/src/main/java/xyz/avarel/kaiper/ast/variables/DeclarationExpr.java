@@ -52,4 +52,9 @@ public class DeclarationExpr extends Single {
         builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
+
+    @Override
+    public String toString() {
+        return "let " + name + " = " + expr;
+    }
 }

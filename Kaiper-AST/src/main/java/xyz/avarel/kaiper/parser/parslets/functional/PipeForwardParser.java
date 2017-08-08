@@ -59,7 +59,7 @@ public class PipeForwardParser extends BinaryParser {
 
             entries.add(0, new TupleEntry(left.getPosition(), "_0", left));
 
-            return new Invocation(token.getPosition(), right, new TupleExpr(tuple.getPosition(), entries));
+            return new Invocation(token.getPosition(), ((Invocation) right).getLeft(), new TupleExpr(tuple.getPosition(), entries));
         } else if (right instanceof FunctionNode || right instanceof Identifier) {
             return new Invocation(token.getPosition(), right, left);
         }

@@ -67,4 +67,9 @@ public class Statements extends Expr implements Iterable<Expr> {
     public Iterator<Expr> iterator() {
         return statements.iterator();
     }
+
+    @Override
+    public String toString() {
+        return "statements";
+    }
 }
