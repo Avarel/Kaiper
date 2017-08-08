@@ -17,8 +17,7 @@ package xyz.avarel.kaiper.runtime.types;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Obj;
-
-import java.util.List;
+import xyz.avarel.kaiper.runtime.Tuple;
 
 @SuppressWarnings("unused")
 public class Type<T> implements Obj {
@@ -102,7 +101,8 @@ public class Type<T> implements Obj {
     }
 
     @Override
-    public Obj invoke(List<Obj> arguments) {
+    public Obj invoke(Tuple arguments) {
+        // fixme
         if (constructor == null) {
             throw new ComputeException(toString() + " does not support instantiation");
         } else {

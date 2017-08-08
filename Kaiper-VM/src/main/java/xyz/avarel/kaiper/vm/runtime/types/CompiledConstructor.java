@@ -35,8 +35,8 @@ public class CompiledConstructor extends Constructor {
     }
 
     @Override
-    public CompiledObj invoke(Tuple arguments) {
-        return eval(arguments, this.scope);
+    public CompiledObj invoke(Tuple argument) {
+        return eval(argument, this.scope);
     }
 
     private CompiledObj eval(List<Obj> arguments, Scope scope) {

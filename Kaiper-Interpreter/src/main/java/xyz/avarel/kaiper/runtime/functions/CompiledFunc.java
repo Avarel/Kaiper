@@ -16,18 +16,16 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.pattern.Pattern;
-import xyz.avarel.kaiper.ast.pattern.PatternCase;
-import xyz.avarel.kaiper.ast.pattern.RestPattern;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.interpreter.PatternBinder;
+import xyz.avarel.kaiper.pattern.Pattern;
+import xyz.avarel.kaiper.pattern.PatternCase;
+import xyz.avarel.kaiper.pattern.RestPattern;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
-
-import java.util.List;
 
 public class CompiledFunc extends Func {
     private final Expr expr;
@@ -53,26 +51,13 @@ public class CompiledFunc extends Func {
         return patternCase.size() - (rest ? 1 : 0);
     }
 
-    public List<CompiledParameter> getParameters() {
-        return null;
-    }
-
     // def fun(x, ...y, z = 5) { println x; println y; println z }
     @Override
-    public Obj invoke(Tuple arguments) { // todo convert to tuple/obj
-        Tuple tuple;
-        if (!(arguments.get(0) instanceof Tuple)) {
-            tuple = new Tuple(arguments.get(0));
-        } else {
-            tuple = (Tuple) arguments.get(0);
-        }
-
+    public Obj invoke(Tuple argument) { // todo convert to tuple/obj
         Scope scope = this.scope.subPool();
 
-        boolean result = new PatternBinder(patternCase, visitor, scope).bindFrom(tuple);
-
-        if (!result) {
-            throw new InterpreterException("Could not match arguments (" + tuple + ") to " + getName() + "(" + patternCase + ")", expr.getPosition());
+        if (!new PatternBinder(patternCase, visitor, scope).bindFrom(argument)) {
+            throw new InterpreterException("Could not match arguments (" + argument + ") to " + getName() + "(" + patternCase + ")");
         }
 
         try {

@@ -24,23 +24,14 @@ import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class NameParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
         Identifier id = new Identifier(token.getPosition(), token.getString());
 
-        if (parser.nextIsAny(TokenType.STRING, TokenType.INT, TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.LEFT_BRACE)) {
-            List<Single> arguments = new ArrayList<>();
-            arguments.add(parser.parseSingle());
-
-            while (parser.match(TokenType.COMMA)) {
-                arguments.add(parser.parseSingle());
-            }
-
-            return new Invocation(token.getPosition(), id, arguments);
+        if (parser.nextIsAny(TokenType.STRING, TokenType.INT, TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.LEFT_BRACE, TokenType.LEFT_PAREN)) {
+            Single argument = parser.parseSingle();
+            return new Invocation(token.getPosition(), id, argument);
         }
 
         return id;

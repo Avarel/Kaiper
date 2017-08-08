@@ -16,43 +16,46 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
+import xyz.avarel.kaiper.pattern.Pattern;
+import xyz.avarel.kaiper.pattern.PatternCase;
+import xyz.avarel.kaiper.pattern.RestPattern;
+import xyz.avarel.kaiper.pattern.VariablePattern;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
+import xyz.avarel.kaiper.runtime.functions.pattern.NativePatternBinder;
 
 import java.util.*;
 
 public abstract class NativeFunc extends Func {
-    //    private final Type receiverType;
-    private final List<Parameter> parameters;
+    private final PatternCase patternCase;
 
     public NativeFunc(String name) {
-        this(name, new Parameter[0]);
+        this(name, new String[0]);
     }
 
-    public NativeFunc(String name, Parameter... parameters) {
+    public NativeFunc(String name, Pattern... parameters) {
         super(name);
-        this.parameters = Arrays.asList(parameters);
+        this.patternCase = new PatternCase(Arrays.asList(parameters));
     }
 
     public NativeFunc(String name, String... params) {
         super(name);
-        this.parameters = new ArrayList<>(params.length);
+        List<Pattern> patterns = new ArrayList<>(params.length);
         for (String param : params) {
-            Parameter of = Parameter.of(param);
-            parameters.add(of);
+            patterns.add(new VariablePattern(param));
         }
+        this.patternCase = new PatternCase(patterns);
     }
 
     @Override
     public int getArity() {
-        return !parameters.isEmpty() && parameters.get(parameters.size() - 1).isRest()
-                ? parameters.size() - 1
-                : parameters.size();
-    }
+        boolean rest = false;
+        for (Pattern pattern : patternCase.getPatterns()) {
+            if (pattern instanceof RestPattern) rest = true;
+        }
 
-    public List<Parameter> getParameters() {
-        return parameters;
+        return patternCase.size() - (rest ? 1 : 0);
     }
 
     @Override
@@ -62,14 +65,13 @@ public abstract class NativeFunc extends Func {
 
     @Override
     public Obj invoke(Tuple argument) {
-        if (argument.size() < getArity()) {
-            throw new ComputeException(getName() + " requires " + getArity() + " arguments");
+        Map<String, Obj> scope = new HashMap<>(getArity());
+
+        if (!new NativePatternBinder(patternCase, scope).bindFrom(argument)) {
+            throw new ComputeException("Could not match arguments (" + argument + ") to " + getName() + "(" + patternCase + ")");
         }
 
-        // todo make magic
-        Map<String, Obj> arguments = new HashMap<>(getArity());
-
-        Obj result = eval(arguments);
+        Obj result = eval(scope);
         return result != null ? result : Null.VALUE;
     }
 

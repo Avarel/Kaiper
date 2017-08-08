@@ -38,14 +38,14 @@ public class CompiledFunc extends Func {
     }
 
     @Override
-    public Obj invoke(Tuple arguments) {
+    public Obj invoke(Tuple argument) {
         try {
             Scope scope = this.scope.subPool();
             for (int i = 0; i < getArity(); i++) {
                 CompiledParameter parameter = parameters.get(i);
 
-                if (i < arguments.size()) {
-                    scope.declare(parameter.getName(), arguments.get(i));
+                if (i < argument.size()) {
+                    scope.declare(parameter.getName(), argument.get(i));
                 } else if (parameter.hasDefault()) {
                     scope.declare(parameter.getName(), parameter.getDefaultValue().executeWithScope(scope));
                 } else {
@@ -57,8 +57,8 @@ public class CompiledFunc extends Func {
                 Parameter lastParam = parameters.get(parameters.size() - 1);
 
                 if (lastParam.isRest()) {
-                    if (arguments.size() > getArity()) {
-                        List<Obj> sublist = arguments.subList(parameters.size() - 1, arguments.size());
+                    if (argument.size() > getArity()) {
+                        List<Obj> sublist = argument.subList(parameters.size() - 1, argument.size());
                         scope.declare(lastParam.getName(), Array.ofList(sublist));
                     } else {
                         scope.declare(lastParam.getName(), new Array());

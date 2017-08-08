@@ -19,15 +19,15 @@ import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 
+// fuck inheritance
+// aint having that shit
 public class CompiledObj implements Obj {
     private final CompiledType type;
     private final Scope scope;
-    private final CompiledObj parent;
 
     @SuppressWarnings("unchecked")
-    public CompiledObj(CompiledType type, CompiledObj parent, Scope scope) {
+    public CompiledObj(CompiledType type,Scope scope) {
         this.type = type;
-        this.parent = parent;
         this.scope = scope;
     }
 
@@ -44,13 +44,6 @@ public class CompiledObj implements Obj {
     @Override
     public Obj getAttr(String name) {
         Obj obj = scope.directLookup(name);
-
-        if (obj == null) {
-            if (parent != null) {
-                return parent.getAttr(name);
-            }
-            return Null.VALUE;
-        }
 
         return obj;
     }

@@ -48,7 +48,13 @@ import java.util.Map;
 public class Tuple implements Obj {
     public static final Type<Bool> TYPE = new Type<>("Tuple");
 
+    // todo empty static one
+
     private final Map<String, Obj> map;
+
+    public Tuple() {
+        this(Collections.emptyMap());
+    }
 
     public Tuple(Obj value) {
         this(Collections.singletonMap("_0", value));
@@ -90,13 +96,23 @@ public class Tuple implements Obj {
 
     @Override
     public String toString() {
+        if (map.isEmpty()) {
+            return "()";
+        }
+
         StringBuilder builder = new StringBuilder();
+
+        int position = 0;
 
         Iterator<Map.Entry<String, Obj>> iterator = map.entrySet().iterator();
         while (true) {
             Map.Entry<String, Obj> entry = iterator.next();
 
-            builder.append(entry.getKey()).append(": ");
+            if (!entry.getKey().equals("_" + position)) {
+                builder.append(entry.getKey()).append(": ");
+            } else {
+                position++;
+            }
 
             boolean isTuple = entry.getValue() instanceof Tuple;
 

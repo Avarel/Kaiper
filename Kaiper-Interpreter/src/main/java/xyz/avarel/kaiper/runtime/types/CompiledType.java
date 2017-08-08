@@ -1,8 +1,10 @@
 package xyz.avarel.kaiper.runtime.types;
 
+import xyz.avarel.kaiper.runtime.Obj;
+
 public class CompiledType extends Type {
-    public CompiledType(Type parent, String name, CompiledConstructor constructor) {
-        super(parent, name, constructor);
+    public CompiledType(String name, CompiledConstructor constructor) {
+        super(Obj.TYPE, name, constructor);
     }
 
     @Override

@@ -18,15 +18,10 @@ package xyz.avarel.kaiper.parser.parslets.functional;
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
-import xyz.avarel.kaiper.ast.functions.FunctionNode;
-import xyz.avarel.kaiper.ast.invocation.Invocation;
-import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
-
-import java.util.Collections;
 
 public class PipeForwardParser extends BinaryParser {
     public PipeForwardParser() {
@@ -41,12 +36,13 @@ public class PipeForwardParser extends BinaryParser {
 
         Single right = parser.parseSingle(getPrecedence());
 
-        if (right instanceof Invocation) {
-            ((Invocation) right).getArgument().add(0, left);
-            return right;
-        } else if (right instanceof FunctionNode || right instanceof Identifier) {
-            return new Invocation(token.getPosition(), right, Collections.singletonList(left));
-        }
+        //fixme
+//        if (right instanceof Invocation) {
+//            ((Invocation) right).getArgument().add(0, left);
+//            return right;
+//        } else if (right instanceof FunctionNode || right instanceof Identifier) {
+//            return new Invocation(token.getPosition(), right, Collections.singletonList(left));
+//        }
 
         throw new SyntaxException(
                 "Pipe-forward requires the right operand to be either: invocation, function, or name",

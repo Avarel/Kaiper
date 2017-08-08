@@ -38,7 +38,7 @@ public enum DefaultFunctions {
     STR(new NativeFunc("str", "a") {
         @Override
         protected Obj eval(Map<String, Obj> arguments) {
-            Obj obj = arguments.get(0);
+            Obj obj = arguments.get("a");
             if (obj instanceof Str) {
                 return obj;
             }
@@ -52,7 +52,7 @@ public enum DefaultFunctions {
             return new NativeFunc("not") {
                 @Override
                 protected Obj eval(Map<String, Obj> arguments0) {
-                    return arguments.get(0).invoke(arguments0).negate();
+                    return arguments.get("function").invoke(new Tuple(arguments0)).negate();
                 }
             };
         }

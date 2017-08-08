@@ -1,17 +1,11 @@
 package xyz.avarel.kaiper.runtime.java;
 
-import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.collections.Dictionary;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.types.Type;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class JavaType extends Type<JavaObject> {
     private final Class<?> clazz;
@@ -60,52 +54,54 @@ public class JavaType extends Type<JavaObject> {
     }
 
     @Override
-    public Obj invoke(List<Obj> arguments) {
-        if (Proxy.isProxyClass(clazz)) {
-            return new JavaObject(Proxy.newProxyInstance(
-                    clazz.getClassLoader(), clazz.getInterfaces(),
-                    new KaiperClassInvocationHandler(arguments.get(0).as(Dictionary.TYPE))
-            ));
-        }
-
-        if (clazz.isInterface()) {
-            return new JavaObject(Proxy.newProxyInstance(
-                    clazz.getClassLoader(), new Class[]{clazz},
-                    new KaiperClassInvocationHandler(arguments.get(0).as(Dictionary.TYPE))
-            ));
-        }
-
-        List<Object> nativeArgs = arguments.stream()
-                .map(Obj::toJava)
-                .collect(Collectors.toList());
-
-        List<Class<?>> classes = nativeArgs.stream()
-                .map(Object::getClass)
-                .collect(Collectors.toList());
-
-        Object result = null;
-
-        outer:
-        for (Constructor<?> constructor : clazz.getConstructors()) {
-            if (classes.size() != constructor.getParameterCount()) continue;
-
-            Class<?>[] parameterTypes = constructor.getParameterTypes();
-            for (int i = 0; i < constructor.getParameterCount(); i++) {
-
-                if (!JavaUtils.isAssignable(classes.get(i), parameterTypes[i])) {
-                    continue outer;
-                }
-            }
-
-            try {
-                result = constructor.newInstance(nativeArgs.toArray());
-                break;
-            } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                throw new ComputeException(e);
-            }
-        }
-
-        return JavaUtils.mapJavaToKaiperType(result);
+    public Obj invoke(Tuple arguments) {
+        // fixme
+        return Null.VALUE;
+//        if (Proxy.isProxyClass(clazz)) {
+//            return new JavaObject(Proxy.newProxyInstance(
+//                    clazz.getClassLoader(), clazz.getInterfaces(),
+//                    new KaiperClassInvocationHandler(arguments.get(0).as(Dictionary.TYPE))
+//            ));
+//        }
+//
+//        if (clazz.isInterface()) {
+//            return new JavaObject(Proxy.newProxyInstance(
+//                    clazz.getClassLoader(), new Class[]{clazz},
+//                    new KaiperClassInvocationHandler(arguments.get(0).as(Dictionary.TYPE))
+//            ));
+//        }
+//
+//        List<Object> nativeArgs = arguments.stream()
+//                .map(Obj::toJava)
+//                .collect(Collectors.toList());
+//
+//        List<Class<?>> classes = nativeArgs.stream()
+//                .map(Object::getClass)
+//                .collect(Collectors.toList());
+//
+//        Object result = null;
+//
+//        outer:
+//        for (Constructor<?> constructor : clazz.getConstructors()) {
+//            if (classes.size() != constructor.getParameterCount()) continue;
+//
+//            Class<?>[] parameterTypes = constructor.getParameterTypes();
+//            for (int i = 0; i < constructor.getParameterCount(); i++) {
+//
+//                if (!JavaUtils.isAssignable(classes.get(i), parameterTypes[i])) {
+//                    continue outer;
+//                }
+//            }
+//
+//            try {
+//                result = constructor.newInstance(nativeArgs.toArray());
+//                break;
+//            } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+//                throw new ComputeException(e);
+//            }
+//        }
+//
+//        return JavaUtils.mapJavaToKaiperType(result);
     }
 
 }

@@ -14,7 +14,7 @@ public class DefaultPattern<T> implements Pattern {
         return delegate;
     }
 
-    public T getDefaultExpr() {
+    public T getDefault() {
         return defaultExpr;
     }
 

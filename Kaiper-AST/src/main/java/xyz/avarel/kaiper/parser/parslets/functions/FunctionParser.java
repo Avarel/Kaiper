@@ -17,7 +17,6 @@ package xyz.avarel.kaiper.parser.parslets.functions;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
-import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -25,6 +24,7 @@ import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
+import xyz.avarel.kaiper.pattern.PatternCase;
 
 public class FunctionParser implements PrefixParser {
     @Override
@@ -41,7 +41,7 @@ public class FunctionParser implements PrefixParser {
         PatternCase patternCase;
         parser.eat(TokenType.LEFT_PAREN);
         if (!parser.match(TokenType.RIGHT_PAREN)) {
-            patternCase = new PatternParser(parser).parsePatternSet();
+            patternCase = new PatternParser(parser).parsePatternCase();
             parser.eat(TokenType.RIGHT_PAREN);
         } else {
             patternCase = PatternCase.EMPTY_CASE;

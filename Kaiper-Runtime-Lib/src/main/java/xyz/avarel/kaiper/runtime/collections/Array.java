@@ -15,12 +15,14 @@
 
 package xyz.avarel.kaiper.runtime.collections;
 
+import xyz.avarel.kaiper.pattern.RestPattern;
+import xyz.avarel.kaiper.pattern.VariablePattern;
 import xyz.avarel.kaiper.runtime.Bool;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
-import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -39,32 +41,33 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         declare("length", new NativeFunc("length", "array") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return Int.of(arguments.get(0).as(Array.TYPE).size());
+                return Int.of(arguments.get("array").as(Array.TYPE).size());
             }
         });
 
         declare("lastIndex", new NativeFunc("lastIndex", "array") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return Int.of(arguments.get(0).as(Array.TYPE).size() - 1);
+                return Int.of(arguments.get("array").as(Array.TYPE).size() - 1);
             }
         });
 
-        declare("append", new NativeFunc("append", Parameter.of("array"), Parameter.of("elements", true)) {
+        declare("append", new NativeFunc("append", new VariablePattern("array"), new RestPattern("elements")) {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                arguments.get(0).as(Array.TYPE).addAll(arguments);
-                return arguments.get(0);
+                Array array = arguments.get("array").as(Array.TYPE);
+                array.addAll(arguments.get("elements").as(Array.TYPE));
+                return array;
             }
         });
 
         declare("each", new NativeFunc("each", "array", "action") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                Func action = arguments.get(1).as(Func.TYPE);
+                Func action = arguments.get("action").as(Func.TYPE);
 
-                for (Obj obj : arguments.get(0).as(Array.TYPE)) {
-                    action.invoke(Collections.singletonList(obj));
+                for (Obj obj : arguments.get("array").as(Array.TYPE)) {
+                    action.invoke(new Tuple(obj));
                 }
                 return Null.VALUE;
             }
@@ -73,11 +76,11 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         declare("map", new NativeFunc("map", "array", "transform") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                Func transform = arguments.get(1).as(Func.TYPE);
+                Func transform = arguments.get("transform").as(Func.TYPE);
 
                 Array array = new Array();
-                for (Obj obj : arguments.get(0).as(Array.TYPE)) {
-                    array.add(transform.invoke(Collections.singletonList(obj)));
+                for (Obj obj : arguments.get("array").as(Array.TYPE)) {
+                    array.add(transform.invoke(new Tuple(obj)));
                 }
                 return array;
             }
@@ -86,11 +89,11 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         declare("filter", new NativeFunc("filter", "array", "predicate") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                Func predicate = arguments.get(1).as(Func.TYPE);
+                Func predicate = arguments.get("predicate").as(Func.TYPE);
 
                 Array array = new Array();
-                for (Obj obj : arguments.get(0).as(Array.TYPE)) {
-                    Bool condition = (Bool) predicate.invoke(Collections.singletonList(obj));
+                for (Obj obj : arguments.get("array").as(Array.TYPE)) {
+                    Bool condition = (Bool) predicate.invoke(new Tuple(obj));
                     if (condition == Bool.TRUE) array.add(obj);
                 }
                 return array;
@@ -101,10 +104,10 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
                 new NativeFunc("fold", "array", "accumulator", "operation") {
                     @Override
                     protected Obj eval(Map<String, Obj> arguments) {
-                        Obj accumulator = arguments.get(1);
-                        Func operation = arguments.get(2).as(Func.TYPE);
+                        Obj accumulator = arguments.get("accumulator");
+                        Func operation = arguments.get("operation").as(Func.TYPE);
 
-                        for (Obj obj : arguments.get(0).as(Array.TYPE)) {
+                        for (Obj obj : arguments.get("array").as(Array.TYPE)) {
                             accumulator = operation.invoke(accumulator, obj);
                         }
                         return accumulator;

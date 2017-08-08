@@ -220,11 +220,11 @@ public interface Obj {
      * Invcoation operator in Kaiper. Default symbol is {@code a(b, c...)}.
      * <br> Implementation should default to error if not implemented.
      *
-     * @param   arguments
+     * @param   argument
      *          List of {@link Obj} arguments.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj invoke(Tuple arguments) {
+    default Obj invoke(Tuple argument) {
         throw unimplemented("invocation");
     }
 

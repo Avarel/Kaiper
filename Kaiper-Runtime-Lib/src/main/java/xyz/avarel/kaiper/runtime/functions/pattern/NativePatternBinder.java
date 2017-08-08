@@ -1,29 +1,24 @@
-package xyz.avarel.kaiper.interpreter;
+package xyz.avarel.kaiper.runtime.functions.pattern;
 
 import xyz.avarel.kaiper.Pair;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.pattern.*;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
-import xyz.avarel.kaiper.scope.Scope;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
-    // dummy
+public class NativePatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
     private static final Pair<String, Obj> SUCCESS_NO_ASSIGNMENT = new Pair<>(null, null);
 
-    private final PatternCase patternCase;
-    private final ExprInterpreter interpreter;
-    private final Scope scope;
+    private final Map<String, Obj> scope;
 
+    private final PatternCase patternCase;
     private int position = 0;
 
-    public PatternBinder(PatternCase patternCase, ExprInterpreter interpreter, Scope scope) {
+    public NativePatternBinder(PatternCase patternCase, Map<String, Obj> scope) {
         this.patternCase = patternCase;
-        this.interpreter = interpreter;
         this.scope = scope;
     }
 
@@ -37,13 +32,12 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
                     results.put(result.getFirst(), result.getSecond());
                 }
             } else {
-                System.out.println(tuple);
                 return false;
             }
         }
 
         for (Map.Entry<String, Obj> result : results.entrySet()) {
-            scope.declare(result.getKey(), result.getValue());
+            scope.put(result.getKey(), result.getValue());
         }
 
         return true;
@@ -58,7 +52,7 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
 
             Tuple tuple = value instanceof Tuple ? (Tuple) value : new Tuple(value);
 
-            if (new PatternBinder(patternCase, interpreter, scope).bindFrom(tuple)) {
+            if (new NativePatternBinder(patternCase, scope).bindFrom(tuple)) {
                 return SUCCESS_NO_ASSIGNMENT;
             } else {
                 return null;
@@ -77,11 +71,11 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
     @Override
     @SuppressWarnings("unchecked")
     public Pair<String, Obj> visit(ValuePattern _pattern, Tuple obj) {
-        ValuePattern<Single> pattern = (ValuePattern<Single>) _pattern;
+        ValuePattern<Obj> pattern = (ValuePattern<Obj>) _pattern;
 
         if (obj.hasAttr("_" + position)) {
             Obj value = obj.getAttr("_" + position);
-            Obj target = pattern.getValue().accept(interpreter, scope);
+            Obj target = pattern.getValue();
             position++;
             return value.equals(target) ? SUCCESS_NO_ASSIGNMENT : null;
         } else {
@@ -109,12 +103,12 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
     @SuppressWarnings("unchecked")
     public Pair<String, Obj> visit(DefaultPattern<?> _pattern, Tuple obj) {
         // hope for the best
-        DefaultPattern<Single> pattern = (DefaultPattern<Single>) _pattern;
+        DefaultPattern<Obj> pattern = (DefaultPattern<Obj>) _pattern;
 
         Pair<String, Obj> result = pattern.getDelegate().accept(this, obj);
 
         if (result == null) {
-            Obj value = pattern.getDefault().accept(interpreter, scope);
+            Obj value = pattern.getDefault();
             return new Pair<>(pattern.getDelegate().getName(), value);
         } else {
             return result;
@@ -163,6 +157,6 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
         Tuple tuple = new Tuple(value);
 
         // check later
-        return pattern.getPattern().accept(new PatternBinder(patternCase, interpreter, scope), tuple);
+        return pattern.getPattern().accept(new NativePatternBinder(patternCase, scope), tuple);
     }
 }

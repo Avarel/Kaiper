@@ -5,6 +5,7 @@ import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
+import xyz.avarel.kaiper.pattern.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class PatternParser extends KaiperParser {
         super(parser);
     }
 
-    public PatternCase parsePatternSet() {
+    public PatternCase parsePatternCase() {
         List<Pattern> patterns = new ArrayList<>();
 
         do {
@@ -55,7 +56,7 @@ public class PatternParser extends KaiperParser {
                 requireDef = true;
 
                 Single def = parseSingle(Precedence.TUPLE_PAIR);
-                basePattern = new DefaultPattern((NamedPattern) basePattern, def);
+                basePattern = new DefaultPattern<>((NamedPattern) basePattern, def);
             } else if (requireDef) {
                 throw new SyntaxException("All parameters after the first default requires a default",
                         peek(0).getPosition());
@@ -87,11 +88,11 @@ public class PatternParser extends KaiperParser {
                 TokenType.NULL, TokenType.BOOLEAN, TokenType.LEFT_BRACKET
         ) || match(TokenType.EQUALS)) {
             Single value = parseSingle(Precedence.TUPLE);
-            return new ValuePattern(value);
+            return new ValuePattern<>(value);
         } else if (match(TokenType.UNDERSCORE)) {
             return WildcardPattern.INSTANCE;
         } else if (match(TokenType.LEFT_PAREN)) {
-            PatternCase nested = parsePatternSet();
+            PatternCase nested = parsePatternCase();
             eat(TokenType.RIGHT_PAREN);
             return nested;
         } else {

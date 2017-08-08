@@ -40,10 +40,10 @@ public class KaiperRepl {
 
         KaiperREPL interpreter = new KaiperREPL();
 
-        interpreter.getScope().declare("println", new NativeFunc("print", "string") {
+        interpreter.getScope().declare("println", new NativeFunc("print", "obj") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                System.out.println(arguments.get(0));
+                System.out.println(arguments.get("obj"));
                 return null;
             }
         });

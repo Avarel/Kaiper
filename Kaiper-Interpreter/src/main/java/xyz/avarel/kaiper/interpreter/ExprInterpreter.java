@@ -34,7 +34,6 @@ import xyz.avarel.kaiper.ast.*;
 import xyz.avarel.kaiper.ast.collections.*;
 import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
-import xyz.avarel.kaiper.ast.functions.ParameterData;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
@@ -54,7 +53,6 @@ import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
 import xyz.avarel.kaiper.runtime.functions.CompiledFunc;
-import xyz.avarel.kaiper.runtime.functions.CompiledParameter;
 import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
@@ -62,10 +60,12 @@ import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.runtime.types.CompiledConstructor;
 import xyz.avarel.kaiper.runtime.types.CompiledType;
-import xyz.avarel.kaiper.runtime.types.Type;
 import xyz.avarel.kaiper.scope.Scope;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     private int recursionDepth = 0;
@@ -306,22 +306,9 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     public Obj visit(TypeNode expr, Scope scope) {
         String name = expr.getName();
 
-        Scope subscope = scope.subPool();
+        CompiledConstructor constructor = new CompiledConstructor(expr.getPatternCase(), expr.getExpr(), this, scope.subPool());
 
-        Obj superType = resultOf(expr.getSuperType(), scope);
-        if (superType != Obj.TYPE && !(superType instanceof CompiledType)) {
-            throw new InterpreterException(superType + " can not be extended", expr.getPosition());
-        }
-
-        List<CompiledParameter> constructorParameters = new ArrayList<>();
-        for (ParameterData data : expr.getParameterExprs()) {
-            constructorParameters.add(new CompiledParameter(data.getName(), data.getDefault(), data.isRest()));
-        }
-
-        CompiledConstructor constructor = new CompiledConstructor(
-                constructorParameters, expr.getSuperParameters(), expr.getExpr(), this, subscope);
-
-        CompiledType type = new CompiledType((Type) superType, name, constructor);
+        CompiledType type = new CompiledType(name, constructor);
 
         scope.declare(name, type);
 

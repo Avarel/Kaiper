@@ -24,7 +24,6 @@ import xyz.avarel.kaiper.ScriptExpr;
 import xyz.avarel.kaiper.interop.JavaModel;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
-import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.runtime.java.JavaType;
 import xyz.avarel.kaiper.runtime.java.JavaUtils;
 import xyz.avarel.kaiper.scope.DefaultScope;
@@ -44,10 +43,10 @@ public class KaiperDevRepl {
 
         Scope scope = DefaultScope.INSTANCE.copy();
 
-        scope.declare("print", new NativeFunc("print", Parameter.of("string")) {
+        scope.declare("println", new NativeFunc("print", "string") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                System.out.println(arguments.get(0));
+                System.out.println(arguments.get("string"));
                 return null;
             }
         });

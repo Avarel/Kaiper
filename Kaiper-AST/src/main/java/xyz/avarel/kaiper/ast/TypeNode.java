@@ -1,27 +1,17 @@
 package xyz.avarel.kaiper.ast;
 
-import xyz.avarel.kaiper.ast.functions.ParameterData;
-import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Position;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import xyz.avarel.kaiper.pattern.PatternCase;
 
 public class TypeNode extends Single {
     private final String name;
-    private final List<ParameterData> parameters;
-    private final Identifier superType;
-    private final List<Single> superParameters;
+    private final PatternCase patternCase;
     private final Expr expr;
 
-    public TypeNode(Position position, String name, List<ParameterData> parameters,
-                    Identifier superType, List<Single> superParameters,
-                    Expr expr) {
+    public TypeNode(Position position, String name, PatternCase patternCase, Expr expr) {
         super(position);
         this.name = name;
-        this.parameters = parameters;
-        this.superType = superType;
-        this.superParameters = superParameters;
+        this.patternCase = patternCase;
         this.expr = expr;
     }
 
@@ -29,16 +19,8 @@ public class TypeNode extends Single {
         return name;
     }
 
-    public List<ParameterData> getParameterExprs() {
-        return parameters;
-    }
-
-    public Identifier getSuperType() {
-        return superType;
-    }
-
-    public List<Single> getSuperParameters() {
-        return superParameters;
+    public PatternCase getPatternCase() {
+        return patternCase;
     }
 
     public Expr getExpr() {
@@ -54,10 +36,7 @@ public class TypeNode extends Single {
     public void ast(StringBuilder builder, String indent, boolean isTail) {
         builder.append(indent).append(isTail ? "└── " : "├── ")
                 .append("type").append(name != null ? " " + name : "")
-                .append('(')
-                .append(getParameterExprs().stream().map(Object::toString)
-                        .collect(Collectors.joining(", ")))
-                .append(')');
+                .append('(').append(patternCase).append(')');
 
         builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
