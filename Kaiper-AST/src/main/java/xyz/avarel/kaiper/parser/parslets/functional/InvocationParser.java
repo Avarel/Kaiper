@@ -42,7 +42,7 @@ public class InvocationParser extends BinaryParser {
         Single arguments;
 
         if (parser.match(TokenType.RIGHT_PAREN)) {
-            arguments = new TupleExpr(left.getPosition(), Collections.emptyList());
+            arguments = new TupleExpr(left.getPosition(), Collections.emptyList(), Collections.emptyMap());
         } else {
             arguments = parser.parseSingle();
             parser.eat(TokenType.RIGHT_PAREN);

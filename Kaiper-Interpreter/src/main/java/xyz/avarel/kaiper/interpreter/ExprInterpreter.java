@@ -38,7 +38,6 @@ import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
-import xyz.avarel.kaiper.ast.tuples.TupleEntry;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
@@ -62,7 +61,6 @@ import xyz.avarel.kaiper.runtime.types.CompiledConstructor;
 import xyz.avarel.kaiper.runtime.types.CompiledType;
 import xyz.avarel.kaiper.scope.Scope;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -448,18 +446,21 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(TupleEntry expr, Scope scope) {
-        Obj value = resultOf(expr.getExpr(), scope);
-        return new Tuple(Collections.singletonMap(expr.getName(), value));
-    }
-
-    @Override
     public Obj visit(TupleExpr expr, Scope scope) {
         Map<String, Obj> map = new LinkedHashMap<>();
 
-        for (TupleEntry entry : expr.getEntries()) {
-            Obj value = resultOf(entry.getExpr(), scope);
-            map.put(entry.getName(), value);
+        List<Single> unnamedElements = expr.getUnnamedElements();
+        for (int i = 0; i < unnamedElements.size(); i++) {
+            Single element = unnamedElements.get(i);
+            map.put("_" + i, resultOf(element, scope));
+        }
+
+        for (Map.Entry<String, Single> entry : expr.getNamedElements().entrySet()) {
+            if (map.containsKey(entry.getKey())) {
+                throw new InterpreterException("Duplicate field name " + entry.getKey(), entry.getValue().getPosition());
+            }
+
+            map.put(entry.getKey(), resultOf(entry.getValue(), scope));
         }
 
         return new Tuple(map);

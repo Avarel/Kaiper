@@ -11,7 +11,6 @@ import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
-import xyz.avarel.kaiper.ast.tuples.TupleEntry;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
@@ -149,11 +148,6 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
 
     @Override
     public Expr visit(TupleExpr expr, Void scope) {
-        return null;
-    }
-
-    @Override
-    public Expr visit(TupleEntry expr, Void scope) {
         return null;
     }
 

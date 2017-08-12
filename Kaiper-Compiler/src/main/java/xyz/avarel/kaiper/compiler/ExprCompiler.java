@@ -498,9 +498,4 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     public DataOutputConsumer visit(TupleExpr expr, Void scope) {
         return null;
     }
-
-    @Override
-    public DataOutputConsumer visit(TupleEntry expr, Void scope) {
-        return null;
-    }
 }

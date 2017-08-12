@@ -20,7 +20,6 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
-import xyz.avarel.kaiper.ast.tuples.TupleEntry;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
@@ -29,6 +28,7 @@ import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PipeForwardParser extends BinaryParser {
@@ -45,21 +45,38 @@ public class PipeForwardParser extends BinaryParser {
         Single right = parser.parseSingle(getPrecedence());
 
         if (right instanceof Invocation) {
-            Single argument = ((Invocation) right).getArgument();
+            Invocation invocation = (Invocation) right;
+            Single argument = invocation.getArgument();
 
-            TupleExpr tuple = argument instanceof TupleExpr ? (TupleExpr) argument : new TupleExpr(argument);
-            List<TupleEntry> entries = new ArrayList<>(tuple.getEntries());
+            if (argument instanceof TupleExpr) {
+                TupleExpr tuple = (TupleExpr) argument;
 
-            for (int i = 0; i < entries.size(); i++) {
-                TupleEntry entry = entries.get(i);
-                if (entry.getName().equals("_" + i)) {
-                    entries.set(i, new TupleEntry(entry.getPosition(), "_" + (i + 1), entry.getExpr()));
-                }
+                List<Single> unnamedElements = new ArrayList<>(tuple.getUnnamedElements());
+                unnamedElements.add(0, left);
+
+                return new Invocation(
+                        token.getPosition(),
+                        invocation.getLeft(),
+                        new TupleExpr(
+                                argument.getPosition(),
+                                unnamedElements,
+                                tuple.getNamedElements()
+                        )
+                );
+            } else {
+                List<Single> unnamedElements = new ArrayList<>(2);
+                unnamedElements.add(left);
+                unnamedElements.add(argument);
+                return new Invocation(
+                        token.getPosition(),
+                        invocation.getLeft(),
+                        new TupleExpr(
+                                argument.getPosition(),
+                                unnamedElements,
+                                Collections.emptyMap()
+                        )
+                );
             }
-
-            entries.add(0, new TupleEntry(left.getPosition(), "_0", left));
-
-            return new Invocation(token.getPosition(), ((Invocation) right).getLeft(), new TupleExpr(tuple.getPosition(), entries));
         } else if (right instanceof FunctionNode || right instanceof Identifier) {
             return new Invocation(token.getPosition(), right, left);
         }

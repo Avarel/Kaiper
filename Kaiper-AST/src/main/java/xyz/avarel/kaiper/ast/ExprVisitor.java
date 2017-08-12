@@ -52,7 +52,6 @@ import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
-import xyz.avarel.kaiper.ast.tuples.TupleEntry;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
@@ -112,8 +111,6 @@ public interface ExprVisitor<R, C> {
     R visit(WhileExpr expr, C scope);
 
     R visit(TupleExpr expr, C scope);
-
-    R visit(TupleEntry expr, C scope);
 
     R visit(DestructuringDeclarationExpr destructuringDeclarationExpr, C scope);
 }

@@ -18,7 +18,7 @@ package xyz.avarel.kaiper.parser.parslets.tuples;
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
-import xyz.avarel.kaiper.ast.tuples.TupleEntry;
+import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -38,6 +38,6 @@ public class TupleColonParser extends BinaryParser {
 
         Single value = parser.parseSingle(getPrecedence());
 
-        return new TupleEntry(left.getPosition(), ((Identifier) left).getName(), value);
+        return new TupleExpr(left.getPosition(), ((Identifier) left).getName(), value);
     }
 }

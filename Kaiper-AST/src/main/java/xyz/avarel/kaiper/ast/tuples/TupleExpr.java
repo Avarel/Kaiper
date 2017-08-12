@@ -6,21 +6,36 @@ import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class TupleExpr extends Single {
-    public final List<TupleEntry> entries;
+    private final List<Single> unnamedElements;
+    private final Map<String, Single> namedElements;
 
-    public TupleExpr(Single convert) {
-        this(convert.getPosition(), Collections.singletonList(new TupleEntry(convert.getPosition(), "_0", convert)));
+    public TupleExpr(Position position, Single element) {
+        this(position, Collections.singletonList(element), Collections.emptyMap());
     }
 
-    public TupleExpr(Position position, List<TupleEntry> entries) {
+    public TupleExpr(Position position, String name, Single element) {
+        this(position, Collections.emptyList(), Collections.singletonMap(name, element));
+    }
+
+    public TupleExpr(Position position, List<Single> unnamedElements, Map<String, Single> namedElements) {
         super(position);
-        this.entries = entries;
+        this.unnamedElements = unnamedElements;
+        this.namedElements = namedElements;
     }
 
-    public List<TupleEntry> getEntries() {
-        return entries;
+    public List<Single> getUnnamedElements() {
+        return unnamedElements;
+    }
+
+    public Map<String, Single> getNamedElements() {
+        return namedElements;
+    }
+
+    public int size() {
+        return unnamedElements.size() + namedElements.size();
     }
 
     @Override
@@ -30,6 +45,6 @@ public class TupleExpr extends Single {
 
     @Override
     public String toString() {
-        return entries.toString();
+        return unnamedElements.toString() + namedElements.toString();
     }
 }
