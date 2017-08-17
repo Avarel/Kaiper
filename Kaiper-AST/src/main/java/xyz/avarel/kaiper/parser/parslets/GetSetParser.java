@@ -46,15 +46,14 @@ public class GetSetParser extends BinaryParser {
 
         parser.eat(TokenType.RIGHT_BRACKET);
 
-        Single getOp = new GetOperation(token.getPosition(),
+        return new GetOperation(
+                token.getPosition(),
                 left,
                 key
         );
-
-        return getOp;
     }
 
-    public Single parseEnd(KaiperParser parser, Position position, Single left, Single start) {
+    private Single parseEnd(KaiperParser parser, Position position, Single left, Single start) {
         if (parser.match(TokenType.COLON)) {
             return parseStep(parser, position, left, start, NullNode.VALUE);
         } else if (parser.match(TokenType.RIGHT_BRACKET)) {
@@ -83,7 +82,7 @@ public class GetSetParser extends BinaryParser {
         );
     }
 
-    public Single parseStep(KaiperParser parser, Position position, Single left, Single start, Single end) {
+    private Single parseStep(KaiperParser parser, Position position, Single left, Single start, Single end) {
         if (parser.match(TokenType.RIGHT_BRACKET)) {
             return new SliceOperation(
                     position,

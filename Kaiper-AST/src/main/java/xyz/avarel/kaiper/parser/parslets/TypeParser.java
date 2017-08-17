@@ -6,7 +6,6 @@ import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
-import xyz.avarel.kaiper.parser.KaiperParserUtils;
 import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 import xyz.avarel.kaiper.pattern.PatternCase;
@@ -30,7 +29,7 @@ public class TypeParser implements PrefixParser {
 
         Expr constructorExpr = NullNode.VALUE;
         if (parser.nextIs(TokenType.LEFT_BRACE)) {
-            constructorExpr = KaiperParserUtils.parseBlock(parser);
+            constructorExpr = parser.parseBlock();
         }
 
         return new TypeNode(token.getPosition(), name, patternCase, constructorExpr);

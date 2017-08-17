@@ -18,9 +18,11 @@ package xyz.avarel.kaiper.ast;
 import xyz.avarel.kaiper.ast.flow.Statements;
 import xyz.avarel.kaiper.lexer.Position;
 
-public abstract class Expr extends Positional {
+public abstract class Expr {
+    private final Position position;
+
     protected Expr(Position position) {
-        super(position);
+        this.position = position;
     }
 
     public abstract <R, C> R accept(ExprVisitor<R, C> visitor, C scope);
@@ -38,5 +40,9 @@ public abstract class Expr extends Positional {
 
         builder.append('\n');
         ast(builder, indent + (tail ? "    " : "│   "), true);
+    }
+
+    public Position getPosition() {
+        return position;
     }
 }

@@ -19,10 +19,9 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-public class Statements extends Expr implements Iterable<Expr> {
+public class Statements extends Expr {
     private final List<Expr> statements;
 
     public Statements(Expr before, Expr after) {
@@ -61,11 +60,6 @@ public class Statements extends Expr implements Iterable<Expr> {
         if (statements.size() >= 1) {
             statements.get(statements.size() - 1).ast(builder, indent, true);
         }
-    }
-
-    @Override
-    public Iterator<Expr> iterator() {
-        return statements.iterator();
     }
 
     @Override

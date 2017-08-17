@@ -44,7 +44,7 @@ public class FileTest {
         exp.add("println", new NativeFunc("print","string") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                System.out.println(arguments.get(0));
+                System.out.println(arguments.get("string"));
                 return null;
             }
         });

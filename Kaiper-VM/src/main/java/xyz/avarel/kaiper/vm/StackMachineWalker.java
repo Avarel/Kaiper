@@ -377,7 +377,7 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
                 throw new ComputeException(name + " is not defined");
             }
 
-            stack.push(scope.lookup(name));
+            stack.push(scope.get(name));
         }
     }
 

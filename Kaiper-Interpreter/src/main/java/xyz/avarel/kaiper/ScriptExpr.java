@@ -27,7 +27,7 @@ import xyz.avarel.kaiper.scope.Scope;
 
 public class ScriptExpr extends Expr {
     private final Expr expr;
-    private Scope scope;
+    private final Scope scope;
 
     public ScriptExpr(Scope scope, Expr expr) {
         super(expr.getPosition());

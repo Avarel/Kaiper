@@ -102,7 +102,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         }
 
         if (scope.contains(expr.getName())) {
-            return scope.lookup(expr.getName());
+            return scope.get(expr.getName());
         }
 
         throw new InterpreterException(expr.getName() + " is not defined", expr.getPosition());
@@ -288,11 +288,11 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     public Obj visit(ModuleNode expr, Scope scope) {
         String name = expr.getName();
 
-        Scope subscope = scope.subPool();
+        Scope subScope = scope.subPool();
 
-        resultOf(expr.getExpr(), subscope);
+        resultOf(expr.getExpr(), subScope);
 
-        Module module = new CompiledModule(name, subscope);
+        Module module = new CompiledModule(name, subScope);
         scope.declare(name, module);
 
         return module;
@@ -373,10 +373,10 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     @Override
     public Obj visit(ForEachExpr expr, Scope scope) {
-        Obj iterExpr = resultOf(expr.getIterable(), scope);
+        Obj iterableObj = resultOf(expr.getIterable(), scope);
 
-        if (iterExpr instanceof Iterable) {
-            Iterable iterable = (Iterable) iterExpr;
+        if (iterableObj instanceof Iterable) {
+            Iterable iterable = (Iterable) iterableObj;
 
             String variant = expr.getVariant();
             Expr loopExpr = expr.getAction();

@@ -20,7 +20,6 @@ import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 
 // fuck inheritance
-// aint having that shit
 public class CompiledObj implements Obj {
     private final CompiledType type;
     private final Scope scope;
@@ -41,11 +40,16 @@ public class CompiledObj implements Obj {
         return Null.VALUE;
     }
 
+//    @Override
+//    public boolean hasAttr(String name) {
+//        return scope.contains(name);
+//    }
+
     @Override
     public Obj getAttr(String name) {
         Obj obj = scope.directLookup(name);
 
-        return obj;
+        return obj == null ? Obj.super.getAttr(name) : obj;
     }
 
     @Override
@@ -55,7 +59,7 @@ public class CompiledObj implements Obj {
 
     @Override
     public String toString() {
-        Obj method = scope.lookup("toString");
+        Obj method = scope.get("toString");
         if (method == null) {
             return type.toString() + "$" + hashCode();
         } else {

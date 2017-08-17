@@ -63,7 +63,7 @@ public class CompiledObj implements Obj {
 
     @Override
     public String toString() {
-        Obj method = scope.lookup("toString");
+        Obj method = scope.get("toString");
         if (method == null) {
             return type.toString() + "$" + hashCode();
         } else {

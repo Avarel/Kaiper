@@ -88,6 +88,16 @@ public class KaiperParser extends Parser {
         }
     }
 
+    public Expr parseBlock() {
+        Expr expr = NullNode.VALUE;
+        eat(TokenType.LEFT_BRACE);
+        if (!match(TokenType.RIGHT_BRACE)) {
+            expr = parseStatements();
+            eat(TokenType.RIGHT_BRACE);
+        }
+        return expr;
+    }
+
     public Single parseSingle() {
         return parseSingle(0);
     }

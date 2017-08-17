@@ -5,7 +5,7 @@ import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 
 public class CompiledModule extends Module {
-    public Scope scope;
+    public final Scope scope;
 
     public CompiledModule(String name, Scope scope) {
         super(name);

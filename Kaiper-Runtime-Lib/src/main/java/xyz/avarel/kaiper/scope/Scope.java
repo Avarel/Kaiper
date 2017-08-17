@@ -39,12 +39,12 @@ public class Scope {
         return map.get(key);
     }
 
-    public Obj lookup(String key) {
+    public Obj get(String key) {
         if (map.containsKey(key)) {
             return map.get(key);
         } else for (Scope parent : parents) {
             if (parent.contains(key)) {
-                return parent.lookup(key);
+                return parent.get(key);
             }
         }
         return null;

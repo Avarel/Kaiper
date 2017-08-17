@@ -39,7 +39,7 @@ public class CompiledConstructor extends Constructor {
             throw new InterpreterException("Could not match arguments (" + arguments + ") to " + getName() + "(" + pattern + ")");
         }
 
-        CompiledObj instance = new CompiledObj((CompiledType) targetType, this.scope.subPool());
+        CompiledObj instance = new CompiledObj((CompiledType) targetType, constructorScope);
 
         constructorScope.declare("this", instance);
 

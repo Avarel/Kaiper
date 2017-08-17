@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KaiperLexer {
-    private Reader reader;
-    private List<Token> tokens;
+    private final Reader reader;
+    private final List<Token> tokens;
 
-    private Entry[] history;
+    private final Entry[] history;
     private int previous;
 
     private boolean eof;
@@ -89,7 +89,7 @@ public class KaiperLexer {
     /**
      * Get the current list of tokens.
      *
-     * @return
+     * @return Current list of tokens in the lexer.
      */
     public List<Token> getTokens() {
         return tokens;

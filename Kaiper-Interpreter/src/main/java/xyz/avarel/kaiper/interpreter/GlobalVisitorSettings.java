@@ -38,8 +38,8 @@ public class GlobalVisitorSettings {
     public static long MILLISECONDS_LIMIT = -1;
     public static int RECURSION_DEPTH_LIMIT = -1;
 
-    public static void checkIterationLimit(int iter) {
-        if (ITERATION_LIMIT != -1 && iter > ITERATION_LIMIT) {
+    public static void checkIterationLimit(int iteration) {
+        if (ITERATION_LIMIT != -1 && iteration > ITERATION_LIMIT) {
             throw new ComputeException("Iteration limit");
         }
     }
