@@ -144,28 +144,8 @@ public interface Obj {
         return Bool.of(this.equals(other));
     }
 
-    /**
-     * Greater than operator in Kaiper. Default symbol is {@code >}.
-     * <br> Implementation should default to error if not implemented.
-     *
-     * @param   other
-     *          Right {@link Obj} operand.
-     * @return  The {@link Obj} result of the operation.
-     */
-    default Bool greaterThan(Obj other) {
-        throw unimplemented("greater than", other);
-    }
-
-    /**
-     * Less than operator in Kaiper. Default symbol is {@code <}.
-     * <br> Implementation should default to error if not implemented.
-     *
-     * @param   other
-     *          Right {@link Obj} operand.
-     * @return  The {@link Obj} result of the operation.
-     */
-    default Bool lessThan(Obj other) {
-        throw unimplemented("less than", other);
+    default int compareTo(Obj other) {
+        throw unimplemented("compare to", other);
     }
 
     /**

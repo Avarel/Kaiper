@@ -164,7 +164,7 @@ public class JavaUtils {
         } else if (result instanceof Double) {
             return Number.of((Double) result);
         } else if (result instanceof Boolean) {
-            return (Boolean) result ? Bool.TRUE : Bool.FALSE;
+            return Bool.of((Boolean) result);
         } else if (result instanceof String) {
             return Str.of((String) result);
         } else if (result instanceof List) {

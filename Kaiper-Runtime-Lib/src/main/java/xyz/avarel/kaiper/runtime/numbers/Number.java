@@ -23,9 +23,9 @@ import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
-import java.util.Map;
+import java.util.List;
 
-public class Number implements Obj {
+public class Number implements Obj, Comparable<Number> {
     public static final Type<Number> TYPE = new Type<>("Number");
     public static final Module MODULE = new NativeModule() {{
         declare("TYPE", Number.TYPE);
@@ -40,7 +40,7 @@ public class Number implements Obj {
 
         declare("parse", new NativeFunc("parse", "a") {
             @Override
-            protected Obj eval(Map<String, Obj> arguments) {
+            protected Obj eval(List<Obj> arguments) {
                 Obj obj = arguments.get(0);
                 if (obj instanceof Number) {
                     return obj;
@@ -175,35 +175,28 @@ public class Number implements Obj {
     }
 
     @Override
-    public Bool isEqualTo(Obj other) {
+    public Obj isEqualTo(Obj other) {
         if (other instanceof Number) {
             return this.isEqualTo((Number) other);
         }
         return Bool.FALSE;
     }
 
-    private Bool isEqualTo(Number other) {
+    private Obj isEqualTo(Number other) {
         return Bool.of(value == other.value);
     }
 
     @Override
-    public Bool greaterThan(Obj other) {
+    public int compareTo(Obj other) {
         if (other instanceof Number) {
-            return this.greaterThan((Number) other);
+            return this.compareTo((Number) other);
         }
-        return Bool.FALSE;
-    }
-
-    private Bool greaterThan(Number other) {
-        return Bool.of(value > other.value);
+        return Obj.super.compareTo(other);
     }
 
     @Override
-    public Bool lessThan(Obj other) {
-        if (other instanceof Number) {
-            return this.lessThan((Number) other);
-        }
-        return Bool.FALSE;
+    public int compareTo(Number other) {
+        return Double.compare(value, other.value);
     }
 
     private Bool lessThan(Number other) {

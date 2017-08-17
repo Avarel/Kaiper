@@ -42,7 +42,7 @@ public class FileBytecodeTest {
         System.out.println("Kaiper FILE");
         System.out.println();
 
-        System.out.println(new KaiperLexer(new FileReader(new File("script.kip"))).tokensToString());
+        System.out.println(new KaiperLexer(new FileReader(new File("script.kip"))).getTokens().toString());
 
         Scope scope = DefaultScope.INSTANCE.copy();
 

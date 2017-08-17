@@ -19,17 +19,15 @@ import xyz.avarel.kaiper.exceptions.SyntaxException;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
+public class KaiperLexer {
     private Reader reader;
     private List<Token> tokens;
 
     private Entry[] history;
     private int previous;
 
-    private boolean init;
     private boolean eof;
     private long lineIndex;
     private long index;
@@ -49,9 +47,7 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
     }
 
     public KaiperLexer(Reader reader, int historyBuffer) {
-        this.reader = reader.markSupported()
-                ? reader
-                : new BufferedReader(reader);
+        this.reader = reader.markSupported() ? reader : new BufferedReader(reader);
         this.eof = false;
         this.tokens = new ArrayList<>();
 
@@ -61,79 +57,12 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
         this.index = -1;
         this.lineIndex = 0;
         this.line = 1;
-    }
 
-    /**
-     * @return The next token.
-     */
-    @Override
-    public Token next() {
-        if (!init) lexTokens();
-        if (tokens.isEmpty()) return readToken();
-        return tokens.remove(0);
-    }
-
-    @Override
-    public boolean hasNext() {
-        return !(previous == 0 && this.eof);
-    }
-
-    @Override
-    public Iterator<Token> iterator() {
-        return this;
-    }
-
-    /**
-     * Lex and remove useless tokens based on context.
-     */
-    private void lexTokens() {
-        Token prev = null;
-
-        // Do some post processing on the tokens to clean up unnecessary ones
         do {
-            Token next = readToken();
-
-            if (next == null) continue;
-
-            if (tokens.size() == 0) {
-                switch (next.getType()) {
-                    case LINE:
-                        continue;
-                }
-            }
-
-            if (prev != null) {
-                switch (prev.getType()) {
-                    case LEFT_BRACE:
-                    case LEFT_BRACKET:
-                    case LEFT_PAREN:
-                    case ARROW:
-                    case COMMA:
-                        switch (next.getType()) {
-                            case LINE: // Remove next LINE token
-                                continue;
-                        }
-                        break;
-                    case LINE: // Remove previous LINE token if followed by:
-                        switch (next.getType()) {
-                            case RIGHT_BRACE:
-                            case RIGHT_BRACKET:
-                            case RIGHT_PAREN:
-                            case COMMA:
-                            case PIPE_FORWARD:
-                            case LINE:
-                                tokens.remove(tokens.size() - 1);
-                        }
-                        break;
-                }
-            }
-
-            tokens.add(next);
-
-            prev = next;
+            readTokens();
         } while (hasNext());
 
-        if (tokens.get(tokens.size() - 1).getType() != TokenType.EOF) {
+        if (lastToken().getType() != TokenType.EOF) {
             tokens.add(new Token(getPosition(), TokenType.EOF));
         }
 
@@ -142,31 +71,79 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        init = true;
     }
 
-    private Token readToken() {
-        if (!hasNext()) return make(TokenType.EOF);
+    /**
+     * Get and remove a token from the tokens list.
+     *
+     * @return The next token.
+     */
+    public Token next() {
+        return tokens.remove(0);
+    }
+
+    public boolean hasNext() {
+        return !(previous == 0 && this.eof);
+    }
+
+    /**
+     * Get the current list of tokens.
+     *
+     * @return
+     */
+    public List<Token> getTokens() {
+        return tokens;
+    }
+
+    private void readTokens() {
+        if (!hasNext()) {
+            tokens.add(make(TokenType.EOF));
+            return;
+        }
 
         char c = advance();
 
         while (Character.isSpaceChar(c) || c == '\t') c = advance();
 
         switch (c) {
-            case '(':
-                return make(TokenType.LEFT_PAREN);
-            case ')':
-                return make(TokenType.RIGHT_PAREN);
+            case '(': {
+                push(make(TokenType.LEFT_PAREN));
+                return;
+            }
+            case ')': {
+                if (lastToken().getType() == TokenType.LINE) {
+                    tokens.remove(tokens.size() - 1);
+                }
 
-            case '[':
-                return make(TokenType.LEFT_BRACKET);
-            case ']':
-                return make(TokenType.RIGHT_BRACKET);
+                push(make(TokenType.RIGHT_PAREN));
+                return;
+            }
+            
+            case '[': {
+                push(make(TokenType.LEFT_BRACKET));
+                return;
+            }
+            case ']': {
+                if (lastToken().getType() == TokenType.LINE) {
+                    tokens.remove(tokens.size() - 1);
+                }
 
-            case '{':
-                return make(TokenType.LEFT_BRACE);
-            case '}':
-                return make(TokenType.RIGHT_BRACE);
+                push(make(TokenType.RIGHT_BRACKET));
+                return;
+            }
+
+            case '{': {
+                push(make(TokenType.LEFT_BRACE));
+                return;
+            }
+            case '}': {
+                if (lastToken().getType() == TokenType.LINE) {
+                    tokens.remove(tokens.size() - 1);
+                }
+
+                push(make(TokenType.RIGHT_BRACE));
+                return;
+            }
 
             case '_': {
                 StringBuilder builder = new StringBuilder().append(c);
@@ -175,137 +152,240 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
                 }
 
                 if (Character.isLetterOrDigit(peek())) {
-                    return nextName(builder.toString());
+                    readName(builder.toString());
+                    return;
                 }
 
-                return make(TokenType.UNDERSCORE, builder.toString());
+                push(make(TokenType.UNDERSCORE, builder.toString()));
+                return;
             }
 
-            case '.':
-                return match('.')
+            case '.': {
+                Token token = match('.')
                         ? match('.')
                         ? make(TokenType.REST)
                         : make(TokenType.RANGE_TO)
                         : make(TokenType.DOT);
-            case ',':
-                return make(TokenType.COMMA);
-            case '!':
-                return match('=')
+                push(token);
+                return;
+            }
+            case ',': {
+                if (lastToken().getType() == TokenType.LINE) {
+                    tokens.remove(tokens.size() - 1);
+                }
+
+                push(make(TokenType.COMMA));
+                return;
+            }
+            case '!': {
+                Token token = match('=')
                         ? make(TokenType.NOT_EQUAL)
                         : make(TokenType.BANG);
-            case '?':
-                return match('=')
+                push(token);
+                return;
+            }
+            case '?': {
+                Token token = match('=')
                         ? make(TokenType.OPTIONAL_ASSIGN)
                         : match(':')
                         ? make(TokenType.ELVIS)
                         : make(TokenType.QUESTION);
-            case '~':
-                return make(TokenType.TILDE);
+                push(token);
+                return;
+            }
+            case '~': {
+                push(make(TokenType.TILDE));
+                return;
+            }
 
-            case '+':
-                return make(TokenType.PLUS);
-            case '-':
-                return match('>')
+            case '+': {
+                push(make(TokenType.PLUS));
+                return;
+            }
+            case '-': {
+                Token token = match('>')
                         ? make(TokenType.ARROW)
                         : make(TokenType.MINUS);
-            case '*':
-                return make(TokenType.ASTERISK);
-            case '/':
-                return match('\\')
-                        ? make(TokenType.AND)
-                        : match('/')
-                        ? nextComment()
-                        : match('*')
-                        ? nextBlockComment()
-                        : make(TokenType.SLASH);
-            case '%':
-                return make(TokenType.PERCENT);
-            case '^':
-                return make(TokenType.CARET);
+                push(token);
+                return;
+            }
+            case '*': {
+                push(make(TokenType.ASTERISK));
+                return;
+            }
+            case '/': {
+                Token token;
+                if (match('\\')) {
+                    token = make(TokenType.AND);
+                } else if (match('/')) {
+                    readComment();
+                    return;
+                } else if (match('*')) {
+                    nextBlockComment();
+                    return;
+                } else {
+                    token = make(TokenType.SLASH);
+                }
+                push(token);
+                return;
+            }
+            case '%': {
+                push(make(TokenType.PERCENT));
+                return;
+            }
+            case '^': {
+                push(make(TokenType.CARET));
+                return;
+            }
 
-            case '\\':
-                return match('/')
+            case '\\': {
+                Token token = match('/')
                         ? make(TokenType.OR)
                         : make(TokenType.BACKSLASH);
+                push(token);
+                return;
+            }
 
-            case ':': return make(TokenType.COLON);
+            case ':': {
+                push(make(TokenType.COLON));
+                return;
+            }
 
 
-            case '=':
-                return match('=') // ==
+            case '=': {
+                Token token = match('=') // ==
                         ? make(TokenType.EQUALS)
                         : make(TokenType.ASSIGN); // >
+                push(token);
+                return;
+            }
 
-            case '>':
-                return match('=') // >=
+            case '>': {
+                Token token = match('=') // >=
                         ? make(TokenType.GTE)
                         : match('>') // >>
                         ? make(TokenType.SHIFT_RIGHT)
                         : make(TokenType.GT); // >
+                push(token);
+                return;
+            }
 
-            case '<':
-                return match('=') // <=
+            case '<': {
+                Token token = match('=') // <=
                         ? make(TokenType.LTE)
                         : match('|') // <|
                         ? make(TokenType.PIPE_BACKWARD)
                         : match('<') // <<
                         ? make(TokenType.SHIFT_LEFT)
                         : make(TokenType.LT); // <
+                push(token);
+                return;
+            }
 
-            case '|':
-                return match('|') // ||
-                        ? make(TokenType.OR)
-                        : match('>') // |>
-                        ? make(TokenType.PIPE_FORWARD)
-                        : make(TokenType.VERTICAL_BAR); // |
+            case '|': {
+                Token token; // |
+                if (match('|')) {
+                    token = make(TokenType.OR);
+                } else if (match('>')) {
+                    if (lastToken().getType() == TokenType.LINE) {
+                        tokens.remove(tokens.size() - 1);
+                    }
+                    token = make(TokenType.PIPE_FORWARD);
+                } else {
+                    token = make(TokenType.VERTICAL_BAR);
+                }
+                push(token);
+                return;
+            }
 
-            case '&':
-                return match('&') // &&
+            case '&': {
+                Token token = match('&') // &&
                         ? make(TokenType.AND)
                         : make(TokenType.AMPERSAND); // &
+                push(token);
+                return;
+            }
 
-            case ';':
+            case '"': {
+                readString('"', true);
+                return;
+            }
+            case '\'': {
+                readString('\'', false);
+                return;
+            }
+
+            case ';': {
                 match('\r');
                 match('\n');
-                return make(TokenType.LINE);
 
-            case '"':
-                return nextString('"');
-            case '\'':
-                return nextString('\'');
-            case '\r':
-                match('\n');
-            case '\n':
-                return make(TokenType.LINE);
+                Token token = make(TokenType.LINE);
 
-            case '\0':
-                return make(TokenType.EOF);
-
-            case (char) -1:
-                return make(TokenType.EOF);
-
-            default:
-                if (Character.isDigit(c)) {
-                    return nextNumber(c);
-                } else if (Character.isLetter(c)) {
-                    return nextName(c);
-                } else {
-                    throw new SyntaxException("Unrecognized `" + c + "`", getPosition());
+                if (!tokens.isEmpty() && lastToken().getType() != TokenType.LINE) {
+                    push(token);
                 }
+
+                return;
+            }
+            case '\r': 
+            case '\n': {
+                if (!tokens.isEmpty()) {
+                    switch (lastToken().getType()) {
+                        case LEFT_BRACE:
+                        case LEFT_BRACKET:
+                        case LEFT_PAREN:
+                        case ARROW:
+                        case COMMA:
+                        case LINE:
+                            break;
+                        default:
+                            push(make(TokenType.LINE));
+                    }
+                }
+                return;
+            }
+
+            case '\0': {
+                push(make(TokenType.EOF));
+                return;
+            }
+
+            case (char) -1: {
+                push(make(TokenType.EOF));
+                return;
+            }
+
+            default: {
+                if (Character.isDigit(c)) {
+                    readNumber(c);
+                    return;
+                } else if (Character.isLetter(c)) {
+                    readName(c);
+                    return;
+                }
+                throw new SyntaxException("Unrecognized `" + c + "`", getPosition());
+            }
         }
     }
+    
+    private void push(Token token) {
+        if (token == null) throw new IllegalArgumentException();
+        tokens.add(token);
+    }
+    
+    private Token lastToken() {
+        return tokens.get(tokens.size() - 1);
+    }
 
-    private Token nextComment() {
+    private void readComment() {
         while (hasNext() && peek() != '\n') {
             advance();
         }
-        return null;
     }
 
-    private Token nextBlockComment() {
+    private void nextBlockComment() {
         while (hasNext()) {
             if (peek() == '*') {
-                System.out.println("got here");
                 advance();
                 if (peek() == '/') {
                     advance();
@@ -315,10 +395,9 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
             }
             advance();
         }
-        return null;
     }
 
-    private Token nextNumber(char init) {
+    private void readNumber(char init) {
         boolean point = false;
 
         char c;
@@ -332,41 +411,50 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
             if (Character.isDigit(c)) {
                 sb.append(c);
             } else switch (c) {
-                case 'i':
+                case 'i': {
                     back();
-                    return make(TokenType.NUMBER, sb.toString());
-                case '.':
+                    push(make(TokenType.NUMBER, sb.toString()));
+                    return;
+                }
+                case '.': {
                     if (point) {
                         back();
-                        return make(TokenType.NUMBER, sb.toString());
+                        Token token = make(TokenType.NUMBER, sb.toString());
+                        push(token);
+                        return;
                     }
 
                     if (!Character.isDigit(peek())) {
                         back();
-                        return make(TokenType.INT, sb.toString());
+                        push(make(TokenType.INT, sb.toString()));
+                        return;
                     }
 
                     sb.append(c);
                     point = true;
                     break;
+                }
                 case '_':
                     break;
-                default:
+                default: {
                     back();
                     if (point) {
-                        return make(TokenType.NUMBER, sb.toString());
+                        push(make(TokenType.NUMBER, sb.toString()));
+                        return;
                     } else {
-                        return make(TokenType.INT, sb.toString());
+                        push(make(TokenType.INT, sb.toString()));
+                        return;
                     }
+                }
             }
         }
     }
 
-    private Token nextName(char init) {
-        return nextName(String.valueOf(init));
+    private void readName(char init) {
+        readName(String.valueOf(init));
     }
 
-    private Token nextAtom() {
+    private void readAtom() {
         StringBuilder sb = new StringBuilder();
 
         char c;
@@ -382,10 +470,11 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
 
         back();
 
-        return make(TokenType.ATOM, sb.toString());
+        Token token = make(TokenType.ATOM, sb.toString());
+        push(token);
     }
 
-    private Token nextName(String init) {
+    private void readName(String init) {
         StringBuilder sb = new StringBuilder(init);
 
         char c;
@@ -401,47 +490,53 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
 
         back();
 
+        Token token;
         String value = sb.toString();
         switch (value) {
             case "type":
-                return make(TokenType.TYPE);
+                token = make(TokenType.TYPE, "type");
+                break;
             case "module":
-                return make(TokenType.MODULE);
+                token = make(TokenType.MODULE, "module");
+                break;
 
-            case "is":
-                return make(TokenType.IS);
-            case "match":
-                return make(TokenType.MATCH);
-            case "case":
-                return make(TokenType.CASE);
             case "if":
-                return make(TokenType.IF);
+                token = make(TokenType.IF, "if");
+                break;
             case "else":
-                return make(TokenType.ELSE);
+                token = make(TokenType.ELSE, "else");
+                break;
             case "return":
-                return make(TokenType.RETURN);
+                token = make(TokenType.RETURN, "return");
+                break;
             case "let":
-                return make(TokenType.LET);
+                token = make(TokenType.LET, "let");
+                break;
             case "for":
-                return make(TokenType.FOR);
+                token = make(TokenType.FOR, "for");
+                break;
             case "null":
-                return make(TokenType.NULL);
+                token = make(TokenType.NULL, "null");
+                break;
 
             case "fn":
             case "def":
-                return make(TokenType.FUNCTION);
+                token = make(TokenType.FUNCTION);
+                break;
 
             case "true":
-                return make(TokenType.BOOLEAN, "true");
+                token = make(TokenType.BOOLEAN, "true");
+                break;
             case "false":
-                return make(TokenType.BOOLEAN, "false");
-
+                token = make(TokenType.BOOLEAN, "false");
+                break;
             default:
-                return make(TokenType.IDENTIFIER, value);
+                token = make(TokenType.IDENTIFIER, value);
         }
+        push(token);
     }
 
-    public Token nextString(char quote) {
+    public void readString(char quote, boolean template) {
         char c;
         StringBuilder sb = new StringBuilder();
         while (true) {
@@ -486,9 +581,61 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
                             throw new SyntaxException("Illegal escape.");
                     }
                     break;
+                case '$': // String templates
+                    if (template) {
+                        if (Character.isLetter(peek())) {
+                            push(make(TokenType.STRING, sb.toString()));
+                            sb.setLength(0);
+                            push(make(TokenType.PLUS));
+                            readName(advance());
+
+                            if (peek() != quote) {
+                                push(make(TokenType.PLUS));
+                            } else {
+                                advance();
+                                return;
+                            }
+                            break;
+                        } else if (peek() == '{') {
+                            push(make(TokenType.STRING, sb.toString()));
+                            sb.setLength(0);
+                            push(make(TokenType.PLUS));
+
+                            advance();
+                            while (peek() != '}') {
+                                if (!hasNext()) {
+                                    throw new SyntaxException("Unterminated template.");
+                                }
+                                sb.append(advance());
+                            }
+                            advance();
+
+                            tokens.add(make(TokenType.LEFT_PAREN));
+                            tokens.addAll(new KaiperLexer(sb.toString()).tokens);
+                            if (lastToken().getType() != TokenType.EOF) {
+                                throw new SyntaxException("Internal error");
+                            }
+                            tokens.remove(tokens.size() - 1);
+                            tokens.add(make(TokenType.RIGHT_PAREN));
+                            sb.setLength(0);
+
+                            if (peek() != quote) {
+                                push(make(TokenType.PLUS));
+                            } else {
+                                advance();
+                                return;
+                            }
+
+                            break;
+                        }
+                        sb.append(c);
+                        break;
+                    }
                 default:
                     if (c == quote) {
-                        return make(TokenType.STRING, sb.toString());
+                        Token token = make(TokenType.STRING, sb.toString());
+                        push(token);
+                        return;
                     }
                     sb.append(c);
             }
@@ -735,21 +882,21 @@ public class KaiperLexer implements Iterator<Token>, Iterable<Token> {
         return c;
     }
 
-    public String tokensToString() {
-        if (!init) lexTokens();
-        return tokens.toString();
-    }
-
     /**
      * Make a printable string of this KaiperLexer.
      *
-     * @return " at {index} [character {character} line {line}]"
+     * @return " at {index} [{character} : {line}]"
      */
     @Override
     public String toString() {
         return getPosition().toString();
     }
 
+    /**
+     * Return the current lexer's positional data.
+     *
+     * @return A plain object with position data.
+     */
     public Position getPosition() {
         return new Position(index, line, lineIndex);
     }

@@ -37,7 +37,7 @@ public class FileTest {
         System.out.println("Kaiper FILE");
         System.out.println();
 
-        System.out.println(new KaiperLexer(new FileReader(new File("script.kip"))).tokensToString());
+        System.out.println(new KaiperLexer(new FileReader(new File("script.kip"))).getTokens().toString());
 
         KaiperScript exp = new KaiperScript(new FileReader(new File("script.kip")));
 
