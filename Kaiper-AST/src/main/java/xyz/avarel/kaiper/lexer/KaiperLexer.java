@@ -59,7 +59,7 @@ public class KaiperLexer {
         this.line = 1;
 
         do {
-            readToken();
+            readTokens();
         } while (hasNext());
 
         if (lastToken().getType() != TokenType.EOF) {
@@ -74,6 +74,8 @@ public class KaiperLexer {
     }
 
     /**
+     * Get and remove a token from the tokens list.
+     *
      * @return The next token.
      */
     public Token next() {
@@ -84,7 +86,16 @@ public class KaiperLexer {
         return !(previous == 0 && this.eof);
     }
 
-    private void readToken() {
+    /**
+     * Get the current list of tokens.
+     *
+     * @return
+     */
+    public List<Token> getTokens() {
+        return tokens;
+    }
+
+    private void readTokens() {
         if (!hasNext()) {
             tokens.add(make(TokenType.EOF));
             return;
@@ -296,11 +307,11 @@ public class KaiperLexer {
             }
 
             case '"': {
-                readString('"');
+                readString('"', true);
                 return;
             }
             case '\'': {
-                readString('\'');
+                readString('\'', false);
                 return;
             }
 
@@ -402,8 +413,7 @@ public class KaiperLexer {
             } else switch (c) {
                 case 'i': {
                     back();
-                    Token token = make(TokenType.NUMBER, sb.toString());
-                    push(token);
+                    push(make(TokenType.NUMBER, sb.toString()));
                     return;
                 }
                 case '.': {
@@ -416,8 +426,7 @@ public class KaiperLexer {
 
                     if (!Character.isDigit(peek())) {
                         back();
-                        Token token = make(TokenType.INT, sb.toString());
-                        push(token);
+                        push(make(TokenType.INT, sb.toString()));
                         return;
                     }
 
@@ -430,12 +439,10 @@ public class KaiperLexer {
                 default: {
                     back();
                     if (point) {
-                        Token token = make(TokenType.NUMBER, sb.toString());
-                        push(token);
+                        push(make(TokenType.NUMBER, sb.toString()));
                         return;
                     } else {
-                        Token token = make(TokenType.INT, sb.toString());
-                        push(token);
+                        push(make(TokenType.INT, sb.toString()));
                         return;
                     }
                 }
@@ -529,7 +536,7 @@ public class KaiperLexer {
         push(token);
     }
 
-    public void readString(char quote) {
+    public void readString(char quote, boolean template) {
         char c;
         StringBuilder sb = new StringBuilder();
         while (true) {
@@ -575,53 +582,55 @@ public class KaiperLexer {
                     }
                     break;
                 case '$': // String templates
-                    if (Character.isLetter(peek())) {
-                        push(make(TokenType.STRING, sb.toString()));
-                        sb.setLength(0);
-                        push(make(TokenType.PLUS));
-                        readName(advance());
-
-                        if (peek() != quote) {
+                    if (template) {
+                        if (Character.isLetter(peek())) {
+                            push(make(TokenType.STRING, sb.toString()));
+                            sb.setLength(0);
                             push(make(TokenType.PLUS));
-                        } else {
-                            advance();
-                            return;
-                        }
-                        break;
-                    } else if (peek() == '{') {
-                        push(make(TokenType.STRING, sb.toString()));
-                        sb.setLength(0);
-                        push(make(TokenType.PLUS));
+                            readName(advance());
 
-                        advance();
-                        while (peek() != '}') {
-                            if (!hasNext()) {
-                                throw new SyntaxException("Unterminated template.");
+                            if (peek() != quote) {
+                                push(make(TokenType.PLUS));
+                            } else {
+                                advance();
+                                return;
                             }
-                            sb.append(advance());
-                        }
-                        advance();
-
-                        tokens.add(make(TokenType.LEFT_PAREN));
-                        tokens.addAll(new KaiperLexer(sb.toString()).tokens);
-                        if (lastToken().getType() != TokenType.EOF) {
-                            throw new SyntaxException("Internal error");
-                        }
-                        tokens.remove(tokens.size() - 1);
-                        tokens.add(make(TokenType.RIGHT_PAREN));
-                        sb.setLength(0);
-
-                        if (peek() != quote) {
+                            break;
+                        } else if (peek() == '{') {
+                            push(make(TokenType.STRING, sb.toString()));
+                            sb.setLength(0);
                             push(make(TokenType.PLUS));
-                        } else {
-                            advance();
-                            return;
-                        }
 
+                            advance();
+                            while (peek() != '}') {
+                                if (!hasNext()) {
+                                    throw new SyntaxException("Unterminated template.");
+                                }
+                                sb.append(advance());
+                            }
+                            advance();
+
+                            tokens.add(make(TokenType.LEFT_PAREN));
+                            tokens.addAll(new KaiperLexer(sb.toString()).tokens);
+                            if (lastToken().getType() != TokenType.EOF) {
+                                throw new SyntaxException("Internal error");
+                            }
+                            tokens.remove(tokens.size() - 1);
+                            tokens.add(make(TokenType.RIGHT_PAREN));
+                            sb.setLength(0);
+
+                            if (peek() != quote) {
+                                push(make(TokenType.PLUS));
+                            } else {
+                                advance();
+                                return;
+                            }
+
+                            break;
+                        }
+                        sb.append(c);
                         break;
                     }
-                    sb.append(c);
-                    break;
                 default:
                     if (c == quote) {
                         Token token = make(TokenType.STRING, sb.toString());
@@ -873,20 +882,21 @@ public class KaiperLexer {
         return c;
     }
 
-    public String tokensToString() {
-        return tokens.toString();
-    }
-
     /**
      * Make a printable string of this KaiperLexer.
      *
-     * @return " at {index} [character {character} line {line}]"
+     * @return " at {index} [{character} : {line}]"
      */
     @Override
     public String toString() {
         return getPosition().toString();
     }
 
+    /**
+     * Return the current lexer's positional data.
+     *
+     * @return A plain object with position data.
+     */
     public Position getPosition() {
         return new Position(index, line, lineIndex);
     }

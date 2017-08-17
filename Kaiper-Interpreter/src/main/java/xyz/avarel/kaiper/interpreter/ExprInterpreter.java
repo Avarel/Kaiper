@@ -171,13 +171,13 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             case NOT_EQUALS:
                 return left.isEqualTo(right).negate();
             case GREATER_THAN:
-                return left.greaterThan(right);
+                return Bool.of(left.compareTo(right) == 1);
             case LESS_THAN:
-                return left.lessThan(right);
+                return Bool.of(left.compareTo(right) == -1);
             case GREATER_THAN_EQUAL:
-                return left.greaterThan(right).or(left.isEqualTo(right));
+                return Bool.of(left.compareTo(right) >= 0);
             case LESS_THAN_EQUAL:
-                return left.lessThan(right).or(left.isEqualTo(right));
+                return Bool.of(left.compareTo(right) <= 0);
 
             case OR:
                 return left.or(right);

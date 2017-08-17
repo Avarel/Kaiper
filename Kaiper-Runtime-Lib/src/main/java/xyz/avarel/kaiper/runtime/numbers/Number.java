@@ -25,7 +25,7 @@ import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.List;
 
-public class Number implements Obj {
+public class Number implements Obj, Comparable<Number> {
     public static final Type<Number> TYPE = new Type<>("Number");
     public static final Module MODULE = new NativeModule() {{
         declare("TYPE", Number.TYPE);
@@ -187,23 +187,16 @@ public class Number implements Obj {
     }
 
     @Override
-    public Obj greaterThan(Obj other) {
+    public int compareTo(Obj other) {
         if (other instanceof Number) {
-            return this.greaterThan((Number) other);
+            return this.compareTo((Number) other);
         }
-        return Bool.FALSE;
-    }
-
-    private Obj greaterThan(Number other) {
-        return Bool.of(value > other.value);
+        return Obj.super.compareTo(other);
     }
 
     @Override
-    public Obj lessThan(Obj other) {
-        if (other instanceof Number) {
-            return this.lessThan((Number) other);
-        }
-        return Bool.FALSE;
+    public int compareTo(Number other) {
+        return Double.compare(value, other.value);
     }
 
     private Bool lessThan(Number other) {

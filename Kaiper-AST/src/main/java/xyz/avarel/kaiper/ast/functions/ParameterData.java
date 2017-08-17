@@ -22,7 +22,6 @@ public class ParameterData {
     private final Single defaultExpr;
     private final boolean rest;
 
-    // todo add position?
     public ParameterData(String name) {
         this(name, null, false);
     }

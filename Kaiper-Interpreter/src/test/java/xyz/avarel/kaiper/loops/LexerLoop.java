@@ -46,7 +46,7 @@ public class LexerLoop {
 
                 KaiperLexer lexer = new KaiperLexer(input);
 
-                System.out.println(lexer.tokensToString());
+                System.out.println(lexer.getTokens().toString());
 
             } catch (RuntimeException e) {
                 System.out.println("    Result | Caught an error: " + e.getMessage() + "\n");

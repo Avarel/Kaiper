@@ -25,7 +25,7 @@ import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.List;
 
-public class Int implements Obj {
+public class Int implements Obj, Comparable<Int> {
     public static final Type<Int> TYPE = new Type<>("Int");
     public static final Module MODULE = new NativeModule() {{
         declare("TYPE", Int.TYPE);
@@ -191,27 +191,16 @@ public class Int implements Obj {
     }
 
     @Override
-    public Obj greaterThan(Obj other) {
+    public int compareTo(Obj other) {
         if (other instanceof Int) {
-            return this.greaterThan((Int) other);
+            return this.compareTo((Int) other);
         }
-        return Bool.FALSE;
-    }
-
-    private Obj greaterThan(Int other) {
-        return Bool.of(value > other.value);
+        return Obj.super.compareTo(other);
     }
 
     @Override
-    public Obj lessThan(Obj other) {
-        if (other instanceof Int) {
-            return this.lessThan((Int) other);
-        }
-        return Bool.FALSE;
-    }
-
-    private Obj lessThan(Int other) {
-        return Bool.of(value < other.value);
+    public int compareTo(Int other) {
+        return Integer.compare(value, other.value);
     }
 
     @Override
