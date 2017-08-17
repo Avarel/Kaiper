@@ -1,4 +1,4 @@
-// Test file for FileTest.java
+/* Test file for FileTest.java */
 
 def memes(x) {
     if (x > 5) {

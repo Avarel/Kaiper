@@ -44,6 +44,6 @@ public final class Token {
 
     @Override
     public String toString() {
-        return type.toString();
+        return type.toString() + " : " + str;
     }
 }
