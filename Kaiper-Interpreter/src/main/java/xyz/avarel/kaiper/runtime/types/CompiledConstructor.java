@@ -4,34 +4,27 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.interpreter.PatternBinder;
-import xyz.avarel.kaiper.pattern.Pattern;
+import xyz.avarel.kaiper.pattern.PatternBinder;
 import xyz.avarel.kaiper.pattern.PatternCase;
-import xyz.avarel.kaiper.pattern.RestPattern;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
 public class CompiledConstructor extends Constructor {
-    private final PatternCase patternCase;
+    private final PatternCase pattern;
     private final ExprInterpreter visitor;
     private final Scope scope;
     private final Expr expr;
 
-    public CompiledConstructor(PatternCase patternCase, Expr expr, ExprInterpreter visitor, Scope scope) {
-        this.patternCase = patternCase;
+    public CompiledConstructor(PatternCase pattern, Expr expr, ExprInterpreter visitor, Scope scope) {
+        this.pattern = pattern;
         this.visitor = visitor;
         this.scope = scope;
         this.expr = expr;
     }
 
     @Override
-    public int getArity() {
-        boolean rest = false;
-        for (Pattern pattern : patternCase.getPatterns()) {
-            if (pattern instanceof RestPattern) rest = true;
-        }
-
-        return patternCase.size() - (rest ? 1 : 0);
+    public PatternCase getPattern() {
+        return pattern;
     }
 
     @Override
@@ -42,8 +35,8 @@ public class CompiledConstructor extends Constructor {
 
         Scope constructorScope = this.scope.subPool();
 
-        if (!new PatternBinder(patternCase, visitor, constructorScope).bindFrom(arguments)) {
-            throw new InterpreterException("Could not match arguments (" + arguments + ") to " + getName() + "(" + patternCase + ")");
+        if (!new PatternBinder(pattern, visitor, constructorScope).bindFrom(arguments)) {
+            throw new InterpreterException("Could not match arguments (" + arguments + ") to " + getName() + "(" + pattern + ")");
         }
 
         CompiledObj instance = new CompiledObj((CompiledType) targetType, this.scope.subPool());

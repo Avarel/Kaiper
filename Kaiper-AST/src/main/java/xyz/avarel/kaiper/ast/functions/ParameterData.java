@@ -47,10 +47,6 @@ public class ParameterData {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (name != null) {
-            sb.append(name);
-        }
-        return sb.toString();
+        return name;
     }
 }

@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class Int implements Obj, Comparable<Int> {
     public static final Type<Int> TYPE = new Type<>("Int");
-    public static final Module MODULE = new NativeModule() {{
+    public static final Module MODULE = new NativeModule("Int") {{
         declare("TYPE", Int.TYPE);
 
         declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
@@ -38,7 +38,7 @@ public class Int implements Obj, Comparable<Int> {
         declare("parse", new NativeFunc("parse", "a") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                Obj obj = arguments.get(0);
+                Obj obj = arguments.get("a");
                 if (obj instanceof Int) {
                     return obj;
                 } else if (obj instanceof Number) {

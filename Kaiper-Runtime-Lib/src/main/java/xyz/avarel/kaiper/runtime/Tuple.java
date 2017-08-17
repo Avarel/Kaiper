@@ -1,5 +1,7 @@
 package xyz.avarel.kaiper.runtime;
 
+import xyz.avarel.kaiper.runtime.modules.Module;
+import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.Collections;
@@ -47,8 +49,9 @@ import java.util.Map;
 
 public class Tuple implements Obj {
     public static final Type<Bool> TYPE = new Type<>("Tuple");
-
-    // todo empty static one
+    public static final Module MODULE = new NativeModule("Tuple") {{
+        declare("TYPE", Tuple.TYPE);
+    }};
 
     private final Map<String, Obj> map;
 
@@ -82,7 +85,8 @@ public class Tuple implements Obj {
 
     @Override
     public Obj getAttr(String name) {
-        return map.get(name);
+        Obj obj = map.get(name);
+        return obj == null ? Obj.super.getAttr(name) : obj;
     }
 
     @Override

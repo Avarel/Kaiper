@@ -28,7 +28,7 @@ public enum Bool implements Obj {
 
     public static final Type<Bool> TYPE = new Type<>("Boolean");
 
-    public static final Module MODULE = new NativeModule() {{
+    public static final Module MODULE = new NativeModule("Boolean") {{
         declare("TYPE", Bool.TYPE);
 
         declare("parse", new NativeFunc("parse", "a") {

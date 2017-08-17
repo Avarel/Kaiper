@@ -1,7 +1,7 @@
-package xyz.avarel.kaiper.interpreter;
+package xyz.avarel.kaiper.pattern;
 
 import xyz.avarel.kaiper.ast.Single;
-import xyz.avarel.kaiper.pattern.*;
+import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;

@@ -1,8 +1,8 @@
-package xyz.avarel.kaiper.interpreter;
+package xyz.avarel.kaiper.pattern;
 
 import xyz.avarel.kaiper.Pair;
 import xyz.avarel.kaiper.ast.Single;
-import xyz.avarel.kaiper.pattern.*;
+import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
@@ -131,7 +131,7 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
         } else { // empty
             int endPosition = obj.size() - (patternCase.size() - (patternCase.getPatterns().indexOf(pattern) + 1));
 
-            if (position != endPosition) {
+            if (position < endPosition) {
                 Array array = new Array();
 
                 do {

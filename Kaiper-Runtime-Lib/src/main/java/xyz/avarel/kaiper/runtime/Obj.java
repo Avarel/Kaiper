@@ -25,7 +25,7 @@ import xyz.avarel.kaiper.runtime.types.Type;
  */
 public interface Obj {
     Type<Obj> TYPE = new Type<>("Object");
-    Module MODULE = new NativeModule() {{
+    Module MODULE = new NativeModule("Object") {{
         declare("TYPE", Obj.TYPE);
     }};
 

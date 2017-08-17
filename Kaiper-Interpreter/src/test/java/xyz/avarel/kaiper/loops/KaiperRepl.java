@@ -68,7 +68,7 @@ public class KaiperRepl {
                     result = interpreter.eval(input);
                 } catch (KaiperException e) {
                     System.out.println("! " + e.getMessage());
-                    e.printStackTrace();
+                    // e.printStackTrace();
                     result = Null.VALUE;
                 }
 

@@ -35,7 +35,7 @@ import java.util.*;
  */
 public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
     public static final Type<Array> TYPE = new Type<>("Array");
-    public static final Module MODULE = new NativeModule() {{
+    public static final Module MODULE = new NativeModule("Array") {{
         declare("TYPE", Array.TYPE);
 
         declare("length", new NativeFunc("length", "array") {

@@ -30,20 +30,20 @@ import java.util.Map;
 
 public class Range implements Obj, Iterable<Int> {
     public static final Type<Range> TYPE = new Type<>("Range");
-    public static final Module MODULE = new NativeModule() {{
+    public static final Module MODULE = new NativeModule("Range") {{
         declare("TYPE", Range.TYPE);
 
         declare("length", new NativeFunc("length", "range") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return Int.of(((Range) arguments.get(0)).size());
+                return Int.of(((Range) arguments.get("range")).size());
             }
         });
 
         declare("lastIndex", new NativeFunc("lastIndex", "range") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return Int.of(((Range) arguments.get(0)).size() - 1);
+                return Int.of(((Range) arguments.get("range")).size() - 1);
             }
         });
     }};

@@ -24,7 +24,8 @@ import java.util.Map;
 public abstract class NativeModule extends Module {
     private final Map<String, Obj> map;
 
-    protected NativeModule() {
+    protected NativeModule(String name) {
+        super(name);
         this.map = new HashMap<>();
     }
 

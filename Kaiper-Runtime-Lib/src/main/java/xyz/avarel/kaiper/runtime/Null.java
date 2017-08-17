@@ -27,7 +27,7 @@ public enum Null implements Obj {
     VALUE;
 
     public static final Type<Null> TYPE = new Type<>("Null");
-    public static final Module MODULE = new NativeModule() {{
+    public static final Module MODULE = new NativeModule("Null") {{
         declare("TYPE", Null.TYPE);
     }};
 

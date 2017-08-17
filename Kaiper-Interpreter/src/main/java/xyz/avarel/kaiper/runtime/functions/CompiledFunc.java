@@ -19,10 +19,8 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.interpreter.PatternBinder;
-import xyz.avarel.kaiper.pattern.Pattern;
+import xyz.avarel.kaiper.pattern.PatternBinder;
 import xyz.avarel.kaiper.pattern.PatternCase;
-import xyz.avarel.kaiper.pattern.RestPattern;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
@@ -42,18 +40,18 @@ public class CompiledFunc extends Func {
     }
 
     @Override
-    public int getArity() {
-        boolean rest = false;
-        for (Pattern pattern : patternCase.getPatterns()) {
-            if (pattern instanceof RestPattern) rest = true;
-        }
+    public PatternCase getPattern() {
+        return patternCase;
+    }
 
-        return patternCase.size() - (rest ? 1 : 0);
+    @Override
+    public int getArity() {
+        return patternCase.size();
     }
 
     // def fun(x, ...y, z = 5) { println x; println y; println z }
     @Override
-    public Obj invoke(Tuple argument) { // todo convert to tuple/obj
+    public Obj invoke(Tuple argument) {
         Scope scope = this.scope.subPool();
 
         if (!new PatternBinder(patternCase, visitor, scope).bindFrom(argument)) {
@@ -69,6 +67,6 @@ public class CompiledFunc extends Func {
 
     @Override
     public String toString() {
-        return "def " + getName() + "(" + patternCase + ")";
+        return super.toString() + " { ... }";
     }
 }

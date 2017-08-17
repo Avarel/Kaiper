@@ -35,6 +35,11 @@ import xyz.avarel.kaiper.runtime.types.Type;
 
 public abstract class Module implements Obj {
     public static final Type<Module> TYPE = new Type<>("Module");
+    private final String name;
+
+    protected Module(String name) {
+        this.name = name;
+    }
 
     @Override
     public abstract Obj getAttr(String name);
@@ -42,5 +47,10 @@ public abstract class Module implements Obj {
     @Override
     public Type getType() {
         return TYPE;
+    }
+
+    @Override
+    public String toString() {
+        return "module " + name;
     }
 }

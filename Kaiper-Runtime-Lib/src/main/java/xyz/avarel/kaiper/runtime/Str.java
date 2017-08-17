@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class Str implements Obj {
     public static final Type<Str> TYPE = new Type<>("String");
-    public static final Module MODULE = new NativeModule() {{
+    public static final Module MODULE = new NativeModule("String") {{
         declare("TYPE", Str.TYPE);
 
         declare("length", new NativeFunc("length", "string") {

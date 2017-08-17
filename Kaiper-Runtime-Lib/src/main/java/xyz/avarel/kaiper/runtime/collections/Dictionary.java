@@ -32,13 +32,13 @@ import java.util.Map;
  */
 public class Dictionary extends HashMap<Obj, Obj> implements Obj {
     public static final Type<Dictionary> TYPE = new Type<>("Dictionary");
-    public static final Module MODULE = new NativeModule() {{
+    public static final Module MODULE = new NativeModule("Dictionary") {{
         declare("TYPE", Dictionary.TYPE);
 
         declare("size", new NativeFunc("size", "dict") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return Int.of(((Dictionary) arguments.get(0)).size());
+                return Int.of(((Dictionary) arguments.get("dict")).size());
             }
         });
     }};

@@ -27,6 +27,8 @@ public class MathModule extends NativeModule {
     public static MathModule INSTANCE = new MathModule();
 
     private MathModule() {
+        super("Math");
+
         declare("PI", Number.of(Math.PI));
         declare("E", Number.of(Math.E));
 

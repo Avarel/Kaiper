@@ -34,6 +34,7 @@ public class DefaultScope extends Scope {
 
         declare("Object", Obj.MODULE);
         declare("Math", MathModule.INSTANCE);
+        declare("Tuple", Tuple.MODULE);
         declare("Type", Type.MODULE);
         declare("Int", Int.MODULE);
         declare("Number", Number.MODULE);

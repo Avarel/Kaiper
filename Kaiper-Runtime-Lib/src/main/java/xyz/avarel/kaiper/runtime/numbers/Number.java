@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class Number implements Obj, Comparable<Number> {
     public static final Type<Number> TYPE = new Type<>("Number");
-    public static final Module MODULE = new NativeModule() {{
+    public static final Module MODULE = new NativeModule("Number") {{
         declare("TYPE", Number.TYPE);
 
         declare("MAX_VALUE", Number.of(Double.MAX_VALUE));

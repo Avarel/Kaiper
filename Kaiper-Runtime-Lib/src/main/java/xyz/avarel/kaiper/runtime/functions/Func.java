@@ -15,6 +15,7 @@
 
 package xyz.avarel.kaiper.runtime.functions;
 
+import xyz.avarel.kaiper.pattern.PatternCase;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.modules.Module;
@@ -25,7 +26,7 @@ import java.util.function.Function;
 
 public abstract class Func implements Obj {
     public static final Type<Func> TYPE = new Type<>("Function");
-    public static final Module MODULE = new NativeModule() {{
+    public static final Module MODULE = new NativeModule("Function") {{
         declare("TYPE", Func.TYPE);
     }};
     private final String name;
@@ -34,7 +35,11 @@ public abstract class Func implements Obj {
         this.name = name;
     }
 
-    public abstract int getArity();
+    public int getArity() {
+        return getPattern().size();
+    }
+
+    public abstract PatternCase getPattern();
 
     public String getName() {
         return name == null ? "anonymous" : name;
@@ -71,6 +76,6 @@ public abstract class Func implements Obj {
 
     @Override
     public String toString() {
-        return "def " + getName();
+        return "def " + getName() + "(" + getPattern() + ")";
     }
 }
