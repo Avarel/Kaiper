@@ -68,25 +68,10 @@ public enum Bool implements Obj {
         return TYPE;
     }
 
-    @Override
-    public Bool or(Obj other) {
-        if (other instanceof Bool) {
-            return or((Bool) other);
-        }
-        return Obj.super.or(other);
-    }
-
     public Bool or(Bool other) {
         return Bool.of(value || other.value);
     }
 
-    @Override
-    public Bool and(Obj other) {
-        if (other instanceof Bool) {
-            return and((Bool) other);
-        }
-        return Obj.super.and(other);
-    }
 
     public Bool and(Bool other) {
         return Bool.of(value && other.value);

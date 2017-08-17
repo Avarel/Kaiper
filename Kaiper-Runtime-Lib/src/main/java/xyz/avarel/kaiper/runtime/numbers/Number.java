@@ -23,7 +23,7 @@ import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
-import java.util.List;
+import java.util.Map;
 
 public class Number implements Obj, Comparable<Number> {
     public static final Type<Number> TYPE = new Type<>("Number");
@@ -40,8 +40,8 @@ public class Number implements Obj, Comparable<Number> {
 
         declare("parse", new NativeFunc("parse", "a") {
             @Override
-            protected Obj eval(List<Obj> arguments) {
-                Obj obj = arguments.get(0);
+            protected Obj eval(Map<String, Obj> arguments) {
+                Obj obj = arguments.get("a");
                 if (obj instanceof Number) {
                     return obj;
                 } else if (obj instanceof Int) {
@@ -175,14 +175,14 @@ public class Number implements Obj, Comparable<Number> {
     }
 
     @Override
-    public Obj isEqualTo(Obj other) {
+    public Bool isEqualTo(Obj other) {
         if (other instanceof Number) {
             return this.isEqualTo((Number) other);
         }
         return Bool.FALSE;
     }
 
-    private Obj isEqualTo(Number other) {
+    private Bool isEqualTo(Number other) {
         return Bool.of(value == other.value);
     }
 
