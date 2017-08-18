@@ -54,7 +54,7 @@ public class CompiledFunc extends Func {
     public Obj invoke(Tuple argument) {
         Scope scope = this.scope.subPool();
 
-        if (!new PatternBinder(patternCase, visitor, scope).bindFrom(argument)) {
+        if (!new PatternBinder(patternCase, visitor, scope).declareFrom(argument)) {
             throw new InterpreterException("Could not match arguments (" + argument + ") to " + getName() + "(" + patternCase + ")");
         }
 

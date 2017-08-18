@@ -1,20 +1,13 @@
-/* Test file for FileTest.java */
-
-def memes(x) {
-    if (x > 5) {
-        return "wew"
-        println "should not do this at all"
-    } else if (x < 0) {
-        return "meme"
-        println "should not do this at all"
-    } else {
-        if (x == 2) {
-            return "ugh"
-            println "should not do this at all"
-        }
-        return "whatever"
-        println "should not do this at all"
+def fibMaker() {
+    let a, b = 0, 1
+    return next: def() {
+        let r = a
+        a, b = b, a + b
+        r
     }
 }
 
-[-5..10] |> Array.map(memes)
+let sequence = fibMaker()
+for (i in 0..9) {
+    println sequence.next()
+}

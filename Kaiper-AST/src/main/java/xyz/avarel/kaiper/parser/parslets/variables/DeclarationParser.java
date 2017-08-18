@@ -17,15 +17,20 @@ package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.value.NullNode;
+import xyz.avarel.kaiper.ast.variables.BindDeclarationExpr;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
-import xyz.avarel.kaiper.ast.variables.DestructuringDeclarationExpr;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
+import xyz.avarel.kaiper.pattern.Pattern;
 import xyz.avarel.kaiper.pattern.PatternCase;
+import xyz.avarel.kaiper.pattern.VariablePattern;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeclarationParser implements PrefixParser {
     @Override
@@ -41,10 +46,30 @@ public class DeclarationParser implements PrefixParser {
 
             parser.eat(TokenType.ASSIGN);
 
-            return new DestructuringDeclarationExpr(token.getPosition(), patternCase, parser.parseSingle());
+            return new BindDeclarationExpr(token.getPosition(), patternCase, parser.parseSingle());
         }
 
         Token name = parser.eat(TokenType.IDENTIFIER);
+
+        if (parser.match(TokenType.COMMA)) {
+            List<Pattern> patterns = new ArrayList<>();
+
+            patterns.add(new VariablePattern(name.getString()));
+
+            do {
+                patterns.add(new VariablePattern(parser.eat(TokenType.IDENTIFIER).getString()));
+            } while (parser.match(TokenType.COMMA));
+
+            PatternCase patternCase = new PatternCase(patterns);
+
+            parser.eat(TokenType.ASSIGN);
+
+            return new BindDeclarationExpr(
+                    token.getPosition(),
+                    patternCase,
+                    parser.parseSingle()
+            );
+        }
 
         if (parser.match(TokenType.ASSIGN)) {
             return new DeclarationExpr(token.getPosition(), name.getString(), parser.parseSingle());

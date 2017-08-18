@@ -27,7 +27,31 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
         this.scope = scope;
     }
 
-    public boolean bindFrom(Tuple tuple) {
+    public boolean declareFrom(Tuple tuple) {
+        Map<String, Obj> results = bindingsFrom(tuple);
+
+        if (results == null) return false;
+
+        for (Map.Entry<String, Obj> result : results.entrySet()) {
+            scope.declare(result.getKey(), result.getValue());
+        }
+
+        return true;
+    }
+
+    public boolean assignFrom(Tuple tuple) {
+        Map<String, Obj> results = bindingsFrom(tuple);
+
+        if (results == null) return false;
+
+        for (Map.Entry<String, Obj> result : results.entrySet()) {
+            scope.assign(result.getKey(), result.getValue());
+        }
+
+        return true;
+    }
+
+    private Map<String, Obj> bindingsFrom(Tuple tuple) {
         Map<String, Obj> results = new LinkedHashMap<>();
         for (Pattern pattern : patternCase.getPatterns()) {
             Pair<String, Obj> result = pattern.accept(this, tuple);
@@ -37,16 +61,11 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
                     results.put(result.getFirst(), result.getSecond());
                 }
             } else {
-                System.out.println(tuple);
-                return false;
+                return null;
             }
         }
 
-        for (Map.Entry<String, Obj> result : results.entrySet()) {
-            scope.declare(result.getKey(), result.getValue());
-        }
-
-        return true;
+        return results;
     }
 
     @Override
@@ -58,7 +77,7 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
 
             Tuple tuple = value instanceof Tuple ? (Tuple) value : new Tuple(value);
 
-            if (new PatternBinder(patternCase, interpreter, scope).bindFrom(tuple)) {
+            if (new PatternBinder(patternCase, interpreter, scope).declareFrom(tuple)) {
                 return SUCCESS_NO_ASSIGNMENT;
             } else {
                 return null;

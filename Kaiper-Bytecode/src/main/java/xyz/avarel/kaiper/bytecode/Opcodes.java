@@ -162,6 +162,7 @@ public enum Opcodes implements DataOutputConsumer {
     NEW_FUNCTION,
     NEW_MODULE,
     NEW_TYPE,
+    // NEW_TUPLE, // todo(Adrian) NEW NODE
     FUNCTION_DEF_PARAM,
     /**
      * {@code NEW_RANGE;}
@@ -178,7 +179,8 @@ public enum Opcodes implements DataOutputConsumer {
      * </ul>
      */
     INVOKE,
-    DECLARE, //TODO DOC
+    DECLARE, // todo(Adrian) DOC
+    ASSIGN,
     /**
      * {@code UNARY_OPERATION type;}
      * <p>Executes a Unary Operation.</p>
@@ -255,8 +257,8 @@ public enum Opcodes implements DataOutputConsumer {
      */
     SET,
     IDENTIFIER,
-    ASSIGN,
     CONDITIONAL,
+    // WHILE, // todo(Adrian) NEW NODE
     FOR_EACH,
 
     DUP, POP;

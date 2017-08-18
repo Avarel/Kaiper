@@ -50,7 +50,7 @@ public class Invocation extends Single {
         left.ast("target", builder, indent + (isTail ? "    " : "│   "), false);
 
         builder.append('\n');
-        argument.ast("argument", builder, indent + (isTail ? "    " : "│   "), false);
+        argument.ast("argument", builder, indent + (isTail ? "    " : "│   "), true);
     }
 
     @Override

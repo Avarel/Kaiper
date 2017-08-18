@@ -6,11 +6,11 @@ import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.pattern.PatternCase;
 
-public class DestructuringDeclarationExpr extends Expr {
+public class BindAssignmentExpr extends Expr {
     private final PatternCase patternCase;
     private final Single expr;
 
-    public DestructuringDeclarationExpr(Position position, PatternCase patternCase, Single expr) {
+    public BindAssignmentExpr(Position position, PatternCase patternCase, Single expr) {
         super(position);
         this.patternCase = patternCase;
         this.expr = expr;
@@ -42,6 +42,6 @@ public class DestructuringDeclarationExpr extends Expr {
 
     @Override
     public String toString() {
-        return "destructure";
+        return patternCase + " = " + expr;
     }
 }

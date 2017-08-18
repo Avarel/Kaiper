@@ -40,10 +40,7 @@ import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
-import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
-import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
-import xyz.avarel.kaiper.ast.variables.DestructuringDeclarationExpr;
-import xyz.avarel.kaiper.ast.variables.Identifier;
+import xyz.avarel.kaiper.ast.variables.*;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
@@ -465,14 +462,31 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(DestructuringDeclarationExpr expr, Scope scope) {
+    public Obj visit(BindDeclarationExpr expr, Scope scope) {
         Obj value = resultOf(expr.getExpr(), scope);
 
         if (!(value instanceof Tuple)) {
             value = new Tuple(value);
         }
 
-        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).bindFrom((Tuple) value);
+        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).declareFrom((Tuple) value);
+
+        if (!result) {
+            throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());
+        }
+
+        return Null.VALUE;
+    }
+
+    @Override
+    public Obj visit(BindAssignmentExpr expr, Scope scope) {
+        Obj value = resultOf(expr.getExpr(), scope);
+
+        if (!(value instanceof Tuple)) {
+            value = new Tuple(value);
+        }
+
+        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).assignFrom((Tuple) value);
 
         if (!result) {
             throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());

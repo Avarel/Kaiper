@@ -30,9 +30,8 @@ public class NameParser implements PrefixParser {
         Identifier id = new Identifier(token.getPosition(), token.getString());
 
         if (parser.nextIsAny(
-                TokenType.STRING, TokenType.INT, TokenType.NUMBER,
-                TokenType.IDENTIFIER, TokenType.LEFT_BRACE, TokenType.LEFT_PAREN,
-                TokenType.UNDERSCORE, TokenType.FUNCTION
+                TokenType.STRING, TokenType.INT, TokenType.NUMBER, TokenType.IDENTIFIER,
+                TokenType.LEFT_BRACE, TokenType.UNDERSCORE, TokenType.FUNCTION
         )) {
             Single argument = parser.parseSingle();
             return new Invocation(token.getPosition(), id, argument);

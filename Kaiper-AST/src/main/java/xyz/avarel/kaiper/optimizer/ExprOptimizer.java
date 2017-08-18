@@ -13,10 +13,7 @@ import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
-import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
-import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
-import xyz.avarel.kaiper.ast.variables.DestructuringDeclarationExpr;
-import xyz.avarel.kaiper.ast.variables.Identifier;
+import xyz.avarel.kaiper.ast.variables.*;
 
 
 // IN PROGRESS
@@ -152,7 +149,12 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
     }
 
     @Override
-    public Expr visit(DestructuringDeclarationExpr destructuringDeclarationExpr, Void scope) {
+    public Expr visit(BindDeclarationExpr expr, Void scope) {
+        return null;
+    }
+
+    @Override
+    public Expr visit(BindAssignmentExpr expr, Void scope) {
         return null;
     }
 }

@@ -35,7 +35,7 @@ public class CompiledConstructor extends Constructor {
 
         Scope constructorScope = this.scope.subPool();
 
-        if (!new PatternBinder(pattern, visitor, constructorScope).bindFrom(arguments)) {
+        if (!new PatternBinder(pattern, visitor, constructorScope).declareFrom(arguments)) {
             throw new InterpreterException("Could not match arguments (" + arguments + ") to " + getName() + "(" + pattern + ")");
         }
 
