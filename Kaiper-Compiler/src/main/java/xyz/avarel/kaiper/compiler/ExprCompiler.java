@@ -14,7 +14,6 @@ import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.bytecode.DataOutputConsumer;
-import xyz.avarel.kaiper.operations.BinaryOperatorType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -201,21 +200,19 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
     @Override
     public DataOutputConsumer visit(ArrayNode expr, Void scope) {
         List<Single> items = expr.getItems();
-        if (items.isEmpty()) return NEW_ARRAY;
 
-        DataOutputConsumer consumer = NEW_ARRAY;
-        for (Single item : items) {
-            DataOutputConsumer data = item.accept(this, null);
-            consumer = consumer.andThen(out -> {
-                DUP.writeInto(out);
-                data.writeInto(out);
-                BINARY_OPERATION.writeInto(out);
-                out.writeByte(BinaryOperatorType.SHL.ordinal());
-                POP.writeInto(out);
-            });
+        DataOutputConsumer[] consumers = new DataOutputConsumer[items.size()];
+        for (int i = 0; i < items.size(); i++) {
+            consumers[i] = items.get(i).accept(this, null);
         }
 
-        return consumer;
+        return out -> {
+            for (DataOutputConsumer data : consumers) {
+                data.writeInto(out);
+            }
+            NEW_ARRAY.writeInto(out);
+            out.writeInt(items.size());
+        };
     }
 
     @Override
@@ -354,6 +351,7 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
         };
     }
 
+    // todo optimize also?
     @Override
     public DataOutputConsumer visit(DictionaryNode expr, Void scope) {
         Map<Single, Single> map = expr.getMap();

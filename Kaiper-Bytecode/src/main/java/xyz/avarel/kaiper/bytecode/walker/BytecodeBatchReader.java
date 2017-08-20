@@ -40,7 +40,7 @@ public class BytecodeBatchReader {
                 walker.opcodeStringConstant(input, stringPool);
                 break;
             case NEW_ARRAY:
-                walker.opcodeNewArray();
+                walker.opcodeNewArray(input);
                 break;
             case NEW_DICTIONARY:
                 walker.opcodeNewDictionary();

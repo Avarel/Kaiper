@@ -50,7 +50,7 @@ public class DummyWalker implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeNewArray() throws IOException {
+    public void opcodeNewArray(DataInput input) throws IOException {
     }
 
     @Override

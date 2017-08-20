@@ -21,7 +21,7 @@ public interface BytecodeWalker {
 
     void opcodeStringConstant(DataInput input, List<String> stringPool) throws IOException;
 
-    void opcodeNewArray() throws IOException;
+    void opcodeNewArray(DataInput input) throws IOException;
 
     void opcodeNewDictionary() throws IOException;
 

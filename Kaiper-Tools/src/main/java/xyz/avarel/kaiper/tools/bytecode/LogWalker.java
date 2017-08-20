@@ -85,9 +85,10 @@ public class LogWalker implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeNewArray() throws IOException {
+    public void opcodeNewArray(DataInput input) throws IOException {
         beginLine();
-        out.println("NEW_ARRAY");
+        out.print("NEW_ARRAY ");
+        out.println(input.readInt());
     }
 
     @Override

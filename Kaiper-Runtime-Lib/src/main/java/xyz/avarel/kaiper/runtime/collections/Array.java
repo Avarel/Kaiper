@@ -120,6 +120,13 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
     }
 
     /**
+     * creates an empty array with the specified initial size.
+     */
+    public Array(int size) {
+        super(size);
+    }
+
+    /**
      * Creates an array of items.
      *
      * @param   items
@@ -127,7 +134,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
      * @return The created {@link Array}.
      */
     public static Array of(Obj... items) {
-        Array array = new Array();
+        Array array = new Array(items.length);
         array.addAll(Arrays.asList(items));
         return array;
     }

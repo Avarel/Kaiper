@@ -38,7 +38,9 @@ import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
 public class StackMachineWalker extends BytecodeWalkerAdapter {
     private static final DummyWalker dummyWalker = new DummyWalker();
     private final Scope scope;
+
     Stack<Obj> stack = new Stack<>();
+
     private long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
 
     public StackMachineWalker(Scope scope) {
@@ -93,9 +95,18 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
     }
 
     @Override
-    public void opcodeNewArray() throws IOException {
+    public void opcodeNewArray(DataInput input) throws IOException {
         checkTimeout();
-        stack.push(new Array());
+
+        int size = input.readInt();
+
+        Array array = new Array(size);
+
+        for (int i = 0; i < size; i++) {
+            array.add(0, stack.pop());
+        }
+
+        stack.push(array);
     }
 
     @Override
@@ -306,16 +317,16 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
                 stack.push(left.isEqualTo(right).negate());
                 break;
             case GREATER_THAN:
-                stack.push(left.greaterThan(right));
+                stack.push(Bool.of(left.compareTo(right) == 1));
                 break;
             case LESS_THAN:
-                stack.push(left.lessThan(right));
+                stack.push(Bool.of(left.compareTo(right) == -1));
                 break;
             case GREATER_THAN_EQUAL:
-                stack.push(left.greaterThan(right).or(left.isEqualTo(right)));
+                stack.push(Bool.of(left.compareTo(right) >= 0));
                 break;
             case LESS_THAN_EQUAL:
-                stack.push(left.lessThan(right).or(left.isEqualTo(right)));
+                stack.push(Bool.of(left.compareTo(right) <= 0));
                 break;
 
             case OR:

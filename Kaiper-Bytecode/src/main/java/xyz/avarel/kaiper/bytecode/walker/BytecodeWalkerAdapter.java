@@ -54,7 +54,7 @@ public abstract class BytecodeWalkerAdapter implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeNewArray() throws IOException {
+    public void opcodeNewArray(DataInput input) throws IOException {
         throw new InvalidBytecodeException("Illegal NEW_ARRAY Instruction");
     }
 

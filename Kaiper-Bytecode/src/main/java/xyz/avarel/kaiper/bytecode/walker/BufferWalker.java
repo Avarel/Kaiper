@@ -69,8 +69,9 @@ public class BufferWalker implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeNewArray() throws IOException {
+    public void opcodeNewArray(DataInput input) throws IOException {
         NEW_ARRAY.writeInto(out);
+        out.write(input.readInt());
     }
 
     @Override
