@@ -19,7 +19,8 @@ public class DummyWalker implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeReturn() throws IOException {
+    public boolean opcodeReturn() throws IOException {
+        return true;
     }
 
     @Override
@@ -66,16 +67,6 @@ public class DummyWalker implements BytecodeWalker {
         input.readShort();
         reader.walkInsts(input, this, stringPool, depth + 1);
         reader.walkInsts(input, this, stringPool, depth + 1);
-    }
-
-    @Override
-    public void opcodeDefineFunctionParam(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
-        int modifiers = input.readByte();
-        input.readShort();
-
-        if ((modifiers & 1) == 1) {
-            reader.walkInsts(input, this, stringPool, depth + 1);
-        }
     }
 
 

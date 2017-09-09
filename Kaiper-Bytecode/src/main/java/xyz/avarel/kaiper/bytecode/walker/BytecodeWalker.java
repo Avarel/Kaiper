@@ -1,5 +1,8 @@
 package xyz.avarel.kaiper.bytecode.walker;
 
+import xyz.avarel.kaiper.bytecode.Opcode;
+import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
+
 import java.io.DataInput;
 import java.io.IOException;
 import java.util.List;
@@ -7,7 +10,7 @@ import java.util.List;
 public interface BytecodeWalker {
     boolean opcodeEnd(DataInput input, int depth) throws IOException;
 
-    void opcodeReturn() throws IOException;
+    boolean opcodeReturn() throws IOException;
 
     void opcodeUndefinedConstant() throws IOException;
 
@@ -28,8 +31,6 @@ public interface BytecodeWalker {
     void opcodeNewRange() throws IOException;
 
     void opcodeNewFunction(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException;
-
-    void opcodeDefineFunctionParam(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException;
 
     void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException;
 
@@ -60,4 +61,8 @@ public interface BytecodeWalker {
     void opcodeDup() throws IOException;
 
     void opcodePop() throws IOException;
+
+    default void opcode(Opcode opcode, DataInput input, BytecodeBatchReader bytecodeBatchReader, List<String> stringPool, int depth) throws IOException {
+        throw new InvalidBytecodeException(String.format("Invalid Bytecode %s (0x%x)", opcode.name(), opcode.code()));
+    }
 }

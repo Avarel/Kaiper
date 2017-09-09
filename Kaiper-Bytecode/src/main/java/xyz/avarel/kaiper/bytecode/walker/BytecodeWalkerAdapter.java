@@ -19,7 +19,7 @@ public abstract class BytecodeWalkerAdapter implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeReturn() throws IOException {
+    public boolean opcodeReturn() throws IOException {
         throw new InvalidBytecodeException("Illegal RETURN Instruction");
     }
 
@@ -74,11 +74,6 @@ public abstract class BytecodeWalkerAdapter implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeDefineFunctionParam(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
-        throw new InvalidBytecodeException("Illegal FUNCTION_DEF_PARAM Instruction");
-    }
-
-    @Override
     public void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
         throw new InvalidBytecodeException("Illegal NEW_MODULE Instruction");
     }
@@ -115,12 +110,12 @@ public abstract class BytecodeWalkerAdapter implements BytecodeWalker {
 
     @Override
     public void opcodeGet() throws IOException {
-        throw new InvalidBytecodeException("Illegal GET Instruction");
+        throw new InvalidBytecodeException("Illegal ARRAY_GET Instruction");
     }
 
     @Override
     public void opcodeSet() throws IOException {
-        throw new InvalidBytecodeException("Illegal SET Instruction");
+        throw new InvalidBytecodeException("Illegal ARRAY_SET Instruction");
     }
 
     @Override

@@ -15,6 +15,8 @@
 
 package xyz.avarel.kaiper.lexer;
 
+import java.util.Objects;
+
 public class Position {
     private final long line;
     private final long lineIndex;
@@ -41,5 +43,20 @@ public class Position {
     @Override
     public String toString() {
         return " at " + this.index + " [" + this.line + ":" + this.lineIndex + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Position)) return false;
+        Position position = (Position) obj;
+        return line == position.line &&
+                lineIndex == position.lineIndex &&
+                index == position.index;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(line, lineIndex, index);
     }
 }

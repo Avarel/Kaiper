@@ -6,7 +6,6 @@ import xyz.avarel.kaiper.bytecode.walker.BytecodeWalkerAdapter;
 import xyz.avarel.kaiper.bytecode.walker.DummyWalker;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
-import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.operations.UnaryOperatorType;
 import xyz.avarel.kaiper.runtime.Bool;
@@ -51,9 +50,9 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
     }
 
     @Override
-    public void opcodeReturn() throws IOException {
+    public boolean opcodeReturn() throws IOException {
         checkTimeout();
-        throw new ReturnException(stack.pop());
+        return false;
     }
 
     @Override
@@ -306,18 +305,17 @@ public class StackMachineWalker extends BytecodeWalkerAdapter {
                 stack.push(left.isEqualTo(right).negate());
                 break;
             case GREATER_THAN:
-                stack.push(left.greaterThan(right));
+                stack.push(Bool.of(left.compareTo(right) == 1));
                 break;
             case LESS_THAN:
-                stack.push(left.lessThan(right));
+                stack.push(Bool.of(left.compareTo(right) == -1));
                 break;
             case GREATER_THAN_EQUAL:
-                stack.push(left.greaterThan(right).or(left.isEqualTo(right)));
+                stack.push(Bool.of(left.compareTo(right) >= 0));
                 break;
             case LESS_THAN_EQUAL:
-                stack.push(left.lessThan(right).or(left.isEqualTo(right)));
+                stack.push(Bool.of(left.compareTo(right) <= 0));
                 break;
-
             case OR:
                 stack.push(left.or(right));
                 break;

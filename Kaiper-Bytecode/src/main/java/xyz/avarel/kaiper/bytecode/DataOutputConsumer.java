@@ -26,11 +26,22 @@ import java.util.Objects;
  */
 @FunctionalInterface
 public interface DataOutputConsumer {
+    DataOutputConsumer NO_OP = new DataOutputConsumer() {
+        @Override
+        public void writeInto(DataOutput out) throws IOException {
+        }
+
+        @Override
+        public DataOutputConsumer andThen(DataOutputConsumer after) {
+            return Objects.requireNonNull(after);
+        }
+    };
+
     void writeInto(DataOutput output) throws IOException;
 
     default DataOutputConsumer andThen(DataOutputConsumer after) {
         Objects.requireNonNull(after);
-        return (DataOutput t) -> {
+        return t -> {
             writeInto(t);
             after.writeInto(t);
         };

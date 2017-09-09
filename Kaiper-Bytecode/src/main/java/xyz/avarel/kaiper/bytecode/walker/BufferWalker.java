@@ -31,8 +31,10 @@ public class BufferWalker implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeReturn() throws IOException {
+    public boolean opcodeReturn() throws IOException {
         RETURN.writeInto(out);
+
+        return true;
     }
 
     @Override
@@ -85,23 +87,12 @@ public class BufferWalker implements BytecodeWalker {
 
     @Override
     public void opcodeNewFunction(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+        // FIXME: 04/09/2017 NEW FORMAT
         NEW_FUNCTION.writeInto(out);
         out.writeShort(input.readShort());
 
         reader.walkInsts(input, this, stringPool, depth + 1);
         reader.walkInsts(input, this, stringPool, depth + 1);
-    }
-
-    @Override
-    public void opcodeDefineFunctionParam(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
-        FUNCTION_DEF_PARAM.writeInto(out);
-        int modifiers;
-        out.writeByte(modifiers = input.readByte());
-        out.writeShort(input.readShort());
-
-        if ((modifiers & 1) == 1) {
-            reader.walkInsts(input, this, stringPool, depth + 1);
-        }
     }
 
     @Override
@@ -154,12 +145,12 @@ public class BufferWalker implements BytecodeWalker {
 
     @Override
     public void opcodeGet() throws IOException {
-        GET.writeInto(out);
+        ARRAY_GET.writeInto(out);
     }
 
     @Override
     public void opcodeSet() throws IOException {
-        SET.writeInto(out);
+        ARRAY_SET.writeInto(out);
     }
 
     @Override

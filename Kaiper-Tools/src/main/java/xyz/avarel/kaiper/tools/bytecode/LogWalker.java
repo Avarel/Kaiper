@@ -37,9 +37,10 @@ public class LogWalker implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeReturn() throws IOException {
+    public boolean opcodeReturn() throws IOException {
         beginLine();
         out.println("RETURN");
+        return true;
     }
 
     @Override
@@ -124,26 +125,6 @@ public class LogWalker implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeDefineFunctionParam(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
-        int modifiers = input.readByte();
-        int constIndex = input.readShort();
-        beginLine();
-        out.printf("FUNCTION_DEF_PARAM %d ", modifiers);
-        writeString(stringPool, constIndex, false);
-
-        boolean hasDefaultValue = (modifiers & 1) == 1;
-
-        if (hasDefaultValue) {
-            out.println(": {");
-            reader.walkInsts(input, new LogWalker(options, out, this.depth + 1), stringPool, depth + 1);
-            beginLine();
-            out.print("}");
-        }
-
-        out.println();
-    }
-
-    @Override
     public void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
         //TODO
     }
@@ -194,13 +175,13 @@ public class LogWalker implements BytecodeWalker {
     @Override
     public void opcodeGet() throws IOException {
         beginLine();
-        out.println("GET");
+        out.println("ARRAY_GET");
     }
 
     @Override
     public void opcodeSet() throws IOException {
         beginLine();
-        out.println("SET");
+        out.println("ARRAY_SET");
     }
 
     @Override

@@ -15,18 +15,26 @@
 
 package xyz.avarel.kaiper.bytecode;
 
-import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
-
-import java.io.DataOutput;
-import java.io.IOException;
-
 /**
  * The Bytecode Instructions of the Kaiper Bytecode.
  *
  * @author AdrianTodt
+ * @version 2.0
  */
-public enum Opcodes implements DataOutputConsumer {
+public enum Opcodes implements DataOutputConsumer, Opcode {
+    /**
+     * {@code END id;}
+     * <p>Special Opcode. Means the end of a bytecode block.</p>
+     */
     END,
+    /**
+     * {@code LINE_NUMBER number;}
+     * <p>Special Opcode. Sets the line number to the equivalent line on the source code.</p>
+     */
+    LINE_NUMBER,
+
+    RESERVED_002, RESERVED_003, RESERVED_004, RESERVED_005, RESERVED_006, RESERVED_007, RESERVED_008, RESERVED_009,
+
     /**
      * {@code RETURN;}
      * <p>Stops the action, returning an object.</p>
@@ -41,6 +49,12 @@ public enum Opcodes implements DataOutputConsumer {
      * </ul>
      */
     RETURN,
+
+    RESERVED_012, RESERVED_013, RESERVED_014, RESERVED_015, RESERVED_016, RESERVED_017,
+
+    DUP,
+    POP,
+
     /**
      * {@code U_CONST;}
      * <p>Summons the <b>Undefined</b> constant.</p>
@@ -81,7 +95,7 @@ public enum Opcodes implements DataOutputConsumer {
      */
     B_CONST_FALSE,
     /**
-     * {@code I_CONST;}
+     * {@code I_CONST value;}
      * <p>Summons a Int Constant.</p>
      * <b>Parameters:</b>
      * <ul>
@@ -94,7 +108,7 @@ public enum Opcodes implements DataOutputConsumer {
      */
     I_CONST,
     /**
-     * {@code D_CONST;}
+     * {@code D_CONST value;}
      * <p>Summons a Decimal Constant.</p>
      * <b>Parameters:</b>
      * <ul>
@@ -107,7 +121,7 @@ public enum Opcodes implements DataOutputConsumer {
      */
     D_CONST,
     /**
-     * {@code S_CONST;}
+     * {@code S_CONST index;}
      * <p>Summons a String constant.</p>
      * <b>Parameters:</b>
      * <ul>
@@ -119,6 +133,9 @@ public enum Opcodes implements DataOutputConsumer {
      * </ul>
      */
     S_CONST,
+
+    RESERVED_025, RESERVED_026, RESERVED_027, RESERVED_028, RESERVED_029,
+
     /**
      * {@code NEW_ARRAY;}
      * <p>Creates an Array.</p>
@@ -162,10 +179,49 @@ public enum Opcodes implements DataOutputConsumer {
     NEW_FUNCTION,
     NEW_MODULE,
     NEW_TYPE,
-    // NEW_TUPLE, // todo(Adrian) NEW NODE
-    FUNCTION_DEF_PARAM,
+    NEW_TUPLE,
+
+    RESERVED_037, RESERVED_038, RESERVED_039,
+
+    DECLARE, // todo(Adrian) DOC
+    ASSIGN,
+    IDENTIFIER,
     /**
-     * {@code NEW_RANGE;}
+     * {@code ARRAY_GET;}
+     * <p>Executes a Get Operation.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     * <li>none</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     * <li>Pushes 2 Objects from the stack (key, left);</li>
+     * <li>Execute the Get Operation on them;</li>
+     * <li>Pushes the new Object into the stack.</li>
+     * </ul>
+     */
+    ARRAY_GET,
+    /**
+     * {@code ARRAY_SET;}
+     * <p>Executes a Get Operation.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     * <li>none</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     * <li>Pushes 2 Objects from the stack (key, left);</li>
+     * <li>Execute the Get Operation on them;</li>
+     * <li>Pushes the new Object into the stack.</li>
+     * </ul>
+     */
+    ARRAY_SET,
+
+    RESERVED_045, RESERVED_046, RESERVED_047, RESERVED_048, RESERVED_049,
+
+    /**
+     * FIXME: 04/09/2017 Documentation misleading
+     * {@code INVOKE;}
      * <p>Creates a Range.</p>
      * <b>Parameters:</b>
      * <ul>
@@ -179,8 +235,6 @@ public enum Opcodes implements DataOutputConsumer {
      * </ul>
      */
     INVOKE,
-    DECLARE, // todo(Adrian) DOC
-    ASSIGN,
     /**
      * {@code UNARY_OPERATION type;}
      * <p>Executes a Unary Operation.</p>
@@ -226,51 +280,22 @@ public enum Opcodes implements DataOutputConsumer {
      * </ul>
      */
     SLICE_OPERATION,
-    /**
-     * {@code GET;}
-     * <p>Executes a Get Operation.</p>
-     * <b>Parameters:</b>
-     * <ul>
-     * <li>none</li>
-     * </ul>
-     * <b>Action:</b>
-     * <ul>
-     * <li>Pushes 2 Objects from the stack (key, left);</li>
-     * <li>Execute the Get Operation on them;</li>
-     * <li>Pushes the new Object into the stack.</li>
-     * </ul>
-     */
-    GET,
-    /**
-     * {@code SET;}
-     * <p>Executes a Get Operation.</p>
-     * <b>Parameters:</b>
-     * <ul>
-     * <li>none</li>
-     * </ul>
-     * <b>Action:</b>
-     * <ul>
-     * <li>Pushes 2 Objects from the stack (key, left);</li>
-     * <li>Execute the Get Operation on them;</li>
-     * <li>Pushes the new Object into the stack.</li>
-     * </ul>
-     */
-    SET,
-    IDENTIFIER,
+
+    RESERVED_054, RESERVED_055, RESERVED_056, RESERVED_057, RESERVED_058, RESERVED_059,
+
     CONDITIONAL,
-    // WHILE, // todo(Adrian) NEW NODE
     FOR_EACH,
+    WHILE,
 
-    DUP, POP;
+    RESERVED_063, RESERVED_064, RESERVED_065, RESERVED_066, RESERVED_067, RESERVED_068, RESERVED_069;
 
-    public static Opcodes byId(int id) {
+    public static Opcode byId(int id) {
         Opcodes[] values = values();
         if (id < values.length) return values[id];
-        throw new InvalidBytecodeException("Invalid Instruction");
+        return new ReservedOpcode(id);
     }
 
-    @Override
-    public void writeInto(DataOutput out) throws IOException {
-        out.writeByte(ordinal());
+    public int code() {
+        return ordinal();
     }
 }

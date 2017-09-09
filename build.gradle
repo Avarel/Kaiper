@@ -39,17 +39,13 @@ if (!hasProperty('bintrayUsername')) bintrayUsername = ''
 if (!hasProperty('bintrayApiKey')) bintrayApiKey = ''
 
 dependencies {
-    project.childProjects.values().each { compile it }
+    project.childProjects.values().findAll {it.name != 'Kaiper-REPL'}.each { compile it }
     //testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
 allprojects {
     apply plugin: 'java'
     if (hasProperty('requiresKotlin')) apply plugin: 'org.jetbrains.kotlin.jvm'
-    apply plugin: 'maven'
-    apply plugin: 'maven-publish'
-    apply plugin: 'com.jfrog.bintray'
-    apply plugin: 'com.github.johnrengelman.shadow'
 
     group = 'xyz.avarel.kaiper'
     version = rootProject.version
@@ -82,14 +78,35 @@ allprojects {
 
     jar {
         baseName = project.name
-        manifest {
-            attributes 'Implementation-Version': project.version
-        }
     }
 
     shadowJar {
-        classifier = 'withDependencies'
+        classifier = ''
     }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '3.5'
+    }
+
+    build {
+        dependsOn jar, shadowJar
+    }
+
+    artifacts {
+        archives shadowJar
+    }
+
+    test {
+        dependsOn assemble
+    }
+
+}
+
+configure(allprojects.findAll {it.name != 'Kaiper-REPL'})  {
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
@@ -114,20 +131,12 @@ allprojects {
         }
     }
 
-    task wrapper(type: Wrapper) {
-        gradleVersion = '3.5'
-    }
-
     build {
-        dependsOn jar, javadocJar, sourcesJar, shadowJar
+        dependsOn javadocJar, sourcesJar
     }
 
     artifacts {
-        archives javadocJar, sourcesJar, shadowJar
-    }
-
-    test {
-        dependsOn assemble
+        archives javadocJar, sourcesJar
     }
 
     bintray {

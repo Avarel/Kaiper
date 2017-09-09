@@ -1,11 +1,14 @@
 package xyz.avarel.kaiper.bytecode.walker;
 
 import xyz.avarel.kaiper.bytecode.BytecodeUtils;
+import xyz.avarel.kaiper.bytecode.Opcode;
 import xyz.avarel.kaiper.bytecode.Opcodes;
 
 import java.io.DataInput;
 import java.io.IOException;
 import java.util.List;
+
+import static xyz.avarel.kaiper.bytecode.Opcodes.*;
 
 public class BytecodeBatchReader {
 
@@ -15,12 +18,12 @@ public class BytecodeBatchReader {
 
     public boolean nextInst(DataInput input, BytecodeWalker walker, List<String> stringPool, int depth) throws IOException {
         byte opcode = input.readByte();
-        switch (Opcodes.byId(opcode)) {
+        Opcode op;
+        switch (op = Opcodes.byId(opcode)) {
             case END:
                 return walker.opcodeEnd(input, depth);
             case RETURN:
-                walker.opcodeReturn();
-                break;
+                return walker.opcodeReturn();
             case U_CONST:
                 walker.opcodeUndefinedConstant();
                 break;
@@ -57,7 +60,7 @@ public class BytecodeBatchReader {
             case NEW_TYPE:
                 walker.opcodeNewType(input, this, stringPool, depth);
                 break;
-            case FUNCTION_DEF_PARAM:
+            case PARAM_CASE:
                 walker.opcodeDefineFunctionParam(input, this, stringPool, depth);
                 break;
             case INVOKE:
@@ -75,10 +78,10 @@ public class BytecodeBatchReader {
             case SLICE_OPERATION:
                 walker.opcodeSliceOperation();
                 break;
-            case GET:
+            case ARRAY_GET:
                 walker.opcodeGet();
                 break;
-            case SET:
+            case ARRAY_SET:
                 walker.opcodeSet();
                 break;
             case IDENTIFIER:
@@ -100,7 +103,7 @@ public class BytecodeBatchReader {
                 walker.opcodePop();
                 break;
             default:
-                throw new IOException("Unrecognized Instruction 0x" + BytecodeUtils.toHex(new byte[]{opcode}));
+                walker.opcode(op, input, this, stringPool, depth);
         }
 
         return true;
