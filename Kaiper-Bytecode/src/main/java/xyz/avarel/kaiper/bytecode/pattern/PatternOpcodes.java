@@ -15,11 +15,8 @@
 
 package xyz.avarel.kaiper.bytecode.pattern;
 
-import xyz.avarel.kaiper.bytecode.DataOutputConsumer;
+import xyz.avarel.kaiper.bytecode.Opcode;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
-
-import java.io.DataOutput;
-import java.io.IOException;
 
 /**
  * The Bytecode Instructions of the Kaiper Patterns.
@@ -27,7 +24,7 @@ import java.io.IOException;
  * @author AdrianTodt
  * @version 2.0
  */
-public enum PatternOpcodes implements DataOutputConsumer {
+public enum PatternOpcodes implements Opcode {
     END,
 
     PATTERN_CASE,
@@ -45,8 +42,7 @@ public enum PatternOpcodes implements DataOutputConsumer {
         throw new InvalidBytecodeException("Invalid Instruction");
     }
 
-    @Override
-    public void writeInto(DataOutput out) throws IOException {
-        out.writeByte(ordinal());
+    public int code() {
+        return ordinal();
     }
 }

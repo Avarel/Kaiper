@@ -1,95 +1,111 @@
 package xyz.avarel.kaiper.compiler;
 
 import xyz.avarel.kaiper.ast.pattern.*;
-import xyz.avarel.kaiper.bytecode.DataOutputConsumer;
 import xyz.avarel.kaiper.bytecode.io.ByteOutput;
-
-import java.util.Iterator;
 
 import static xyz.avarel.kaiper.bytecode.pattern.PatternOpcodes.*;
 
 public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
     private final ExprCompiler parent;
-    private int regionId = 0;
 
     public PatternCompiler(ExprCompiler parent) {
-
         this.parent = parent;
     }
 
     @Override
     public Void visit(PatternCase patternCase, ByteOutput out) {
-        Iterator<DataOutputConsumer> iterator = patternCase.getPatterns().stream().map(pattern -> pattern.accept(this, out)).iterator();
-
-        DataOutputConsumer result = PATTERN_CASE;
+        out.write(PATTERN_CASE);
 
         int id = parent.regionId;
         parent.regionId++;
 
-        while (iterator.hasNext()) {
-            result = result.andThen(iterator.next());
+        for (Pattern pattern : patternCase.getPatterns()) {
+            pattern.accept(this, out);
         }
+
+        END.writeInto(out);
+        out.writeShort(id);
 
         parent.regionId--;
 
-        return result.andThen(out -> {
-            END.writeInto(out);
-            out.writeShort(id);
-        });
+        return null;
     }
 
     @Override
     public Void visit(WildcardPattern pattern, ByteOutput out) {
-        return WILDCARD;
+        out.write(WILDCARD);
+
+        return null;
     }
 
     @Override
     public Void visit(VariablePattern pattern, ByteOutput out) {
-        int name = parent.stringConst(pattern.getName());
+        out.write(VARIABLE);
+        out.writeShort(parent.stringConst(pattern.getName()));
 
-        return out -> {
-            VARIABLE.writeInto(out);
-            out.writeInt(name);
-        };
+        return null;
     }
 
     @Override
     public Void visit(TuplePattern pattern, ByteOutput out) {
         int name = parent.stringConst(pattern.getName());
 
+        out.write(TUPLE);
+        out.writeShort(name);
+
         int id = parent.regionId;
         parent.regionId++;
 
-        DataOutputConsumer data = pattern.getPattern().accept(this, out);
+        pattern.getPattern().accept(this, out);
+        END.writeInto(out);
+        out.writeShort(id);
 
         parent.regionId--;
 
-        return out -> {
-            TUPLE.writeInto(out);
-            out.writeShort(name);
-            data.writeInto(out);
-            END.writeInto(out);
-            out.writeShort(id);
-        };
+        return null;
     }
 
     @Override
     public Void visit(RestPattern pattern, ByteOutput out) {
-        int name = parent.stringConst(pattern.getName());
+        out.write(REST);
+        out.writeShort(parent.stringConst(pattern.getName()));
 
-        return out -> {
-            REST.writeInto(out);
-            out.writeInt(name);
-        };
+        return null;
     }
 
     @Override
     public Void visit(ValuePattern pattern, ByteOutput out) {
+        out.write(VALUE);
+
+        int id = parent.regionId;
+        parent.regionId++;
+
+        pattern.getValue().accept(parent, out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        parent.regionId--;
+
         return null;
     }
 
     @Override
     public Void visit(DefaultPattern pattern, ByteOutput out) {
+        out.write(DEFAULT);
+
+        int id = parent.regionId;
+        parent.regionId++;
+
+        pattern.getDelegate().accept(this, out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        pattern.getDefault().accept(parent, out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        parent.regionId--;
+
         return null;
     }
 }

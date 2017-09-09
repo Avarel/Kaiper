@@ -1,5 +1,7 @@
 package xyz.avarel.kaiper.bytecode.io;
 
+import xyz.avarel.kaiper.bytecode.Opcode;
+
 public interface ByteOutput {
     void write(int b);
 
@@ -28,4 +30,8 @@ public interface ByteOutput {
     void writeChars(String s);
 
     void writeString(String s);
+
+    default void write(Opcode opcode) {
+        writeByte(opcode.code());
+    }
 }
