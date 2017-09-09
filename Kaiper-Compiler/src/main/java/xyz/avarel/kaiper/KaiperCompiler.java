@@ -1,8 +1,9 @@
 package xyz.avarel.kaiper;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.bytecode.DataOutputConsumer;
 import xyz.avarel.kaiper.bytecode.KaiperBytecode;
+import xyz.avarel.kaiper.bytecode.io.ByteDataOutput;
+import xyz.avarel.kaiper.bytecode.io.IOUtils;
 import xyz.avarel.kaiper.compiler.ExprCompiler;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
@@ -92,19 +93,18 @@ public class KaiperCompiler {
     }
 
     public static void compile(Expr expr, OutputStream out) throws IOException {
-        compile(expr, (DataOutput) new DataOutputStream(out));
-    }
+        ByteDataOutput dataOutput = IOUtils.wrap(new DataOutputStream(out));
 
-    public static void compile(Expr expr, DataOutput out) throws IOException {
-        KaiperBytecode.initialize(out);
+        KaiperBytecode.initialize(dataOutput);
 
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         ExprCompiler compiler = new ExprCompiler();
-        DataOutputConsumer bytecode = expr.accept(compiler, null);
+        expr.accept(compiler, IOUtils.wrap(new DataOutputStream(buffer)));
 
-        compiler.writeStringPool().writeInto(out);
-        bytecode.writeInto(out);
+        compiler.writeStringPool(dataOutput);
+        out.write(buffer.toByteArray());
 
-        KaiperBytecode.finalize(out);
+        KaiperBytecode.finalize(dataOutput);
     }
 
     public static void compileCompressed(Expr expr, OutputStream stream) throws IOException {
