@@ -186,36 +186,8 @@ public enum Opcodes implements DataOutputConsumer, Opcode {
     DECLARE, // todo(Adrian) DOC
     ASSIGN,
     IDENTIFIER,
-    /**
-     * {@code ARRAY_GET;}
-     * <p>Executes a Get Operation.</p>
-     * <b>Parameters:</b>
-     * <ul>
-     * <li>none</li>
-     * </ul>
-     * <b>Action:</b>
-     * <ul>
-     * <li>Pushes 2 Objects from the stack (key, left);</li>
-     * <li>Execute the Get Operation on them;</li>
-     * <li>Pushes the new Object into the stack.</li>
-     * </ul>
-     */
-    ARRAY_GET,
-    /**
-     * {@code ARRAY_SET;}
-     * <p>Executes a Get Operation.</p>
-     * <b>Parameters:</b>
-     * <ul>
-     * <li>none</li>
-     * </ul>
-     * <b>Action:</b>
-     * <ul>
-     * <li>Pushes 2 Objects from the stack (key, left);</li>
-     * <li>Execute the Get Operation on them;</li>
-     * <li>Pushes the new Object into the stack.</li>
-     * </ul>
-     */
-    ARRAY_SET,
+    BIND_DECLARE,
+    BIND_ASSIGN,
 
     RESERVED_045, RESERVED_046, RESERVED_047, RESERVED_048, RESERVED_049,
 
@@ -281,7 +253,37 @@ public enum Opcodes implements DataOutputConsumer, Opcode {
      */
     SLICE_OPERATION,
 
-    RESERVED_054, RESERVED_055, RESERVED_056, RESERVED_057, RESERVED_058, RESERVED_059,
+
+    /**
+     * {@code ARRAY_GET;}
+     * <p>Executes a Get Operation.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     * <li>none</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     * <li>Pushes 2 Objects from the stack (key, left);</li>
+     * <li>Execute the Get Operation on them;</li>
+     * <li>Pushes the new Object into the stack.</li>
+     * </ul>
+     */
+    ARRAY_GET,
+    /**
+     * {@code ARRAY_SET;}
+     * <p>Executes a Get Operation.</p>
+     * <b>Parameters:</b>
+     * <ul>
+     * <li>none</li>
+     * </ul>
+     * <b>Action:</b>
+     * <ul>
+     * <li>Pushes 2 Objects from the stack (key, left);</li>
+     * <li>Execute the Get Operation on them;</li>
+     * <li>Pushes the new Object into the stack.</li>
+     * </ul>
+     */
+    ARRAY_SET, RESERVED_056, RESERVED_057, RESERVED_058, RESERVED_059,
 
     CONDITIONAL,
     FOR_EACH,

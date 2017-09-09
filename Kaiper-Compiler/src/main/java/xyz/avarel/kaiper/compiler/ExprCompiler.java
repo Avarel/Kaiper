@@ -11,15 +11,11 @@ import xyz.avarel.kaiper.ast.operations.UnaryOperation;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.*;
-import xyz.avarel.kaiper.bytecode.DataOutputConsumer;
 import xyz.avarel.kaiper.bytecode.io.ByteOutput;
+import xyz.avarel.kaiper.exceptions.CompilerException;
 import xyz.avarel.kaiper.lexer.Position;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static xyz.avarel.kaiper.bytecode.Opcodes.*;
 
@@ -402,102 +398,150 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
     @Override
     public Void visit(BindAssignmentExpr expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getExpr(), out);
+
+        lineNumber(expr, out);
+
+        BIND_ASSIGN.writeInto(out);
+
+        int id = regionId;
+        regionId++;
+
+        new PatternCompiler(this).visit(expr.getPatternCase(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        regionId--;
+
         return null;
     }
 
     @Override
     public Void visit(BindDeclarationExpr expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getExpr(), out);
+
+        lineNumber(expr, out);
+
+        BIND_DECLARE.writeInto(out);
+
+        int id = regionId;
+        regionId++;
+
+        new PatternCompiler(this).visit(expr.getPatternCase(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        regionId--;
+
         return null;
     }
 
     @Override
     public Void visit(ModuleNode expr, ByteOutput out) {
+        lineNumber(expr, out);
+
         int name = stringConst(expr.getName());
+
+        NEW_MODULE.writeInto(out);
+        out.writeShort(name);
 
         int id = regionId;
         regionId++;
-        DataOutputConsumer inner = expr.getExpr().accept(this, null);
+
+        lineNumberAndVisit(expr.getExpr(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
         regionId--;
-
-
-        return out -> {
-            NEW_MODULE.writeInto(out);
-            out.writeShort(name);
-            inner.writeInto(out);
-            END.writeInto(out);
-            out.writeShort(id);
-        };
 
         return null;
     }
 
     @Override
     public Void visit(TypeNode expr, ByteOutput out) {
+        lineNumber(expr, out);
+
         int name = stringConst(expr.getName());
+
+        NEW_TYPE.writeInto(out);
+        out.writeShort(name);
+
         int id = regionId;
         regionId++;
-        List<DataOutputConsumer> params = expr.getParameterExprs().stream().map(this::visitParameter).collect(Collectors.toList());
-        DataOutputConsumer superType = expr.getSuperType().accept(this, null);
-        List<DataOutputConsumer> superParams = expr.getSuperParameters().stream().map(e -> e.accept(this, null)).collect(Collectors.toList());
-        DataOutputConsumer inner = expr.getExpr().accept(this, null);
+
+
+        new PatternCompiler(this).visit(expr.getPatternCase(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        lineNumberAndVisit(expr.getExpr(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
         regionId--;
-
-
-        DataOutputConsumer result = out -> {
-            NEW_TYPE.writeInto(out);
-            out.writeShort(name);
-        };
-
-        for (DataOutputConsumer param : params) result = result.andThen(param);
-
-        result = result.andThen(out -> {
-            END.writeInto(out);
-            out.writeShort(id);
-
-            superType.writeInto(out);
-
-            END.writeInto(out);
-            out.writeShort(id);
-        });
-
-        for (DataOutputConsumer param : superParams) result = result.andThen(param);
-
-        return result.andThen(out -> {
-            END.writeInto(out);
-            out.writeShort(id);
-
-            inner.writeInto(out);
-
-            END.writeInto(out);
-            out.writeShort(id);
-        });
 
         return null;
     }
 
     @Override
     public Void visit(WhileExpr expr, ByteOutput out) {
+        lineNumber(expr, out);
+
+        WHILE.writeInto(out);
+
         int id = regionId;
         regionId++;
-        DataOutputConsumer condition = expr.getCondition().accept(this, null);
-        DataOutputConsumer action = expr.getAction().accept(this, null);
-        regionId--;
 
-        return out -> {
-            WHILE.writeInto(out);
-            condition.writeInto(out);
-            END.writeInto(out);
-            out.writeShort(id);
-            action.writeInto(out);
-            END.writeInto(out);
-            out.writeShort(id);
-        };
+        lineNumberAndVisit(expr.getCondition(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        lineNumberAndVisit(expr.getAction(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        regionId--;
 
         return null;
     }
 
     @Override
     public Void visit(TupleExpr expr, ByteOutput out) {
+        Map<String, Single> map = new LinkedHashMap<>();
+
+        List<Single> unnamedElements = expr.getUnnamedElements();
+        for (int i = 0; i < unnamedElements.size(); i++) {
+            Single element = unnamedElements.get(i);
+            map.put("_" + i, element);
+        }
+
+        for (Map.Entry<String, Single> entry : expr.getNamedElements().entrySet()) {
+            if (map.containsKey(entry.getKey())) {
+                throw new CompilerException("Duplicate field name " + entry.getKey(), entry.getValue().getPosition());
+            }
+
+            map.put(entry.getKey(), entry.getValue());
+        }
+
+        lineNumber(expr, out);
+
+        NEW_TUPLE.writeInto(out);
+
+        out.writeInt(map.size());
+
+        int id = regionId;
+        regionId++;
+
+        for (Map.Entry<String, Single> entry : map.entrySet()) {
+            out.writeShort(stringConst(entry.getKey()));
+
+            lineNumberAndVisit(entry.getValue(), out);
+            END.writeInto(out);
+            out.writeShort(id);
+        }
+
+        regionId--;
+
         return null;
     }
 }
