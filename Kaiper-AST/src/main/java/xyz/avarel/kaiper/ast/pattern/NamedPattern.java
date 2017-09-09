@@ -1,4 +1,4 @@
-package xyz.avarel.kaiper.pattern;
+package xyz.avarel.kaiper.ast.pattern;
 
 public abstract class NamedPattern implements Pattern {
     private final String name;

@@ -16,11 +16,11 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.pattern.PatternBinder;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.pattern.PatternBinder;
-import xyz.avarel.kaiper.pattern.PatternCase;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
@@ -39,7 +39,6 @@ public class CompiledFunc extends Func {
         this.visitor = visitor;
     }
 
-    @Override
     public PatternCase getPattern() {
         return patternCase;
     }
@@ -67,6 +66,6 @@ public class CompiledFunc extends Func {
 
     @Override
     public String toString() {
-        return super.toString() + " { ... }";
+        return super.toString() + "(" + getPattern() + ")"  + " { ... }";
     }
 }

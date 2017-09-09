@@ -1,11 +1,11 @@
 package xyz.avarel.kaiper.runtime.types;
 
 import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.pattern.PatternBinder;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.pattern.PatternBinder;
-import xyz.avarel.kaiper.pattern.PatternCase;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -23,6 +23,10 @@ public class CompiledConstructor extends Constructor {
     }
 
     @Override
+    public int getArity() {
+        return pattern.size();
+    }
+
     public PatternCase getPattern() {
         return pattern;
     }

@@ -2,10 +2,10 @@ package xyz.avarel.kaiper.parser;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.ast.pattern.*;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.pattern.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,16 +38,16 @@ public class PatternParser extends KaiperParser {
             String name = eat(TokenType.IDENTIFIER).getString();
 
             if (match(TokenType.COLON)) {
-                Pattern pattern;
+                Pattern simplePattern;
 
                 if (nextIs(TokenType.IDENTIFIER)) {
                     String innerName = eat(TokenType.IDENTIFIER).getString();
-                    pattern = new VariablePattern(innerName);
+                    simplePattern = new VariablePattern(innerName);
                 } else {
-                    pattern = parseSimplePattern();
+                    simplePattern = parseSimplePattern();
                 }
 
-                basePattern = new TuplePattern(name, pattern);
+                basePattern = new TuplePattern(name, simplePattern);
             } else { // x ~= _0: x
                 basePattern = new VariablePattern(name);
             }
@@ -56,7 +56,7 @@ public class PatternParser extends KaiperParser {
                 requireDef = true;
 
                 Single def = parseSingle(Precedence.TUPLE_PAIR);
-                basePattern = new DefaultPattern<>((NamedPattern) basePattern, def);
+                basePattern = new DefaultPattern((NamedPattern) basePattern, def);
             } else if (requireDef) {
                 throw new SyntaxException("All parameters after the first default requires a default",
                         peek(0).getPosition());
@@ -88,7 +88,7 @@ public class PatternParser extends KaiperParser {
                 TokenType.NULL, TokenType.BOOLEAN, TokenType.LEFT_BRACKET
         ) || match(TokenType.EQUALS)) {
             Single value = parseSingle(Precedence.TUPLE);
-            return new ValuePattern<>(value);
+            return new ValuePattern(value);
         } else if (match(TokenType.UNDERSCORE)) {
             return WildcardPattern.INSTANCE;
         } else if (match(TokenType.LEFT_PAREN)) {

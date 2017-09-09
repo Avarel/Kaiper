@@ -1,13 +1,13 @@
 def fibMaker() {
-    let (a, b) = 0, 1
+    let a, b = 0, 1
     return {
         let r = a
-        (a, b) = b, a + b
+        a, b = b, a + b
         r
     }
 }
 
 let nextFibNumber = fibMaker()
-for (i in 0..9) {
+for i in 0..9 {
     println nextFibNumber()
 }

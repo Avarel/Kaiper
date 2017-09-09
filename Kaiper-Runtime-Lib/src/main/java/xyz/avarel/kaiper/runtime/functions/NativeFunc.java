@@ -16,52 +16,55 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
-import xyz.avarel.kaiper.pattern.NativePatternBinder;
-import xyz.avarel.kaiper.pattern.Pattern;
-import xyz.avarel.kaiper.pattern.PatternCase;
-import xyz.avarel.kaiper.pattern.VariablePattern;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
+import xyz.avarel.kaiper.runtime.pattern.RuntimeLibPattern;
+import xyz.avarel.kaiper.runtime.pattern.RuntimeLibPatternCase;
+import xyz.avarel.kaiper.runtime.pattern.VariableRuntimeLibPattern;
 
 import java.util.*;
 
 public abstract class NativeFunc extends Func {
-    private final PatternCase pattern;
+    private final RuntimeLibPatternCase pattern;
 
     public NativeFunc(String name) {
         this(name, new String[0]);
     }
 
-    public NativeFunc(String name, Pattern... parameters) {
+    public NativeFunc(String name, RuntimeLibPattern... parameters) {
         super(name);
-        this.pattern = new PatternCase(Arrays.asList(parameters));
+        this.pattern = new RuntimeLibPatternCase(Arrays.asList(parameters));
     }
 
     public NativeFunc(String name, String... params) {
         super(name);
-        List<Pattern> patterns = new ArrayList<>(params.length);
+        List<RuntimeLibPattern> patterns = new ArrayList<>(params.length);
         for (String param : params) {
-            patterns.add(new VariablePattern(param));
+            patterns.add(new VariableRuntimeLibPattern(param));
         }
-        this.pattern = new PatternCase(patterns);
+        this.pattern = new RuntimeLibPatternCase(patterns);
     }
 
     @Override
-    public PatternCase getPattern() {
+    public int getArity() {
+        return pattern.size();
+    }
+
+    public RuntimeLibPatternCase getPattern() {
         return pattern;
     }
 
     @Override
     public String toString() {
-        return super.toString() + " { native code... }";
+        return super.toString() + "(" + getPattern() + ")" + " { native code... }";
     }
 
     @Override
     public Obj invoke(Tuple argument) {
         Map<String, Obj> scope = new HashMap<>(getArity());
 
-        if (!new NativePatternBinder(pattern, scope).bindFrom(argument)) {
+        if (!new RuntimeLibPatternBinder(pattern, scope).bindFrom(argument)) {
             throw new ComputeException("Could not match arguments (" + argument + ") to " + getName() + "(" + pattern + ")");
         }
 

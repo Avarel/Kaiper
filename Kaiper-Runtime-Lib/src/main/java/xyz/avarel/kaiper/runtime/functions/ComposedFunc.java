@@ -16,7 +16,6 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
-import xyz.avarel.kaiper.pattern.PatternCase;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 
@@ -36,13 +35,13 @@ public class ComposedFunc extends Func {
     }
 
     @Override
-    public PatternCase getPattern() {
-        return inner.getPattern();
+    public int getArity() {
+        return inner.getArity();
     }
 
     @Override
     public String toString() {
-        return super.toString() + " { " + outer.getName() + "(" + inner.getName() + "(" + getPattern() + ")) }";
+        return super.toString() + " { " + outer.getName() + "(" + inner.toString() + ") }";
     }
 
     @Override

@@ -33,5 +33,4 @@ class ArrayTest {
         Assert.assertEquals(true, eval("[1..3] == [1,2,3]").toJava())
     }
 
-    fun notMe(x: Int, y: Int = x + 2) = 2
 }

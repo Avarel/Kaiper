@@ -1,7 +1,7 @@
 package xyz.avarel.kaiper.ast;
 
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.lexer.Position;
-import xyz.avarel.kaiper.pattern.PatternCase;
 
 public class TypeNode extends Single {
     private final String name;

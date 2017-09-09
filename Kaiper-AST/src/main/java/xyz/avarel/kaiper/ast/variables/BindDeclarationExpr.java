@@ -3,8 +3,8 @@ package xyz.avarel.kaiper.ast.variables;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.lexer.Position;
-import xyz.avarel.kaiper.pattern.PatternCase;
 
 public class BindDeclarationExpr extends Expr {
     private final PatternCase patternCase;

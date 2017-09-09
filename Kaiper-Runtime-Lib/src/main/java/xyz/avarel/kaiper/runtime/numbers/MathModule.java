@@ -15,11 +15,11 @@
 
 package xyz.avarel.kaiper.runtime.numbers;
 
-import xyz.avarel.kaiper.pattern.RestPattern;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
+import xyz.avarel.kaiper.runtime.pattern.RestRuntimeLibPattern;
 
 import java.util.Map;
 
@@ -90,7 +90,7 @@ public class MathModule extends NativeModule {
             }
         });
 
-        declare("sum", new NativeFunc("sum", new RestPattern("numbers")) {
+        declare("sum", new NativeFunc("sum", new RestRuntimeLibPattern("numbers")) {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
                 if (arguments.isEmpty()) return Int.of(0);
@@ -104,7 +104,7 @@ public class MathModule extends NativeModule {
             }
         });
 
-        declare("product", new NativeFunc("product", new RestPattern("numbers")) {
+        declare("product", new NativeFunc("product", new RestRuntimeLibPattern("numbers")) {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
                 if (arguments.isEmpty()) return Int.of(0);

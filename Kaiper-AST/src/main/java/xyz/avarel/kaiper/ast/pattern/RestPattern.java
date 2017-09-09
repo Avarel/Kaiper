@@ -1,4 +1,4 @@
-package xyz.avarel.kaiper.pattern;
+package xyz.avarel.kaiper.ast.pattern;
 
 public class RestPattern extends NamedPattern {
     public RestPattern(String name) {

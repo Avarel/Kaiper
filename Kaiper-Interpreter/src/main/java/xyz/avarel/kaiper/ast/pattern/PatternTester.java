@@ -1,6 +1,5 @@
-package xyz.avarel.kaiper.pattern;
+package xyz.avarel.kaiper.ast.pattern;
 
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
@@ -53,10 +52,7 @@ public class PatternTester implements PatternVisitor<Boolean, Tuple> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Boolean visit(ValuePattern<?> _pattern, Tuple obj) {
-        ValuePattern<Single> pattern = (ValuePattern<Single>) _pattern;
-
+    public Boolean visit(ValuePattern pattern, Tuple obj) {
         if (obj.hasAttr("_" + position)) {
             Obj value = obj.getAttr("_" + position);
             Obj target = pattern.getValue().accept(interpreter, scope);

@@ -32,7 +32,7 @@ import java.io.*;
  * affect the state of the evaluator and the following calls. All of the changes to the evaluator are accumulated in the
  * {@link #scope} field.
  */
-public class KaiperREPL {
+public class KaiperEvaluator {
     private final ExprInterpreter visitor;
     private final Scope scope;
     private Obj answer;
@@ -40,7 +40,7 @@ public class KaiperREPL {
     /**
      * Creates a new Evaluator instantiated with default values and functions copied from {@link DefaultScope}.
      */
-    public KaiperREPL() {
+    public KaiperEvaluator() {
         this(DefaultScope.INSTANCE.copy());
     }
 
@@ -50,7 +50,7 @@ public class KaiperREPL {
      * @param   scope
      *          The initial {@link Scope} values to copy from.
      */
-    public KaiperREPL(Scope scope) {
+    public KaiperEvaluator(Scope scope) {
         this.scope = scope;
         this.visitor = new ExprInterpreter();
         this.answer = Null.VALUE;
@@ -61,9 +61,9 @@ public class KaiperREPL {
      * affect the parent evaluator.
      *
      * @param   parent
-     *          The parent {@link KaiperREPL}.
+     *          The parent {@link KaiperEvaluator}.
      */
-    public KaiperREPL(KaiperREPL parent) {
+    public KaiperEvaluator(KaiperEvaluator parent) {
         this(parent.scope.subPool());
     }
 

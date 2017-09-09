@@ -1,15 +1,17 @@
-package xyz.avarel.kaiper.pattern;
+package xyz.avarel.kaiper.ast.pattern;
 
+
+import xyz.avarel.kaiper.ast.Expr;
 
 // literally literals
-public class ValuePattern<T> implements Pattern {
-    private final T value;
+public class ValuePattern implements Pattern {
+    private final Expr value;
 
-    public ValuePattern(T value) {
+    public ValuePattern(Expr value) {
         this.value = value;
     }
 
-    public T getValue() {
+    public Expr getValue() {
         return value;
     }
 

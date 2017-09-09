@@ -1,4 +1,4 @@
-package xyz.avarel.kaiper.pattern;
+package xyz.avarel.kaiper.ast.pattern;
 
 // x
 public class VariablePattern extends NamedPattern  {

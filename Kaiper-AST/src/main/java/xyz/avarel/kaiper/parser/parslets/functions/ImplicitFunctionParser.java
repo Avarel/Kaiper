@@ -17,6 +17,9 @@ package xyz.avarel.kaiper.parser.parslets.functions;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
+import xyz.avarel.kaiper.ast.pattern.Pattern;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
+import xyz.avarel.kaiper.ast.pattern.VariablePattern;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -24,9 +27,6 @@ import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.InfixParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
-import xyz.avarel.kaiper.pattern.Pattern;
-import xyz.avarel.kaiper.pattern.PatternCase;
-import xyz.avarel.kaiper.pattern.VariablePattern;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
