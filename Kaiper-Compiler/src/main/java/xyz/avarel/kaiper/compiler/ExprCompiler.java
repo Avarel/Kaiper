@@ -42,7 +42,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lastLineNumber = lineNumber;
 
-        LINE_NUMBER.writeInto(out);
+        out.writeOpcode(LINE_NUMBER);
         out.writeLong(lineNumber);
     }
 
@@ -69,7 +69,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         while (iterator.hasNext()) {
             lineNumberAndVisit(iterator.next(), out);
-            if (iterator.hasNext()) POP.writeInto(out);
+            if (iterator.hasNext()) out.writeOpcode(POP);
         }
 
         return null;
@@ -82,18 +82,18 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        NEW_FUNCTION.writeInto(out);
+        out.writeOpcode(NEW_FUNCTION);
         out.writeShort(name);
 
         int id = regionId;
         regionId++;
 
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         lineNumberAndVisit(expr.getExpr(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         regionId--;
@@ -113,7 +113,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
             lineNumberAndVisit(expr.getParent(), out);
         }
 
-        IDENTIFIER.writeInto(out);
+        out.writeOpcode(IDENTIFIER);
 
         out.writeBoolean(parented);
         out.writeShort(name);
@@ -128,7 +128,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        INVOKE.writeInto(out);
+        out.writeOpcode(INVOKE);
 
         return null;
     }
@@ -140,7 +140,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        BINARY_OPERATION.writeInto(out);
+        out.writeOpcode(BINARY_OPERATION);
         out.writeByte(expr.getOperator().ordinal());
 
         return null;
@@ -152,7 +152,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        UNARY_OPERATION.writeInto(out);
+        out.writeOpcode(UNARY_OPERATION);
         out.writeByte(expr.getOperator().ordinal());
 
         return null;
@@ -165,7 +165,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        NEW_RANGE.writeInto(out);
+        out.writeOpcode(NEW_RANGE);
 
         return null;
     }
@@ -175,7 +175,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
         List<Single> items = expr.getItems();
 
         if (items.isEmpty()) {
-            NEW_ARRAY.writeInto(out);
+            out.writeOpcode(NEW_ARRAY);
             out.writeInt(0);
 
             return null;
@@ -187,7 +187,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        NEW_ARRAY.writeInto(out);
+        out.writeOpcode(NEW_ARRAY);
         out.writeInt(items.size());
 
         return null;
@@ -202,7 +202,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        SLICE_OPERATION.writeInto(out);
+        out.writeOpcode(SLICE_OPERATION);
 
         return null;
     }
@@ -217,7 +217,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        ASSIGN.writeInto(out);
+        out.writeOpcode(ASSIGN);
         out.writeBoolean(parented);
         out.writeShort(name);
 
@@ -231,7 +231,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        ARRAY_GET.writeInto(out);
+        out.writeOpcode(ARRAY_GET);
 
         return null;
     }
@@ -244,7 +244,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        ARRAY_SET.writeInto(out);
+        out.writeOpcode(ARRAY_SET);
 
         return null;
     }
@@ -254,7 +254,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
         lineNumberAndVisit(expr.getExpr(), out);
 
         lineNumber(expr, out);
-        RETURN.writeInto(out);
+        out.writeOpcode(RETURN);
 
         return null;
     }
@@ -262,7 +262,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     public Void visit(ConditionalExpr expr, ByteOutput out) {
         lineNumber(expr, out);
 
-        CONDITIONAL.writeInto(out);
+        out.writeOpcode(CONDITIONAL);
         boolean hasElseBranch = expr.getElseBranch() != null;
         out.writeBoolean(hasElseBranch);
 
@@ -270,16 +270,16 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
         regionId++;
 
         lineNumberAndVisit(expr.getCondition(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         lineNumberAndVisit(expr.getIfBranch(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         if (hasElseBranch) {
             lineNumberAndVisit(expr.getElseBranch(), out);
-            END.writeInto(out);
+            out.writeOpcode(END);
             out.writeShort(id);
         }
 
@@ -293,18 +293,18 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        FOR_EACH.writeInto(out);
+        out.writeOpcode(FOR_EACH);
         out.writeShort(variant);
 
         int id = regionId;
         regionId++;
 
         lineNumberAndVisit(expr.getIterable(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         lineNumberAndVisit(expr.getAction(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         regionId--;
@@ -317,18 +317,18 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     public Void visit(DictionaryNode expr, ByteOutput out) {
         lineNumber(expr, out);
 
-        NEW_DICTIONARY.writeInto(out);
+        out.writeOpcode(NEW_DICTIONARY);
 
         Map<Single, Single> map = expr.getMap();
         if (map.isEmpty()) return null;
 
         for (Map.Entry<Single, Single> entry : map.entrySet()) {
-            DUP.writeInto(out);
+            out.writeOpcode(DUP);
 
             lineNumberAndVisit(entry.getKey(), out);
             lineNumberAndVisit(entry.getValue(), out);
 
-            ARRAY_SET.writeInto(out);
+            out.writeOpcode(ARRAY_SET);
         }
 
         return null;
@@ -338,7 +338,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     public Void visit(NullNode expr, ByteOutput out) {
         lineNumber(expr, out);
 
-        U_CONST.writeInto(out);
+        out.writeOpcode(U_CONST);
 
         return null;
     }
@@ -347,7 +347,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     public Void visit(IntNode expr, ByteOutput out) {
         lineNumber(expr, out);
 
-        I_CONST.writeInto(out);
+        out.writeOpcode(I_CONST);
         out.writeInt(expr.getValue());
 
         return null;
@@ -357,7 +357,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     public Void visit(DecimalNode expr, ByteOutput out) {
         lineNumber(expr, out);
 
-        D_CONST.writeInto(out);
+        out.writeOpcode(D_CONST);
         out.writeDouble(expr.getValue());
 
         return null;
@@ -367,7 +367,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     public Void visit(BooleanNode expr, ByteOutput out) {
         lineNumber(expr, out);
 
-        (expr == BooleanNode.TRUE ? B_CONST_TRUE : B_CONST_FALSE).writeInto(out);
+        out.writeOpcode(expr == BooleanNode.TRUE ? B_CONST_TRUE : B_CONST_FALSE);
 
         return null;
     }
@@ -376,7 +376,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     public Void visit(StringNode expr, ByteOutput out) {
         lineNumber(expr, out);
 
-        S_CONST.writeInto(out);
+        out.writeOpcode(S_CONST);
         out.writeShort(stringConst(expr.getValue()));
 
         return null;
@@ -390,7 +390,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         int name = stringConst(expr.getName());
 
-        DECLARE.writeInto(out);
+        out.writeOpcode(DECLARE);
         out.writeShort(name);
 
         return null;
@@ -402,13 +402,13 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        BIND_ASSIGN.writeInto(out);
+        out.writeOpcode(BIND_ASSIGN);
 
         int id = regionId;
         regionId++;
 
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         regionId--;
@@ -422,13 +422,13 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        BIND_DECLARE.writeInto(out);
+        out.writeOpcode(BIND_DECLARE);
 
         int id = regionId;
         regionId++;
 
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         regionId--;
@@ -442,14 +442,14 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         int name = stringConst(expr.getName());
 
-        NEW_MODULE.writeInto(out);
+        out.writeOpcode(NEW_MODULE);
         out.writeShort(name);
 
         int id = regionId;
         regionId++;
 
         lineNumberAndVisit(expr.getExpr(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         regionId--;
@@ -463,7 +463,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         int name = stringConst(expr.getName());
 
-        NEW_TYPE.writeInto(out);
+        out.writeOpcode(NEW_TYPE);
         out.writeShort(name);
 
         int id = regionId;
@@ -471,11 +471,11 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
 
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         lineNumberAndVisit(expr.getExpr(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         regionId--;
@@ -487,17 +487,17 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     public Void visit(WhileExpr expr, ByteOutput out) {
         lineNumber(expr, out);
 
-        WHILE.writeInto(out);
+        out.writeOpcode(WHILE);
 
         int id = regionId;
         regionId++;
 
         lineNumberAndVisit(expr.getCondition(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         lineNumberAndVisit(expr.getAction(), out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         regionId--;
@@ -525,7 +525,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         lineNumber(expr, out);
 
-        NEW_TUPLE.writeInto(out);
+        out.writeOpcode(NEW_TUPLE);
 
         out.writeInt(map.size());
 
@@ -536,7 +536,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
             out.writeShort(stringConst(entry.getKey()));
 
             lineNumberAndVisit(entry.getValue(), out);
-            END.writeInto(out);
+            out.writeOpcode(END);
             out.writeShort(id);
         }
 

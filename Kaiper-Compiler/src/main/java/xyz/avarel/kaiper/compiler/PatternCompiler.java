@@ -14,7 +14,7 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
 
     @Override
     public Void visit(PatternCase patternCase, ByteOutput out) {
-        out.write(PATTERN_CASE);
+        out.writeOpcode(PATTERN_CASE);
 
         int id = parent.regionId;
         parent.regionId++;
@@ -23,7 +23,7 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
             pattern.accept(this, out);
         }
 
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         parent.regionId--;
@@ -33,14 +33,14 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
 
     @Override
     public Void visit(WildcardPattern pattern, ByteOutput out) {
-        out.write(WILDCARD);
+        out.writeOpcode(WILDCARD);
 
         return null;
     }
 
     @Override
     public Void visit(VariablePattern pattern, ByteOutput out) {
-        out.write(VARIABLE);
+        out.writeOpcode(VARIABLE);
         out.writeShort(parent.stringConst(pattern.getName()));
 
         return null;
@@ -50,14 +50,14 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
     public Void visit(TuplePattern pattern, ByteOutput out) {
         int name = parent.stringConst(pattern.getName());
 
-        out.write(TUPLE);
+        out.writeOpcode(TUPLE);
         out.writeShort(name);
 
         int id = parent.regionId;
         parent.regionId++;
 
         pattern.getPattern().accept(this, out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         parent.regionId--;
@@ -67,7 +67,7 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
 
     @Override
     public Void visit(RestPattern pattern, ByteOutput out) {
-        out.write(REST);
+        out.writeOpcode(REST);
         out.writeShort(parent.stringConst(pattern.getName()));
 
         return null;
@@ -75,13 +75,13 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
 
     @Override
     public Void visit(ValuePattern pattern, ByteOutput out) {
-        out.write(VALUE);
+        out.writeOpcode(VALUE);
 
         int id = parent.regionId;
         parent.regionId++;
 
         pattern.getValue().accept(parent, out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         parent.regionId--;
@@ -91,17 +91,17 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
 
     @Override
     public Void visit(DefaultPattern pattern, ByteOutput out) {
-        out.write(DEFAULT);
+        out.writeOpcode(DEFAULT);
 
         int id = parent.regionId;
         parent.regionId++;
 
         pattern.getDelegate().accept(this, out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         pattern.getDefault().accept(parent, out);
-        END.writeInto(out);
+        out.writeOpcode(END);
         out.writeShort(id);
 
         parent.regionId--;

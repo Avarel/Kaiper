@@ -31,7 +31,7 @@ public interface ByteOutput {
 
     void writeString(String s);
 
-    default void write(Opcode opcode) {
+    default void writeOpcode(Opcode opcode) {
         writeByte(opcode.code());
     }
 }

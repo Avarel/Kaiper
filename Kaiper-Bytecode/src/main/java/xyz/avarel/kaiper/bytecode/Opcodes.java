@@ -21,7 +21,7 @@ package xyz.avarel.kaiper.bytecode;
  * @author AdrianTodt
  * @version 2.0
  */
-public enum Opcodes implements DataOutputConsumer, Opcode {
+public enum Opcodes implements Opcode {
     /**
      * {@code END id;}
      * <p>Special Opcode. Means the end of a bytecode block.</p>

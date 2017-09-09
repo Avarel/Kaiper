@@ -6,6 +6,10 @@ import java.io.IOException;
 public class ByteDataOutput implements DataOutput, ByteOutput {
     private final DataOutput wrapped;
 
+    public ByteDataOutput(DataOutput dataInput) {
+        this.wrapped = dataInput;
+    }
+
     @Override
     public void write(int b) {
         try {
@@ -135,9 +139,5 @@ public class ByteDataOutput implements DataOutput, ByteOutput {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public ByteDataOutput(DataOutput dataInput) {
-        this.wrapped = dataInput;
     }
 }
