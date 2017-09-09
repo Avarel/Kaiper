@@ -101,7 +101,7 @@ public class KaiperCompiler {
         ExprCompiler compiler = new ExprCompiler();
         DataOutputConsumer bytecode = expr.accept(compiler, null);
 
-        compiler.stringPool().writeInto(out);
+        compiler.writeStringPool().writeInto(out);
         bytecode.writeInto(out);
 
         KaiperBytecode.finalize(out);

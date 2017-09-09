@@ -1,18 +1,25 @@
 package xyz.avarel.kaiper.compiler;
 
+import xyz.avarel.kaiper.ast.pattern.*;
 import xyz.avarel.kaiper.bytecode.DataOutputConsumer;
-import xyz.avarel.kaiper.pattern.*;
+import xyz.avarel.kaiper.bytecode.io.ByteOutput;
 
 import java.util.Iterator;
 
 import static xyz.avarel.kaiper.bytecode.pattern.PatternOpcodes.*;
 
-public class PatternCompiler implements PatternVisitor<DataOutputConsumer, ExprCompiler> {
+public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
+    private final ExprCompiler parent;
     private int regionId = 0;
 
+    public PatternCompiler(ExprCompiler parent) {
+
+        this.parent = parent;
+    }
+
     @Override
-    public DataOutputConsumer visit(PatternCase patternCase, ExprCompiler parent) {
-        Iterator<DataOutputConsumer> iterator = patternCase.getPatterns().stream().map(pattern -> pattern.accept(this, parent)).iterator();
+    public Void visit(PatternCase patternCase, ByteOutput out) {
+        Iterator<DataOutputConsumer> iterator = patternCase.getPatterns().stream().map(pattern -> pattern.accept(this, out)).iterator();
 
         DataOutputConsumer result = PATTERN_CASE;
 
@@ -32,12 +39,12 @@ public class PatternCompiler implements PatternVisitor<DataOutputConsumer, ExprC
     }
 
     @Override
-    public DataOutputConsumer visit(WildcardPattern pattern, ExprCompiler parent) {
+    public Void visit(WildcardPattern pattern, ByteOutput out) {
         return WILDCARD;
     }
 
     @Override
-    public DataOutputConsumer visit(VariablePattern pattern, ExprCompiler parent) {
+    public Void visit(VariablePattern pattern, ByteOutput out) {
         int name = parent.stringConst(pattern.getName());
 
         return out -> {
@@ -47,13 +54,13 @@ public class PatternCompiler implements PatternVisitor<DataOutputConsumer, ExprC
     }
 
     @Override
-    public DataOutputConsumer visit(TuplePattern pattern, ExprCompiler parent) {
+    public Void visit(TuplePattern pattern, ByteOutput out) {
         int name = parent.stringConst(pattern.getName());
 
         int id = parent.regionId;
         parent.regionId++;
 
-        DataOutputConsumer data = pattern.getPattern().accept(this, parent);
+        DataOutputConsumer data = pattern.getPattern().accept(this, out);
 
         parent.regionId--;
 
@@ -67,7 +74,7 @@ public class PatternCompiler implements PatternVisitor<DataOutputConsumer, ExprC
     }
 
     @Override
-    public DataOutputConsumer visit(RestPattern pattern, ExprCompiler parent) {
+    public Void visit(RestPattern pattern, ByteOutput out) {
         int name = parent.stringConst(pattern.getName());
 
         return out -> {
@@ -77,12 +84,12 @@ public class PatternCompiler implements PatternVisitor<DataOutputConsumer, ExprC
     }
 
     @Override
-    public DataOutputConsumer visit(ValuePattern<?> pattern, ExprCompiler parent) {
+    public Void visit(ValuePattern pattern, ByteOutput out) {
         return null;
     }
 
     @Override
-    public DataOutputConsumer visit(DefaultPattern<?> pattern, ExprCompiler parent) {
+    public Void visit(DefaultPattern pattern, ByteOutput out) {
         return null;
     }
 }

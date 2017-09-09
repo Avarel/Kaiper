@@ -12,14 +12,18 @@ import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.*;
 import xyz.avarel.kaiper.bytecode.DataOutputConsumer;
+import xyz.avarel.kaiper.bytecode.io.ByteOutput;
 import xyz.avarel.kaiper.lexer.Position;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static xyz.avarel.kaiper.bytecode.Opcodes.*;
 
-public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
+public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
     private final List<String> stringPool = new LinkedList<>();
 
@@ -35,427 +39,379 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
         return i;
     }
 
-    private DataOutputConsumer lineNumber(Position position) {
+    private void lineNumber(Position position, ByteOutput out) {
         long lineNumber = position.getLineNumber();
 
-        if (lineNumber == lastLineNumber) return DataOutputConsumer.NO_OP;
+        if (lineNumber == lastLineNumber) return;
 
         lastLineNumber = lineNumber;
 
-        return out -> {
-            LINE_NUMBER.writeInto(out);
-            out.writeLong(lineNumber);
-        };
+        LINE_NUMBER.writeInto(out);
+        out.writeLong(lineNumber);
     }
 
-    private DataOutputConsumer lineNumberAndVisit(Expr expr) {
-        return lineNumber(expr.getPosition()).andThen(expr.accept(this, null));
+    private void lineNumber(Expr expr, ByteOutput out) {
+        lineNumber(expr.getPosition(), out);
     }
 
-    private DataOutputConsumer lineNumber(Expr expr) {
-        return lineNumber(expr.getPosition());
+    private void lineNumberAndVisit(Expr expr, ByteOutput out) {
+        lineNumber(expr.getPosition(), out);
+        expr.accept(this, out);
     }
 
-    public DataOutputConsumer stringPool() {
-        ArrayList<String> strings = new ArrayList<>(stringPool);
-
-        return out -> {
-            out.writeShort(strings.size());
-            for (String s : strings) {
-                out.writeUTF(s);
-            }
-        };
+    public void writeStringPool(ByteOutput out) {
+        out.writeShort(stringPool.size());
+        for (String s : stringPool) {
+            out.writeString(s);
+        }
     }
 
     @Override
-    public DataOutputConsumer visit(Statements statements, Void scope) {
+    public Void visit(Statements statements, ByteOutput out) {
         Iterator<Expr> iterator = statements.getExprs().iterator();
-        if (!iterator.hasNext()) return DataOutputConsumer.NO_OP;
-
-        DataOutputConsumer consumer = lineNumberAndVisit(iterator.next());
-
-        if (!iterator.hasNext()) return consumer;
-
-        consumer = consumer.andThen(POP);
+        if (!iterator.hasNext()) return null;
 
         while (iterator.hasNext()) {
-            consumer = consumer.andThen(lineNumberAndVisit(iterator.next()));
-
-            if (iterator.hasNext()) consumer = consumer.andThen(POP);
+            lineNumberAndVisit(iterator.next(), out);
+            if (iterator.hasNext()) POP.writeInto(out);
         }
 
-        return consumer;
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(FunctionNode expr, Void scope) {
+    public Void visit(FunctionNode expr, ByteOutput out) {
         String tmp = expr.getName();
         int name = stringConst(tmp == null ? "" : tmp);
 
+        lineNumber(expr, out);
+
+        NEW_FUNCTION.writeInto(out);
+        out.writeShort(name);
+
         int id = regionId;
         regionId++;
-        DataOutputConsumer patterns = new PatternCompiler().visit(expr.getPatternCase(), this), inner = lineNumberAndVisit(expr);
+
+        new PatternCompiler(this).visit(expr.getPatternCase(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        lineNumberAndVisit(expr.getExpr(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
         regionId--;
 
-
-        return lineNumber(expr.getPosition()).andThen(out -> {
-            NEW_FUNCTION.writeInto(out);
-            out.writeShort(name);
-
-            patterns.writeInto(out);
-
-            END.writeInto(out);
-            out.writeShort(id);
-
-            inner.writeInto(out);
-
-            END.writeInto(out);
-            out.writeShort(id);
-        });
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(Identifier expr, Void scope) {
+    public Void visit(Identifier expr, ByteOutput out) {
         int name = stringConst(expr.getName());
 
-        if (expr.getParent() == null) {
-            return lineNumber(expr.getPosition()).andThen(out -> {
-                IDENTIFIER.writeInto(out);
-                out.writeBoolean(false);
-                out.writeShort(name);
-            });
+        lineNumber(expr, out);
+
+        boolean parented = expr.getParent() != null;
+
+        if (parented) {
+            lineNumberAndVisit(expr.getParent(), out);
         }
 
-        DataOutputConsumer parent = lineNumber(expr).andThen(expr.getParent().accept(this, null));
+        IDENTIFIER.writeInto(out);
 
-        return lineNumber(expr.getPosition()).andThen(out -> {
-            parent.writeInto(out);
-            IDENTIFIER.writeInto(out);
-            out.writeBoolean(true);
-            out.writeShort(name);
-        });
+        out.writeBoolean(parented);
+        out.writeShort(name);
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(Invocation expr, Void scope) {
-        DataOutputConsumer left = lineNumberAndVisit(expr.getLeft()),
-                args = lineNumberAndVisit(expr.getArgument()),
-                line = lineNumber(expr);
+    public Void visit(Invocation expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getLeft(), out);
+        lineNumberAndVisit(expr.getArgument(), out);
 
+        lineNumber(expr, out);
 
-        return out -> {
-            left.writeInto(out);
-            args.writeInto(out);
-            line.writeInto(out);
-            INVOKE.writeInto(out);
-        };
+        INVOKE.writeInto(out);
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(BinaryOperation expr, Void scope) {
-        DataOutputConsumer left = lineNumberAndVisit(expr.getLeft()),
-                right = lineNumberAndVisit(expr.getRight()),
-                line = lineNumber(expr);
-        int operator = expr.getOperator().ordinal();
+    public Void visit(BinaryOperation expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getLeft(), out);
+        lineNumberAndVisit(expr.getRight(), out);
 
-        return out -> {
-            left.writeInto(out);
-            right.writeInto(out);
-            line.writeInto(out);
-            BINARY_OPERATION.writeInto(out);
-            out.writeByte(operator);
-        };
+        lineNumber(expr, out);
+
+        BINARY_OPERATION.writeInto(out);
+        out.writeByte(expr.getOperator().ordinal());
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(UnaryOperation expr, Void scope) {
-        DataOutputConsumer target = lineNumberAndVisit(expr.getTarget()),
-                line = lineNumber(expr);
-        int operator = expr.getOperator().ordinal();
+    public Void visit(UnaryOperation expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getTarget(), out);
 
-        return out -> {
-            target.writeInto(out);
-            line.writeInto(out);
-            UNARY_OPERATION.writeInto(out);
-            out.writeByte(operator);
-        };
+        lineNumber(expr, out);
+
+        UNARY_OPERATION.writeInto(out);
+        out.writeByte(expr.getOperator().ordinal());
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(RangeNode expr, Void scope) {
-        DataOutputConsumer left = lineNumberAndVisit(expr.getLeft()),
-                right = lineNumberAndVisit(expr.getRight()),
-                line = lineNumber(expr);
+    public Void visit(RangeNode expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getLeft(), out);
+        lineNumberAndVisit(expr.getRight(), out);
 
-        return out -> {
-            left.writeInto(out);
-            right.writeInto(out);
-            line.writeInto(out);
-            NEW_RANGE.writeInto(out);
-        };
+        lineNumber(expr, out);
+
+        NEW_RANGE.writeInto(out);
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(ArrayNode expr, Void scope) {
+    public Void visit(ArrayNode expr, ByteOutput out) {
         List<Single> items = expr.getItems();
 
-        if (items.isEmpty()) return lineNumber(expr).andThen(out -> {
+        if (items.isEmpty()) {
             NEW_ARRAY.writeInto(out);
             out.writeInt(0);
-        });
 
-        DataOutputConsumer consumer = NO_OP;
-        int count = 0;
-        for (Single item : items) {
-            consumer = consumer.andThen(lineNumberAndVisit(item));
+            return null;
         }
 
-        return consumer.andThen(lineNumber(expr).andThen(out -> {
-            NEW_ARRAY.writeInto(out);
-            out.writeInt(count);
-        }));
+        for (Single sub : expr.getItems()) {
+            lineNumberAndVisit(sub, out);
+        }
+
+        lineNumber(expr, out);
+
+        NEW_ARRAY.writeInto(out);
+        out.writeInt(items.size());
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(SliceOperation expr, Void scope) {
-        DataOutputConsumer left = lineNumberAndVisit(expr.getLeft()),
-                start = lineNumberAndVisit(expr.getStart()),
-                end = lineNumberAndVisit(expr.getEnd()),
-                step = lineNumberAndVisit(expr.getStep()),
-                line = lineNumber(expr);
+    public Void visit(SliceOperation expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getLeft(), out);
+        lineNumberAndVisit(expr.getStart(), out);
+        lineNumberAndVisit(expr.getEnd(), out);
+        lineNumberAndVisit(expr.getStep(), out);
 
-        return out -> {
-            left.writeInto(out);
-            start.writeInto(out);
-            end.writeInto(out);
-            step.writeInto(out);
-            line.writeInto(out);
-            SLICE_OPERATION.writeInto(out);
-        };
+        lineNumber(expr, out);
+
+        SLICE_OPERATION.writeInto(out);
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(AssignmentExpr expr, Void scope) {
+    public Void visit(AssignmentExpr expr, ByteOutput out) {
         int name = stringConst(expr.getName());
+        boolean parented = expr.getParent() != null;
 
-        DataOutputConsumer data = lineNumberAndVisit(expr.getExpr());
+        if (parented) lineNumberAndVisit(expr.getParent(), out);
+        lineNumberAndVisit(expr.getExpr(), out);
 
-        if (expr.getParent() != null) {
+        lineNumber(expr, out);
 
-            DataOutputConsumer parent = lineNumberAndVisit(expr.getParent());
-            DataOutputConsumer line = lineNumber(expr);
+        ASSIGN.writeInto(out);
+        out.writeBoolean(parented);
+        out.writeShort(name);
 
-            return out -> {
-                parent.writeInto(out);
-                data.writeInto(out);
-                line.writeInto(out);
-                ASSIGN.writeInto(out);
-                out.writeBoolean(true);
-                out.writeShort(name);
-            };
-        }
-
-        DataOutputConsumer line = lineNumber(expr);
-
-        return out -> {
-            data.writeInto(out);
-            line.writeInto(out);
-            ASSIGN.writeInto(out);
-            out.writeBoolean(false);
-            out.writeShort(name);
-        };
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(GetOperation expr, Void scope) {
-        DataOutputConsumer left = lineNumberAndVisit(expr.getLeft()),
-                key = lineNumberAndVisit(expr.getKey()),
-                line = lineNumber(expr);
+    public Void visit(GetOperation expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getLeft(), out);
+        lineNumberAndVisit(expr.getKey(), out);
 
-        return out -> {
-            left.writeInto(out);
-            key.writeInto(out);
-            line.writeInto(out);
-            ARRAY_GET.writeInto(out);
-        };
+        lineNumber(expr, out);
+
+        ARRAY_GET.writeInto(out);
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(SetOperation expr, Void scope) {
-        DataOutputConsumer left = lineNumberAndVisit(expr.getLeft()),
-                key = lineNumberAndVisit(expr.getKey()),
-                data = lineNumberAndVisit(expr.getExpr()),
-                line = lineNumber(expr);
+    public Void visit(SetOperation expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getLeft(), out);
+        lineNumberAndVisit(expr.getKey(), out);
+        lineNumberAndVisit(expr.getExpr(), out);
 
-        return out -> {
-            left.writeInto(out);
-            key.writeInto(out);
-            data.writeInto(out);
-            line.writeInto(out);
-            ARRAY_SET.writeInto(out);
-        };
+        lineNumber(expr, out);
+
+        ARRAY_SET.writeInto(out);
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(ReturnExpr expr, Void scope) {
-        DataOutputConsumer data = lineNumberAndVisit(expr.getExpr()), line = lineNumber(expr);
+    public Void visit(ReturnExpr expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getExpr(), out);
 
-        return out -> {
-            data.writeInto(out);
-            line.writeInto(out);
-            RETURN.writeInto(out);
-        };
+        lineNumber(expr, out);
+        RETURN.writeInto(out);
+
+        return null;
     }
 
-    public DataOutputConsumer visit(ConditionalExpr expr, Void ignored) {
+    public Void visit(ConditionalExpr expr, ByteOutput out) {
+        lineNumber(expr, out);
+
+        CONDITIONAL.writeInto(out);
         boolean hasElseBranch = expr.getElseBranch() != null;
+        out.writeBoolean(hasElseBranch);
 
         int id = regionId;
         regionId++;
-        DataOutputConsumer line = lineNumber(expr);
-        DataOutputConsumer condition = lineNumberAndVisit(expr.getCondition());
-        DataOutputConsumer ifBranch = lineNumberAndVisit(expr.getIfBranch());
-        DataOutputConsumer elseBranch = hasElseBranch ? lineNumberAndVisit(expr.getElseBranch()) : null;
-        regionId--;
 
-        if (!hasElseBranch) {
-            return out -> {
-                line.writeInto(out);
-                CONDITIONAL.writeInto(out);
-                out.writeBoolean(false);
-                condition.writeInto(out);
-                END.writeInto(out);
-                out.writeShort(id);
-                ifBranch.writeInto(out);
-                END.writeInto(out);
-                out.writeShort(id);
-            };
+        lineNumberAndVisit(expr.getCondition(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        lineNumberAndVisit(expr.getIfBranch(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        if (hasElseBranch) {
+            lineNumberAndVisit(expr.getElseBranch(), out);
+            END.writeInto(out);
+            out.writeShort(id);
         }
 
-        return out -> {
-            line.writeInto(out);
-            CONDITIONAL.writeInto(out);
-            out.writeBoolean(true);
-            condition.writeInto(out);
-            END.writeInto(out);
-            out.writeShort(id);
-            ifBranch.writeInto(out);
-            END.writeInto(out);
-            out.writeShort(id);
-            elseBranch.writeInto(out);
-            END.writeInto(out);
-            out.writeShort(id);
-        };
+        regionId--;
+
+        return null;
     }
 
-    public DataOutputConsumer visit(ForEachExpr expr, Void ignored) {
+    public Void visit(ForEachExpr expr, ByteOutput out) {
         int variant = stringConst(expr.getVariant());
 
+        lineNumber(expr, out);
+
+        FOR_EACH.writeInto(out);
+        out.writeShort(variant);
+
         int id = regionId;
         regionId++;
-        DataOutputConsumer line = lineNumber(expr);
-        DataOutputConsumer iterable = expr.getIterable().accept(this, null);
-        DataOutputConsumer action = expr.getAction().accept(this, null);
+
+        lineNumberAndVisit(expr.getIterable(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
+        lineNumberAndVisit(expr.getAction(), out);
+        END.writeInto(out);
+        out.writeShort(id);
+
         regionId--;
 
-        return out -> {
-            line.writeInto(out);
-            FOR_EACH.writeInto(out);
-            out.writeShort(variant);
-            iterable.writeInto(out);
-            END.writeInto(out);
-            out.writeShort(id);
-            action.writeInto(out);
-            END.writeInto(out);
-            out.writeShort(id);
-        };
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(DictionaryNode expr, Void scope) {
+    public Void visit(DictionaryNode expr, ByteOutput out) {
+        lineNumber(expr, out);
+
+        NEW_DICTIONARY.writeInto(out);
+
         Map<Single, Single> map = expr.getMap();
-        if (map.isEmpty()) return NEW_DICTIONARY;
+        if (map.isEmpty()) return null;
 
-        DataOutputConsumer consumer = NEW_DICTIONARY;
         for (Map.Entry<Single, Single> entry : map.entrySet()) {
-            DataOutputConsumer key = entry.getKey().accept(this, null);
-            DataOutputConsumer value = entry.getValue().accept(this, null);
+            DUP.writeInto(out);
 
-            consumer = consumer.andThen(out -> {
-                DUP.writeInto(out);
-                key.writeInto(out);
-                value.writeInto(out);
-                ARRAY_SET.writeInto(out);
-            });
+            lineNumberAndVisit(entry.getKey(), out);
+            lineNumberAndVisit(entry.getValue(), out);
+
+            ARRAY_SET.writeInto(out);
         }
 
-        return consumer;
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(NullNode expr, Void scope) {
-        return U_CONST;
+    public Void visit(NullNode expr, ByteOutput out) {
+        lineNumber(expr, out);
+
+        U_CONST.writeInto(out);
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(IntNode expr, Void scope) {
-        int constValue = expr.getValue();
+    public Void visit(IntNode expr, ByteOutput out) {
+        lineNumber(expr, out);
 
-        return out -> {
-            I_CONST.writeInto(out);
-            out.writeInt(constValue);
-        };
+        I_CONST.writeInto(out);
+        out.writeInt(expr.getValue());
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(DecimalNode expr, Void scope) {
-        double constValue = expr.getValue();
+    public Void visit(DecimalNode expr, ByteOutput out) {
+        lineNumber(expr, out);
 
-        return out -> {
-            D_CONST.writeInto(out);
-            out.writeDouble(constValue);
-        };
+        D_CONST.writeInto(out);
+        out.writeDouble(expr.getValue());
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(BooleanNode expr, Void scope) {
-        return expr == BooleanNode.TRUE ? B_CONST_TRUE : B_CONST_FALSE;
+    public Void visit(BooleanNode expr, ByteOutput out) {
+        lineNumber(expr, out);
+
+        (expr == BooleanNode.TRUE ? B_CONST_TRUE : B_CONST_FALSE).writeInto(out);
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(StringNode expr, Void scope) {
-        int constValue = stringConst(expr.getValue());
+    public Void visit(StringNode expr, ByteOutput out) {
+        lineNumber(expr, out);
 
-        return out -> {
-            S_CONST.writeInto(out);
-            out.writeShort(constValue);
-        };
+        S_CONST.writeInto(out);
+        out.writeShort(stringConst(expr.getValue()));
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(DeclarationExpr expr, Void scope) {
+    public Void visit(DeclarationExpr expr, ByteOutput out) {
+        lineNumberAndVisit(expr.getExpr(), out);
+
+        lineNumber(expr, out);
+
         int name = stringConst(expr.getName());
-        DataOutputConsumer consumer = expr.getExpr().accept(this, null);
 
-        return out -> {
-            consumer.writeInto(out);
-            DECLARE.writeInto(out);
-            out.writeShort(name);
-        };
-    }
+        DECLARE.writeInto(out);
+        out.writeShort(name);
 
-    @Override
-    public DataOutputConsumer visit(BindAssignmentExpr expr, Void scope) {
         return null;
     }
 
     @Override
-    public DataOutputConsumer visit(BindDeclarationExpr expr, Void scope) {
+    public Void visit(BindAssignmentExpr expr, ByteOutput out) {
         return null;
     }
 
     @Override
-    public DataOutputConsumer visit(ModuleNode expr, Void scope) {
+    public Void visit(BindDeclarationExpr expr, ByteOutput out) {
+        return null;
+    }
+
+    @Override
+    public Void visit(ModuleNode expr, ByteOutput out) {
         int name = stringConst(expr.getName());
 
         int id = regionId;
@@ -471,10 +427,12 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
             END.writeInto(out);
             out.writeShort(id);
         };
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(TypeNode expr, Void scope) {
+    public Void visit(TypeNode expr, ByteOutput out) {
         int name = stringConst(expr.getName());
         int id = regionId;
         regionId++;
@@ -513,10 +471,12 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
             END.writeInto(out);
             out.writeShort(id);
         });
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(WhileExpr expr, Void scope) {
+    public Void visit(WhileExpr expr, ByteOutput out) {
         int id = regionId;
         regionId++;
         DataOutputConsumer condition = expr.getCondition().accept(this, null);
@@ -532,10 +492,12 @@ public class ExprCompiler implements ExprVisitor<DataOutputConsumer, Void> {
             END.writeInto(out);
             out.writeShort(id);
         };
+
+        return null;
     }
 
     @Override
-    public DataOutputConsumer visit(TupleExpr expr, Void scope) {
+    public Void visit(TupleExpr expr, ByteOutput out) {
         return null;
     }
 }
