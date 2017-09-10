@@ -40,7 +40,8 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public boolean opcodeLineNumber(OpcodeReader reader, ByteInput in) {
-        return false;
+        out.writeLong(in.readLong());
+        return true;
     }
 
     @Override
@@ -50,12 +51,12 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public boolean opcodeDup(OpcodeReader reader, ByteInput in) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean opcodePop(OpcodeReader reader, ByteInput in) {
-        return false;
+        return true;
     }
 
     @Override
@@ -65,7 +66,7 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public boolean opcodeBooleanConstant(OpcodeReader reader, boolean value, ByteInput in) {
-        return false;
+        return true;
     }
 
     @Override
@@ -104,22 +105,52 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public boolean opcodeNewFunction(OpcodeReader reader, ByteInput in) {
-        return true; // TODO: 10/09/2017
+        out.writeShort(in.readShort());
+
+        depth++;
+        reader.read(new PatternOpcodeBufferConsumer(out, depth), in);
+        reader.read(this, in);
+        depth--;
+
+        return true;
     }
 
     @Override
     public boolean opcodeNewModule(OpcodeReader reader, ByteInput in) {
-        return true; // TODO: 10/09/2017
+        out.writeShort(in.readShort());
+
+        depth++;
+        reader.read(this, in);
+        depth--;
+
+        return true;
     }
 
     @Override
     public boolean opcodeNewType(OpcodeReader reader, ByteInput in) {
-        return true; // TODO: 10/09/2017
+        out.writeShort(in.readShort());
+
+        depth++;
+        reader.read(new PatternOpcodeBufferConsumer(out, depth), in);
+        reader.read(this, in);
+        depth--;
+
+        return true;
     }
 
     @Override
     public boolean opcodeNewTuple(OpcodeReader reader, ByteInput in) {
-        return true; // TODO: 10/09/2017
+        int size = in.readInt();
+        out.writeInt(size);
+
+        depth++;
+        for (int i = 0; i < size; i++) {
+            out.writeShort(in.readShort());
+            reader.read(this, in);
+        }
+        depth--;
+
+        return true;
     }
 
     @Override
@@ -142,12 +173,20 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public boolean opcodeBindDeclare(OpcodeReader reader, ByteInput in) {
-        return false;
+        depth++;
+        reader.read(new PatternOpcodeBufferConsumer(out, depth), in);
+        depth--;
+
+        return true;
     }
 
     @Override
     public boolean opcodeBindAssign(OpcodeReader reader, ByteInput in) {
-        return false;
+        depth++;
+        reader.read(new PatternOpcodeBufferConsumer(out, depth), in);
+        depth--;
+
+        return true;
     }
 
     @Override
@@ -158,28 +197,28 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
     @Override
     public boolean opcodeUnaryOperation(OpcodeReader reader, ByteInput in) {
         out.writeByte(in.readByte());
-        return false;
+        return true;
     }
 
     @Override
     public boolean opcodeBinaryOperation(OpcodeReader reader, ByteInput in) {
         out.writeByte(in.readByte());
-        return false;
+        return true;
     }
 
     @Override
     public boolean opcodeSliceOperation(OpcodeReader reader, ByteInput in) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean opcodeArrayGet(OpcodeReader reader, ByteInput in) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean opcodeArraySet(OpcodeReader reader, ByteInput in) {
-        return false;
+        return true;
     }
 
     @Override
@@ -193,7 +232,7 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         if (hasElseBranch) reader.read(this, in);
         depth--;
 
-        return false;
+        return true;
     }
 
     @Override
@@ -205,7 +244,7 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         reader.read(this, in);
         depth--;
 
-        return false;
+        return true;
     }
 
     @Override
@@ -215,6 +254,6 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         reader.read(this, in);
         depth--;
 
-        return false;
+        return true;
     }
 }
