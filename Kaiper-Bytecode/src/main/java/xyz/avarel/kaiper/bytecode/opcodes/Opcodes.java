@@ -13,7 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.kaiper.bytecode;
+package xyz.avarel.kaiper.bytecode.opcodes;
 
 /**
  * The Bytecode Instructions of the Kaiper Bytecode.
@@ -290,12 +290,6 @@ public enum Opcodes implements Opcode {
     WHILE,
 
     RESERVED_063, RESERVED_064, RESERVED_065, RESERVED_066, RESERVED_067, RESERVED_068, RESERVED_069;
-
-    public static Opcode byId(int id) {
-        Opcodes[] values = values();
-        if (id < values.length) return values[id];
-        return new ReservedOpcode(id);
-    }
 
     public int code() {
         return ordinal();

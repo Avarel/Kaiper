@@ -1,7 +1,7 @@
 package xyz.avarel.kaiper.vm;
 
 import xyz.avarel.kaiper.bytecode.KaiperBytecode;
-import xyz.avarel.kaiper.bytecode.walker.BytecodeBatchReader;
+import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -50,8 +50,8 @@ public class KaiperVM {
 
         versionHeaderAndCheck(input);
         List<String> stringPool = stringPool(input);
-        BytecodeBatchReader reader = new BytecodeBatchReader();
-        reader.walkInsts(input, walker, stringPool, 0);
+        OpcodeReader reader = new OpcodeReader(opcodes, foreignOpcodes);
+        reader.read(input, walker, stringPool, 0);
 
         return walker.stack.peek();
     }

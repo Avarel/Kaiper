@@ -1,9 +1,9 @@
 package xyz.avarel.kaiper.bytecode.io;
 
 public interface ByteInput {
-    void readFully(byte b[]);
+    ByteInput readFully(byte b[]);
 
-    void readFully(byte b[], int off, int len);
+    ByteInput readFully(byte b[], int off, int len);
 
     int skipBytes(int n);
 

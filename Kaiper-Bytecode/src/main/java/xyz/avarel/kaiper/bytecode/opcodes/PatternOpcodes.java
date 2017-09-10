@@ -13,10 +13,7 @@
  * under the License.
  */
 
-package xyz.avarel.kaiper.bytecode.pattern;
-
-import xyz.avarel.kaiper.bytecode.Opcode;
-import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
+package xyz.avarel.kaiper.bytecode.opcodes;
 
 /**
  * The Bytecode Instructions of the Kaiper Patterns.
@@ -35,12 +32,6 @@ public enum PatternOpcodes implements Opcode {
 
     VALUE,
     DEFAULT;
-
-    public static PatternOpcodes byId(int id) {
-        PatternOpcodes[] values = values();
-        if (id < values.length) return values[id];
-        throw new InvalidBytecodeException("Invalid Instruction");
-    }
 
     public int code() {
         return ordinal();

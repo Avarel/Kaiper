@@ -15,11 +15,12 @@
 
 package xyz.avarel.kaiper.bytecode;
 
+import xyz.avarel.kaiper.bytecode.io.ByteInput;
+import xyz.avarel.kaiper.bytecode.io.ByteOutput;
+import xyz.avarel.kaiper.bytecode.opcodes.Opcodes;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
 
@@ -27,27 +28,26 @@ import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
  * @author AdrianTodt
  */
 public class KaiperBytecode {
-    public static byte[] IDENTIFIER = {'K', 'a', 'i'};
+    public static String IDENTIFIER = "Kai";
+    public static byte[] IDENTIFIER_BYTES = IDENTIFIER.getBytes(StandardCharsets.UTF_8);
     public static byte BYTECODE_VERSION_MAJOR = 2, BYTECODE_VERSION_MINOR = 0;
+    public static String IDENTIFIER_HEX = "0x" + toHex(IDENTIFIER_BYTES);
 
-    public static void initialize(DataOutput output) throws IOException {
-        output.write(IDENTIFIER);
-        output.write(BYTECODE_VERSION_MAJOR);
-        output.write(BYTECODE_VERSION_MINOR);
+    public static void initialize(ByteOutput output) {
+        output.writeBytes(IDENTIFIER_BYTES).writeByte(BYTECODE_VERSION_MAJOR).writeByte(BYTECODE_VERSION_MINOR);
     }
 
-    public static void validateInit(DataInput input) throws IOException {
+    public static void validateInit(ByteInput input) {
         byte k = input.readByte(), a = input.readByte(), i = input.readByte();
 
         if (k != 'K' || a != 'a' || i != 'i') {
-            String hexKaiper = "0x" + toHex(new byte[]{k, a, i});
-            String rightHex = "0x" + toHex(IDENTIFIER);
+            String headerHex = "0x" + toHex(k, a, i);
 
-            throw new InvalidBytecodeException("Invalid Header " + hexKaiper + ", was expecting " + rightHex + " (Kai)");
+            throw new InvalidBytecodeException("Invalid Header " + headerHex + ", was expecting " + IDENTIFIER_HEX + " (" + IDENTIFIER + ")");
         }
     }
 
-    public static void validateVersion(DataInput input) throws IOException {
+    public static void validateVersion(ByteInput input) {
         int versionMajor = input.readByte(), versionMinor = input.readByte();
 
         if (versionMajor != BYTECODE_VERSION_MAJOR || versionMinor > BYTECODE_VERSION_MINOR) {
@@ -59,17 +59,15 @@ public class KaiperBytecode {
         }
     }
 
-    public static String identifier(DataInput input) throws IOException {
+    public static String identifier(ByteInput input) {
         validateInit(input);
 
         int versionMajor = input.readByte(), versionMinor = input.readByte();
 
-        return "Kai" + versionMajor + "." + versionMinor;
+        return IDENTIFIER + versionMajor + "." + versionMinor;
     }
 
-    public static void finalize(DataOutput output) throws IOException {
-        //END -1
-        output.writeByte(0);
-        output.writeShort(-1);
+    public static void finalize(ByteOutput output) {
+        output.writeOpcode(Opcodes.END).writeShort(-1);
     }
 }

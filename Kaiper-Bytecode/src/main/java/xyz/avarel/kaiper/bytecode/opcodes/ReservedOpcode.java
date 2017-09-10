@@ -1,4 +1,4 @@
-package xyz.avarel.kaiper.bytecode;
+package xyz.avarel.kaiper.bytecode.opcodes;
 
 public class ReservedOpcode implements Opcode {
     private final int id;

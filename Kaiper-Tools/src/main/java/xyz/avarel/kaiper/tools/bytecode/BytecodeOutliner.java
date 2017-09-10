@@ -1,7 +1,7 @@
 package xyz.avarel.kaiper.tools.bytecode;
 
 import xyz.avarel.kaiper.bytecode.BytecodeUtils;
-import xyz.avarel.kaiper.bytecode.walker.BytecodeBatchReader;
+import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 
 import java.io.*;
@@ -111,7 +111,7 @@ public class BytecodeOutliner {
         versionHeaderAndCheck(input, out);
         List<String> stringPool = stringPool(input, out);
         out.println("Main: {");
-        new BytecodeBatchReader().walkInsts(input, new LogWalker(options, out, 0), stringPool, 0);
+        new OpcodeReader(opcodes, foreignOpcodes).read(input, new LogWalker(options, out, 0), stringPool, 0);
         out.println("}");
     }
 
@@ -127,11 +127,11 @@ public class BytecodeOutliner {
         if (options.skipHeaderChecking()) return;
 
         if (k != 'K' || a != 'a' || i != 'i') {
-            String hexKaiper = "0x" + BytecodeUtils.toHex(new byte[]{k, a, i});
+            String hexKaiper = "0x" + BytecodeUtils.toHex(k, a, i);
 
             if (!options.dontExitOnHeaderError()) throw new KaiperException("Invalid Header " + hexKaiper + "");
 
-            String rightHex = "0x" + BytecodeUtils.toHex(IDENTIFIER);
+            String rightHex = "0x" + BytecodeUtils.toHex(IDENTIFIER_BYTES);
             out.println("(Invalid Header " + hexKaiper + ", was expecting " + rightHex + " (Kai))");
             out.println();
         }

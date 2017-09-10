@@ -1,8 +1,8 @@
 package xyz.avarel.kaiper.tools.bytecode;
 
 import xyz.avarel.kaiper.bytecode.BytecodeUtils;
-import xyz.avarel.kaiper.bytecode.walker.BytecodeBatchReader;
-import xyz.avarel.kaiper.bytecode.walker.BytecodeWalker;
+import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
+import xyz.avarel.kaiper.bytecode.reader.walker.BytecodeWalker;
 
 import java.io.DataInput;
 import java.io.IOException;
@@ -104,7 +104,7 @@ public class LogWalker implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeNewFunction(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+    public void opcodeNewFunction(DataInput input, OpcodeReader reader, List<String> stringPool, int depth) throws IOException {
         LogWalker walker = new LogWalker(options, out, this.depth + 1);
         int constIndex = input.readShort();
 
@@ -113,24 +113,24 @@ public class LogWalker implements BytecodeWalker {
         writeString(stringPool, constIndex, false);
         out.println(": (");
 
-        reader.walkInsts(input, walker, stringPool, depth + 1);
+        reader.read(input, walker, stringPool, depth + 1);
 
         beginLine();
         out.println("), {");
 
-        reader.walkInsts(input, walker, stringPool, depth + 1);
+        reader.read(input, walker, stringPool, depth + 1);
 
         beginLine();
         out.println("}");
     }
 
     @Override
-    public void opcodeNewModule(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+    public void opcodeNewModule(DataInput input, OpcodeReader reader, List<String> stringPool, int depth) throws IOException {
         //TODO
     }
 
     @Override
-    public void opcodeNewType(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+    public void opcodeNewType(DataInput input, OpcodeReader reader, List<String> stringPool, int depth) throws IOException {
         //TODO
     }
 
@@ -189,7 +189,7 @@ public class LogWalker implements BytecodeWalker {
         boolean parented = input.readBoolean();
         int constIndex = input.readShort();
         beginLine();
-        out.printf("IDENTIFIER %s ", parented);
+        out.printf("IDENTIFIER_BYTES %s ", parented);
         writeString(stringPool, constIndex);
     }
 
@@ -203,28 +203,28 @@ public class LogWalker implements BytecodeWalker {
     }
 
     @Override
-    public void opcodeConditional(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+    public void opcodeConditional(DataInput input, OpcodeReader reader, List<String> stringPool, int depth) throws IOException {
         LogWalker walker = new LogWalker(options, out, this.depth + 1);
 
         boolean hasElseBranch = input.readBoolean();
         beginLine();
         out.printf("CONDITIONAL %s ", hasElseBranch);
         out.println(": (");
-        reader.walkInsts(input, walker, stringPool, depth + 1);
+        reader.read(input, walker, stringPool, depth + 1);
         beginLine();
         out.println("), {");
-        reader.walkInsts(input, walker, stringPool, depth + 1);
+        reader.read(input, walker, stringPool, depth + 1);
         if (hasElseBranch) {
             beginLine();
             out.println("}, {");
-            reader.walkInsts(input, walker, stringPool, depth + 1);
+            reader.read(input, walker, stringPool, depth + 1);
         }
         beginLine();
         out.println("}");
     }
 
     @Override
-    public void opcodeForEach(DataInput input, BytecodeBatchReader reader, List<String> stringPool, int depth) throws IOException {
+    public void opcodeForEach(DataInput input, OpcodeReader reader, List<String> stringPool, int depth) throws IOException {
         LogWalker walker = new LogWalker(options, out, this.depth + 1);
 
         int constIndex = input.readShort();
@@ -232,10 +232,10 @@ public class LogWalker implements BytecodeWalker {
         out.print("FOR_EACH ");
         writeString(stringPool, constIndex, false);
         out.println(": (");
-        reader.walkInsts(input, walker, stringPool, depth + 1);
+        reader.read(input, walker, stringPool, depth + 1);
         beginLine();
         out.println("), {");
-        reader.walkInsts(input, walker, stringPool, depth + 1);
+        reader.read(input, walker, stringPool, depth + 1);
         beginLine();
         out.println("}");
     }

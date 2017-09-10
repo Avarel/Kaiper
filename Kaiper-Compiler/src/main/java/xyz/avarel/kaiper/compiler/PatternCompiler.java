@@ -3,7 +3,7 @@ package xyz.avarel.kaiper.compiler;
 import xyz.avarel.kaiper.ast.pattern.*;
 import xyz.avarel.kaiper.bytecode.io.ByteOutput;
 
-import static xyz.avarel.kaiper.bytecode.pattern.PatternOpcodes.*;
+import static xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes.*;
 
 public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
     private final ExprCompiler parent;
@@ -23,8 +23,7 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
             pattern.accept(this, out);
         }
 
-        out.writeOpcode(END);
-        out.writeShort(id);
+        out.writeOpcode(END).writeShort(id);
 
         parent.regionId--;
 
@@ -40,25 +39,20 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
 
     @Override
     public Void visit(VariablePattern pattern, ByteOutput out) {
-        out.writeOpcode(VARIABLE);
-        out.writeShort(parent.stringConst(pattern.getName()));
+        out.writeOpcode(VARIABLE).writeShort(parent.stringConst(pattern.getName()));
 
         return null;
     }
 
     @Override
     public Void visit(TuplePattern pattern, ByteOutput out) {
-        int name = parent.stringConst(pattern.getName());
-
-        out.writeOpcode(TUPLE);
-        out.writeShort(name);
+        out.writeOpcode(TUPLE).writeShort(parent.stringConst(pattern.getName()));
 
         int id = parent.regionId;
         parent.regionId++;
 
         pattern.getPattern().accept(this, out);
-        out.writeOpcode(END);
-        out.writeShort(id);
+        out.writeOpcode(END).writeShort(id);
 
         parent.regionId--;
 
@@ -67,8 +61,7 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
 
     @Override
     public Void visit(RestPattern pattern, ByteOutput out) {
-        out.writeOpcode(REST);
-        out.writeShort(parent.stringConst(pattern.getName()));
+        out.writeOpcode(REST).writeShort(parent.stringConst(pattern.getName()));
 
         return null;
     }
@@ -81,8 +74,7 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
         parent.regionId++;
 
         pattern.getValue().accept(parent, out);
-        out.writeOpcode(END);
-        out.writeShort(id);
+        out.writeOpcode(END).writeShort(id);
 
         parent.regionId--;
 
@@ -97,12 +89,10 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
         parent.regionId++;
 
         pattern.getDelegate().accept(this, out);
-        out.writeOpcode(END);
-        out.writeShort(id);
+        out.writeOpcode(END).writeShort(id);
 
         pattern.getDefault().accept(parent, out);
-        out.writeOpcode(END);
-        out.writeShort(id);
+        out.writeOpcode(END).writeShort(id);
 
         parent.regionId--;
 

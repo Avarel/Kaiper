@@ -1,37 +1,35 @@
 package xyz.avarel.kaiper.bytecode.io;
 
-import xyz.avarel.kaiper.bytecode.Opcode;
+import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 
 public interface ByteOutput {
-    void write(int b);
+    ByteOutput writeByte(int b);
 
-    void write(byte b[]);
+    ByteOutput writeBytes(byte b[]);
 
-    void write(byte b[], int off, int len);
+    ByteOutput writeBytes(byte b[], int off, int len);
 
-    void writeBoolean(boolean v);
+    ByteOutput writeBoolean(boolean v);
 
-    void writeByte(int v);
+    ByteOutput writeShort(int v);
 
-    void writeShort(int v);
+    ByteOutput writeChar(int v);
 
-    void writeChar(int v);
+    ByteOutput writeInt(int v);
 
-    void writeInt(int v);
+    ByteOutput writeLong(long v);
 
-    void writeLong(long v);
+    ByteOutput writeFloat(float v);
 
-    void writeFloat(float v);
+    ByteOutput writeDouble(double v);
 
-    void writeDouble(double v);
+    ByteOutput writeBytes(String s);
 
-    void writeBytes(String s);
+    ByteOutput writeChars(String s);
 
-    void writeChars(String s);
+    ByteOutput writeString(String s);
 
-    void writeString(String s);
-
-    default void writeOpcode(Opcode opcode) {
-        writeByte(opcode.code());
+    default ByteOutput writeOpcode(Opcode opcode) {
+        return writeByte(opcode.code());
     }
 }
