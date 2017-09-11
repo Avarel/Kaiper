@@ -7,6 +7,7 @@ import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.bytecode.reader.consumers.OpcodeConsumerAdapter;
 import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
 import xyz.avarel.kaiper.bytecode.reader.consumers.impl.OpcodeBufferConsumer;
+import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.operations.UnaryOperatorType;
@@ -216,16 +217,51 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public ReadResult opcodeDeclare(OpcodeReader reader, ByteInput in) {
+        String name = stringPool.get(in.readUnsignedShort());
+
+        Obj value = stack.pop();
+        scope.declare(name, value);
+        stack.push(Null.VALUE);
+
         return CONTINUE;
     }
 
     @Override
     public ReadResult opcodeAssign(OpcodeReader reader, ByteInput in) {
+        boolean parented = in.readBoolean();
+        String name = stringPool.get(in.readUnsignedShort());
+
+        Obj value = stack.pop();
+
+        if (parented) {
+            stack.push(stack.pop().setAttr(name, value));
+        } else {
+            if (!scope.contains(name)) {
+                throw new ComputeException(name + " is not defined");
+            }
+
+            scope.assign(name, value);
+            stack.push(value);
+        }
+
         return CONTINUE;
     }
 
     @Override
     public ReadResult opcodeIdentifier(OpcodeReader reader, ByteInput in) {
+        boolean parented = in.readBoolean();
+        String name = stringPool.get(in.readUnsignedShort());
+
+        if (parented) {
+            stack.push(stack.pop().getAttr(name));
+        } else {
+            if (!scope.contains(name)) {
+                throw new ComputeException(name + " is not defined");
+            }
+
+            stack.push(scope.get(name));
+        }
+
         return CONTINUE;
     }
 
