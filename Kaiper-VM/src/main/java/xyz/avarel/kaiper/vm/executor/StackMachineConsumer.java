@@ -59,15 +59,15 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
     /**
      * Recyclable Buffer (ByteArray)
      */
-    private final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+    public final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
     /**
      * Recyclable Buffer (ByteOutput)
      */
-    private final ByteOutputStream byteBufferOutput = new ByteOutputStream(byteBuffer);
+    public final ByteOutputStream byteBufferOutput = new ByteOutputStream(byteBuffer);
     /**
      * Recyclable Buffer (OpcodeBufferConsumer)
      */
-    private final OpcodeBufferConsumer buffer = new OpcodeBufferConsumer(NullOutputStream.DATA_INSTANCE);
+    public final OpcodeBufferConsumer buffer = new OpcodeBufferConsumer(NullOutputStream.DATA_INSTANCE);
 
     /**
      * Current Scope

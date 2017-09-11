@@ -106,63 +106,6 @@ public class StackMachineWalker {
         stack.push(type);
     }
 
-    public void opcodeConditional(DataInput in, OpcodeReader reader, List<String> stringPool, int depth) throws IOException {
-        checkTimeout();
-        boolean hasElseBranch = in.readBoolean();
-        reader.read(in, this, stringPool, depth + 1);
-        checkTimeout();
-
-        if (stack.pop() == Bool.TRUE) {
-            reader.read(in, this, stringPool, depth + 1);
-            checkTimeout();
-            if (hasElseBranch) reader.read(in, DummyWalker.INSTANCE, stringPool, depth + 1);
-        } else {
-            reader.read(in, DummyWalker.INSTANCE, stringPool, depth + 1);
-            checkTimeout();
-            if (hasElseBranch) reader.read(in, this, stringPool, depth + 1);
-            else stack.push(Null.VALUE);
-        }
-    }
-
-
-    public void opcodeForEach(DataInput in, OpcodeReader reader, List<String> stringPool, int depth) throws IOException {
-        checkTimeout();
-        String variant = stringPool.get(in.readUnsignedShort());
-
-        reader.read(in, this, stringPool, depth + 1);
-        checkTimeout();
-        Obj iterObj = stack.pop();
-
-        if (!(iterObj instanceof Iterable)) {
-            stack.push(Null.VALUE);
-            return;
-        }
-
-        Iterable iterable = (Iterable) iterObj;
-
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        reader.read(in, new BufferWalker(new DataOutputStream(buffer)), stringPool, depth + 1);
-        checkTimeout();
-        byte[] bytecode = buffer.toByteArray();
-
-        int iter = 0;
-        for (Object var : iterable) {
-            GlobalVisitorSettings.checkIterationLimit(iter);
-
-            if (!(var instanceof Obj)) {
-                throw new ComputeException("Items in iterable do not implement Obj interface");
-            }
-
-            Scope copy = scope.subPool();
-            copy.declare(variant, (Obj) var);
-            reader.read(new DataInputStream(new ByteArrayInputStream(bytecode)), new StackMachineWalker(this, copy), stringPool, depth + 1);
-            checkTimeout();
-            iter++;
-        }
-
-        stack.push(Null.VALUE);
-    }
-
     public void resetTimeout() {
         timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
     }

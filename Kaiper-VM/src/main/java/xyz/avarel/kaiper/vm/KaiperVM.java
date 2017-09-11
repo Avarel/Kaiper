@@ -1,11 +1,17 @@
 package xyz.avarel.kaiper.vm;
 
 import xyz.avarel.kaiper.bytecode.KaiperBytecode;
+import xyz.avarel.kaiper.bytecode.io.ByteInput;
+import xyz.avarel.kaiper.bytecode.io.ByteInputStream;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
+import xyz.avarel.kaiper.vm.executor.StackMachineConsumer;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -13,16 +19,12 @@ import java.util.zip.GZIPInputStream;
 public class KaiperVM {
     //region DELEGATES
 
-    public Obj executeBytecode(DataInput input, Scope scope) throws IOException {
+    public Obj executeBytecode(InputStream input, Scope scope) throws IOException {
         return readAndExecute(input, scope);
     }
 
-    public Obj executeBytecode(InputStream input, Scope scope) throws IOException {
-        return readAndExecute(new DataInputStream(input), scope);
-    }
-
     public Obj executeBytecode(byte[] input, Scope scope) throws IOException {
-        return readAndExecute(new DataInputStream(new ByteArrayInputStream(input)), scope);
+        return readAndExecute(new ByteArrayInputStream(input), scope);
     }
 
     //endregion
@@ -31,13 +33,13 @@ public class KaiperVM {
 
     public Obj executeCompressedBytecode(InputStream input, Scope scope) throws IOException {
         try (GZIPInputStream gz = new GZIPInputStream(input)) {
-            return readAndExecute(new DataInputStream(gz), scope);
+            return readAndExecute(gz, scope);
         }
     }
 
     public Obj executeCompressedBytecode(byte[] input, Scope scope) throws IOException {
         try (GZIPInputStream gz = new GZIPInputStream(new ByteArrayInputStream(input))) {
-            return readAndExecute(new DataInputStream(gz), scope);
+            return readAndExecute(gz, scope);
         }
     }
 
@@ -45,32 +47,34 @@ public class KaiperVM {
 
     //region MAIN METHOD
 
-    private Obj readAndExecute(DataInput input, Scope scope) throws IOException {
-        StackMachineWalker walker = new StackMachineWalker(scope);
+    private Obj readAndExecute(InputStream inputStream, Scope scope) throws IOException {
+        try {
+            ByteInputStream input = new ByteInputStream(inputStream);
+            versionHeaderAndCheck(input);
 
-        versionHeaderAndCheck(input);
-        List<String> stringPool = stringPool(input);
-        OpcodeReader reader = new OpcodeReader(opcodes, foreignOpcodes);
-        reader.read(input, walker, stringPool, 0);
-
-        return walker.stack.peek();
+            StackMachineConsumer stackMachine = new StackMachineConsumer(scope, readStringPool(input));
+            OpcodeReader.DEFAULT_OPCODE_READER.read(stackMachine, input);
+            return stackMachine.stack.peek();
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
     }
 
     //endregion
 
     //region HEADERS
 
-    private void versionHeaderAndCheck(DataInput input) throws IOException {
+    private void versionHeaderAndCheck(ByteInput input) throws IOException {
         KaiperBytecode.validateInit(input);
         KaiperBytecode.validateVersion(input);
     }
 
-    private List<String> stringPool(DataInput input) throws IOException {
+    private List<String> readStringPool(ByteInput input) throws IOException {
         int poolSize = input.readShort();
         List<String> constants = new ArrayList<>(poolSize);
 
         for (int i = 0; i < poolSize; i++) {
-            constants.add(input.readUTF());
+            constants.add(input.readString());
         }
 
         return constants;
