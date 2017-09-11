@@ -3,21 +3,23 @@ package xyz.avarel.kaiper.vm.compiled;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
-import xyz.avarel.kaiper.vm.StackMachineWalker;
+import xyz.avarel.kaiper.vm.executor.StackMachineConsumer;
 
-import java.io.IOException;
 import java.util.List;
 
-public class CompiledScopedExecution {
-    private final CompiledExecution execution;
+public class CompiledScopedExecution extends CompiledExecution {
     private final Scope baseScope;
 
-    public CompiledScopedExecution(byte[] bytecode, OpcodeReader reader, List<String> stringPool, int depth, Scope baseScope, StackMachineWalker parent) {
-        this.execution = new CompiledExecution(bytecode, reader, stringPool, depth, parent);
-        this.baseScope = baseScope.copy();
+    public CompiledScopedExecution(OpcodeReader reader, byte[] bytecode, int depth, List<String> stringPool, Scope baseScope) {
+        super(reader, bytecode, depth, stringPool);
+        this.baseScope = baseScope;
     }
 
-    public Obj execute() throws IOException {
-        return execution.executeWithScope(baseScope.subPool());
+    public Obj execute() {
+        return execute(baseScope.subPool());
+    }
+
+    public Obj execute(StackMachineConsumer executor) {
+        return execute(executor, baseScope.subPool());
     }
 }
