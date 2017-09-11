@@ -32,14 +32,60 @@ import java.util.List;
 import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
 import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.*;
 
+/**
+ * <p>
+ * The main (internal) class of the KaiperVM.
+ * </p>
+ * <p><em>
+ * Beware that every instance of this class <b>ARE NOT</b> thread-safe, unless when halted by breakpoints. The same can be assumed from most fields.
+ * To reduce RAM and CPU costs, some objects (specially IO) are recycled, as thread-safety is not a concern.
+ * </em></p>
+ * <p><em>
+ * Each instance may be used to "execute" <b>one, and only one</b> chunk of bytecode <b>at the same time</b>.
+ * </em></p>
+ *
+ * @author AdrianTodt
+ */
 public class StackMachineConsumer extends OpcodeConsumerAdapter {
+    /**
+     * The Breakpoint object (used on resumeBreakpoint and opcodeBreakpoint)
+     */
     public final Object breakpointObj = new Object();
+    /**
+     * String Pool (short => String)
+     */
     public final List<String> stringPool;
+
+    /**
+     * Recyclable Buffer (ByteArray)
+     */
+    private final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+    /**
+     * Recyclable Buffer (ByteOutput)
+     */
+    private final ByteOutputStream byteBufferOutput = new ByteOutputStream(byteBuffer);
+    /**
+     * Recyclable Buffer (OpcodeBufferConsumer)
+     */
+    private final OpcodeBufferConsumer buffer = new OpcodeBufferConsumer(NullOutputStream.DATA_INSTANCE);
+
+    /**
+     * Current Scope
+     */
     public Scope scope;
+    /**
+     * Current Stack
+     */
     public VMStack<Obj> stack = new VMStack<>();
     public long breakpointMillis = 0;
     public long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
+    /**
+     * Current Depth
+     */
     public int depth = 0;
+    /**
+     * Current Line Number
+     */
     public long lineNumber = -1;
 
     public StackMachineConsumer(Scope scope, List<String> stringPool) {
@@ -342,7 +388,7 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
             Bool bool = Bool.of(operator == BinaryOperatorType.OR);
             if (left == bool) {
                 //Standard way of skipping a block of code.
-                reader.read(new OpcodeBufferConsumer(NullOutputStream.DATA_INSTANCE, depth), in);
+                reader.read(buffer.reset(NullOutputStream.DATA_INSTANCE, depth), in);
                 stack.push(bool);
             } else {
                 reader.read(this, in);
@@ -459,10 +505,10 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
             checkTimeout();
 
             if (hasElseBranch) {
-                reader.read(new OpcodeBufferConsumer(NullOutputStream.DATA_INSTANCE, depth), in);
+                reader.read(buffer.reset(NullOutputStream.DATA_INSTANCE, depth), in);
             }
         } else {
-            reader.read(new OpcodeBufferConsumer(NullOutputStream.DATA_INSTANCE, depth), in);
+            reader.read(buffer.reset(NullOutputStream.DATA_INSTANCE, depth), in);
             checkTimeout();
 
             if (hasElseBranch) {
@@ -487,16 +533,19 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
 
         Obj iterObj = stack.pop();
 
-        ByteArrayOutputStream bufferOut = new ByteArrayOutputStream();
-        reader.read(new OpcodeBufferConsumer(new ByteOutputStream(bufferOut), depth), in);
 
         if (!(iterObj instanceof Iterable)) {
+            reader.read(buffer.reset(NullOutputStream.DATA_INSTANCE, depth), in);
+
             stack.push(Null.VALUE);
             return CONTINUE;
         }
 
-        ByteArrayInputStream buffer = new ByteArrayInputStream(bufferOut.toByteArray());
-        ByteInputStream bufferIn = new ByteInputStream(buffer);
+        byteBuffer.reset();
+        reader.read(buffer.reset(byteBufferOutput, depth), in);
+        ByteArrayInputStream buffer = new ByteArrayInputStream(byteBuffer.toByteArray());
+
+        ByteInput bufferInput = new ByteInputStream(buffer);
 
         //save state
         Scope lastScope = scope;
@@ -514,7 +563,7 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
             scope = lastScope.subPool();
             scope.declare(variant, (Obj) var);
 
-            reader.read(this, bufferIn);
+            reader.read(this, bufferInput);
             checkTimeout();
             buffer.reset();
             iteration++;
@@ -535,16 +584,16 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
     public ReadResult opcodeWhile(OpcodeReader reader, ByteInput in) {
         depth++;
 
-        ByteArrayOutputStream bufferArray = new ByteArrayOutputStream();
-        OpcodeBufferConsumer bufferConsumer = new OpcodeBufferConsumer(new ByteOutputStream(bufferArray), depth);
-        reader.read(bufferConsumer, in);
-        ByteArrayInputStream bufferCondition = new ByteArrayInputStream(bufferArray.toByteArray());
-        bufferArray.reset();
-        reader.read(bufferConsumer, in);
-        ByteArrayInputStream bufferAction = new ByteArrayInputStream(bufferArray.toByteArray());
+        byteBuffer.reset();
+        buffer.reset(byteBufferOutput, depth);
+        reader.read(buffer, in);
+        ByteArrayInputStream bufferCondition = new ByteArrayInputStream(byteBuffer.toByteArray());
+        byteBuffer.reset();
+        reader.read(buffer, in);
+        ByteArrayInputStream bufferAction = new ByteArrayInputStream(byteBuffer.toByteArray());
 
-        ByteInputStream bufferConditionIn = new ByteInputStream(bufferCondition);
-        ByteInputStream bufferActionIn = new ByteInputStream(bufferAction);
+        ByteInput conditionInput = new ByteInputStream(bufferCondition);
+        ByteInput actionInput = new ByteInputStream(bufferAction);
 
         //save state
         Scope lastScope = scope;
@@ -556,14 +605,14 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
             GlobalVisitorSettings.checkIterationLimit(iteration);
 
             scope = lastScope.subPool();
-            reader.read(this, bufferConditionIn);
+            reader.read(this, conditionInput);
             checkTimeout();
             Obj condition = stack.pop();
             stack.popToLock(); //reset stack
 
             if (condition instanceof Bool && condition == Bool.TRUE) {
                 scope = lastScope.subPool();
-                reader.read(this, bufferActionIn);
+                reader.read(this, actionInput);
                 checkTimeout();
                 stack.popToLock(); //reset stack
             } else {

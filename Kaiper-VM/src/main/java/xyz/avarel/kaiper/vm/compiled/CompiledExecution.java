@@ -14,6 +14,7 @@ public class CompiledExecution {
     private final int depth;
     private final List<String> stringPool;
     private final OpcodeReader reader;
+    private final Object lock_defaultExecutor = new Object();
     private StackMachineConsumer defaultExecutor;
 
     public CompiledExecution(OpcodeReader reader, byte[] bytecode, int depth, List<String> stringPool) {
@@ -24,12 +25,17 @@ public class CompiledExecution {
     }
 
     public Obj execute(Scope scope) {
-        //Lazy
-        if (this.defaultExecutor == null) {
-            this.defaultExecutor = new StackMachineConsumer(scope, stringPool);
+        //Lazy and recycling executors
+        StackMachineConsumer executor;
+        synchronized (lock_defaultExecutor) {
+            if (this.defaultExecutor == null) {
+                executor = new StackMachineConsumer(scope, stringPool);
+            } else {
+                executor = this.defaultExecutor;
+                this.defaultExecutor = null;
+            }
         }
 
-        StackMachineConsumer executor = this.defaultExecutor;
 
         //reset
         executor.scope = scope;
@@ -47,11 +53,16 @@ public class CompiledExecution {
         executor.stack.unlock();
         executor.stack.clear();
 
+
+        synchronized (lock_defaultExecutor) {
+            this.defaultExecutor = executor;
+        }
+
         return result;
     }
 
     public Obj execute(StackMachineConsumer executor, Scope scope) {
-        if (executor == null || executor == this.defaultExecutor) {
+        if (executor == null) {
             return execute(scope);
         }
 
@@ -59,11 +70,13 @@ public class CompiledExecution {
         Scope lastScope = executor.scope;
         int lastLock = executor.stack.lock();
         int lastDepth = executor.depth;
+        long lastLn = executor.lineNumber;
 
         //load temp state
         executor.scope = scope;
         executor.depth = this.depth;
         executor.stack.setLock(lastLock);
+        executor.lineNumber = -1;
 
         reader.read(executor, new ByteInputStream(new ByteArrayInputStream(bytecode)));
         Obj result = executor.stack.pop();
@@ -71,6 +84,7 @@ public class CompiledExecution {
         //load state
         executor.depth = lastDepth;
         executor.scope = lastScope;
+        executor.lineNumber = lastLn;
         executor.stack.popToLock();
         executor.stack.setLock(lastLock);
 

@@ -273,11 +273,22 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         return CONTINUE;
     }
 
+    public OpcodeBufferConsumer reset(ByteOutput out, int depth) {
+        this.out = out;
+        this.depth = depth;
+
+        return this;
+    }
+
     public ByteOutput getOut() {
         return out;
     }
 
     public void setOut(ByteOutput out) {
         this.out = out;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 }
