@@ -22,7 +22,19 @@ package xyz.avarel.kaiper.bytecode.opcodes;
  * @version 2.0
  */
 public enum PatternOpcodes implements Opcode {
+    /**
+     * {@code END id;}
+     * <p>Special Opcode. Means the end of a bytecode block.</p>
+     */
     END,
+
+    RESERVED_001, RESERVED_002, RESERVED_003, RESERVED_004, RESERVED_005, RESERVED_006, RESERVED_007, RESERVED_008,
+
+    /**
+     * {@code BREAKPOINT;}
+     * <p>Special Opcode. Freezes execution until the resumeBreakpoint() is called again.</p>
+     */
+    BREAKPOINT,
 
     PATTERN_CASE,
     WILDCARD,

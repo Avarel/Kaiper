@@ -16,8 +16,8 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
     public Void visit(PatternCase patternCase, ByteOutput out) {
         out.writeOpcode(PATTERN_CASE);
 
-        int id = parent.regionId;
-        parent.regionId++;
+        int id = parent.depth;
+        parent.depth++;
 
         for (Pattern pattern : patternCase.getPatterns()) {
             pattern.accept(this, out);
@@ -25,7 +25,7 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
 
         out.writeOpcode(END).writeShort(id);
 
-        parent.regionId--;
+        parent.depth--;
 
         return null;
     }
@@ -48,13 +48,13 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
     public Void visit(TuplePattern pattern, ByteOutput out) {
         out.writeOpcode(TUPLE).writeShort(parent.stringConst(pattern.getName()));
 
-        int id = parent.regionId;
-        parent.regionId++;
+        int id = parent.depth;
+        parent.depth++;
 
         pattern.getPattern().accept(this, out);
         out.writeOpcode(END).writeShort(id);
 
-        parent.regionId--;
+        parent.depth--;
 
         return null;
     }
@@ -70,13 +70,13 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
     public Void visit(ValuePattern pattern, ByteOutput out) {
         out.writeOpcode(VALUE);
 
-        int id = parent.regionId;
-        parent.regionId++;
+        int id = parent.depth;
+        parent.depth++;
 
         pattern.getValue().accept(parent, out);
         out.writeOpcode(END).writeShort(id);
 
-        parent.regionId--;
+        parent.depth--;
 
         return null;
     }
@@ -85,8 +85,8 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
     public Void visit(DefaultPattern pattern, ByteOutput out) {
         out.writeOpcode(DEFAULT);
 
-        int id = parent.regionId;
-        parent.regionId++;
+        int id = parent.depth;
+        parent.depth++;
 
         pattern.getDelegate().accept(this, out);
         out.writeOpcode(END).writeShort(id);
@@ -94,7 +94,7 @@ public class PatternCompiler implements PatternVisitor<Void, ByteOutput> {
         pattern.getDefault().accept(parent, out);
         out.writeOpcode(END).writeShort(id);
 
-        parent.regionId--;
+        parent.depth--;
 
         return null;
     }

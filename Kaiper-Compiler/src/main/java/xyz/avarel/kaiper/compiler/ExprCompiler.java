@@ -14,16 +14,19 @@ import xyz.avarel.kaiper.ast.variables.*;
 import xyz.avarel.kaiper.bytecode.io.ByteOutput;
 import xyz.avarel.kaiper.exceptions.CompilerException;
 import xyz.avarel.kaiper.lexer.Position;
+import xyz.avarel.kaiper.operations.BinaryOperatorType;
 
 import java.util.*;
 
 import static xyz.avarel.kaiper.bytecode.opcodes.Opcodes.*;
+import static xyz.avarel.kaiper.operations.BinaryOperatorType.AND;
+import static xyz.avarel.kaiper.operations.BinaryOperatorType.OR;
 
 public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
     private final List<String> stringPool = new LinkedList<>();
 
-    int regionId = 0;
+    int depth = 0;
     private long lastLineNumber;
 
     @Override
@@ -48,8 +51,8 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(NEW_FUNCTION).writeShort(name);
 
-        int id = regionId;
-        regionId++;
+        int id = depth;
+        depth++;
 
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
         out.writeOpcode(END).writeShort(id);
@@ -57,7 +60,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
         visit(out, expr.getExpr());
         out.writeOpcode(END).writeShort(id);
 
-        regionId--;
+        depth--;
 
         return null;
     }
@@ -92,11 +95,28 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
     @Override
     public Void visit(BinaryOperation expr, ByteOutput out) {
+        BinaryOperatorType op = expr.getOperator();
+        if (op == AND || op == OR) {
+            visit(out, expr.getLeft());
+
+            lineNumber(expr, out);
+
+            out.writeOpcode(BINARY_OPERATION).writeByte(op.ordinal());
+
+            int id = depth;
+            depth++;
+
+            visit(out, expr.getRight());
+            out.writeOpcode(END).writeShort(id);
+
+            depth--;
+        }
+
         visit(out, expr.getLeft(), expr.getRight());
 
         lineNumber(expr, out);
 
-        out.writeOpcode(BINARY_OPERATION).writeByte(expr.getOperator().ordinal());
+        out.writeOpcode(BINARY_OPERATION).writeByte(op.ordinal());
 
         return null;
     }
@@ -207,8 +227,8 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(CONDITIONAL).writeBoolean(hasElseBranch);
 
-        int id = regionId;
-        regionId++;
+        int id = depth;
+        depth++;
 
         visit(out, expr.getCondition());
         out.writeOpcode(END).writeShort(id);
@@ -221,7 +241,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
             out.writeOpcode(END).writeShort(id);
         }
 
-        regionId--;
+        depth--;
 
         return null;
     }
@@ -233,8 +253,8 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(FOR_EACH).writeShort(variant);
 
-        int id = regionId;
-        regionId++;
+        int id = depth;
+        depth++;
 
         visit(out, expr.getIterable());
         out.writeOpcode(END).writeShort(id);
@@ -242,7 +262,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
         visit(out, expr.getAction());
         out.writeOpcode(END).writeShort(id);
 
-        regionId--;
+        depth--;
 
 
         return null;
@@ -335,13 +355,13 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(NEW_MODULE).writeShort(name);
 
-        int id = regionId;
-        regionId++;
+        int id = depth;
+        depth++;
 
         visit(out, expr.getExpr());
         out.writeOpcode(END).writeShort(id);
 
-        regionId--;
+        depth--;
 
         return null;
     }
@@ -354,8 +374,8 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(NEW_TYPE).writeShort(name);
 
-        int id = regionId;
-        regionId++;
+        int id = depth;
+        depth++;
 
 
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
@@ -364,7 +384,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
         visit(out, expr.getExpr());
         out.writeOpcode(END).writeShort(id);
 
-        regionId--;
+        depth--;
 
         return null;
     }
@@ -375,8 +395,8 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(WHILE);
 
-        int id = regionId;
-        regionId++;
+        int id = depth;
+        depth++;
 
         visit(out, expr.getCondition());
         out.writeOpcode(END).writeShort(id);
@@ -384,7 +404,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
         visit(out, expr.getAction());
         out.writeOpcode(END).writeShort(id);
 
-        regionId--;
+        depth--;
 
         return null;
     }
@@ -411,8 +431,8 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(NEW_TUPLE).writeInt(map.size());
 
-        int id = regionId;
-        regionId++;
+        int id = depth;
+        depth++;
 
         for (Map.Entry<String, Single> entry : map.entrySet()) {
             out.writeShort(stringConst(entry.getKey()));
@@ -421,7 +441,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
             out.writeOpcode(END).writeShort(id);
         }
 
-        regionId--;
+        depth--;
 
         return null;
     }
@@ -434,13 +454,13 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(BIND_DECLARE);
 
-        int id = regionId;
-        regionId++;
+        int id = depth;
+        depth++;
 
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
         out.writeOpcode(END).writeShort(id);
 
-        regionId--;
+        depth--;
 
         return null;
     }
@@ -453,13 +473,13 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(BIND_ASSIGN);
 
-        int id = regionId;
-        regionId++;
+        int id = depth;
+        depth++;
 
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
         out.writeOpcode(END).writeShort(id);
 
-        regionId--;
+        depth--;
 
         return null;
     }

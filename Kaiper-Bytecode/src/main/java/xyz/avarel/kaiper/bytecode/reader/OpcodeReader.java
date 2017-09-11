@@ -3,6 +3,7 @@ package xyz.avarel.kaiper.bytecode.reader;
 import xyz.avarel.kaiper.bytecode.io.ByteInput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.opcodes.ReservedOpcode;
+import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
 public class OpcodeReader {
@@ -27,8 +28,11 @@ public class OpcodeReader {
         throw new InvalidBytecodeException(opcode);
     }
 
-    public void read(BaseOpcodeConsumer consumer, ByteInput in) {
+    public ReadResult read(BaseOpcodeConsumer consumer, ByteInput in) {
+        ReadResult r;
+
         //noinspection StatementWithEmptyBody
-        while (consumer.accept(this, next(in), in)) ;
+        while ((r = consumer.accept(this, next(in), in)) == ReadResult.CONTINUE) ;
+        return r;
     }
 }

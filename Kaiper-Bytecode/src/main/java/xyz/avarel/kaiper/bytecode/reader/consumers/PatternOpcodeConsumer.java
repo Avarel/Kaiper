@@ -6,21 +6,21 @@ import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 
 public interface PatternOpcodeConsumer {
 
-    boolean opcodeEnd(OpcodeReader reader, ByteInput in);
+    ReadResult opcodeEnd(OpcodeReader reader, ByteInput in);
 
-    boolean opcodePatternCase(OpcodeReader reader, ByteInput in);
+    ReadResult opcodePatternCase(OpcodeReader reader, ByteInput in);
 
-    boolean opcodeWildcardPattern(OpcodeReader reader, ByteInput in);
+    ReadResult opcodeWildcardPattern(OpcodeReader reader, ByteInput in);
 
-    boolean opcodeVariablePattern(OpcodeReader reader, ByteInput in);
+    ReadResult opcodeVariablePattern(OpcodeReader reader, ByteInput in);
 
-    boolean opcodeTuplePattern(OpcodeReader reader, ByteInput in);
+    ReadResult opcodeTuplePattern(OpcodeReader reader, ByteInput in);
 
-    boolean opcodeRestPattern(OpcodeReader reader, ByteInput in);
+    ReadResult opcodeRestPattern(OpcodeReader reader, ByteInput in);
 
-    boolean opcodeValuePattern(OpcodeReader reader, ByteInput in);
+    ReadResult opcodeValuePattern(OpcodeReader reader, ByteInput in);
 
-    boolean opcodeDefaultPattern(OpcodeReader reader, ByteInput in);
+    ReadResult opcodeDefaultPattern(OpcodeReader reader, ByteInput in);
 
-    boolean unknownOpcode(OpcodeReader reader, Opcode opcode, ByteInput in);
+    ReadResult unknownOpcode(OpcodeReader reader, Opcode opcode, ByteInput in);
 }

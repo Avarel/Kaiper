@@ -9,7 +9,7 @@ import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
 public abstract class PatternOpcodeConsumerAdapter implements BaseOpcodeConsumer, PatternOpcodeConsumer {
     @Override
-    public boolean accept(OpcodeReader reader, Opcode opcode, ByteInput in) {
+    public ReadResult accept(OpcodeReader reader, Opcode opcode, ByteInput in) {
         if (opcode instanceof PatternOpcodes) {
             switch ((PatternOpcodes) opcode) {
                 case END:
@@ -35,7 +35,7 @@ public abstract class PatternOpcodeConsumerAdapter implements BaseOpcodeConsumer
     }
 
     @Override
-    public boolean unknownOpcode(OpcodeReader reader, Opcode opcode, ByteInput in) {
+    public ReadResult unknownOpcode(OpcodeReader reader, Opcode opcode, ByteInput in) {
         throw new InvalidBytecodeException(opcode);
     }
 }

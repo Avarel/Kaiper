@@ -5,7 +5,10 @@ import xyz.avarel.kaiper.bytecode.io.ByteOutput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.bytecode.reader.consumers.OpcodeConsumerAdapter;
+import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
+
+import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.*;
 
 public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
     private final ByteOutput out;
@@ -21,13 +24,13 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public boolean accept(OpcodeReader reader, Opcode opcode, ByteInput in) {
+    public ReadResult accept(OpcodeReader reader, Opcode opcode, ByteInput in) {
         out.writeOpcode(opcode);
         return super.accept(reader, opcode, in);
     }
 
     @Override
-    public boolean opcodeEnd(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeEnd(OpcodeReader reader, ByteInput in) {
         short endId = in.readShort();
         out.writeShort(endId);
 
@@ -35,76 +38,81 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
             throw new InvalidBytecodeException("Unexpected End " + endId);
         }
 
-        return false;
+        return ENDED;
     }
 
     @Override
-    public boolean opcodeLineNumber(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeLineNumber(OpcodeReader reader, ByteInput in) {
         out.writeLong(in.readLong());
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeReturn(OpcodeReader reader, ByteInput in) {
-        return true;
+    public ReadResult opcodeBreakpoint(OpcodeReader reader, ByteInput in) {
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeDup(OpcodeReader reader, ByteInput in) {
-        return true;
+    public ReadResult opcodeReturn(OpcodeReader reader, ByteInput in) {
+        return RETURNED;
     }
 
     @Override
-    public boolean opcodePop(OpcodeReader reader, ByteInput in) {
-        return true;
+    public ReadResult opcodeDup(OpcodeReader reader, ByteInput in) {
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeNullConstant(OpcodeReader reader, ByteInput in) {
-        return true;
+    public ReadResult opcodePop(OpcodeReader reader, ByteInput in) {
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeBooleanConstant(OpcodeReader reader, boolean value, ByteInput in) {
-        return true;
+    public ReadResult opcodeNullConstant(OpcodeReader reader, ByteInput in) {
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeIntConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBooleanConstant(OpcodeReader reader, boolean value, ByteInput in) {
+        return CONTINUE;
+    }
+
+    @Override
+    public ReadResult opcodeIntConstant(OpcodeReader reader, ByteInput in) {
         out.writeInt(in.readInt());
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeDecimalConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeDecimalConstant(OpcodeReader reader, ByteInput in) {
         out.writeDouble(in.readDouble());
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeStringConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeStringConstant(OpcodeReader reader, ByteInput in) {
         out.writeShort(in.readShort());
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeNewArray(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewArray(OpcodeReader reader, ByteInput in) {
         out.writeInt(in.readInt());
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeNewDictionary(OpcodeReader reader, ByteInput in) {
-        return true;
+    public ReadResult opcodeNewDictionary(OpcodeReader reader, ByteInput in) {
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeNewRange(OpcodeReader reader, ByteInput in) {
-        return true;
+    public ReadResult opcodeNewRange(OpcodeReader reader, ByteInput in) {
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeNewFunction(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewFunction(OpcodeReader reader, ByteInput in) {
         out.writeShort(in.readShort());
 
         depth++;
@@ -112,22 +120,22 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         reader.read(this, in);
         depth--;
 
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeNewModule(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewModule(OpcodeReader reader, ByteInput in) {
         out.writeShort(in.readShort());
 
         depth++;
         reader.read(this, in);
         depth--;
 
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeNewType(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewType(OpcodeReader reader, ByteInput in) {
         out.writeShort(in.readShort());
 
         depth++;
@@ -135,11 +143,11 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         reader.read(this, in);
         depth--;
 
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeNewTuple(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewTuple(OpcodeReader reader, ByteInput in) {
         int size = in.readInt();
         out.writeInt(size);
 
@@ -150,79 +158,79 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         }
         depth--;
 
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeDeclare(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeDeclare(OpcodeReader reader, ByteInput in) {
         out.writeShort(in.readShort());
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeAssign(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeAssign(OpcodeReader reader, ByteInput in) {
         out.writeBoolean(in.readBoolean()).writeShort(in.readShort());
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeIdentifier(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeIdentifier(OpcodeReader reader, ByteInput in) {
         out.writeBoolean(in.readBoolean()).writeShort(in.readShort());
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeBindDeclare(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBindDeclare(OpcodeReader reader, ByteInput in) {
         depth++;
         reader.read(new PatternOpcodeBufferConsumer(out, depth), in);
         depth--;
 
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeBindAssign(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBindAssign(OpcodeReader reader, ByteInput in) {
         depth++;
         reader.read(new PatternOpcodeBufferConsumer(out, depth), in);
         depth--;
 
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeInvoke(OpcodeReader reader, ByteInput in) {
-        return true;
+    public ReadResult opcodeInvoke(OpcodeReader reader, ByteInput in) {
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeUnaryOperation(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeUnaryOperation(OpcodeReader reader, ByteInput in) {
         out.writeByte(in.readByte());
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeBinaryOperation(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBinaryOperation(OpcodeReader reader, ByteInput in) {
         out.writeByte(in.readByte());
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeSliceOperation(OpcodeReader reader, ByteInput in) {
-        return true;
+    public ReadResult opcodeSliceOperation(OpcodeReader reader, ByteInput in) {
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeArrayGet(OpcodeReader reader, ByteInput in) {
-        return true;
+    public ReadResult opcodeArrayGet(OpcodeReader reader, ByteInput in) {
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeArraySet(OpcodeReader reader, ByteInput in) {
-        return true;
+    public ReadResult opcodeArraySet(OpcodeReader reader, ByteInput in) {
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeConditional(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeConditional(OpcodeReader reader, ByteInput in) {
         boolean hasElseBranch = in.readBoolean();
         out.writeBoolean(hasElseBranch);
 
@@ -232,11 +240,11 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         if (hasElseBranch) reader.read(this, in);
         depth--;
 
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeForEach(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeForEach(OpcodeReader reader, ByteInput in) {
         out.writeShort(in.readShort());
 
         depth++;
@@ -244,16 +252,16 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         reader.read(this, in);
         depth--;
 
-        return true;
+        return CONTINUE;
     }
 
     @Override
-    public boolean opcodeWhile(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeWhile(OpcodeReader reader, ByteInput in) {
         depth++;
         reader.read(this, in);
         reader.read(this, in);
         depth--;
 
-        return true;
+        return CONTINUE;
     }
 }

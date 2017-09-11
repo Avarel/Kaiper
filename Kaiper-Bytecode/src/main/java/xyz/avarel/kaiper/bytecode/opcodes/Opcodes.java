@@ -33,7 +33,13 @@ public enum Opcodes implements Opcode {
      */
     LINE_NUMBER,
 
-    RESERVED_002, RESERVED_003, RESERVED_004, RESERVED_005, RESERVED_006, RESERVED_007, RESERVED_008, RESERVED_009,
+    RESERVED_002, RESERVED_003, RESERVED_004, RESERVED_005, RESERVED_006, RESERVED_007, RESERVED_008,
+
+    /**
+     * {@code BREAKPOINT;}
+     * <p>Special Opcode. Freezes execution until the resumeBreakpoint() is called again.</p>
+     */
+    BREAKPOINT,
 
     /**
      * {@code RETURN;}
