@@ -27,7 +27,9 @@ import xyz.avarel.kaiper.vm.utils.VMStack;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
 import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.*;
@@ -262,6 +264,20 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public ReadResult opcodeNewTuple(OpcodeReader reader, ByteInput in) {
+        int size = in.readInt();
+
+        Map<String, Obj> map = new LinkedHashMap<>();
+
+        depth++;
+        for (int i = 0; i < size; i++) {
+            String key = stringPool.get(in.readUnsignedShort());
+            reader.read(this, in);
+            map.put(key, stack.pop());
+        }
+        depth--;
+
+        stack.push(new Tuple(map));
+
         return CONTINUE;
     }
 
@@ -331,6 +347,7 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
         Obj left = stack.pop();
 
         stack.push(left.invoke((Tuple) arg)); //if this implodes, it's Avarel's fault
+
         return CONTINUE;
     }
 
@@ -395,6 +412,7 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
                 //stack.push(stack.pop()); //oh nvm
             }
             depth--;
+
             return CONTINUE;
         }
 
@@ -538,6 +556,7 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
             reader.read(buffer.reset(NullOutputStream.DATA_INSTANCE, depth), in);
 
             stack.push(Null.VALUE);
+
             return CONTINUE;
         }
 
@@ -577,6 +596,7 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
         depth--;
 
         stack.push(Null.VALUE);
+
         return CONTINUE;
     }
 
@@ -630,6 +650,7 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
         depth--;
 
         stack.push(Null.VALUE);
+        
         return CONTINUE;
     }
 
