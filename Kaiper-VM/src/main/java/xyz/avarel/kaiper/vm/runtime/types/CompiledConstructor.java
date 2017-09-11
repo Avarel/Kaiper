@@ -9,6 +9,7 @@ import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.runtime.types.Constructor;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
+import xyz.avarel.kaiper.vm.patterns.PatternCase;
 import xyz.avarel.kaiper.vm.runtime.functions.CompiledParameter;
 
 import java.io.IOException;
@@ -17,21 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompiledConstructor extends Constructor {
-    private final List<CompiledParameter> parameters;
-    private final List<Obj> superParameters;
+    private final PatternCase patternCase;
     private final Scope scope;
     private final CompiledExecution executor;
 
-    public CompiledConstructor(List<CompiledParameter> parameters, List<Obj> superParameters, CompiledExecution executor, Scope scope) {
-        this.parameters = parameters;
-        this.superParameters = superParameters;
+    public CompiledConstructor(PatternCase patternCase, CompiledExecution executor, Scope scope) {
+        this.patternCase = patternCase;
         this.executor = executor;
         this.scope = scope;
     }
 
-    @Override
-    public List<CompiledParameter> getParameters() {
-        return parameters;
+    public List<CompiledParameter> getPatternCase() {
+        return patternCase;
     }
 
     @Override
@@ -48,7 +46,7 @@ public class CompiledConstructor extends Constructor {
             Scope constructorScope = scope.subPool();
 
             for (int i = 0; i < getArity(); i++) {
-                CompiledParameter parameter = parameters.get(i);
+                CompiledParameter parameter = patternCase.get(i);
 
                 if (i < arguments.size()) {
                     constructorScope.declare(parameter.getName(), arguments.get(i));
@@ -60,12 +58,12 @@ public class CompiledConstructor extends Constructor {
             }
 
 
-            if (!parameters.isEmpty()) {
-                Parameter lastParam = parameters.get(parameters.size() - 1);
+            if (!patternCase.isEmpty()) {
+                Parameter lastParam = patternCase.get(patternCase.size() - 1);
 
                 if (lastParam.isRest()) {
                     if (arguments.size() > getArity()) {
-                        List<Obj> sublist = arguments.subList(parameters.size() - 1, arguments.size());
+                        List<Obj> sublist = arguments.subList(patternCase.size() - 1, arguments.size());
                         constructorScope.declare(lastParam.getName(), Array.ofList(sublist));
                     } else {
                         constructorScope.declare(lastParam.getName(), new Array());

@@ -6,7 +6,7 @@ import xyz.avarel.kaiper.bytecode.io.ByteInputStream;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
-import xyz.avarel.kaiper.vm.executor.StackMachineConsumer;
+import xyz.avarel.kaiper.vm.executor.StackMachine;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class KaiperVM {
             ByteInputStream input = new ByteInputStream(inputStream);
             versionHeaderAndCheck(input);
 
-            StackMachineConsumer stackMachine = new StackMachineConsumer(scope, readStringPool(input));
+            StackMachine stackMachine = new StackMachine(scope, readStringPool(input));
             OpcodeReader.DEFAULT_OPCODE_READER.read(stackMachine, input);
             return stackMachine.stack.peek();
         } catch (UncheckedIOException e) {

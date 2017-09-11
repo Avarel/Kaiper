@@ -4,7 +4,7 @@ import xyz.avarel.kaiper.bytecode.io.ByteInputStream;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
-import xyz.avarel.kaiper.vm.executor.StackMachineConsumer;
+import xyz.avarel.kaiper.vm.executor.StackMachine;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -15,7 +15,7 @@ public class CompiledExecution {
     private final List<String> stringPool;
     private final OpcodeReader reader;
     private final Object lock_defaultExecutor = new Object();
-    private StackMachineConsumer defaultExecutor;
+    private StackMachine defaultExecutor;
 
     public CompiledExecution(OpcodeReader reader, byte[] bytecode, int depth, List<String> stringPool) {
         this.bytecode = bytecode;
@@ -26,10 +26,10 @@ public class CompiledExecution {
 
     public Obj execute(Scope scope) {
         //Lazy and recycling executors
-        StackMachineConsumer executor;
+        StackMachine executor;
         synchronized (lock_defaultExecutor) {
             if (this.defaultExecutor == null) {
-                executor = new StackMachineConsumer(scope, stringPool);
+                executor = new StackMachine(scope, stringPool);
             } else {
                 executor = this.defaultExecutor;
                 this.defaultExecutor = null;
@@ -61,7 +61,7 @@ public class CompiledExecution {
         return result;
     }
 
-    public Obj execute(StackMachineConsumer executor, Scope scope) {
+    public Obj execute(StackMachine executor, Scope scope) {
         if (executor == null) {
             return execute(scope);
         }

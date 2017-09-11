@@ -15,11 +15,11 @@ import java.util.List;
 import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.CONTINUE;
 import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.ENDED;
 
-public class PatternCompilerConsumer extends PatternOpcodeConsumerAdapter {
-    public StackMachineConsumer parent;
+public class PatternCreator extends PatternOpcodeConsumerAdapter {
+    public StackMachine parent;
     public VMStack<Pattern> pStack = new VMStack<>();
 
-    public PatternCompilerConsumer(StackMachineConsumer parent) {
+    public PatternCreator(StackMachine parent) {
         this.parent = parent;
     }
 

@@ -17,12 +17,18 @@ import xyz.avarel.kaiper.runtime.*;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
+import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.GlobalVisitorSettings;
+import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
+import xyz.avarel.kaiper.vm.patterns.PatternCase;
+import xyz.avarel.kaiper.vm.runtime.functions.CompiledFunc;
+import xyz.avarel.kaiper.vm.runtime.types.CompiledConstructor;
+import xyz.avarel.kaiper.vm.runtime.types.CompiledType;
 import xyz.avarel.kaiper.vm.utils.VMStack;
 
 import java.io.ByteArrayInputStream;
@@ -48,7 +54,7 @@ import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.*;
  *
  * @author AdrianTodt
  */
-public class StackMachineConsumer extends OpcodeConsumerAdapter {
+public class StackMachine extends OpcodeConsumerAdapter {
     /**
      * The Breakpoint object (used on resumeBreakpoint and opcodeBreakpoint)
      */
@@ -70,6 +76,10 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
      * Recyclable Buffer (OpcodeBufferConsumer)
      */
     public final OpcodeBufferConsumer buffer = new OpcodeBufferConsumer(NullOutputStream.DATA_INSTANCE);
+    /**
+     * Recyclable PatternCreator
+     */
+    public final PatternCreator patternConsumer = new PatternCreator(this);
 
     /**
      * Current Scope
@@ -90,7 +100,7 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
      */
     public long lineNumber = -1;
 
-    public StackMachineConsumer(Scope scope, List<String> stringPool) {
+    public StackMachine(Scope scope, List<String> stringPool) {
         this.stringPool = stringPool;
         this.scope = scope;
     }
@@ -226,6 +236,33 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public ReadResult opcodeNewFunction(OpcodeReader reader, ByteInput in) {
+        String name = stringPool.get(in.readUnsignedShort());
+
+        depth++;
+
+        patternConsumer.pStack.clear();
+        patternConsumer.pStack.unlock();
+        OpcodeReader.DEFAULT_PATTERN_OPCODE_READER.read(patternConsumer, in);
+        PatternCase patternCase = (PatternCase) patternConsumer.pStack.pop();
+        patternConsumer.pStack.clear();
+
+        byteBuffer.reset();
+        reader.read(buffer.reset(byteBufferOutput, depth), in);
+
+        Func func = new CompiledFunc(
+                name.isEmpty() ? null : name,
+                patternCase,
+                new CompiledExecution(
+                        reader, byteBuffer.toByteArray(), depth, stringPool
+                ),
+                scope.subPool()
+        );
+
+        depth--;
+
+        if (func.getName() != null) scope.declare(func.getName(), func);
+        stack.push(func);
+
         return CONTINUE;
     }
 
@@ -259,6 +296,33 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public ReadResult opcodeNewType(OpcodeReader reader, ByteInput in) {
+        String name = stringPool.get(in.readUnsignedShort());
+
+        depth++;
+
+        patternConsumer.pStack.clear();
+        patternConsumer.pStack.unlock();
+        OpcodeReader.DEFAULT_PATTERN_OPCODE_READER.read(patternConsumer, in);
+        PatternCase patternCase = (PatternCase) patternConsumer.pStack.pop();
+        patternConsumer.pStack.clear();
+
+        byteBuffer.reset();
+        reader.read(buffer.reset(byteBufferOutput, depth), in);
+
+        CompiledConstructor constructor = new CompiledConstructor(
+                patternCase,
+                new CompiledExecution(
+                        reader, byteBuffer.toByteArray(), depth, stringPool
+                ),
+                scope.subPool()
+        );
+
+        depth--;
+
+        CompiledType type = new CompiledType(name, constructor);
+        scope.declare(name, type);
+        stack.push(type);
+
         return CONTINUE;
     }
 
@@ -333,11 +397,13 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public ReadResult opcodeBindDeclare(OpcodeReader reader, ByteInput in) {
+        // TODO: 11/09/2017
         return CONTINUE;
     }
 
     @Override
     public ReadResult opcodeBindAssign(OpcodeReader reader, ByteInput in) {
+        // TODO: 11/09/2017
         return CONTINUE;
     }
 
@@ -650,7 +716,7 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
         depth--;
 
         stack.push(Null.VALUE);
-        
+
         return CONTINUE;
     }
 

@@ -3,7 +3,7 @@ package xyz.avarel.kaiper.vm.compiled;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
-import xyz.avarel.kaiper.vm.executor.StackMachineConsumer;
+import xyz.avarel.kaiper.vm.executor.StackMachine;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class CompiledScopedExecution extends CompiledExecution {
         return execute(baseScope.subPool());
     }
 
-    public Obj execute(StackMachineConsumer executor) {
+    public Obj execute(StackMachine executor) {
         return execute(executor, baseScope.subPool());
     }
 }

@@ -9,19 +9,21 @@ import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
+import xyz.avarel.kaiper.vm.patterns.Pattern;
+import xyz.avarel.kaiper.vm.patterns.PatternCase;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
 
 public class CompiledFunc extends Func {
-    private final List<CompiledParameter> parameters;
+    private final PatternCase patternCase;
     private final CompiledExecution executor;
     private final Scope scope;
 
-    public CompiledFunc(String name, List<CompiledParameter> parameters, CompiledExecution executor, Scope scope) {
+    public CompiledFunc(String name, PatternCase patternCase, CompiledExecution executor, Scope scope) {
         super(name);
-        this.parameters = parameters;
+        this.patternCase = patternCase;
         this.executor = executor;
         this.scope = scope;
     }
