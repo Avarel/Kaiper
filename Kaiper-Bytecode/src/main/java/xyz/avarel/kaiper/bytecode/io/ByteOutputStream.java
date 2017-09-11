@@ -242,4 +242,9 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         return writeByte(opcode.code());
     }
 
+    @Override
+    public OutputStream getOutputStream() {
+        return out;
+    }
+
 }

@@ -2,6 +2,8 @@ package xyz.avarel.kaiper.bytecode.io;
 
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 
+import java.io.OutputStream;
+
 public interface ByteOutput {
     ByteOutput writeByte(int b);
 
@@ -32,4 +34,6 @@ public interface ByteOutput {
     default ByteOutput writeOpcode(Opcode opcode) {
         return writeByte(opcode.code());
     }
+
+    OutputStream getOutputStream();
 }

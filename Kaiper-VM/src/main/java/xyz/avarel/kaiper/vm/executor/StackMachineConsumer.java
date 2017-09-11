@@ -1,6 +1,8 @@
 package xyz.avarel.kaiper.vm.executor;
 
 import xyz.avarel.kaiper.bytecode.io.ByteInput;
+import xyz.avarel.kaiper.bytecode.io.ByteInputStream;
+import xyz.avarel.kaiper.bytecode.io.ByteOutputStream;
 import xyz.avarel.kaiper.bytecode.io.NullOutputStream;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
@@ -23,6 +25,8 @@ import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.GlobalVisitorSettings;
 import xyz.avarel.kaiper.vm.utils.VMStack;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
@@ -444,16 +448,139 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
 
     @Override
     public ReadResult opcodeConditional(OpcodeReader reader, ByteInput in) {
+        boolean hasElseBranch = in.readBoolean();
+
+        depth++;
+        reader.read(this, in);
+        checkTimeout();
+
+        if (stack.pop() == Bool.TRUE) {
+            reader.read(this, in);
+            checkTimeout();
+
+            if (hasElseBranch) {
+                reader.read(new OpcodeBufferConsumer(NullOutputStream.DATA_INSTANCE, depth), in);
+            }
+        } else {
+            reader.read(new OpcodeBufferConsumer(NullOutputStream.DATA_INSTANCE, depth), in);
+            checkTimeout();
+
+            if (hasElseBranch) {
+                reader.read(this, in);
+            } else {
+                stack.push(Null.VALUE);
+            }
+        }
+
+        depth--;
+
         return CONTINUE;
     }
 
     @Override
     public ReadResult opcodeForEach(OpcodeReader reader, ByteInput in) {
+        String variant = stringPool.get(in.readUnsignedShort());
+
+        depth++;
+        reader.read(this, in);
+        checkTimeout();
+
+        Obj iterObj = stack.pop();
+
+        ByteArrayOutputStream bufferOut = new ByteArrayOutputStream();
+        reader.read(new OpcodeBufferConsumer(new ByteOutputStream(bufferOut), depth), in);
+
+        if (!(iterObj instanceof Iterable)) {
+            stack.push(Null.VALUE);
+            return CONTINUE;
+        }
+
+        ByteArrayInputStream buffer = new ByteArrayInputStream(bufferOut.toByteArray());
+        ByteInputStream bufferIn = new ByteInputStream(buffer);
+
+        //save state
+        Scope lastScope = scope;
+        int lastLock = stack.lock();
+
+        int iteration = 0;
+        for (Object var : (Iterable) iterObj) {
+            checkTimeout();
+            GlobalVisitorSettings.checkIterationLimit(iteration);
+
+            if (!(var instanceof Obj)) {
+                throw new ComputeException("Items in iterable do not implement Obj interface");
+            }
+
+            scope = lastScope.subPool();
+            scope.declare(variant, (Obj) var);
+
+            reader.read(this, bufferIn);
+            checkTimeout();
+            buffer.reset();
+            iteration++;
+        }
+
+        //load state
+        scope = lastScope;
+        stack.popToLock();
+        stack.setLock(lastLock);
+
+        depth--;
+
+        stack.push(Null.VALUE);
         return CONTINUE;
     }
 
     @Override
     public ReadResult opcodeWhile(OpcodeReader reader, ByteInput in) {
+        depth++;
+
+        ByteArrayOutputStream bufferArray = new ByteArrayOutputStream();
+        OpcodeBufferConsumer bufferConsumer = new OpcodeBufferConsumer(new ByteOutputStream(bufferArray), depth);
+        reader.read(bufferConsumer, in);
+        ByteArrayInputStream bufferCondition = new ByteArrayInputStream(bufferArray.toByteArray());
+        bufferArray.reset();
+        reader.read(bufferConsumer, in);
+        ByteArrayInputStream bufferAction = new ByteArrayInputStream(bufferArray.toByteArray());
+
+        ByteInputStream bufferConditionIn = new ByteInputStream(bufferCondition);
+        ByteInputStream bufferActionIn = new ByteInputStream(bufferAction);
+
+        //save state
+        Scope lastScope = scope;
+        int lastLock = stack.lock();
+
+        int iteration = 0;
+
+        while (true) {
+            GlobalVisitorSettings.checkIterationLimit(iteration);
+
+            scope = lastScope.subPool();
+            reader.read(this, bufferConditionIn);
+            checkTimeout();
+            Obj condition = stack.pop();
+            stack.popToLock(); //reset stack
+
+            if (condition instanceof Bool && condition == Bool.TRUE) {
+                scope = lastScope.subPool();
+                reader.read(this, bufferActionIn);
+                checkTimeout();
+                stack.popToLock(); //reset stack
+            } else {
+                break;
+            }
+
+            iteration++;
+        }
+
+        //load state
+        scope = lastScope;
+        stack.popToLock();
+        stack.setLock(lastLock);
+
+        depth--;
+
+        stack.push(Null.VALUE);
         return CONTINUE;
     }
 

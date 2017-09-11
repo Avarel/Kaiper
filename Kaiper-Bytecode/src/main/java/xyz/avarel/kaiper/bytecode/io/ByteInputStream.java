@@ -264,4 +264,9 @@ public class ByteInputStream extends DelegatedInputStream implements ByteInput {
             throw new UncheckedIOException(e);
         }
     }
+
+    @Override
+    public InputStream getInputStream() {
+        return in;
+    }
 }

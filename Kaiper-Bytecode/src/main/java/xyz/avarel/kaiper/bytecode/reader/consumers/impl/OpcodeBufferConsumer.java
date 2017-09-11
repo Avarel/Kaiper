@@ -11,11 +11,19 @@ import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.*;
 
 public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
-    private final ByteOutput out;
+    private ByteOutput out;
     private int depth = 0;
+
+    public OpcodeBufferConsumer() {
+        this(null);
+    }
 
     public OpcodeBufferConsumer(ByteOutput out) {
         this.out = out;
+    }
+
+    public OpcodeBufferConsumer(int depth) {
+        this(null, depth);
     }
 
     public OpcodeBufferConsumer(ByteOutput out, int depth) {
@@ -263,5 +271,13 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         depth--;
 
         return CONTINUE;
+    }
+
+    public ByteOutput getOut() {
+        return out;
+    }
+
+    public void setOut(ByteOutput out) {
+        this.out = out;
     }
 }

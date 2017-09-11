@@ -1,5 +1,7 @@
 package xyz.avarel.kaiper.bytecode.io;
 
+import java.io.InputStream;
+
 public interface ByteInput {
     ByteInput readFully(byte b[]);
 
@@ -28,4 +30,6 @@ public interface ByteInput {
     double readDouble();
 
     String readString();
+
+    InputStream getInputStream();
 }
