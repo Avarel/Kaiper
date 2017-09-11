@@ -17,6 +17,10 @@ jar {
     baseName = project.name
     manifest {
         attributes 'Implementation-Version': project.version
-        attributes 'Main-Class': 'xyz.avarel.kaiper.repl.REPL'
+        attributes 'Main-Class': 'xyz.avarel.kaiper.repl.KaiperRepl'
     }
+}
+
+dependencies {
+    compile project(":Kaiper-Interpreter")
 }

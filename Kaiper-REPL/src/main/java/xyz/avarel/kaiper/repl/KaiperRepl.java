@@ -57,9 +57,9 @@ public class KaiperRepl {
                 String line = sc.nextLine();
 
                 buffer.append(line);
-                openBrackets += countMatches(line, '{');
-                openBrackets -= countMatches(line, '}');
+                openBrackets += countMatches(line, '{') - countMatches(line, '}');
             } while (openBrackets > 0);
+
 
             String input = buffer.toString();
 
