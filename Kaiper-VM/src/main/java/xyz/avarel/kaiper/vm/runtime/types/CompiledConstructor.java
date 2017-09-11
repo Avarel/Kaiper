@@ -28,13 +28,13 @@ public class CompiledConstructor extends Constructor {
         this.scope = scope;
     }
 
-    public List<CompiledParameter> getPatternCase() {
-        return patternCase;
-    }
-
     @Override
     public CompiledObj invoke(Tuple argument) {
         return eval(argument, this.scope);
+    }
+
+    public List<CompiledParameter> getPatternCase() {
+        return patternCase;
     }
 
     private CompiledObj eval(List<Obj> arguments, Scope scope) {

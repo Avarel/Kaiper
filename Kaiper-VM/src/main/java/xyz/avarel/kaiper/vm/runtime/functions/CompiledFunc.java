@@ -9,7 +9,6 @@ import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
-import xyz.avarel.kaiper.vm.patterns.Pattern;
 import xyz.avarel.kaiper.vm.patterns.PatternCase;
 
 import java.io.IOException;
@@ -32,11 +31,6 @@ public class CompiledFunc extends Func {
     public int getArity() {
         if (parameters.isEmpty()) return 0;
         return parameters.get(parameters.size() - 1).isRest() ? parameters.size() - 1 : parameters.size();
-    }
-
-    @Override
-    public List<CompiledParameter> getParameters() {
-        return parameters;
     }
 
     @Override
@@ -76,5 +70,10 @@ public class CompiledFunc extends Func {
         } catch (IOException e) {
             throw new UncheckedIOException(e); //this shouldn't happen but okay so
         }
+    }
+
+    @Override
+    public List<CompiledParameter> getParameters() {
+        return parameters;
     }
 }

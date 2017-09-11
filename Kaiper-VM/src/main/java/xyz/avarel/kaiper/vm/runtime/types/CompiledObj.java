@@ -26,25 +26,15 @@ public class CompiledObj implements Obj {
     private final Scope scope;
 
     @SuppressWarnings("unchecked")
-    public CompiledObj(CompiledType type,Scope scope) {
+    public CompiledObj(CompiledType type, Scope scope) {
         this.type = type;
         this.scope = scope;
     }
 
-    public Scope getScope() {
-        return scope;
-    }
-
     @Override
-    public Obj setAttr(String name, Obj value) {
-        scope.declare(name, value);
-        return Null.VALUE;
+    public Type getType() {
+        return type;
     }
-
-//    @Override
-//    public boolean hasAttr(String name) {
-//        return scope.contains(name);
-//    }
 
     @Override
     public Obj getAttr(String name) {
@@ -53,9 +43,15 @@ public class CompiledObj implements Obj {
         return obj == null ? Obj.super.getAttr(name) : obj;
     }
 
+//    @Override
+//    public boolean hasAttr(String name) {
+//        return scope.contains(name);
+//    }
+
     @Override
-    public Type getType() {
-        return type;
+    public Obj setAttr(String name, Obj value) {
+        scope.declare(name, value);
+        return Null.VALUE;
     }
 
     @Override
@@ -66,5 +62,9 @@ public class CompiledObj implements Obj {
         } else {
             return method.invoke(this).toString();
         }
+    }
+
+    public Scope getScope() {
+        return scope;
     }
 }

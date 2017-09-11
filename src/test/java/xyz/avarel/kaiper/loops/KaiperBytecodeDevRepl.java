@@ -24,7 +24,6 @@ import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
-import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.tools.bytecode.BytecodeOutliner;
@@ -45,10 +44,10 @@ public class KaiperBytecodeDevRepl {
 
         Scope scope = DefaultScope.INSTANCE.copy();
 
-        scope.declare("print", new NativeFunc("print", Parameter.of("string")) {
+        scope.declare("print", new NativeFunc("print","string") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                System.out.println(arguments.get(0));
+                System.out.println(arguments.get("_0"));
                 return null;
             }
         });

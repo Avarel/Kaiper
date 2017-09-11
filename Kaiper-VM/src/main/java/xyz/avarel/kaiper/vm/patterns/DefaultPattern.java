@@ -12,16 +12,16 @@ public class DefaultPattern implements Pattern {
         this.defaultExpr = defaultExpr;
     }
 
+    @Override
+    public String toString() {
+        return delegate + " = " + defaultExpr;
+    }
+
     public NamedPattern getDelegate() {
         return delegate;
     }
 
     public CompiledScopedExecution getDefault() {
         return defaultExpr;
-    }
-
-    @Override
-    public String toString() {
-        return delegate + " = " + defaultExpr;
     }
 }

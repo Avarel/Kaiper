@@ -19,10 +19,6 @@ public class PatternCase implements Pattern {
         this.patterns = patterns;
     }
 
-    public List<Pattern> getPatterns() {
-        return patterns;
-    }
-
     public String toString() {
         if (patterns.isEmpty()) {
             return "";
@@ -42,6 +38,10 @@ public class PatternCase implements Pattern {
         }
 
         return sb.toString();
+    }
+
+    public List<Pattern> getPatterns() {
+        return patterns;
     }
 
     public int size() {

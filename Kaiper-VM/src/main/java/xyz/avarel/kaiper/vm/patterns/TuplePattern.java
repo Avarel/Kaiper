@@ -12,12 +12,12 @@ public class TuplePattern extends NamedPattern {
         this.pattern = pattern;
     }
 
-    public Pattern getPattern() {
-        return pattern;
-    }
-
     @Override
     public String toString() {
         return getName() + ": " + pattern;
+    }
+
+    public Pattern getPattern() {
+        return pattern;
     }
 }

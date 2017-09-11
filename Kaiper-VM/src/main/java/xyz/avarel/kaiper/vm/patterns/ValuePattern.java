@@ -11,12 +11,12 @@ public class ValuePattern implements Pattern {
         this.value = value;
     }
 
-    public Expr getValue() {
-        return value;
-    }
-
     @Override
     public String toString() {
         return value.toString();
+    }
+
+    public Expr getValue() {
+        return value;
     }
 }

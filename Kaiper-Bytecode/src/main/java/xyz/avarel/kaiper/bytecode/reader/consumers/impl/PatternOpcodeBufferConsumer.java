@@ -8,7 +8,8 @@ import xyz.avarel.kaiper.bytecode.reader.consumers.PatternOpcodeConsumerAdapter;
 import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
-import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.*;
+import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.CONTINUE;
+import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.ENDED;
 
 public class PatternOpcodeBufferConsumer extends PatternOpcodeConsumerAdapter {
     private final ByteOutput out;

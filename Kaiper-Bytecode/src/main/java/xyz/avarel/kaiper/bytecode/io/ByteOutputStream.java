@@ -96,6 +96,16 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         }
     }
 
+    public final ByteOutputStream writeByte(int v) {
+        try {
+            out.write(v);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return this;
+    }
+
     @Override
     public ByteOutput writeBytes(byte[] b) {
         try {
@@ -103,7 +113,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        
+
         return this;
     }
 
@@ -113,7 +123,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        
+
         return this;
     }
 
@@ -123,17 +133,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        
-        return this;
-    }
 
-    public final ByteOutputStream writeByte(int v) {
-        try {
-            out.write(v);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-        
         return this;
     }
 
@@ -144,7 +144,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        
+
         return this;
     }
 
@@ -155,7 +155,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        
+
         return this;
     }
 
@@ -168,7 +168,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        
+
         return this;
     }
 
@@ -187,7 +187,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        
+
         return this;
     }
 
