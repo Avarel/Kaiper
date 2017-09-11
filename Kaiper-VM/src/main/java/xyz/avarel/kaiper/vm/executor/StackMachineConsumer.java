@@ -14,6 +14,8 @@ import xyz.avarel.kaiper.runtime.*;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
+import xyz.avarel.kaiper.runtime.modules.CompiledModule;
+import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.scope.Scope;
@@ -131,13 +133,13 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
         Array array = new Array();
 
         if (size != 0) {
-            int oldLock = stack.setRelativeLock(size);
+            int lastLock = stack.setRelativeLock(size);
 
             while (stack.canPop()) {
                 array.add(0, stack.pop());
             }
 
-            stack.setLock(oldLock);
+            stack.setLock(lastLock);
         }
 
         stack.push(array);
@@ -182,19 +184,22 @@ public class StackMachineConsumer extends OpcodeConsumerAdapter {
         depth++;
 
         //save state
-        Scope oldScope = scope;
-        int oldLock = stack.lock();
+        Scope lastScope = scope;
+        int lastLock = stack.lock();
         scope = moduleScope;
 
         reader.read(this, in);
 
         //load state
-        scope = oldScope;
+        scope = lastScope;
         stack.popToLock();
-        stack.setLock(oldLock);
-
+        stack.setLock(lastLock);
 
         depth--;
+
+        Module module = new CompiledModule(name, moduleScope);
+        scope.declare(name, module);
+        stack.push(module);
 
         return CONTINUE;
     }
