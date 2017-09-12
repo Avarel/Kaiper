@@ -15,6 +15,8 @@
 
 package xyz.avarel.kaiper.bytecode.opcodes;
 
+import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
+
 /**
  * The Bytecode Instructions of the Kaiper Bytecode.
  *
@@ -296,6 +298,8 @@ public enum KOpcodes implements Opcode {
     WHILE,
 
     RESERVED_063, RESERVED_064, RESERVED_065, RESERVED_066, RESERVED_067, RESERVED_068, RESERVED_069;
+
+    public static final OpcodeReader READER = new OpcodeReader(values());
 
     public int code() {
         return ordinal();

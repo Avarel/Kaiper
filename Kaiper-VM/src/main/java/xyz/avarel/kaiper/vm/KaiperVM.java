@@ -3,7 +3,7 @@ package xyz.avarel.kaiper.vm;
 import xyz.avarel.kaiper.bytecode.KaiperBytecode;
 import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
-import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
+import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
@@ -53,7 +53,7 @@ public class KaiperVM {
             versionHeaderAndCheck(input);
 
             StackMachine stackMachine = new StackMachine(scope, readStringPool(input));
-            OpcodeReader.DEFAULT_OPCODE_READER.read(stackMachine, input);
+            KOpcodes.READER.read(stackMachine, input);
             return stackMachine.stack.peek();
         } catch (UncheckedIOException e) {
             throw e.getCause();

@@ -5,6 +5,7 @@ import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
 import xyz.avarel.kaiper.bytecode.io.KDataOutputStream;
 import xyz.avarel.kaiper.bytecode.io.NullOutputStream;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
+import xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.bytecode.reader.consumers.KOpcodeProcessorAdapter;
 import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
@@ -79,7 +80,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     /**
      * Recyclable PatternCreator
      */
-    public final PatternCreator patternConsumer = new PatternCreator(this);
+    public final PatternReader patternConsumer = new PatternReader(this);
 
     /**
      * Current Scope
@@ -242,7 +243,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
         patternConsumer.pStack.clear();
         patternConsumer.pStack.unlock();
-        OpcodeReader.DEFAULT_PATTERN_OPCODE_READER.read(patternConsumer, in);
+        PatternOpcodes.OPCODE_READER.read(patternConsumer, in);
         PatternCase patternCase = (PatternCase) patternConsumer.pStack.pop();
         patternConsumer.pStack.clear();
 
@@ -302,7 +303,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
         patternConsumer.pStack.clear();
         patternConsumer.pStack.unlock();
-        OpcodeReader.DEFAULT_PATTERN_OPCODE_READER.read(patternConsumer, in);
+        PatternOpcodes.OPCODE_READER.read(patternConsumer, in);
         PatternCase patternCase = (PatternCase) patternConsumer.pStack.pop();
         patternConsumer.pStack.clear();
 

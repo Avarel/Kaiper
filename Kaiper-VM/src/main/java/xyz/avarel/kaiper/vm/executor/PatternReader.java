@@ -1,11 +1,13 @@
 package xyz.avarel.kaiper.vm.executor;
 
 import xyz.avarel.kaiper.bytecode.io.KDataInput;
+import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.bytecode.reader.consumers.PatternOpcodeProcessorAdapter;
 import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
+import xyz.avarel.kaiper.vm.compiled.CompiledScopedExecution;
 import xyz.avarel.kaiper.vm.patterns.*;
 import xyz.avarel.kaiper.vm.utils.VMStack;
 
@@ -15,11 +17,11 @@ import java.util.List;
 import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.CONTINUE;
 import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.ENDED;
 
-public class PatternCreator extends PatternOpcodeProcessorAdapter {
+public class PatternReader extends PatternOpcodeProcessorAdapter {
     public StackMachine parent;
     public VMStack<Pattern> pStack = new VMStack<>();
 
-    public PatternCreator(StackMachine parent) {
+    public PatternReader(StackMachine parent) {
         this.parent = parent;
     }
 
@@ -95,11 +97,57 @@ public class PatternCreator extends PatternOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeValuePattern(OpcodeReader reader, KDataInput in) {
+        parent.depth++;
+
+        int lastLock = pStack.lock();
+
+        parent.byteBuffer.reset();
+        reader.read(parent.buffer.reset(parent.byteBufferOutput, parent.depth), in);
+
+        pStack.setLock(lastLock);
+
+        pStack.push(new ValuePattern(
+                new CompiledScopedExecution(
+                        KOpcodes.READER,
+                        parent.byteBuffer.toByteArray(),
+                        parent.depth,
+                        parent.stringPool,
+                        parent.scope.subPool()
+                )
+        ));
+
+        parent.depth--;
+
+
         return CONTINUE;
     }
 
     @Override
     public ReadResult opcodeDefaultPattern(OpcodeReader reader, KDataInput in) {
+        parent.depth++;
+
+        int lastLock = pStack.lock();
+
+        reader.read(this, in);
+
+        parent.byteBuffer.reset();
+        reader.read(parent.buffer.reset(parent.byteBufferOutput, parent.depth), in);
+
+        pStack.setLock(lastLock);
+
+        pStack.push(new DefaultPattern(
+                (NamedPattern) pStack.pop(),
+                new CompiledScopedExecution(
+                        KOpcodes.READER,
+                        parent.byteBuffer.toByteArray(),
+                        parent.depth,
+                        parent.stringPool,
+                        parent.scope.subPool()
+                )
+        ));
+
+        parent.depth--;
+
         return CONTINUE;
     }
 }

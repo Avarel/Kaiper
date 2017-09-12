@@ -1,13 +1,13 @@
 package xyz.avarel.kaiper.vm.patterns;
 
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.vm.compiled.CompiledScopedExecution;
 
 // literally literals
 public class ValuePattern implements Pattern {
-    private final Expr value;
+    private final CompiledScopedExecution value;
 
-    public ValuePattern(Expr value) {
+    public ValuePattern(CompiledScopedExecution value) {
         this.value = value;
     }
 
@@ -16,7 +16,7 @@ public class ValuePattern implements Pattern {
         return value.toString();
     }
 
-    public Expr getValue() {
+    public CompiledScopedExecution getValue() {
         return value;
     }
 }
