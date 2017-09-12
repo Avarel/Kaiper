@@ -8,6 +8,8 @@ public interface PatternOpcodeProcessor {
 
     ReadResult opcodeEnd(OpcodeReader reader, KDataInput in);
 
+    ReadResult opcodeBreakpoint(OpcodeReader reader, KDataInput in);
+
     ReadResult opcodePatternCase(OpcodeReader reader, KDataInput in);
 
     ReadResult opcodeWildcardPattern(OpcodeReader reader, KDataInput in);

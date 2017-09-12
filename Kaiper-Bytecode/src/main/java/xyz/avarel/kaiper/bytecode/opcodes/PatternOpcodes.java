@@ -47,7 +47,7 @@ public enum PatternOpcodes implements Opcode {
     VALUE,
     DEFAULT;
 
-    public static final OpcodeReader OPCODE_READER = new OpcodeReader(values());
+    public static final OpcodeReader READER = new OpcodeReader(values());
 
     public int code() {
         return ordinal();

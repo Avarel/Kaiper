@@ -24,7 +24,7 @@ import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.scope.Scope;
-import xyz.avarel.kaiper.vm.GlobalVisitorSettings;
+import xyz.avarel.kaiper.vm.GlobalExecutionSettings;
 import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
 import xyz.avarel.kaiper.vm.patterns.PatternCase;
 import xyz.avarel.kaiper.vm.runtime.functions.CompiledFunc;
@@ -80,7 +80,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     /**
      * Recyclable PatternCreator
      */
-    public final PatternReader patternConsumer = new PatternReader(this);
+    public final PatternProcessor patternProcessor = new PatternProcessor(this);
 
     /**
      * Current Scope
@@ -91,11 +91,8 @@ public class StackMachine extends KOpcodeProcessorAdapter {
      */
     public VMStack<Obj> stack = new VMStack<>();
     public long breakpointMillis = 0;
-    public long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
-    /**
-     * Current Depth
-     */
-    public int depth = 0;
+    public long timeout = System.currentTimeMillis() + GlobalExecutionSettings.MILLISECONDS_LIMIT;
+    
     /**
      * Current Line Number
      */
@@ -116,12 +113,6 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeEnd(OpcodeReader reader, KDataInput in) {
-        int endId = in.readUnsignedShort();
-
-        if (endId != depth - 1) {
-            throw new InvalidBytecodeException("Unexpected End " + endId);
-        }
-
         return ENDED;
     }
 
@@ -229,7 +220,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         int start = ((Int) startObj).value();
         int end = ((Int) endObj).value();
 
-        GlobalVisitorSettings.checkSizeLimit(Math.abs(end - start));
+        GlobalExecutionSettings.checkSizeLimit(Math.abs(end - start));
 
         stack.push(new Range(start, end));
         return CONTINUE;
@@ -239,27 +230,21 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     public ReadResult opcodeNewFunction(OpcodeReader reader, KDataInput in) {
         String name = stringPool.get(in.readUnsignedShort());
 
-        depth++;
-
-        patternConsumer.pStack.clear();
-        patternConsumer.pStack.unlock();
-        PatternOpcodes.OPCODE_READER.read(patternConsumer, in);
-        PatternCase patternCase = (PatternCase) patternConsumer.pStack.pop();
-        patternConsumer.pStack.clear();
+        PatternOpcodes.READER.read(patternProcessor, in);
+        PatternCase patternCase = (PatternCase) patternProcessor.pStack.pop();
+        patternProcessor.pStack.clear();
 
         byteBuffer.reset();
-        reader.read(buffer.reset(byteBufferOutput, depth), in);
+        reader.read(buffer.setOut(byteBufferOutput), in);
 
         Func func = new CompiledFunc(
                 name.isEmpty() ? null : name,
                 patternCase,
                 new CompiledExecution(
-                        reader, byteBuffer.toByteArray(), depth, stringPool
+                        reader, byteBuffer.toByteArray(), stringPool
                 ),
                 scope.subPool()
         );
-
-        depth--;
 
         if (func.getName() != null) scope.declare(func.getName(), func);
         stack.push(func);
@@ -271,8 +256,6 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     public ReadResult opcodeNewModule(OpcodeReader reader, KDataInput in) {
         String name = stringPool.get(in.readUnsignedShort());
         Scope moduleScope = scope.subPool();
-
-        depth++;
 
         //save state
         Scope lastScope = scope;
@@ -286,8 +269,6 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         stack.popToLock();
         stack.setLock(lastLock);
 
-        depth--;
-
         Module module = new CompiledModule(name, moduleScope);
         scope.declare(name, module);
         stack.push(module);
@@ -299,26 +280,22 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     public ReadResult opcodeNewType(OpcodeReader reader, KDataInput in) {
         String name = stringPool.get(in.readUnsignedShort());
 
-        depth++;
-
-        patternConsumer.pStack.clear();
-        patternConsumer.pStack.unlock();
-        PatternOpcodes.OPCODE_READER.read(patternConsumer, in);
-        PatternCase patternCase = (PatternCase) patternConsumer.pStack.pop();
-        patternConsumer.pStack.clear();
+        patternProcessor.pStack.clear();
+        patternProcessor.pStack.unlock();
+        PatternOpcodes.READER.read(patternProcessor, in);
+        PatternCase patternCase = (PatternCase) patternProcessor.pStack.pop();
+        patternProcessor.pStack.clear();
 
         byteBuffer.reset();
-        reader.read(buffer.reset(byteBufferOutput, depth), in);
+        reader.read(buffer.setOut(byteBufferOutput), in);
 
         CompiledConstructor constructor = new CompiledConstructor(
                 patternCase,
                 new CompiledExecution(
-                        reader, byteBuffer.toByteArray(), depth, stringPool
+                        reader, byteBuffer.toByteArray(), stringPool
                 ),
                 scope.subPool()
         );
-
-        depth--;
 
         CompiledType type = new CompiledType(name, constructor);
         scope.declare(name, type);
@@ -333,13 +310,11 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
         Map<String, Obj> map = new LinkedHashMap<>();
 
-        depth++;
         for (int i = 0; i < size; i++) {
             String key = stringPool.get(in.readUnsignedShort());
             reader.read(this, in);
             map.put(key, stack.pop());
         }
-        depth--;
 
         stack.push(new Tuple(map));
 
@@ -468,17 +443,15 @@ public class StackMachine extends KOpcodeProcessorAdapter {
             (Sorry if my english is shitty right now, it's 10 PM. - Adrian)
              */
 
-            depth++;
             Bool bool = Bool.of(operator == BinaryOperatorType.OR);
             if (left == bool) {
                 //Standard way of skipping a block of code.
-                reader.read(buffer.reset(NullOutputStream.DATA_INSTANCE, depth), in);
+                reader.read(buffer.setOut(NullOutputStream.DATA_INSTANCE), in);
                 stack.push(bool);
             } else {
                 reader.read(this, in);
                 //stack.push(stack.pop()); //oh nvm
             }
-            depth--;
 
             return CONTINUE;
         }
@@ -581,7 +554,6 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     public ReadResult opcodeConditional(OpcodeReader reader, KDataInput in) {
         boolean hasElseBranch = in.readBoolean();
 
-        depth++;
         reader.read(this, in);
         checkTimeout();
 
@@ -590,10 +562,10 @@ public class StackMachine extends KOpcodeProcessorAdapter {
             checkTimeout();
 
             if (hasElseBranch) {
-                reader.read(buffer.reset(NullOutputStream.DATA_INSTANCE, depth), in);
+                reader.read(buffer.setOut(NullOutputStream.DATA_INSTANCE), in);
             }
         } else {
-            reader.read(buffer.reset(NullOutputStream.DATA_INSTANCE, depth), in);
+            reader.read(buffer.setOut(NullOutputStream.DATA_INSTANCE), in);
             checkTimeout();
 
             if (hasElseBranch) {
@@ -603,8 +575,6 @@ public class StackMachine extends KOpcodeProcessorAdapter {
             }
         }
 
-        depth--;
-
         return CONTINUE;
     }
 
@@ -612,7 +582,6 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     public ReadResult opcodeForEach(OpcodeReader reader, KDataInput in) {
         String variant = stringPool.get(in.readUnsignedShort());
 
-        depth++;
         reader.read(this, in);
         checkTimeout();
 
@@ -620,7 +589,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
 
         if (!(iterObj instanceof Iterable)) {
-            reader.read(buffer.reset(NullOutputStream.DATA_INSTANCE, depth), in);
+            reader.read(buffer.setOut(NullOutputStream.DATA_INSTANCE), in);
 
             stack.push(Null.VALUE);
 
@@ -628,7 +597,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         }
 
         byteBuffer.reset();
-        reader.read(buffer.reset(byteBufferOutput, depth), in);
+        reader.read(buffer.setOut(byteBufferOutput), in);
         ByteArrayInputStream buffer = new ByteArrayInputStream(byteBuffer.toByteArray());
 
         KDataInput bufferInput = new KDataInputStream(buffer);
@@ -640,7 +609,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         int iteration = 0;
         for (Object var : (Iterable) iterObj) {
             checkTimeout();
-            GlobalVisitorSettings.checkIterationLimit(iteration);
+            GlobalExecutionSettings.checkIterationLimit(iteration);
 
             if (!(var instanceof Obj)) {
                 throw new ComputeException("Items in iterable do not implement Obj interface");
@@ -660,8 +629,6 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         stack.popToLock();
         stack.setLock(lastLock);
 
-        depth--;
-
         stack.push(Null.VALUE);
 
         return CONTINUE;
@@ -669,10 +636,9 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeWhile(OpcodeReader reader, KDataInput in) {
-        depth++;
 
         byteBuffer.reset();
-        buffer.reset(byteBufferOutput, depth);
+        buffer.setOut(byteBufferOutput);
         reader.read(buffer, in);
         ByteArrayInputStream bufferCondition = new ByteArrayInputStream(byteBuffer.toByteArray());
         byteBuffer.reset();
@@ -689,7 +655,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         int iteration = 0;
 
         while (true) {
-            GlobalVisitorSettings.checkIterationLimit(iteration);
+            GlobalExecutionSettings.checkIterationLimit(iteration);
 
             scope = lastScope.subPool();
             reader.read(this, conditionInput);
@@ -714,19 +680,17 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         stack.popToLock();
         stack.setLock(lastLock);
 
-        depth--;
-
         stack.push(Null.VALUE);
 
         return CONTINUE;
     }
 
     public void resetTimeout() {
-        timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
+        timeout = System.currentTimeMillis() + GlobalExecutionSettings.MILLISECONDS_LIMIT;
     }
 
     public void checkTimeout() {
-        GlobalVisitorSettings.checkTimeout(timeout);
+        GlobalExecutionSettings.checkTimeout(timeout);
     }
 
     public void resumeBreakpoint() {

@@ -32,7 +32,7 @@ package xyz.avarel.kaiper.vm;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
 
-public class GlobalVisitorSettings {
+public class GlobalExecutionSettings {
     public static int ITERATION_LIMIT = -1;
     public static int SIZE_LIMIT = -1;
     public static long MILLISECONDS_LIMIT = -1;

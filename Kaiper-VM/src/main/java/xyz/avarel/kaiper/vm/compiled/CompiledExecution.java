@@ -11,15 +11,13 @@ import java.util.List;
 
 public class CompiledExecution {
     private final byte[] bytecode;
-    private final int depth;
     private final List<String> stringPool;
     private final OpcodeReader reader;
     private final Object lock_defaultExecutor = new Object();
     private StackMachine defaultExecutor;
 
-    public CompiledExecution(OpcodeReader reader, byte[] bytecode, int depth, List<String> stringPool) {
+    public CompiledExecution(OpcodeReader reader, byte[] bytecode, List<String> stringPool) {
         this.bytecode = bytecode;
-        this.depth = depth;
         this.stringPool = stringPool;
         this.reader = reader;
     }
@@ -41,7 +39,6 @@ public class CompiledExecution {
         executor.scope = scope;
         executor.stack.unlock();
         executor.stack.clear();
-        executor.depth = depth;
         executor.lineNumber = -1;
         executor.resetTimeout();
 
@@ -69,12 +66,10 @@ public class CompiledExecution {
         //save state
         Scope lastScope = executor.scope;
         int lastLock = executor.stack.lock();
-        int lastDepth = executor.depth;
         long lastLn = executor.lineNumber;
 
         //load temp state
         executor.scope = scope;
-        executor.depth = this.depth;
         executor.stack.setLock(lastLock);
         executor.lineNumber = -1;
 
@@ -82,7 +77,6 @@ public class CompiledExecution {
         Obj result = executor.stack.pop();
 
         //load state
-        executor.depth = lastDepth;
         executor.scope = lastScope;
         executor.lineNumber = lastLn;
         executor.stack.popToLock();

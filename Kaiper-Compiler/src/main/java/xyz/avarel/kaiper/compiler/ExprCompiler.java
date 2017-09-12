@@ -26,7 +26,6 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
     private final List<String> stringPool = new LinkedList<>();
 
-    int depth = 0;
     private long lastLineNumber;
 
     @Override
@@ -51,16 +50,11 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(NEW_FUNCTION).writeShort(name);
 
-        int id = depth;
-        depth++;
-
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         visit(out, expr.getExpr());
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
@@ -103,13 +97,8 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
             out.writeOpcode(BINARY_OPERATION).writeByte(op.ordinal());
 
-            int id = depth;
-            depth++;
-
             visit(out, expr.getRight());
-            out.writeOpcode(END).writeShort(id);
-
-            depth--;
+            out.writeOpcode(END);
         }
 
         visit(out, expr.getLeft(), expr.getRight());
@@ -227,21 +216,16 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(CONDITIONAL).writeBoolean(hasElseBranch);
 
-        int id = depth;
-        depth++;
-
         visit(out, expr.getCondition());
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         visit(out, expr.getIfBranch());
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         if (hasElseBranch) {
             visit(out, expr.getElseBranch());
-            out.writeOpcode(END).writeShort(id);
+            out.writeOpcode(END);
         }
-
-        depth--;
 
         return null;
     }
@@ -253,17 +237,11 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(FOR_EACH).writeShort(variant);
 
-        int id = depth;
-        depth++;
-
         visit(out, expr.getIterable());
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         visit(out, expr.getAction());
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
-
+        out.writeOpcode(END);
 
         return null;
     }
@@ -355,13 +333,8 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(NEW_MODULE).writeShort(name);
 
-        int id = depth;
-        depth++;
-
         visit(out, expr.getExpr());
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
@@ -374,17 +347,11 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(NEW_TYPE).writeShort(name);
 
-        int id = depth;
-        depth++;
-
-
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         visit(out, expr.getExpr());
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
@@ -395,16 +362,11 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(WHILE);
 
-        int id = depth;
-        depth++;
-
         visit(out, expr.getCondition());
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         visit(out, expr.getAction());
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
@@ -431,17 +393,12 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(NEW_TUPLE).writeInt(map.size());
 
-        int id = depth;
-        depth++;
-
         for (Map.Entry<String, Single> entry : map.entrySet()) {
             out.writeShort(stringConst(entry.getKey()));
 
             visit(out, entry.getValue());
-            out.writeOpcode(END).writeShort(id);
+            out.writeOpcode(END);
         }
-
-        depth--;
 
         return null;
     }
@@ -454,13 +411,8 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(BIND_DECLARE);
 
-        int id = depth;
-        depth++;
-
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
@@ -473,13 +425,8 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(BIND_ASSIGN);
 
-        int id = depth;
-        depth++;
-
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }

@@ -1,5 +1,5 @@
 package xyz.avarel.kaiper.bytecode.reader.processors;
 
 public enum ReadResult {
-    CONTINUE, ENDED, RETURNED;
+    CONTINUE, ENDED, ERRORED, RETURNED;
 }

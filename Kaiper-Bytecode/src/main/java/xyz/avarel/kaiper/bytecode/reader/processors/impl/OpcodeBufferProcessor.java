@@ -2,17 +2,17 @@ package xyz.avarel.kaiper.bytecode.reader.processors.impl;
 
 import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.io.KDataOutput;
+import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
+import xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.bytecode.reader.processors.MultiOpcodeProcessorAdapter;
 import xyz.avarel.kaiper.bytecode.reader.processors.ReadResult;
-import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
 import static xyz.avarel.kaiper.bytecode.reader.processors.ReadResult.*;
 
 public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
     private KDataOutput out;
-    private int depth = 0;
 
     public OpcodeBufferProcessor() {
         this(null);
@@ -20,15 +20,6 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
 
     public OpcodeBufferProcessor(KDataOutput out) {
         this.out = out;
-    }
-
-    public OpcodeBufferProcessor(int depth) {
-        this(null, depth);
-    }
-
-    public OpcodeBufferProcessor(KDataOutput out, int depth) {
-        this.out = out;
-        this.depth = depth;
     }
 
     @Override
@@ -39,13 +30,6 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeEnd(OpcodeReader reader, KDataInput in) {
-        short endId = in.readShort();
-        out.writeShort(endId);
-
-        if (endId != (depth - 1)) {
-            throw new InvalidBytecodeException("Unexpected End " + endId);
-        }
-
         return ENDED;
     }
 
@@ -122,11 +106,9 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
     @Override
     public ReadResult opcodeNewFunction(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
-
-        depth++;
+        
+        PatternOpcodes.READER.read(this, in);
         reader.read(this, in);
-        reader.read(this, in);
-        depth--;
 
         return CONTINUE;
     }
@@ -135,9 +117,7 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
     public ReadResult opcodeNewModule(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
 
-        depth++;
         reader.read(this, in);
-        depth--;
 
         return CONTINUE;
     }
@@ -146,10 +126,8 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
     public ReadResult opcodeNewType(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
 
-        depth++;
+        PatternOpcodes.READER.read(this, in);
         reader.read(this, in);
-        reader.read(this, in);
-        depth--;
 
         return CONTINUE;
     }
@@ -159,12 +137,10 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
         int size = in.readInt();
         out.writeInt(size);
 
-        depth++;
         for (int i = 0; i < size; i++) {
             out.writeShort(in.readShort());
             reader.read(this, in);
         }
-        depth--;
 
         return CONTINUE;
     }
@@ -189,18 +165,14 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeBindDeclare(OpcodeReader reader, KDataInput in) {
-        depth++;
-        reader.read(this, in);
-        depth--;
+        PatternOpcodes.READER.read(this, in);
 
         return CONTINUE;
     }
 
     @Override
     public ReadResult opcodeBindAssign(OpcodeReader reader, KDataInput in) {
-        depth++;
-        reader.read(this, in);
-        depth--;
+        PatternOpcodes.READER.read(this, in);
 
         return CONTINUE;
     }
@@ -242,11 +214,9 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
         boolean hasElseBranch = in.readBoolean();
         out.writeBoolean(hasElseBranch);
 
-        depth++;
         reader.read(this, in);
         reader.read(this, in);
         if (hasElseBranch) reader.read(this, in);
-        depth--;
 
         return CONTINUE;
     }
@@ -255,29 +225,23 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
     public ReadResult opcodeForEach(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
 
-        depth++;
         reader.read(this, in);
         reader.read(this, in);
-        depth--;
 
         return CONTINUE;
     }
 
     @Override
     public ReadResult opcodeWhile(OpcodeReader reader, KDataInput in) {
-        depth++;
         reader.read(this, in);
         reader.read(this, in);
-        depth--;
 
         return CONTINUE;
     }
 
     @Override
     public ReadResult opcodePatternCase(OpcodeReader reader, KDataInput in) {
-        depth++;
         reader.read(this, in);
-        depth--;
 
         return CONTINUE;
     }
@@ -297,9 +261,7 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
     public ReadResult opcodeTuplePattern(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
 
-        depth++;
         reader.read(this, in);
-        depth--;
 
         return CONTINUE;
     }
@@ -312,39 +274,26 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeValuePattern(OpcodeReader reader, KDataInput in) {
-        depth++;
-        reader.read(this, in);
-        depth--;
+        KOpcodes.READER.read(this, in);
 
         return CONTINUE;
     }
 
     @Override
     public ReadResult opcodeDefaultPattern(OpcodeReader reader, KDataInput in) {
-        depth++;
-        reader.read(this, in);
-        reader.read(this, in);
-        depth--;
+        out.writeShort(in.readShort());
+        KOpcodes.READER.read(this, in);
 
         return CONTINUE;
     }
 
-    public OpcodeBufferProcessor reset(KDataOutput out, int depth) {
+    public OpcodeBufferProcessor setOut(KDataOutput out) {
         this.out = out;
-        this.depth = depth;
 
         return this;
     }
 
     public KDataOutput getOut() {
         return out;
-    }
-
-    public void setOut(KDataOutput out) {
-        this.out = out;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
     }
 }

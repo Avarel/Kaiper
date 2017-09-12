@@ -10,8 +10,8 @@ import java.util.List;
 public class CompiledScopedExecution extends CompiledExecution {
     private final Scope baseScope;
 
-    public CompiledScopedExecution(OpcodeReader reader, byte[] bytecode, int depth, List<String> stringPool, Scope baseScope) {
-        super(reader, bytecode, depth, stringPool);
+    public CompiledScopedExecution(OpcodeReader reader, byte[] bytecode, List<String> stringPool, Scope baseScope) {
+        super(reader, bytecode, stringPool);
         this.baseScope = baseScope;
     }
 

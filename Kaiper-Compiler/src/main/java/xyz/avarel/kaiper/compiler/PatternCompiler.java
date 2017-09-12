@@ -3,6 +3,8 @@ package xyz.avarel.kaiper.compiler;
 import xyz.avarel.kaiper.ast.pattern.*;
 import xyz.avarel.kaiper.bytecode.io.KDataOutput;
 
+import java.util.List;
+
 import static xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes.*;
 
 public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
@@ -14,18 +16,15 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
 
     @Override
     public Void visit(PatternCase patternCase, KDataOutput out) {
-        out.writeOpcode(PATTERN_CASE);
+        List<Pattern> patterns = patternCase.getPatterns();
 
-        int id = parent.depth;
-        parent.depth++;
+        out.writeOpcode(PATTERN_CASE).writeInt(patterns.size());
 
-        for (Pattern pattern : patternCase.getPatterns()) {
+        for (Pattern pattern : patterns) {
             pattern.accept(this, out);
         }
 
-        out.writeOpcode(END).writeShort(id);
-
-        parent.depth--;
+        out.writeOpcode(END);
 
         return null;
     }
@@ -48,13 +47,8 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
     public Void visit(TuplePattern pattern, KDataOutput out) {
         out.writeOpcode(TUPLE).writeShort(parent.stringConst(pattern.getName()));
 
-        int id = parent.depth;
-        parent.depth++;
-
         pattern.getPattern().accept(this, out);
-        out.writeOpcode(END).writeShort(id);
-
-        parent.depth--;
+        out.writeOpcode(END);
 
         return null;
     }
@@ -70,31 +64,20 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
     public Void visit(ValuePattern pattern, KDataOutput out) {
         out.writeOpcode(VALUE);
 
-        int id = parent.depth;
-        parent.depth++;
-
         pattern.getValue().accept(parent, out);
-        out.writeOpcode(END).writeShort(id);
-
-        parent.depth--;
+        out.writeOpcode(END);
 
         return null;
     }
 
     @Override
     public Void visit(DefaultPattern pattern, KDataOutput out) {
-        out.writeOpcode(DEFAULT);
-
-        int id = parent.depth;
-        parent.depth++;
+        out.writeOpcode(DEFAULT).writeShort(parent.stringConst(pattern.getDelegate().getName()));
 
         pattern.getDelegate().accept(this, out);
-        out.writeOpcode(END).writeShort(id);
 
         pattern.getDefault().accept(parent, out);
-        out.writeOpcode(END).writeShort(id);
-
-        parent.depth--;
+        out.writeOpcode(END);
 
         return null;
     }

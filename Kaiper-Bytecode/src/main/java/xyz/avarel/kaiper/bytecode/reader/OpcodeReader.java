@@ -20,7 +20,7 @@ public class OpcodeReader {
         this.foreignOpcodes = foreignOpcodes;
     }
 
-    protected Opcode next(KDataInput in) {
+    public Opcode next(KDataInput in) {
         byte id = in.readByte();
         if (id < opcodeList.length) return opcodeList[id];
 
@@ -29,11 +29,14 @@ public class OpcodeReader {
         throw new InvalidBytecodeException(opcode);
     }
 
-    public ReadResult read(OpcodeProcessor consumer, KDataInput in) {
+    public ReadResult read(OpcodeProcessor processor, KDataInput in) {
         ReadResult r;
-
         //noinspection StatementWithEmptyBody
-        while ((r = consumer.process(this, next(in), in)) == ReadResult.CONTINUE) ;
+        while ((r = readNext(processor, in)) == ReadResult.CONTINUE) ;
         return r;
+    }
+
+    public ReadResult readNext(OpcodeProcessor processor, KDataInput in) {
+        return processor.process(this, next(in), in);
     }
 }
