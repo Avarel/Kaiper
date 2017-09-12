@@ -1,4 +1,4 @@
-package xyz.avarel.kaiper.bytecode.reader.consumers;
+package xyz.avarel.kaiper.bytecode.reader.processors;
 
 import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
@@ -7,7 +7,7 @@ import xyz.avarel.kaiper.bytecode.reader.OpcodeProcessor;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
-public abstract class KOpcodeProcessorAdapter implements OpcodeProcessor, KOpcodeConsumer {
+public abstract class KOpcodeProcessorAdapter implements OpcodeProcessor, KOpcodeProcessor {
     @Override
     public ReadResult process(OpcodeReader reader, Opcode opcode, KDataInput in) {
         if (opcode instanceof KOpcodes) {

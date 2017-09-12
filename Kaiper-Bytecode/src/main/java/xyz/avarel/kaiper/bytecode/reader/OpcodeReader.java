@@ -3,7 +3,7 @@ package xyz.avarel.kaiper.bytecode.reader;
 import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.opcodes.ReservedOpcode;
-import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
+import xyz.avarel.kaiper.bytecode.reader.processors.ReadResult;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
 public class OpcodeReader {

@@ -7,9 +7,9 @@ import xyz.avarel.kaiper.bytecode.io.NullOutputStream;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
-import xyz.avarel.kaiper.bytecode.reader.consumers.KOpcodeProcessorAdapter;
-import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
-import xyz.avarel.kaiper.bytecode.reader.consumers.impl.KOpcodeBufferProcessor;
+import xyz.avarel.kaiper.bytecode.reader.processors.KOpcodeProcessorAdapter;
+import xyz.avarel.kaiper.bytecode.reader.processors.ReadResult;
+import xyz.avarel.kaiper.bytecode.reader.processors.impl.OpcodeBufferProcessor;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
-import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.*;
+import static xyz.avarel.kaiper.bytecode.reader.processors.ReadResult.*;
 
 /**
  * <p>
@@ -76,7 +76,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     /**
      * Recyclable Buffer (OpcodeBufferConsumer)
      */
-    public final KOpcodeBufferProcessor buffer = new KOpcodeBufferProcessor(NullOutputStream.DATA_INSTANCE);
+    public final OpcodeBufferProcessor buffer = new OpcodeBufferProcessor(NullOutputStream.DATA_INSTANCE);
     /**
      * Recyclable PatternCreator
      */

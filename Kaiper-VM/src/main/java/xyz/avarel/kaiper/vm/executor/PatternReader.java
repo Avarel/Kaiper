@@ -4,8 +4,8 @@ import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
-import xyz.avarel.kaiper.bytecode.reader.consumers.PatternOpcodeProcessorAdapter;
-import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
+import xyz.avarel.kaiper.bytecode.reader.processors.PatternOpcodeProcessorAdapter;
+import xyz.avarel.kaiper.bytecode.reader.processors.ReadResult;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 import xyz.avarel.kaiper.vm.compiled.CompiledScopedExecution;
 import xyz.avarel.kaiper.vm.patterns.*;
@@ -14,8 +14,8 @@ import xyz.avarel.kaiper.vm.utils.VMStack;
 import java.util.LinkedList;
 import java.util.List;
 
-import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.CONTINUE;
-import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.ENDED;
+import static xyz.avarel.kaiper.bytecode.reader.processors.ReadResult.CONTINUE;
+import static xyz.avarel.kaiper.bytecode.reader.processors.ReadResult.ENDED;
 
 public class PatternReader extends PatternOpcodeProcessorAdapter {
     public StackMachine parent;

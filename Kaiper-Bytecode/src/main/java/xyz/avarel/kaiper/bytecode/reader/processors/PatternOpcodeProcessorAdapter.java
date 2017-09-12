@@ -1,4 +1,4 @@
-package xyz.avarel.kaiper.bytecode.reader.consumers;
+package xyz.avarel.kaiper.bytecode.reader.processors;
 
 import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;

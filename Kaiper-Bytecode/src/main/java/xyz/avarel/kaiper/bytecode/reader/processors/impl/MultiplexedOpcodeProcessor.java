@@ -1,10 +1,10 @@
-package xyz.avarel.kaiper.bytecode.reader.consumers.impl;
+package xyz.avarel.kaiper.bytecode.reader.processors.impl;
 
 import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeProcessor;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
-import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
+import xyz.avarel.kaiper.bytecode.reader.processors.ReadResult;
 import xyz.avarel.kaiper.utils.ArrayIterator;
 
 import java.io.IOException;

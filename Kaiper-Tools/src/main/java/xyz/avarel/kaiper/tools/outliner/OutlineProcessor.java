@@ -4,15 +4,15 @@ import xyz.avarel.kaiper.bytecode.BytecodeUtils;
 import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
-import xyz.avarel.kaiper.bytecode.reader.consumers.KOpcodeProcessorAdapter;
-import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
+import xyz.avarel.kaiper.bytecode.reader.processors.MultiOpcodeProcessorAdapter;
+import xyz.avarel.kaiper.bytecode.reader.processors.ReadResult;
 
 import java.io.PrintWriter;
 import java.util.List;
 
-import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.*;
+import static xyz.avarel.kaiper.bytecode.reader.processors.ReadResult.*;
 
-public class OutlineProcessor extends KOpcodeProcessorAdapter {
+public class OutlineProcessor extends MultiOpcodeProcessorAdapter {
     private final OutlineOptions options;
     private final PrintWriter out;
     private final int depth;
@@ -285,6 +285,41 @@ public class OutlineProcessor extends KOpcodeProcessorAdapter {
     public ReadResult opcodeWhile(OpcodeReader reader, KDataInput in) {
         //TODO
         return CONTINUE;
+    }
+
+    @Override
+    public ReadResult opcodePatternCase(OpcodeReader reader, KDataInput in) {
+        return null;
+    }
+
+    @Override
+    public ReadResult opcodeWildcardPattern(OpcodeReader reader, KDataInput in) {
+        return null;
+    }
+
+    @Override
+    public ReadResult opcodeVariablePattern(OpcodeReader reader, KDataInput in) {
+        return null;
+    }
+
+    @Override
+    public ReadResult opcodeTuplePattern(OpcodeReader reader, KDataInput in) {
+        return null;
+    }
+
+    @Override
+    public ReadResult opcodeRestPattern(OpcodeReader reader, KDataInput in) {
+        return null;
+    }
+
+    @Override
+    public ReadResult opcodeValuePattern(OpcodeReader reader, KDataInput in) {
+        return null;
+    }
+
+    @Override
+    public ReadResult opcodeDefaultPattern(OpcodeReader reader, KDataInput in) {
+        return null;
     }
 
     //region HELPER METHODS

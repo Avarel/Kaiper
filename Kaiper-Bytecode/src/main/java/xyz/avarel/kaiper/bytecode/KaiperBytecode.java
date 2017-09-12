@@ -52,7 +52,7 @@ public class KaiperBytecode {
 
         if (versionMajor != BYTECODE_VERSION_MAJOR || versionMinor > BYTECODE_VERSION_MINOR) {
             throw new InvalidBytecodeException(String.format(
-                    "Unsupported Bytecode Version (Library Version: DAB%d.[0-%d]; Bytecode: DAB%d.%d)",
+                    "Unsupported Bytecode Version (Library Version: Kai%d.[0-%d]; Bytecode: Kai%d.%d)",
                     BYTECODE_VERSION_MAJOR, BYTECODE_VERSION_MINOR,
                     versionMajor, versionMinor
             ));
