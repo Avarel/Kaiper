@@ -1,14 +1,14 @@
 package xyz.avarel.kaiper.vm.executor;
 
-import xyz.avarel.kaiper.bytecode.io.ByteInput;
-import xyz.avarel.kaiper.bytecode.io.ByteInputStream;
-import xyz.avarel.kaiper.bytecode.io.ByteOutputStream;
+import xyz.avarel.kaiper.bytecode.io.KDataInput;
+import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
+import xyz.avarel.kaiper.bytecode.io.KDataOutputStream;
 import xyz.avarel.kaiper.bytecode.io.NullOutputStream;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
-import xyz.avarel.kaiper.bytecode.reader.consumers.OpcodeConsumerAdapter;
+import xyz.avarel.kaiper.bytecode.reader.consumers.KOpcodeProcessorAdapter;
 import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
-import xyz.avarel.kaiper.bytecode.reader.consumers.impl.OpcodeBufferConsumer;
+import xyz.avarel.kaiper.bytecode.reader.consumers.impl.KOpcodeBufferProcessor;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
@@ -54,7 +54,7 @@ import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.*;
  *
  * @author AdrianTodt
  */
-public class StackMachine extends OpcodeConsumerAdapter {
+public class StackMachine extends KOpcodeProcessorAdapter {
     /**
      * The Breakpoint object (used on resumeBreakpoint and opcodeBreakpoint)
      */
@@ -71,11 +71,11 @@ public class StackMachine extends OpcodeConsumerAdapter {
     /**
      * Recyclable Buffer (ByteOutput)
      */
-    public final ByteOutputStream byteBufferOutput = new ByteOutputStream(byteBuffer);
+    public final KDataOutputStream byteBufferOutput = new KDataOutputStream(byteBuffer);
     /**
      * Recyclable Buffer (OpcodeBufferConsumer)
      */
-    public final OpcodeBufferConsumer buffer = new OpcodeBufferConsumer(NullOutputStream.DATA_INSTANCE);
+    public final KOpcodeBufferProcessor buffer = new KOpcodeBufferProcessor(NullOutputStream.DATA_INSTANCE);
     /**
      * Recyclable PatternCreator
      */
@@ -106,16 +106,16 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult accept(OpcodeReader reader, Opcode opcode, ByteInput in) {
+    public ReadResult process(OpcodeReader reader, Opcode opcode, KDataInput in) {
         checkTimeout();
-        ReadResult result = super.accept(reader, opcode, in);
+        ReadResult result = super.process(reader, opcode, in);
         checkTimeout();
         return result;
     }
 
     @Override
-    public ReadResult opcodeEnd(OpcodeReader reader, ByteInput in) {
-        short endId = in.readShort();
+    public ReadResult opcodeEnd(OpcodeReader reader, KDataInput in) {
+        int endId = in.readUnsignedShort();
 
         if (endId != depth - 1) {
             throw new InvalidBytecodeException("Unexpected End " + endId);
@@ -125,13 +125,13 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeLineNumber(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeLineNumber(OpcodeReader reader, KDataInput in) {
         this.lineNumber = in.readLong();
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeBreakpoint(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBreakpoint(OpcodeReader reader, KDataInput in) {
         synchronized (breakpointObj) {
             try {
                 breakpointObj.wait();
@@ -144,54 +144,54 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeReturn(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeReturn(OpcodeReader reader, KDataInput in) {
         return RETURNED;
     }
 
     @Override
-    public ReadResult opcodeDup(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeDup(OpcodeReader reader, KDataInput in) {
         stack.push(stack.peek());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodePop(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodePop(OpcodeReader reader, KDataInput in) {
         stack.pop();
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeNullConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNullConstant(OpcodeReader reader, KDataInput in) {
         stack.push(Null.VALUE);
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeBooleanConstant(OpcodeReader reader, boolean value, ByteInput in) {
+    public ReadResult opcodeBooleanConstant(OpcodeReader reader, boolean value, KDataInput in) {
         stack.push(Bool.of(value));
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeIntConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeIntConstant(OpcodeReader reader, KDataInput in) {
         stack.push(Int.of(in.readInt()));
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeDecimalConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeDecimalConstant(OpcodeReader reader, KDataInput in) {
         stack.push(Number.of(in.readDouble()));
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeStringConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeStringConstant(OpcodeReader reader, KDataInput in) {
         stack.push(Str.of(stringPool.get(in.readUnsignedShort())));
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeNewArray(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewArray(OpcodeReader reader, KDataInput in) {
         int size = in.readInt();
         Array array = new Array();
 
@@ -210,13 +210,13 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeNewDictionary(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewDictionary(OpcodeReader reader, KDataInput in) {
         stack.push(new Dictionary());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeNewRange(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewRange(OpcodeReader reader, KDataInput in) {
         Obj endObj = stack.pop();
         Obj startObj = stack.pop();
 
@@ -235,7 +235,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeNewFunction(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewFunction(OpcodeReader reader, KDataInput in) {
         String name = stringPool.get(in.readUnsignedShort());
 
         depth++;
@@ -267,7 +267,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeNewModule(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewModule(OpcodeReader reader, KDataInput in) {
         String name = stringPool.get(in.readUnsignedShort());
         Scope moduleScope = scope.subPool();
 
@@ -295,7 +295,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeNewType(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewType(OpcodeReader reader, KDataInput in) {
         String name = stringPool.get(in.readUnsignedShort());
 
         depth++;
@@ -327,7 +327,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeNewTuple(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewTuple(OpcodeReader reader, KDataInput in) {
         int size = in.readInt();
 
         Map<String, Obj> map = new LinkedHashMap<>();
@@ -346,7 +346,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeDeclare(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeDeclare(OpcodeReader reader, KDataInput in) {
         String name = stringPool.get(in.readUnsignedShort());
 
         Obj value = stack.pop();
@@ -357,7 +357,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeAssign(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeAssign(OpcodeReader reader, KDataInput in) {
         boolean parented = in.readBoolean();
         String name = stringPool.get(in.readUnsignedShort());
 
@@ -378,7 +378,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeIdentifier(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeIdentifier(OpcodeReader reader, KDataInput in) {
         boolean parented = in.readBoolean();
         String name = stringPool.get(in.readUnsignedShort());
 
@@ -396,19 +396,19 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeBindDeclare(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBindDeclare(OpcodeReader reader, KDataInput in) {
         // TODO: 11/09/2017
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeBindAssign(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBindAssign(OpcodeReader reader, KDataInput in) {
         // TODO: 11/09/2017
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeInvoke(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeInvoke(OpcodeReader reader, KDataInput in) {
         Obj arg = stack.pop();
         Obj left = stack.pop();
 
@@ -418,7 +418,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeUnaryOperation(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeUnaryOperation(OpcodeReader reader, KDataInput in) {
         byte type = in.readByte();
 
         UnaryOperatorType[] values = UnaryOperatorType.values();
@@ -444,7 +444,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeBinaryOperation(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBinaryOperation(OpcodeReader reader, KDataInput in) {
         byte type = in.readByte();
 
         BinaryOperatorType[] values = BinaryOperatorType.values();
@@ -544,7 +544,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeSliceOperation(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeSliceOperation(OpcodeReader reader, KDataInput in) {
         Obj step = stack.pop();
         Obj end = stack.pop();
         Obj start = stack.pop();
@@ -556,7 +556,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeArrayGet(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeArrayGet(OpcodeReader reader, KDataInput in) {
         Obj key = stack.pop();
         Obj left = stack.pop();
 
@@ -566,7 +566,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeArraySet(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeArraySet(OpcodeReader reader, KDataInput in) {
         Obj value = stack.pop();
         Obj key = stack.pop();
         Obj left = stack.pop();
@@ -577,7 +577,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeConditional(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeConditional(OpcodeReader reader, KDataInput in) {
         boolean hasElseBranch = in.readBoolean();
 
         depth++;
@@ -608,7 +608,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeForEach(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeForEach(OpcodeReader reader, KDataInput in) {
         String variant = stringPool.get(in.readUnsignedShort());
 
         depth++;
@@ -630,7 +630,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
         reader.read(buffer.reset(byteBufferOutput, depth), in);
         ByteArrayInputStream buffer = new ByteArrayInputStream(byteBuffer.toByteArray());
 
-        ByteInput bufferInput = new ByteInputStream(buffer);
+        KDataInput bufferInput = new KDataInputStream(buffer);
 
         //save state
         Scope lastScope = scope;
@@ -667,7 +667,7 @@ public class StackMachine extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeWhile(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeWhile(OpcodeReader reader, KDataInput in) {
         depth++;
 
         byteBuffer.reset();
@@ -678,8 +678,8 @@ public class StackMachine extends OpcodeConsumerAdapter {
         reader.read(buffer, in);
         ByteArrayInputStream bufferAction = new ByteArrayInputStream(byteBuffer.toByteArray());
 
-        ByteInput conditionInput = new ByteInputStream(bufferCondition);
-        ByteInput actionInput = new ByteInputStream(bufferAction);
+        KDataInput conditionInput = new KDataInputStream(bufferCondition);
+        KDataInput actionInput = new KDataInputStream(bufferAction);
 
         //save state
         Scope lastScope = scope;

@@ -21,7 +21,7 @@ package xyz.avarel.kaiper.bytecode.opcodes;
  * @author AdrianTodt
  * @version 2.0
  */
-public enum Opcodes implements Opcode {
+public enum KOpcodes implements Opcode {
     /**
      * {@code END id;}
      * <p>Special Opcode. Means the end of a bytecode block.</p>

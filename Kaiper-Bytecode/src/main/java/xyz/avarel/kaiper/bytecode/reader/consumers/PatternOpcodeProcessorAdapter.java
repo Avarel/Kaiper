@@ -1,15 +1,15 @@
 package xyz.avarel.kaiper.bytecode.reader.consumers;
 
-import xyz.avarel.kaiper.bytecode.io.ByteInput;
+import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes;
-import xyz.avarel.kaiper.bytecode.reader.BaseOpcodeConsumer;
+import xyz.avarel.kaiper.bytecode.reader.OpcodeProcessor;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
-public abstract class PatternOpcodeConsumerAdapter implements BaseOpcodeConsumer, PatternOpcodeConsumer {
+public abstract class PatternOpcodeProcessorAdapter implements OpcodeProcessor, PatternOpcodeProcessor {
     @Override
-    public ReadResult accept(OpcodeReader reader, Opcode opcode, ByteInput in) {
+    public ReadResult process(OpcodeReader reader, Opcode opcode, KDataInput in) {
         if (opcode instanceof PatternOpcodes) {
             switch ((PatternOpcodes) opcode) {
                 case END:
@@ -35,7 +35,7 @@ public abstract class PatternOpcodeConsumerAdapter implements BaseOpcodeConsumer
     }
 
     @Override
-    public ReadResult unknownOpcode(OpcodeReader reader, Opcode opcode, ByteInput in) {
+    public ReadResult unknownOpcode(OpcodeReader reader, Opcode opcode, KDataInput in) {
         throw new InvalidBytecodeException(opcode);
     }
 }

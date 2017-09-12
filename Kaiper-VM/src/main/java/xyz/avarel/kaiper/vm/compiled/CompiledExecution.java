@@ -1,6 +1,6 @@
 package xyz.avarel.kaiper.vm.compiled;
 
-import xyz.avarel.kaiper.bytecode.io.ByteInputStream;
+import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
@@ -45,7 +45,7 @@ public class CompiledExecution {
         executor.lineNumber = -1;
         executor.resetTimeout();
 
-        reader.read(executor, new ByteInputStream(new ByteArrayInputStream(bytecode)));
+        reader.read(executor, new KDataInputStream(new ByteArrayInputStream(bytecode)));
         Obj result = executor.stack.pop();
 
         //remove any possible references
@@ -78,7 +78,7 @@ public class CompiledExecution {
         executor.stack.setLock(lastLock);
         executor.lineNumber = -1;
 
-        reader.read(executor, new ByteInputStream(new ByteArrayInputStream(bytecode)));
+        reader.read(executor, new KDataInputStream(new ByteArrayInputStream(bytecode)));
         Obj result = executor.stack.pop();
 
         //load state

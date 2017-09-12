@@ -1,44 +1,44 @@
 package xyz.avarel.kaiper.bytecode.reader.consumers.impl;
 
-import xyz.avarel.kaiper.bytecode.io.ByteInput;
-import xyz.avarel.kaiper.bytecode.io.ByteOutput;
+import xyz.avarel.kaiper.bytecode.io.KDataInput;
+import xyz.avarel.kaiper.bytecode.io.KDataOutput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
-import xyz.avarel.kaiper.bytecode.reader.consumers.OpcodeConsumerAdapter;
+import xyz.avarel.kaiper.bytecode.reader.consumers.KOpcodeProcessorAdapter;
 import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
 import static xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult.*;
 
-public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
-    private ByteOutput out;
+public class KOpcodeBufferProcessor extends KOpcodeProcessorAdapter {
+    private KDataOutput out;
     private int depth = 0;
 
-    public OpcodeBufferConsumer() {
+    public KOpcodeBufferProcessor() {
         this(null);
     }
 
-    public OpcodeBufferConsumer(ByteOutput out) {
+    public KOpcodeBufferProcessor(KDataOutput out) {
         this.out = out;
     }
 
-    public OpcodeBufferConsumer(int depth) {
+    public KOpcodeBufferProcessor(int depth) {
         this(null, depth);
     }
 
-    public OpcodeBufferConsumer(ByteOutput out, int depth) {
+    public KOpcodeBufferProcessor(KDataOutput out, int depth) {
         this.out = out;
         this.depth = depth;
     }
 
     @Override
-    public ReadResult accept(OpcodeReader reader, Opcode opcode, ByteInput in) {
+    public ReadResult process(OpcodeReader reader, Opcode opcode, KDataInput in) {
         out.writeOpcode(opcode);
-        return super.accept(reader, opcode, in);
+        return super.process(reader, opcode, in);
     }
 
     @Override
-    public ReadResult opcodeEnd(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeEnd(OpcodeReader reader, KDataInput in) {
         short endId = in.readShort();
         out.writeShort(endId);
 
@@ -50,81 +50,81 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeLineNumber(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeLineNumber(OpcodeReader reader, KDataInput in) {
         out.writeLong(in.readLong());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeBreakpoint(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBreakpoint(OpcodeReader reader, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeReturn(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeReturn(OpcodeReader reader, KDataInput in) {
         return RETURNED;
     }
 
     @Override
-    public ReadResult opcodeDup(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeDup(OpcodeReader reader, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodePop(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodePop(OpcodeReader reader, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeNullConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNullConstant(OpcodeReader reader, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeBooleanConstant(OpcodeReader reader, boolean value, ByteInput in) {
+    public ReadResult opcodeBooleanConstant(OpcodeReader reader, boolean value, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeIntConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeIntConstant(OpcodeReader reader, KDataInput in) {
         out.writeInt(in.readInt());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeDecimalConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeDecimalConstant(OpcodeReader reader, KDataInput in) {
         out.writeDouble(in.readDouble());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeStringConstant(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeStringConstant(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeNewArray(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewArray(OpcodeReader reader, KDataInput in) {
         out.writeInt(in.readInt());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeNewDictionary(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewDictionary(OpcodeReader reader, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeNewRange(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewRange(OpcodeReader reader, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeNewFunction(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewFunction(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
 
         depth++;
-        reader.read(new PatternOpcodeBufferConsumer(out, depth), in);
+        reader.read(new PatternOpcodeBufferProcessor(out, depth), in);
         reader.read(this, in);
         depth--;
 
@@ -132,7 +132,7 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeNewModule(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewModule(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
 
         depth++;
@@ -143,11 +143,11 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeNewType(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewType(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
 
         depth++;
-        reader.read(new PatternOpcodeBufferConsumer(out, depth), in);
+        reader.read(new PatternOpcodeBufferProcessor(out, depth), in);
         reader.read(this, in);
         depth--;
 
@@ -155,7 +155,7 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeNewTuple(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeNewTuple(OpcodeReader reader, KDataInput in) {
         int size = in.readInt();
         out.writeInt(size);
 
@@ -170,75 +170,75 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeDeclare(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeDeclare(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeAssign(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeAssign(OpcodeReader reader, KDataInput in) {
         out.writeBoolean(in.readBoolean()).writeShort(in.readShort());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeIdentifier(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeIdentifier(OpcodeReader reader, KDataInput in) {
         out.writeBoolean(in.readBoolean()).writeShort(in.readShort());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeBindDeclare(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBindDeclare(OpcodeReader reader, KDataInput in) {
         depth++;
-        reader.read(new PatternOpcodeBufferConsumer(out, depth), in);
+        reader.read(new PatternOpcodeBufferProcessor(out, depth), in);
         depth--;
 
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeBindAssign(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBindAssign(OpcodeReader reader, KDataInput in) {
         depth++;
-        reader.read(new PatternOpcodeBufferConsumer(out, depth), in);
+        reader.read(new PatternOpcodeBufferProcessor(out, depth), in);
         depth--;
 
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeInvoke(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeInvoke(OpcodeReader reader, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeUnaryOperation(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeUnaryOperation(OpcodeReader reader, KDataInput in) {
         out.writeByte(in.readByte());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeBinaryOperation(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeBinaryOperation(OpcodeReader reader, KDataInput in) {
         out.writeByte(in.readByte());
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeSliceOperation(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeSliceOperation(OpcodeReader reader, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeArrayGet(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeArrayGet(OpcodeReader reader, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeArraySet(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeArraySet(OpcodeReader reader, KDataInput in) {
         return CONTINUE;
     }
 
     @Override
-    public ReadResult opcodeConditional(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeConditional(OpcodeReader reader, KDataInput in) {
         boolean hasElseBranch = in.readBoolean();
         out.writeBoolean(hasElseBranch);
 
@@ -252,7 +252,7 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeForEach(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeForEach(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
 
         depth++;
@@ -264,7 +264,7 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
     }
 
     @Override
-    public ReadResult opcodeWhile(OpcodeReader reader, ByteInput in) {
+    public ReadResult opcodeWhile(OpcodeReader reader, KDataInput in) {
         depth++;
         reader.read(this, in);
         reader.read(this, in);
@@ -273,18 +273,18 @@ public class OpcodeBufferConsumer extends OpcodeConsumerAdapter {
         return CONTINUE;
     }
 
-    public OpcodeBufferConsumer reset(ByteOutput out, int depth) {
+    public KOpcodeBufferProcessor reset(KDataOutput out, int depth) {
         this.out = out;
         this.depth = depth;
 
         return this;
     }
 
-    public ByteOutput getOut() {
+    public KDataOutput getOut() {
         return out;
     }
 
-    public void setOut(ByteOutput out) {
+    public void setOut(KDataOutput out) {
         this.out = out;
     }
 

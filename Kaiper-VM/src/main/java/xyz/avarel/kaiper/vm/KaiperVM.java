@@ -1,8 +1,8 @@
 package xyz.avarel.kaiper.vm;
 
 import xyz.avarel.kaiper.bytecode.KaiperBytecode;
-import xyz.avarel.kaiper.bytecode.io.ByteInput;
-import xyz.avarel.kaiper.bytecode.io.ByteInputStream;
+import xyz.avarel.kaiper.bytecode.io.KDataInput;
+import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
@@ -49,7 +49,7 @@ public class KaiperVM {
 
     private Obj readAndExecute(InputStream inputStream, Scope scope) throws IOException {
         try {
-            ByteInputStream input = new ByteInputStream(inputStream);
+            KDataInputStream input = new KDataInputStream(inputStream);
             versionHeaderAndCheck(input);
 
             StackMachine stackMachine = new StackMachine(scope, readStringPool(input));
@@ -64,12 +64,12 @@ public class KaiperVM {
 
     //region HEADERS
 
-    private void versionHeaderAndCheck(ByteInput input) throws IOException {
+    private void versionHeaderAndCheck(KDataInput input) throws IOException {
         KaiperBytecode.validateInit(input);
         KaiperBytecode.validateVersion(input);
     }
 
-    private List<String> readStringPool(ByteInput input) throws IOException {
+    private List<String> readStringPool(KDataInput input) throws IOException {
         int poolSize = input.readShort();
         List<String> constants = new ArrayList<>(poolSize);
 

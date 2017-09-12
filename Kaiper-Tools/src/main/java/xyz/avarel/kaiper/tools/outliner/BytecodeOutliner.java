@@ -1,4 +1,4 @@
-package xyz.avarel.kaiper.tools.bytecode;
+package xyz.avarel.kaiper.tools.outliner;
 
 import xyz.avarel.kaiper.bytecode.BytecodeUtils;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
@@ -111,7 +111,7 @@ public class BytecodeOutliner {
         versionHeaderAndCheck(input, out);
         List<String> stringPool = stringPool(input, out);
         out.println("Main: {");
-        new OpcodeReader(opcodes, foreignOpcodes).read(input, new LogWalker(options, out, 0), stringPool, 0);
+        new OpcodeReader(opcodes, foreignOpcodes).read(input, new OutlineProcessor(options, out, 0, stringPool), stringPool, 0);
         out.println("}");
     }
 
