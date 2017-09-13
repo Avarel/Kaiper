@@ -359,7 +359,7 @@ public class KaiperLexer {
                 if (Character.isDigit(c)) {
                     readNumber(c);
                     return;
-                } else if (Character.isLetter(c)) {
+                } else if (Character.isLetter(c) || c == '$') {
                     readName(c);
                     return;
                 }

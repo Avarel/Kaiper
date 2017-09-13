@@ -31,10 +31,8 @@ public class IfElseParser implements PrefixParser {
         if (!parser.getParserFlags().allowControlFlows()) {
             throw new SyntaxException("Control flows are disabled");
         }
-
-        parser.eat(TokenType.LEFT_PAREN);
+        
         Single condition = parser.parseSingle();
-        parser.eat(TokenType.RIGHT_PAREN);
 
         Expr ifBranch;
 
