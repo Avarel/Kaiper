@@ -93,7 +93,6 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Pair<String, Obj> visit(ValuePattern pattern, Tuple obj) {
         if (obj.hasAttr("_" + position)) {
             Obj value = obj.getAttr("_" + position);
@@ -122,7 +121,6 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Pair<String, Obj> visit(DefaultPattern pattern, Tuple obj) {
         Pair<String, Obj> result = pattern.getDelegate().accept(this, obj);
 

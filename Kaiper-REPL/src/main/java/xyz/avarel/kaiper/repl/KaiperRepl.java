@@ -75,6 +75,7 @@ public class KaiperRepl {
                 System.out.println("    \u2514\u2500\u2500 " + result + " : " + result.getType());
             } catch (KaiperException e) {
                 System.out.println("err \u2514\u2500\u2500 " + e.getMessage());
+                e.printStackTrace(System.out);
             }
 
             System.out.println();
