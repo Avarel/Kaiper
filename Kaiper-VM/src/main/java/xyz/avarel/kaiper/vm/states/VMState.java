@@ -4,53 +4,47 @@ import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
 
 public class VMState {
-    private static final VMState CLEAN_STATE = new VMState();
-
     public static void cleanState(StackMachine stackMachine) {
-        CLEAN_STATE.loadState(stackMachine);
+        StatelessStackMachines.reset(stackMachine);
     }
 
-    public static VMState saveState(StackMachine stackMachine) {
+    public static VMState save(StackMachine stackMachine) {
         return new VMState(stackMachine);
     }
 
     public static VMState saveAndCleanState(StackMachine stackMachine) {
-        VMState state = saveState(stackMachine);
+        VMState state = save(stackMachine);
         cleanState(stackMachine);
         return state;
     }
 
-    private final int stackSize;
     private final int stackLock;
     private final Scope scope;
     private final long lineNumber;
+    private final String[] stringPool;
 
     private VMState() {
-        stackSize = 0;
         stackLock = 0;
         scope = null;
         lineNumber = -1;
+        stringPool = null;
     }
 
     private VMState(StackMachine stackMachine) {
-        stackSize = stackMachine.stack.size();
         stackLock = stackMachine.stack.getLock();
         scope = stackMachine.scope;
         lineNumber = stackMachine.lineNumber;
+        stringPool = stackMachine.stringPool;
     }
 
     public VMState saveAndLoadState(StackMachine stackMachine) {
-        VMState state = saveState(stackMachine);
-        loadState(stackMachine);
+        VMState state = save(stackMachine);
+        load(stackMachine);
         return state;
     }
 
-    public void loadState(StackMachine stackMachine) {
-        //Clear to size
-        stackMachine.stack.setLock(stackSize);
-        stackMachine.stack.popToLock();
 
-
+    public void load(StackMachine stackMachine) {
         stackMachine.stack.setLock(stackLock);
         stackMachine.scope = scope;
         stackMachine.lineNumber = lineNumber;

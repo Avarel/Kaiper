@@ -1,40 +1,81 @@
 package xyz.avarel.kaiper.vm.compiled;
 
 import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
-import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.runtime.Tuple;
+import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
+import xyz.avarel.kaiper.vm.states.StatelessStackMachines;
+import xyz.avarel.kaiper.vm.states.VMState;
 
 import java.io.ByteArrayInputStream;
-import java.util.List;
 
 public class PreparedPatternExecution {
     private final byte[] bytecode;
-    private final int depth;
-    private final List<String> stringPool;
-    private final OpcodeReader reader;
+    private final String[] stringPool;
 
-    public PreparedPatternExecution(OpcodeReader reader, byte[] bytecode, int depth, List<String> stringPool) {
+    public PreparedPatternExecution(byte[] bytecode, String[] stringPool) {
         this.bytecode = bytecode;
-        this.depth = depth;
         this.stringPool = stringPool;
-        this.reader = reader;
     }
 
 
-    public boolean execute(StackMachine executor, Tuple tuple) {
+    public boolean executeAssign(Scope scope, Tuple tuple) {
+        StackMachine machine = StatelessStackMachines.borrow();
+        machine.stringPool = stringPool;
+        machine.scope = scope;
 
-        //save state
-        int lastDepth = executor.depth;
+        try {
+            return machine.patternProcessor.assignFrom(tuple, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+        } finally {
+            StatelessStackMachines.release(machine);
+        }
+    }
+
+    public boolean executeDeclare(Scope scope, Tuple tuple) {
+        StackMachine machine = StatelessStackMachines.borrow();
+        machine.stringPool = stringPool;
+        machine.scope = scope;
+
+        try {
+            return machine.patternProcessor.declareFrom(tuple, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+        } finally {
+            StatelessStackMachines.release(machine);
+        }
+    }
+
+    public boolean executeAssign(StackMachine machine, Scope scope, Tuple tuple) {
+        if (machine == null) {
+            return executeAssign(scope, tuple);
+        }
+
+        VMState state = VMState.save(machine);
 
         //load temp state
-        executor.depth = this.depth;
-        boolean result = executor.patternProcessor.assignFrom(tuple, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+        machine.scope = scope;
+        machine.stringPool = stringPool;
 
-        //load state
-        executor.depth = lastDepth;
+        try {
+            return machine.patternProcessor.assignFrom(tuple, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+        } finally {
+            state.load(machine);
+        }
+    }
 
+    public boolean executeDeclare(StackMachine machine, Scope scope, Tuple tuple) {
+        if (machine == null) {
+            return executeAssign(scope, tuple);
+        }
 
-        return result;
+        VMState state = VMState.save(machine);
+
+        //load temp state
+        machine.scope = scope;
+        machine.stringPool = stringPool;
+
+        try {
+            return machine.patternProcessor.declareFrom(tuple, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+        } finally {
+            state.load(machine);
+        }
     }
 }

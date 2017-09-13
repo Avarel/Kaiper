@@ -9,6 +9,7 @@ import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.runtime.types.Constructor;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
+import xyz.avarel.kaiper.vm.compiled.PreparedPatternExecution;
 import xyz.avarel.kaiper.vm.patterns.PatternCase;
 import xyz.avarel.kaiper.vm.runtime.functions.CompiledParameter;
 
@@ -22,7 +23,7 @@ public class CompiledConstructor extends Constructor {
     private final Scope scope;
     private final CompiledExecution executor;
 
-    public CompiledConstructor(PatternCase patternCase, CompiledExecution executor, Scope scope) {
+    public CompiledConstructor(PreparedPatternExecution patternCase, CompiledExecution executor, Scope scope) {
         this.patternCase = patternCase;
         this.executor = executor;
         this.scope = scope;

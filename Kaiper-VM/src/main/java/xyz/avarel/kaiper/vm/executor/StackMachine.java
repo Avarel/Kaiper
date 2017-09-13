@@ -5,7 +5,6 @@ import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
 import xyz.avarel.kaiper.bytecode.io.KDataOutputStream;
 import xyz.avarel.kaiper.bytecode.io.NullOutputStream;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
-import xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.bytecode.reader.processors.KOpcodeProcessorAdapter;
 import xyz.avarel.kaiper.bytecode.reader.processors.ReadResult;
@@ -26,7 +25,7 @@ import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.GlobalExecutionSettings;
 import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
-import xyz.avarel.kaiper.vm.patterns.PatternCase;
+import xyz.avarel.kaiper.vm.compiled.PreparedPatternExecution;
 import xyz.avarel.kaiper.vm.runtime.functions.CompiledFunc;
 import xyz.avarel.kaiper.vm.runtime.types.CompiledConstructor;
 import xyz.avarel.kaiper.vm.runtime.types.CompiledType;
@@ -35,7 +34,6 @@ import xyz.avarel.kaiper.vm.utils.VMStack;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static xyz.avarel.kaiper.bytecode.BytecodeUtils.toHex;
@@ -61,11 +59,6 @@ public class StackMachine extends KOpcodeProcessorAdapter {
      */
     public final Object breakpointObj = new Object();
     /**
-     * String Pool (short => String)
-     */
-    public final List<String> stringPool;
-
-    /**
      * Recyclable Buffer (ByteArray)
      */
     public final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
@@ -83,6 +76,10 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     public final PatternProcessor patternProcessor = new PatternProcessor(this);
 
     /**
+     * String Pool (short => String)
+     */
+    public String[] stringPool;
+    /**
      * Current Scope
      */
     public Scope scope;
@@ -92,15 +89,18 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     public VMStack<Obj> stack = new VMStack<>();
     public long breakpointMillis = 0;
     public long timeout = System.currentTimeMillis() + GlobalExecutionSettings.MILLISECONDS_LIMIT;
-    
+
     /**
      * Current Line Number
      */
     public long lineNumber = -1;
 
-    public StackMachine(Scope scope, List<String> stringPool) {
+    public StackMachine(String[] stringPool, Scope scope) {
         this.stringPool = stringPool;
         this.scope = scope;
+    }
+
+    public StackMachine() {
     }
 
     @Override
@@ -178,7 +178,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeStringConstant(OpcodeReader reader, KDataInput in) {
-        stack.push(Str.of(stringPool.get(in.readUnsignedShort())));
+        stack.push(Str.of(stringPool[in.readUnsignedShort()]));
         return CONTINUE;
     }
 
@@ -228,21 +228,20 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeNewFunction(OpcodeReader reader, KDataInput in) {
-        String name = stringPool.get(in.readUnsignedShort());
-
-        PatternOpcodes.READER.read(patternProcessor, in);
-        PatternCase patternCase = (PatternCase) patternProcessor.pStack.pop();
-        patternProcessor.pStack.clear();
+        String name = stringPool[in.readUnsignedShort()];
 
         byteBuffer.reset();
         reader.read(buffer.setOut(byteBufferOutput), in);
+        byte[] patternBytecode = byteBuffer.toByteArray();
+
+        byteBuffer.reset();
+        reader.read(buffer.setOut(byteBufferOutput), in);
+        byte[] function = byteBuffer.toByteArray();
 
         Func func = new CompiledFunc(
                 name.isEmpty() ? null : name,
-                patternCase,
-                new CompiledExecution(
-                        reader, byteBuffer.toByteArray(), stringPool
-                ),
+                new PreparedPatternExecution(patternBytecode, stringPool),
+                new CompiledExecution(function, stringPool),
                 scope.subPool()
         );
 
@@ -254,7 +253,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeNewModule(OpcodeReader reader, KDataInput in) {
-        String name = stringPool.get(in.readUnsignedShort());
+        String name = stringPool[in.readUnsignedShort()];
         Scope moduleScope = scope.subPool();
 
         //save state
@@ -278,22 +277,19 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeNewType(OpcodeReader reader, KDataInput in) {
-        String name = stringPool.get(in.readUnsignedShort());
-
-        patternProcessor.pStack.clear();
-        patternProcessor.pStack.unlock();
-        PatternOpcodes.READER.read(patternProcessor, in);
-        PatternCase patternCase = (PatternCase) patternProcessor.pStack.pop();
-        patternProcessor.pStack.clear();
+        String name = stringPool[in.readUnsignedShort()];
 
         byteBuffer.reset();
         reader.read(buffer.setOut(byteBufferOutput), in);
+        byte[] patternBytecode = byteBuffer.toByteArray();
+
+        byteBuffer.reset();
+        reader.read(buffer.setOut(byteBufferOutput), in);
+        byte[] function = byteBuffer.toByteArray();
 
         CompiledConstructor constructor = new CompiledConstructor(
-                patternCase,
-                new CompiledExecution(
-                        reader, byteBuffer.toByteArray(), stringPool
-                ),
+                new PreparedPatternExecution(patternBytecode, stringPool),
+                new CompiledExecution(function, stringPool),
                 scope.subPool()
         );
 
@@ -311,7 +307,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         Map<String, Obj> map = new LinkedHashMap<>();
 
         for (int i = 0; i < size; i++) {
-            String key = stringPool.get(in.readUnsignedShort());
+            String key = stringPool[in.readUnsignedShort()];
             reader.read(this, in);
             map.put(key, stack.pop());
         }
@@ -323,7 +319,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeDeclare(OpcodeReader reader, KDataInput in) {
-        String name = stringPool.get(in.readUnsignedShort());
+        String name = stringPool[in.readUnsignedShort()];
 
         Obj value = stack.pop();
         scope.declare(name, value);
@@ -335,7 +331,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     @Override
     public ReadResult opcodeAssign(OpcodeReader reader, KDataInput in) {
         boolean parented = in.readBoolean();
-        String name = stringPool.get(in.readUnsignedShort());
+        String name = stringPool[in.readUnsignedShort()];
 
         Obj value = stack.pop();
 
@@ -356,7 +352,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     @Override
     public ReadResult opcodeIdentifier(OpcodeReader reader, KDataInput in) {
         boolean parented = in.readBoolean();
-        String name = stringPool.get(in.readUnsignedShort());
+        String name = stringPool[in.readUnsignedShort()];
 
         if (parented) {
             stack.push(stack.pop().getAttr(name));
@@ -580,7 +576,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeForEach(OpcodeReader reader, KDataInput in) {
-        String variant = stringPool.get(in.readUnsignedShort());
+        String variant = stringPool[in.readUnsignedShort()];
 
         reader.read(this, in);
         checkTimeout();
