@@ -2,7 +2,7 @@ package xyz.avarel.kaiper;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.bytecode.KaiperBytecode;
-import xyz.avarel.kaiper.bytecode.io.ByteOutputStream;
+import xyz.avarel.kaiper.bytecode.io.KDataOutputStream;
 import xyz.avarel.kaiper.compiler.ExprCompiler;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
@@ -26,7 +26,7 @@ public class KaiperCompiler {
 
     public static void compile(Expr expr, OutputStream stream) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        ByteOutputStream out = new ByteOutputStream(buffer); //Underlaying Stream = buffer
+        KDataOutputStream out = new KDataOutputStream(buffer); //Underlaying Stream = buffer
 
         ExprCompiler compiler = new ExprCompiler();
         expr.accept(compiler, out);

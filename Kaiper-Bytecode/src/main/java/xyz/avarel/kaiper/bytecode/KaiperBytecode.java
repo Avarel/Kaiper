@@ -15,9 +15,9 @@
 
 package xyz.avarel.kaiper.bytecode;
 
-import xyz.avarel.kaiper.bytecode.io.ByteInput;
-import xyz.avarel.kaiper.bytecode.io.ByteOutput;
-import xyz.avarel.kaiper.bytecode.opcodes.Opcodes;
+import xyz.avarel.kaiper.bytecode.io.KDataInput;
+import xyz.avarel.kaiper.bytecode.io.KDataOutput;
+import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
 import java.nio.charset.StandardCharsets;
@@ -33,11 +33,11 @@ public class KaiperBytecode {
     public static byte BYTECODE_VERSION_MAJOR = 2, BYTECODE_VERSION_MINOR = 0;
     public static String IDENTIFIER_HEX = "0x" + toHex(IDENTIFIER_BYTES);
 
-    public static void initialize(ByteOutput output) {
+    public static void initialize(KDataOutput output) {
         output.writeBytes(IDENTIFIER_BYTES).writeByte(BYTECODE_VERSION_MAJOR).writeByte(BYTECODE_VERSION_MINOR);
     }
 
-    public static void validateInit(ByteInput input) {
+    public static void validateInit(KDataInput input) {
         byte k = input.readByte(), a = input.readByte(), i = input.readByte();
 
         if (k != 'K' || a != 'a' || i != 'i') {
@@ -47,19 +47,19 @@ public class KaiperBytecode {
         }
     }
 
-    public static void validateVersion(ByteInput input) {
+    public static void validateVersion(KDataInput input) {
         int versionMajor = input.readByte(), versionMinor = input.readByte();
 
         if (versionMajor != BYTECODE_VERSION_MAJOR || versionMinor > BYTECODE_VERSION_MINOR) {
             throw new InvalidBytecodeException(String.format(
-                    "Unsupported Bytecode Version (Library Version: DAB%d.[0-%d]; Bytecode: DAB%d.%d)",
+                    "Unsupported Bytecode Version (Library Version: Kai%d.[0-%d]; Bytecode: Kai%d.%d)",
                     BYTECODE_VERSION_MAJOR, BYTECODE_VERSION_MINOR,
                     versionMajor, versionMinor
             ));
         }
     }
 
-    public static String identifier(ByteInput input) {
+    public static String identifier(KDataInput input) {
         validateInit(input);
 
         int versionMajor = input.readByte(), versionMinor = input.readByte();
@@ -67,7 +67,7 @@ public class KaiperBytecode {
         return IDENTIFIER + versionMajor + "." + versionMinor;
     }
 
-    public static void finalize(ByteOutput output) {
-        output.writeOpcode(Opcodes.END).writeShort(-1);
+    public static void finalize(KDataOutput output) {
+        output.writeOpcode(KOpcodes.END).writeShort(-1);
     }
 }

@@ -6,7 +6,7 @@ import java.io.OutputStream;
 //(Will be) Used on some OpcodeConsumers to null output (DummyWalker replacement)
 public class NullOutputStream extends OutputStream {
     public static final NullOutputStream INSTANCE = new NullOutputStream();
-    public static final ByteOutputStream DATA_INSTANCE = new ByteOutputStream(INSTANCE);
+    public static final KDataOutputStream DATA_INSTANCE = new KDataOutputStream(INSTANCE);
 
     private NullOutputStream() {
 

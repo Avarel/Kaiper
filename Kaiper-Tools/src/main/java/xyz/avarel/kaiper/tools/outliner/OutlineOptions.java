@@ -1,4 +1,4 @@
-package xyz.avarel.kaiper.tools.bytecode;
+package xyz.avarel.kaiper.tools.outliner;
 
 public class OutlineOptions {
     private boolean skipVersionHeader = false;
@@ -9,7 +9,6 @@ public class OutlineOptions {
     private boolean dontExitOnHeaderError = false;
     private boolean inlineStrings = true;
     private boolean use4Spaces = false;
-    private boolean explicitEnd = false;
 
     public OutlineOptions() {
     }
@@ -23,7 +22,6 @@ public class OutlineOptions {
         this.dontExitOnHeaderError = options.dontExitOnHeaderError;
         this.inlineStrings = options.inlineStrings;
         this.use4Spaces = options.use4Spaces;
-        this.explicitEnd = options.explicitEnd;
     }
 
     public boolean skipVersionHeader() {
@@ -95,15 +93,6 @@ public class OutlineOptions {
 
     public OutlineOptions use4Spaces(boolean use4Spaces) {
         this.use4Spaces = use4Spaces;
-        return this;
-    }
-
-    public boolean explicitEnd() {
-        return explicitEnd;
-    }
-
-    public OutlineOptions explicitEnd(boolean explicitEnd) {
-        this.explicitEnd = explicitEnd;
         return this;
     }
 }

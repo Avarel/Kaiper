@@ -3,8 +3,8 @@ package xyz.avarel.kaiper.bytecode;
 import xyz.avarel.kaiper.KaiperCompiler;
 import xyz.avarel.kaiper.KaiperScript;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.tools.bytecode.BytecodeOutliner;
-import xyz.avarel.kaiper.tools.bytecode.OutlineOptions;
+import xyz.avarel.kaiper.tools.outliner.BytecodeOutliner;
+import xyz.avarel.kaiper.tools.outliner.OutlineOptions;
 
 import java.io.IOException;
 

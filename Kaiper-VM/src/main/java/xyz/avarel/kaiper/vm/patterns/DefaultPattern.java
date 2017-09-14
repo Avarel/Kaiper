@@ -2,19 +2,19 @@ package xyz.avarel.kaiper.vm.patterns;
 
 import xyz.avarel.kaiper.vm.compiled.CompiledScopedExecution;
 
-// (delegate) = (defaultExpr)
+// (delegate) = (defaultValue)
 public class DefaultPattern implements Pattern {
     private final NamedPattern delegate;
-    private final CompiledScopedExecution defaultExpr;
+    private final CompiledScopedExecution defaultValue;
 
-    public DefaultPattern(NamedPattern delegate, CompiledScopedExecution defaultExpr) {
+    public DefaultPattern(NamedPattern delegate, CompiledScopedExecution defaultValue) {
         this.delegate = delegate;
-        this.defaultExpr = defaultExpr;
+        this.defaultValue = defaultValue;
     }
 
     @Override
     public String toString() {
-        return delegate + " = " + defaultExpr;
+        return delegate + " = " + defaultValue;
     }
 
     public NamedPattern getDelegate() {
@@ -22,6 +22,6 @@ public class DefaultPattern implements Pattern {
     }
 
     public CompiledScopedExecution getDefault() {
-        return defaultExpr;
+        return defaultValue;
     }
 }

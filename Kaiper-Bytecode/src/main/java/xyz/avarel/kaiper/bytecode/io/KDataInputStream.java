@@ -7,13 +7,13 @@ import java.io.*;
  *
  * @author AdrianTodt
  */
-public class ByteInputStream extends DelegatedInputStream implements ByteInput {
-    private static String readString(ByteInput in) throws IOException {
+public class KDataInputStream extends DelegatedInputStream implements KDataInput {
+    private static String readString(KDataInput in) throws IOException {
         int utflen = in.readUnsignedShort();
         byte[] bytearr = null;
         char[] chararr = null;
-        if (in instanceof ByteInputStream) {
-            ByteInputStream dis = (ByteInputStream) in;
+        if (in instanceof KDataInputStream) {
+            KDataInputStream dis = (KDataInputStream) in;
             if (dis.bytearr.length < utflen) {
                 dis.bytearr = new byte[utflen * 2];
                 dis.chararr = new char[utflen * 2];
@@ -96,7 +96,7 @@ public class ByteInputStream extends DelegatedInputStream implements ByteInput {
     private char chararr[] = new char[80];
     private byte readBuffer[] = new byte[8];
 
-    public ByteInputStream(InputStream in) {
+    public KDataInputStream(InputStream in) {
         super(in);
     }
 
@@ -116,13 +116,13 @@ public class ByteInputStream extends DelegatedInputStream implements ByteInput {
         }
     }
 
-    public final ByteInput readFully(byte b[]) {
+    public final KDataInput readFully(byte b[]) {
         readFully(b, 0, b.length);
 
         return this;
     }
 
-    public final ByteInput readFully(byte b[], int off, int len) {
+    public final KDataInput readFully(byte b[], int off, int len) {
         try {
             if (len < 0)
                 throw new IndexOutOfBoundsException();

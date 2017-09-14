@@ -2,10 +2,10 @@ package xyz.avarel.kaiper.bytecode.io;
 
 import java.io.InputStream;
 
-public interface ByteInput {
-    ByteInput readFully(byte b[]);
+public interface KDataInput {
+    KDataInput readFully(byte b[]);
 
-    ByteInput readFully(byte b[], int off, int len);
+    KDataInput readFully(byte b[], int off, int len);
 
     int skipBytes(int n);
 

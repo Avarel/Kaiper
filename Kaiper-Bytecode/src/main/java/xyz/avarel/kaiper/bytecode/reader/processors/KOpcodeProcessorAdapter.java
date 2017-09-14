@@ -1,17 +1,17 @@
-package xyz.avarel.kaiper.bytecode.reader.consumers;
+package xyz.avarel.kaiper.bytecode.reader.processors;
 
-import xyz.avarel.kaiper.bytecode.io.ByteInput;
+import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
-import xyz.avarel.kaiper.bytecode.opcodes.Opcodes;
-import xyz.avarel.kaiper.bytecode.reader.BaseOpcodeConsumer;
+import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
+import xyz.avarel.kaiper.bytecode.reader.OpcodeProcessor;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
-public abstract class OpcodeConsumerAdapter implements BaseOpcodeConsumer, OpcodeConsumer {
+public abstract class KOpcodeProcessorAdapter implements OpcodeProcessor, KOpcodeProcessor {
     @Override
-    public ReadResult accept(OpcodeReader reader, Opcode opcode, ByteInput in) {
-        if (opcode instanceof Opcodes) {
-            switch ((Opcodes) opcode) {
+    public ReadResult process(OpcodeReader reader, Opcode opcode, KDataInput in) {
+        if (opcode instanceof KOpcodes) {
+            switch ((KOpcodes) opcode) {
                 case END:
                     return opcodeEnd(reader, in);
                 case LINE_NUMBER:
@@ -93,7 +93,7 @@ public abstract class OpcodeConsumerAdapter implements BaseOpcodeConsumer, Opcod
     }
 
     @Override
-    public ReadResult unknownOpcode(OpcodeReader reader, Opcode opcode, ByteInput in) {
+    public ReadResult unknownOpcode(OpcodeReader reader, Opcode opcode, KDataInput in) {
         throw new InvalidBytecodeException(opcode);
     }
 }

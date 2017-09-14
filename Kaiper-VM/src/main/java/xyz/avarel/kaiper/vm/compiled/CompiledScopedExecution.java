@@ -1,17 +1,14 @@
 package xyz.avarel.kaiper.vm.compiled;
 
-import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
 
-import java.util.List;
-
 public class CompiledScopedExecution extends CompiledExecution {
     private final Scope baseScope;
 
-    public CompiledScopedExecution(OpcodeReader reader, byte[] bytecode, int depth, List<String> stringPool, Scope baseScope) {
-        super(reader, bytecode, depth, stringPool);
+    public CompiledScopedExecution(byte[] bytecode, String[] stringPool, Scope baseScope) {
+        super(bytecode, stringPool);
         this.baseScope = baseScope;
     }
 
