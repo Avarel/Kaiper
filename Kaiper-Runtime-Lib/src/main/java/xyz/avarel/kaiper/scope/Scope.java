@@ -15,6 +15,7 @@
 
 package xyz.avarel.kaiper.scope;
 
+import xyz.avarel.kaiper.GenericScope;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Obj;
 
@@ -22,46 +23,27 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Scope {
-    private final Scope[] parents;
-    private final Map<String, Obj> map;
-
+public final class Scope extends GenericScope<Obj> {
     public Scope(Scope... parents) {
         this(new HashMap<>(), parents);
     }
 
     public Scope(Map<String, Obj> map, Scope... parents) {
-        this.map = map;
-        this.parents = parents;
-    }
-
-    public Obj directLookup(String key) {
-        return map.get(key);
-    }
-
-    public Obj get(String key) {
-        if (map.containsKey(key)) {
-            return map.get(key);
-        } else for (Scope parent : parents) {
-            if (parent.contains(key)) {
-                return parent.get(key);
-            }
-        }
-        return null;
+        super(map, parents);
     }
 
     public void declare(String key, Obj value) {
-        if (map.containsKey(key)) {
+        if (getMap().containsKey(key)) {
             throw new ComputeException(key + " already exists in the scope");
         }
-        map.put(key, value);
+        getMap().put(key, value);
     }
 
     public void assign(String key, Obj value) {
-        if (map.containsKey(key)) {
-            map.put(key, value);
+        if (getMap().containsKey(key)) {
+            getMap().put(key, value);
             return;
-        } else for (Scope parent : parents) {
+        } else for (Scope parent : getParents()) {
             if (parent.contains(key)) {
                 parent.assign(key, value);
                 return;
@@ -71,40 +53,24 @@ public class Scope {
     }
 
     public Scope[] getParents() {
-        return parents;
+        return (Scope[]) super.getParents();
     }
 
-    public Map<String, Obj> getMap() {
-        return map;
-    }
-
-    public boolean contains(String key) {
-        if (map.containsKey(key)) return true;
-        for (Scope parent : parents) {
-            if (parent.contains(key)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    @Override
     public Scope copy() {
-        return new Scope(new HashMap<>(map), parents);
+        return new Scope(new HashMap<>(getMap()), getParents());
     }
 
+    @Override
     public Scope subPool() {
         return new Scope(this);
     }
 
-    public Scope combine(Scope otherScope) {
-        Scope[] array = Arrays.copyOf(parents, parents.length + 1);
-        array[array.length - 1] = otherScope;
-
-        return new Scope(new HashMap<>(map), array);
-    }
-
     @Override
-    public String toString() {
-        return map.toString();
+    public Scope combine(GenericScope<Obj> otherScope) {
+        Scope[] array = Arrays.copyOf(getParents(), getParents().length + 1);
+        array[array.length - 1] = (Scope) otherScope;
+
+        return new Scope(new HashMap<>(getMap()), array);
     }
 }

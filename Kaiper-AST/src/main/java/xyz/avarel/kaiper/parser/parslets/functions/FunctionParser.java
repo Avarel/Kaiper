@@ -35,7 +35,7 @@ public class FunctionParser implements PrefixParser {
             throw new SyntaxException("Function creation are disabled");
         }
 
-        if (parser.match(TokenType.LEFT_BRACE)) {
+        if (parser.matchSignificant(TokenType.LEFT_BRACE)) {
             return lambda.parse(parser, parser.getLast());
         } else if (parser.match(TokenType.UNDERSCORE)) {
             return implicit.parse(parser, parser.getLast());

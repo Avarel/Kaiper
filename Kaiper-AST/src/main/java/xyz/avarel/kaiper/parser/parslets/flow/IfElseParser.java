@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets.flow;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
-import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
@@ -34,31 +33,20 @@ public class IfElseParser implements PrefixParser {
         
         Single condition = parser.parseSingle();
 
-        Expr ifBranch;
 
-        if (parser.matchSignificant(TokenType.LEFT_BRACE)) {
-            if (!parser.matchSignificant(TokenType.RIGHT_BRACE)) {
-                ifBranch = parser.parseStatements();
-                parser.eat(TokenType.RIGHT_BRACE);
-            } else {
-                ifBranch = NullNode.VALUE;
-            }
-        } else {
-            ifBranch = parser.parseExpr();
-        }
+        parser.eat(TokenType.LEFT_BRACE);
+        Expr ifBranch = parser.parseStatements();
+        parser.eat(TokenType.RIGHT_BRACE);
 
         Expr elseBranch = null;
 
-        if (parser.matchSignificant(TokenType.ELSE)) {
-            if (parser.matchSignificant(TokenType.LEFT_BRACE)) {
-                if (!parser.matchSignificant(TokenType.RIGHT_BRACE)) {
-                    elseBranch = parser.parseStatements();
-                    parser.eat(TokenType.RIGHT_BRACE);
-                } else {
-                    elseBranch = NullNode.VALUE;
-                }
-            } else {
+        if (parser.match(TokenType.ELSE)) {
+            if (parser.nextIs(TokenType.IF)) {
                 elseBranch = parser.parseExpr();
+            } else {
+                parser.eat(TokenType.LEFT_BRACE);
+                elseBranch = parser.parseStatements();
+                parser.eat(TokenType.RIGHT_BRACE);
             }
         }
 
