@@ -88,7 +88,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     @Override
     public Obj visit(FunctionNode expr, Scope scope) {
         Func func = new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope.subPool());
-        if (expr.getName() != null) scope.declare(expr.getName(), func);
+        if (expr.getName() != null) ScopeUtils.declare(scope, expr.getName(), func);
         return func;
     }
 
@@ -268,7 +268,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         }
 
         Obj value = resultOf(expr.getExpr(), scope);
-        scope.assign(attr, value);
+        ScopeUtils.assign(scope, attr, value);
+
         return value;
     }
 
@@ -277,7 +278,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         String attr = expr.getName();
 
         Obj value = resultOf(expr.getExpr(), scope);
-        scope.declare(attr, value);
+        ScopeUtils.declare(scope, attr, value);
         return Null.VALUE;
     }
 
@@ -290,7 +291,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         resultOf(expr.getExpr(), subScope);
 
         Module module = new CompiledModule(name, subScope);
-        scope.declare(name, module);
+        ScopeUtils.declare(scope, name, module);
 
         return module;
     }
@@ -303,7 +304,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         CompiledType type = new CompiledType(name, constructor);
 
-        scope.declare(name, type);
+        ScopeUtils.declare(scope, name, type);
 
         return type;
     }
@@ -384,7 +385,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
                 if (var instanceof Obj) {
                     Scope copy = scope.subPool();
-                    copy.declare(variant, (Obj) var);
+                    ScopeUtils.declare(copy, variant, (Obj) var);
                     resultOf(loopExpr, copy);
                     iteration++;
                 } else {

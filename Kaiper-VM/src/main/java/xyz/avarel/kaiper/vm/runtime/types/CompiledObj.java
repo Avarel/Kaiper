@@ -38,7 +38,7 @@ public class CompiledObj implements Obj {
 
     @Override
     public Obj getAttr(String name) {
-        Obj obj = scope.directLookup(name);
+        Obj obj = scope.getMap().get(name);
 
         return obj == null ? Obj.super.getAttr(name) : obj;
     }

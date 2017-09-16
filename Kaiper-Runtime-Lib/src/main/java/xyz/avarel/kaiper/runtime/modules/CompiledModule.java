@@ -14,7 +14,7 @@ public class CompiledModule extends Module {
 
     @Override
     public Obj getAttr(String name) {
-        Obj obj = scope.directLookup(name);
+        Obj obj = scope.getMap().get(name);
         return obj == null ? Null.VALUE : obj;
     }
 }

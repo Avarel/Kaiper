@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Scope {
+public class Scope /* extends GenericScope<String, Obj> */ {
     private final Scope[] parents;
     private final Map<String, Obj> map;
 
@@ -35,28 +35,32 @@ public class Scope {
         this.parents = parents;
     }
 
-    public Obj directLookup(String key) {
-        return map.get(key);
-    }
-
     public Obj get(String key) {
-        if (map.containsKey(key)) {
-            return map.get(key);
+        Obj value = map.get(key);
+        if (value != null) {
+            return value;
         } else for (Scope parent : parents) {
-            if (parent.contains(key)) {
-                return parent.get(key);
+            Obj value0 = parent.get(key);
+            if (value0 != null) {
+                return value0;
             }
         }
         return null;
     }
 
+    public Obj put(String key, Obj value) {
+        return map.put(key, value);
+    }
+
+    @Deprecated
     public void declare(String key, Obj value) {
         if (map.containsKey(key)) {
             throw new ComputeException(key + " already exists in the scope");
         }
-        map.put(key, value);
+        put(key, value);
     }
 
+    @Deprecated
     public void assign(String key, Obj value) {
         if (map.containsKey(key)) {
             map.put(key, value);

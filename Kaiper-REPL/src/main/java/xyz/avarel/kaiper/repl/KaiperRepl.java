@@ -33,7 +33,7 @@ public class KaiperRepl {
 
         KaiperEvaluator interpreter = new KaiperEvaluator();
 
-        interpreter.getScope().declare("println", new NativeFunc("println", "obj") {
+        interpreter.getScope().put("println", new NativeFunc("println", "obj") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
                 System.out.println(arguments.get("obj"));

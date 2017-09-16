@@ -19,6 +19,7 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
+import xyz.avarel.kaiper.interpreter.ScopeUtils;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.ParserFlags;
@@ -121,7 +122,7 @@ public class KaiperScript {
      * @return  The current {@link KaiperScript} builder instance. Useful for chaining.
      */
     public KaiperScript add(String name, Obj object) {
-        scope.declare(name, object);
+        ScopeUtils.declare(scope, name, object);
         return this;
     }
 
@@ -137,7 +138,7 @@ public class KaiperScript {
      * @return  The current {@link KaiperScript} builder instance. Useful for chaining.
      */
     public KaiperScript add(String name, KaiperScript script) {
-        scope.declare(name, new KaiperScript(script.parser, script.scope.combine(scope)).compute());
+        ScopeUtils.declare(scope, name, new KaiperScript(script.parser, script.scope.combine(scope)).compute());
         return this;
     }
 

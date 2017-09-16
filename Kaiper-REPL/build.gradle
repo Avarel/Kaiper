@@ -13,6 +13,8 @@
  * under the License.
  */
 
+apply plugin: 'com.github.johnrengelman.shadow'
+
 jar {
     baseName = project.name
     manifest {
