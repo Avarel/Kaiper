@@ -5,17 +5,17 @@ import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 
 public class ScopeUtils {
-    public static void assign(Scope target, String key, Obj value) {
+    //
+    public static boolean assign(Scope target, String key, Obj value) {
         if (target.getMap().containsKey(key)) {
             target.put(key, value);
-            return;
+            return true;
         } else for (Scope parent : target.getParents()) {
-            if (parent.contains(key)) {
-                assign(parent, key, value);
-                return;
+            if (assign(parent, key, value)) {
+                return true;
             }
         }
-        throw new ComputeException(key + " is not defined, it must be declared first");
+        return false;
     }
 
     public static void declare(Scope target, String key, Obj value) {

@@ -15,7 +15,7 @@
 
 package xyz.avarel.kaiper.runtime.types;
 
-import xyz.avarel.kaiper.interpreter.ScopeUtils;
+import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
@@ -36,7 +36,7 @@ public class CompiledObj implements Obj {
 
     @Override
     public Obj setAttr(String name, Obj value) {
-        ScopeUtils.declare(scope, name, value);
+        ExprInterpreter.declare(scope, name, value);
         return Null.VALUE;
     }
 

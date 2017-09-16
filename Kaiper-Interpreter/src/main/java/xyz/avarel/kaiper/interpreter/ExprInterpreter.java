@@ -88,7 +88,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     @Override
     public Obj visit(FunctionNode expr, Scope scope) {
         Func func = new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope.subPool());
-        if (expr.getName() != null) ScopeUtils.declare(scope, expr.getName(), func);
+        if (expr.getName() != null) declare(scope, expr.getName(), func);
         return func;
     }
 
@@ -268,7 +268,9 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         }
 
         Obj value = resultOf(expr.getExpr(), scope);
-        ScopeUtils.assign(scope, attr, value);
+        if(!assign(scope, attr, value)) {
+            throw new ComputeException(attr + " is not defined, it must be declared first");
+        }
 
         return value;
     }
@@ -278,7 +280,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         String attr = expr.getName();
 
         Obj value = resultOf(expr.getExpr(), scope);
-        ScopeUtils.declare(scope, attr, value);
+        declare(scope, attr, value);
         return Null.VALUE;
     }
 
@@ -291,7 +293,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         resultOf(expr.getExpr(), subScope);
 
         Module module = new CompiledModule(name, subScope);
-        ScopeUtils.declare(scope, name, module);
+        declare(scope, name, module);
 
         return module;
     }
@@ -304,7 +306,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         CompiledType type = new CompiledType(name, constructor);
 
-        ScopeUtils.declare(scope, name, type);
+        declare(scope, name, type);
 
         return type;
     }
@@ -385,7 +387,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
                 if (var instanceof Obj) {
                     Scope copy = scope.subPool();
-                    ScopeUtils.declare(copy, variant, (Obj) var);
+                    declare(copy, variant, (Obj) var);
                     resultOf(loopExpr, copy);
                     iteration++;
                 } else {
@@ -505,6 +507,25 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         }
     }
 
+    public static boolean assign(Scope target, String key, Obj value) {
+        if (target.getMap().containsKey(key)) {
+            target.put(key, value);
+            return true;
+        } else for (Scope parent : target.getParents()) {
+            if (assign(parent, key, value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void declare(Scope target, String key, Obj value) {
+        if (target.getMap().containsKey(key)) {
+            throw new ComputeException(key + " already exists in the scope");
+        }
+        target.put(key, value);
+    }
+    
     private void checkTimeout() {
         GlobalVisitorSettings.checkTimeout(timeout);
     }

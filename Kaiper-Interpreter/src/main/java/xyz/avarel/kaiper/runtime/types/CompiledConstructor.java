@@ -6,7 +6,6 @@ import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.interpreter.ScopeUtils;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -46,7 +45,7 @@ public class CompiledConstructor extends Constructor {
 
         CompiledObj instance = new CompiledObj((CompiledType) targetType, constructorScope);
 
-        ScopeUtils.declare(constructorScope, "this", instance);
+        ExprInterpreter.declare(constructorScope, "this", instance);
 
         expr.accept(visitor, constructorScope);
 
