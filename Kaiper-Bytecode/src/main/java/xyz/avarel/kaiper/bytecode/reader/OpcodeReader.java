@@ -1,16 +1,12 @@
 package xyz.avarel.kaiper.bytecode.reader;
 
-import xyz.avarel.kaiper.bytecode.io.ByteInput;
+import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
-import xyz.avarel.kaiper.bytecode.opcodes.Opcodes;
-import xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes;
 import xyz.avarel.kaiper.bytecode.opcodes.ReservedOpcode;
-import xyz.avarel.kaiper.bytecode.reader.consumers.ReadResult;
+import xyz.avarel.kaiper.bytecode.reader.processors.ReadResult;
 import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 
 public class OpcodeReader {
-    public static final OpcodeReader DEFAULT_OPCODE_READER = new OpcodeReader(Opcodes.values());
-    public static final OpcodeReader DEFAULT_PATTERN_OPCODE_READER = new OpcodeReader(PatternOpcodes.values());
 
     protected final Opcode[] opcodeList;
     protected final boolean foreignOpcodes;
@@ -24,7 +20,7 @@ public class OpcodeReader {
         this.foreignOpcodes = foreignOpcodes;
     }
 
-    protected Opcode next(ByteInput in) {
+    public Opcode next(KDataInput in) {
         byte id = in.readByte();
         if (id < opcodeList.length) return opcodeList[id];
 
@@ -33,11 +29,14 @@ public class OpcodeReader {
         throw new InvalidBytecodeException(opcode);
     }
 
-    public ReadResult read(BaseOpcodeConsumer consumer, ByteInput in) {
+    public ReadResult read(OpcodeProcessor processor, KDataInput in) {
         ReadResult r;
-
         //noinspection StatementWithEmptyBody
-        while ((r = consumer.accept(this, next(in), in)) == ReadResult.CONTINUE) ;
+        while ((r = readNext(processor, in)) == ReadResult.CONTINUE) ;
         return r;
+    }
+
+    public ReadResult readNext(OpcodeProcessor processor, KDataInput in) {
+        return processor.process(this, next(in), in);
     }
 }

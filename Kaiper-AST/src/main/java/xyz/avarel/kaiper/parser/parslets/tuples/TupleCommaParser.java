@@ -45,10 +45,10 @@ public class TupleCommaParser extends BinaryParser {
             TupleExpr tuple = (TupleExpr) left;
 
             if (tuple.size() != 1) {
-                throw new SyntaxException("Internal error", tuple.getPosition());
+                unnamedElements.add(tuple);
+            } else {
+                namedElements.putAll(tuple.getNamedElements());
             }
-
-            namedElements.putAll(tuple.getNamedElements());
 
         } else { // (literal), __
             unnamedElements.add(left);

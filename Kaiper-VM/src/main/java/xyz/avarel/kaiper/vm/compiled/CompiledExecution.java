@@ -1,92 +1,55 @@
 package xyz.avarel.kaiper.vm.compiled;
 
-import xyz.avarel.kaiper.bytecode.io.ByteInputStream;
-import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
+import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
+import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
+import xyz.avarel.kaiper.vm.states.StatelessStackMachines;
+import xyz.avarel.kaiper.vm.states.VMState;
 
 import java.io.ByteArrayInputStream;
-import java.util.List;
 
 public class CompiledExecution {
     private final byte[] bytecode;
-    private final int depth;
-    private final List<String> stringPool;
-    private final OpcodeReader reader;
-    private final Object lock_defaultExecutor = new Object();
-    private StackMachine defaultExecutor;
+    private final String[] stringPool;
 
-    public CompiledExecution(OpcodeReader reader, byte[] bytecode, int depth, List<String> stringPool) {
+    public CompiledExecution(byte[] bytecode, String[] stringPool) {
         this.bytecode = bytecode;
-        this.depth = depth;
         this.stringPool = stringPool;
-        this.reader = reader;
+    }
+
+    public String[] getStringPool() {
+        return stringPool;
     }
 
     public Obj execute(Scope scope) {
-        //Lazy and recycling executors
-        StackMachine executor;
-        synchronized (lock_defaultExecutor) {
-            if (this.defaultExecutor == null) {
-                executor = new StackMachine(scope, stringPool);
-            } else {
-                executor = this.defaultExecutor;
-                this.defaultExecutor = null;
-            }
-        }
+        StackMachine machine = StatelessStackMachines.borrow();
+        machine.stringPool = stringPool;
+        machine.scope = scope;
 
+        KOpcodes.READER.read(machine, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+        Obj result = machine.stack.pop();
 
-        //reset
-        executor.scope = scope;
-        executor.stack.unlock();
-        executor.stack.clear();
-        executor.depth = depth;
-        executor.lineNumber = -1;
-        executor.resetTimeout();
-
-        reader.read(executor, new ByteInputStream(new ByteArrayInputStream(bytecode)));
-        Obj result = executor.stack.pop();
-
-        //remove any possible references
-        executor.scope = null;
-        executor.stack.unlock();
-        executor.stack.clear();
-
-
-        synchronized (lock_defaultExecutor) {
-            this.defaultExecutor = executor;
-        }
+        StatelessStackMachines.release(machine);
 
         return result;
     }
 
-    public Obj execute(StackMachine executor, Scope scope) {
-        if (executor == null) {
+    public Obj execute(StackMachine machine, Scope scope) {
+        if (machine == null) {
             return execute(scope);
         }
 
-        //save state
-        Scope lastScope = executor.scope;
-        int lastLock = executor.stack.lock();
-        int lastDepth = executor.depth;
-        long lastLn = executor.lineNumber;
-
         //load temp state
-        executor.scope = scope;
-        executor.depth = this.depth;
-        executor.stack.setLock(lastLock);
-        executor.lineNumber = -1;
+        VMState state = VMState.save(machine);
+        machine.stringPool = stringPool;
+        machine.scope = scope;
 
-        reader.read(executor, new ByteInputStream(new ByteArrayInputStream(bytecode)));
-        Obj result = executor.stack.pop();
+        KOpcodes.READER.read(machine, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+        Obj result = machine.stack.pop();
 
-        //load state
-        executor.depth = lastDepth;
-        executor.scope = lastScope;
-        executor.lineNumber = lastLn;
-        executor.stack.popToLock();
-        executor.stack.setLock(lastLock);
+        state.load(machine);
 
         return result;
     }

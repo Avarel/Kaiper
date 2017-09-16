@@ -9,6 +9,7 @@ import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
 import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
+import xyz.avarel.kaiper.vm.compiled.PreparedPatternExecution;
 import xyz.avarel.kaiper.vm.patterns.PatternCase;
 
 import java.io.IOException;
@@ -16,13 +17,13 @@ import java.io.UncheckedIOException;
 import java.util.List;
 
 public class CompiledFunc extends Func {
-    private final PatternCase patternCase;
+    private final PreparedPatternExecution patternExecutor;
     private final CompiledExecution executor;
     private final Scope scope;
 
-    public CompiledFunc(String name, PatternCase patternCase, CompiledExecution executor, Scope scope) {
+    public CompiledFunc(String name, PreparedPatternExecution patternExecutor, CompiledExecution executor, Scope scope) {
         super(name);
-        this.patternCase = patternCase;
+        this.patternExecutor = patternExecutor;
         this.executor = executor;
         this.scope = scope;
     }

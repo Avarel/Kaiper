@@ -34,7 +34,7 @@ public class ForEachParser implements PrefixParser {
             throw new SyntaxException("Loops are disabled");
         }
 
-        parser.eat(TokenType.LEFT_PAREN);
+        boolean match = parser.match(TokenType.LEFT_PAREN);
 
         String variant = parser.eat(TokenType.IDENTIFIER).getString();
 
@@ -42,7 +42,7 @@ public class ForEachParser implements PrefixParser {
 
         Single iterable = parser.parseSingle();
 
-        parser.eat(TokenType.RIGHT_PAREN);
+        if (match) parser.eat(TokenType.RIGHT_PAREN);
 
         Expr expr;
 

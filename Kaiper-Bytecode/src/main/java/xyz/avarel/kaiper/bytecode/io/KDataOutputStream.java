@@ -13,8 +13,8 @@ import java.io.UncheckedIOException;
  *
  * @author AdrianTodt
  */
-public class ByteOutputStream extends DelegatedOutputStream implements ByteOutput {
-    private static void writeString(String str, ByteOutput out) throws IOException {
+public class KDataOutputStream extends DelegatedOutputStream implements KDataOutput {
+    private static void writeString(String str, KDataOutput out) throws IOException {
         int strlen = str.length();
         int utflen = 0;
         int c, count = 0;
@@ -36,8 +36,8 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
                     "encoded string too long: " + utflen + " bytes");
 
         byte[] bytearr = null;
-        if (out instanceof ByteOutputStream) {
-            ByteOutputStream dos = (ByteOutputStream) out;
+        if (out instanceof KDataOutputStream) {
+            KDataOutputStream dos = (KDataOutputStream) out;
             if (dos.bytearr == null || (dos.bytearr.length < (utflen + 2)))
                 dos.bytearr = new byte[(utflen * 2) + 2];
             bytearr = dos.bytearr;
@@ -76,7 +76,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
     private byte writeBuffer[] = new byte[8];
 
 
-    public ByteOutputStream(OutputStream out) {
+    public KDataOutputStream(OutputStream out) {
         super(out);
     }
 
@@ -96,7 +96,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         }
     }
 
-    public final ByteOutputStream writeByte(int v) {
+    public final KDataOutputStream writeByte(int v) {
         try {
             out.write(v);
         } catch (IOException e) {
@@ -107,7 +107,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
     }
 
     @Override
-    public ByteOutput writeBytes(byte[] b) {
+    public KDataOutput writeBytes(byte[] b) {
         try {
             out.write(b);
         } catch (IOException e) {
@@ -117,7 +117,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         return this;
     }
 
-    public synchronized ByteOutputStream writeBytes(byte[] b, int off, int len) {
+    public synchronized KDataOutputStream writeBytes(byte[] b, int off, int len) {
         try {
             out.write(b, off, len);
         } catch (IOException e) {
@@ -127,7 +127,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         return this;
     }
 
-    public final ByteOutputStream writeBoolean(boolean v) {
+    public final KDataOutputStream writeBoolean(boolean v) {
         try {
             out.write(v ? 1 : 0);
         } catch (IOException e) {
@@ -137,7 +137,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         return this;
     }
 
-    public final ByteOutputStream writeShort(int v) {
+    public final KDataOutputStream writeShort(int v) {
         try {
             out.write((v >>> 8) & 0xFF);
             out.write((v) & 0xFF);
@@ -148,7 +148,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         return this;
     }
 
-    public final ByteOutputStream writeChar(int v) {
+    public final KDataOutputStream writeChar(int v) {
         try {
             out.write((v >>> 8) & 0xFF);
             out.write((v) & 0xFF);
@@ -159,7 +159,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         return this;
     }
 
-    public final ByteOutputStream writeInt(int v) {
+    public final KDataOutputStream writeInt(int v) {
         try {
             out.write((v >>> 24) & 0xFF);
             out.write((v >>> 16) & 0xFF);
@@ -172,7 +172,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         return this;
     }
 
-    public final ByteOutputStream writeLong(long v) {
+    public final KDataOutputStream writeLong(long v) {
         writeBuffer[0] = (byte) (v >>> 56);
         writeBuffer[1] = (byte) (v >>> 48);
         writeBuffer[2] = (byte) (v >>> 40);
@@ -191,15 +191,15 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         return this;
     }
 
-    public final ByteOutputStream writeFloat(float v) {
+    public final KDataOutputStream writeFloat(float v) {
         return writeInt(Float.floatToIntBits(v));
     }
 
-    public final ByteOutputStream writeDouble(double v) {
+    public final KDataOutputStream writeDouble(double v) {
         return writeLong(Double.doubleToLongBits(v));
     }
 
-    public final ByteOutputStream writeBytes(String s) {
+    public final KDataOutputStream writeBytes(String s) {
         try {
             int len = s.length();
             for (int i = 0; i < len; i++) {
@@ -212,7 +212,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         return this;
     }
 
-    public final ByteOutputStream writeChars(String s) {
+    public final KDataOutputStream writeChars(String s) {
         try {
             int len = s.length();
             for (int i = 0; i < len; i++) {
@@ -227,7 +227,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
         return this;
     }
 
-    public final ByteOutputStream writeString(String str) {
+    public final KDataOutputStream writeString(String str) {
         try {
             writeString(str, this);
         } catch (IOException e) {
@@ -238,7 +238,7 @@ public class ByteOutputStream extends DelegatedOutputStream implements ByteOutpu
     }
 
     @Override
-    public ByteOutput writeOpcode(Opcode opcode) {
+    public KDataOutput writeOpcode(Opcode opcode) {
         return writeByte(opcode.code());
     }
 

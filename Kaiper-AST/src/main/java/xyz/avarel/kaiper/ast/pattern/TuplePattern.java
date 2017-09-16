@@ -23,6 +23,6 @@ public class TuplePattern extends NamedPattern {
 
     @Override
     public String toString() {
-        return getName() + ": " + pattern;
+        return getName() + ": (" + pattern + ")";
     }
 }

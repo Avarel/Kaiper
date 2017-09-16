@@ -11,26 +11,25 @@ import xyz.avarel.kaiper.ast.operations.UnaryOperation;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.*;
-import xyz.avarel.kaiper.bytecode.io.ByteOutput;
+import xyz.avarel.kaiper.bytecode.io.KDataOutput;
 import xyz.avarel.kaiper.exceptions.CompilerException;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 
 import java.util.*;
 
-import static xyz.avarel.kaiper.bytecode.opcodes.Opcodes.*;
+import static xyz.avarel.kaiper.bytecode.opcodes.KOpcodes.*;
 import static xyz.avarel.kaiper.operations.BinaryOperatorType.AND;
 import static xyz.avarel.kaiper.operations.BinaryOperatorType.OR;
 
-public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
+public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
     private final List<String> stringPool = new LinkedList<>();
 
-    int depth = 0;
     private long lastLineNumber;
 
     @Override
-    public Void visit(Statements statements, ByteOutput out) {
+    public Void visit(Statements statements, KDataOutput out) {
         Iterator<Expr> iterator = statements.getExprs().iterator();
         if (!iterator.hasNext()) return null;
 
@@ -43,7 +42,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(FunctionNode expr, ByteOutput out) {
+    public Void visit(FunctionNode expr, KDataOutput out) {
         String tmp = expr.getName();
         int name = stringConst(tmp == null ? "" : tmp);
 
@@ -51,22 +50,17 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(NEW_FUNCTION).writeShort(name);
 
-        int id = depth;
-        depth++;
-
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         visit(out, expr.getExpr());
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
 
     @Override
-    public Void visit(Identifier expr, ByteOutput out) {
+    public Void visit(Identifier expr, KDataOutput out) {
         int name = stringConst(expr.getName());
 
         lineNumber(expr, out);
@@ -83,7 +77,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(Invocation expr, ByteOutput out) {
+    public Void visit(Invocation expr, KDataOutput out) {
         visit(out, expr.getLeft(), expr.getArgument());
 
         lineNumber(expr, out);
@@ -94,7 +88,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(BinaryOperation expr, ByteOutput out) {
+    public Void visit(BinaryOperation expr, KDataOutput out) {
         BinaryOperatorType op = expr.getOperator();
         if (op == AND || op == OR) {
             visit(out, expr.getLeft());
@@ -103,13 +97,8 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
             out.writeOpcode(BINARY_OPERATION).writeByte(op.ordinal());
 
-            int id = depth;
-            depth++;
-
             visit(out, expr.getRight());
-            out.writeOpcode(END).writeShort(id);
-
-            depth--;
+            out.writeOpcode(END);
         }
 
         visit(out, expr.getLeft(), expr.getRight());
@@ -122,7 +111,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(UnaryOperation expr, ByteOutput out) {
+    public Void visit(UnaryOperation expr, KDataOutput out) {
         visit(out, expr.getTarget());
 
         lineNumber(expr, out);
@@ -133,7 +122,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(RangeNode expr, ByteOutput out) {
+    public Void visit(RangeNode expr, KDataOutput out) {
         visit(out, expr.getLeft(), expr.getRight());
 
         lineNumber(expr, out);
@@ -144,7 +133,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(ArrayNode expr, ByteOutput out) {
+    public Void visit(ArrayNode expr, KDataOutput out) {
         List<Single> items = expr.getItems();
 
         if (items.isEmpty()) {
@@ -163,7 +152,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(SliceOperation expr, ByteOutput out) {
+    public Void visit(SliceOperation expr, KDataOutput out) {
         visit(out, expr.getLeft(), expr.getStart(), expr.getEnd(), expr.getStep());
 
         lineNumber(expr, out);
@@ -174,7 +163,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(AssignmentExpr expr, ByteOutput out) {
+    public Void visit(AssignmentExpr expr, KDataOutput out) {
         int name = stringConst(expr.getName());
         boolean parented = expr.getParent() != null;
 
@@ -189,7 +178,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(GetOperation expr, ByteOutput out) {
+    public Void visit(GetOperation expr, KDataOutput out) {
         visit(out, expr.getLeft(), expr.getKey());
 
         lineNumber(expr, out);
@@ -200,7 +189,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(SetOperation expr, ByteOutput out) {
+    public Void visit(SetOperation expr, KDataOutput out) {
         visit(out, expr.getLeft(), expr.getKey(), expr.getExpr());
 
         lineNumber(expr, out);
@@ -211,7 +200,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(ReturnExpr expr, ByteOutput out) {
+    public Void visit(ReturnExpr expr, KDataOutput out) {
         visit(out, expr.getExpr());
 
         lineNumber(expr, out);
@@ -220,56 +209,45 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
         return null;
     }
 
-    public Void visit(ConditionalExpr expr, ByteOutput out) {
+    public Void visit(ConditionalExpr expr, KDataOutput out) {
         lineNumber(expr, out);
 
         boolean hasElseBranch = expr.getElseBranch() != null;
 
         out.writeOpcode(CONDITIONAL).writeBoolean(hasElseBranch);
 
-        int id = depth;
-        depth++;
-
         visit(out, expr.getCondition());
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         visit(out, expr.getIfBranch());
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         if (hasElseBranch) {
             visit(out, expr.getElseBranch());
-            out.writeOpcode(END).writeShort(id);
+            out.writeOpcode(END);
         }
-
-        depth--;
 
         return null;
     }
 
-    public Void visit(ForEachExpr expr, ByteOutput out) {
+    public Void visit(ForEachExpr expr, KDataOutput out) {
         int variant = stringConst(expr.getVariant());
 
         lineNumber(expr, out);
 
         out.writeOpcode(FOR_EACH).writeShort(variant);
 
-        int id = depth;
-        depth++;
-
         visit(out, expr.getIterable());
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         visit(out, expr.getAction());
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
-
+        out.writeOpcode(END);
 
         return null;
     }
 
     @Override
-    public Void visit(DictionaryNode expr, ByteOutput out) {
+    public Void visit(DictionaryNode expr, KDataOutput out) {
         lineNumber(expr, out);
 
         out.writeOpcode(NEW_DICTIONARY);
@@ -290,7 +268,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(NullNode expr, ByteOutput out) {
+    public Void visit(NullNode expr, KDataOutput out) {
         lineNumber(expr, out);
 
         out.writeOpcode(U_CONST);
@@ -299,7 +277,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(IntNode expr, ByteOutput out) {
+    public Void visit(IntNode expr, KDataOutput out) {
         lineNumber(expr, out);
 
         out.writeOpcode(I_CONST).writeInt(expr.getValue());
@@ -308,7 +286,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(DecimalNode expr, ByteOutput out) {
+    public Void visit(DecimalNode expr, KDataOutput out) {
         lineNumber(expr, out);
 
         out.writeOpcode(D_CONST).writeDouble(expr.getValue());
@@ -317,7 +295,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(BooleanNode expr, ByteOutput out) {
+    public Void visit(BooleanNode expr, KDataOutput out) {
         lineNumber(expr, out);
 
         out.writeOpcode(expr == BooleanNode.TRUE ? B_CONST_TRUE : B_CONST_FALSE);
@@ -326,7 +304,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(StringNode expr, ByteOutput out) {
+    public Void visit(StringNode expr, KDataOutput out) {
         lineNumber(expr, out);
 
         out.writeOpcode(S_CONST).writeShort(stringConst(expr.getValue()));
@@ -335,7 +313,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(DeclarationExpr expr, ByteOutput out) {
+    public Void visit(DeclarationExpr expr, KDataOutput out) {
         visit(out, expr.getExpr());
 
         lineNumber(expr, out);
@@ -348,69 +326,53 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
     }
 
     @Override
-    public Void visit(ModuleNode expr, ByteOutput out) {
+    public Void visit(ModuleNode expr, KDataOutput out) {
         lineNumber(expr, out);
 
         int name = stringConst(expr.getName());
 
         out.writeOpcode(NEW_MODULE).writeShort(name);
 
-        int id = depth;
-        depth++;
-
         visit(out, expr.getExpr());
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
 
     @Override
-    public Void visit(TypeNode expr, ByteOutput out) {
+    public Void visit(TypeNode expr, KDataOutput out) {
         lineNumber(expr, out);
 
         int name = stringConst(expr.getName());
 
         out.writeOpcode(NEW_TYPE).writeShort(name);
 
-        int id = depth;
-        depth++;
-
-
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         visit(out, expr.getExpr());
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
 
     @Override
-    public Void visit(WhileExpr expr, ByteOutput out) {
+    public Void visit(WhileExpr expr, KDataOutput out) {
         lineNumber(expr, out);
 
         out.writeOpcode(WHILE);
 
-        int id = depth;
-        depth++;
-
         visit(out, expr.getCondition());
-        out.writeOpcode(END).writeShort(id);
+        out.writeOpcode(END);
 
         visit(out, expr.getAction());
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
 
     @Override
-    public Void visit(TupleExpr expr, ByteOutput out) {
+    public Void visit(TupleExpr expr, KDataOutput out) {
         Map<String, Single> map = new LinkedHashMap<>();
 
         List<Single> unnamedElements = expr.getUnnamedElements();
@@ -431,55 +393,40 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
 
         out.writeOpcode(NEW_TUPLE).writeInt(map.size());
 
-        int id = depth;
-        depth++;
-
         for (Map.Entry<String, Single> entry : map.entrySet()) {
             out.writeShort(stringConst(entry.getKey()));
 
             visit(out, entry.getValue());
-            out.writeOpcode(END).writeShort(id);
+            out.writeOpcode(END);
         }
-
-        depth--;
 
         return null;
     }
 
     @Override
-    public Void visit(BindDeclarationExpr expr, ByteOutput out) {
+    public Void visit(BindDeclarationExpr expr, KDataOutput out) {
         visit(out, expr.getExpr());
 
         lineNumber(expr, out);
 
         out.writeOpcode(BIND_DECLARE);
 
-        int id = depth;
-        depth++;
-
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
 
     @Override
-    public Void visit(BindAssignmentExpr expr, ByteOutput out) {
+    public Void visit(BindAssignmentExpr expr, KDataOutput out) {
         visit(out, expr.getExpr());
 
         lineNumber(expr, out);
 
         out.writeOpcode(BIND_ASSIGN);
 
-        int id = depth;
-        depth++;
-
         new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END).writeShort(id);
-
-        depth--;
+        out.writeOpcode(END);
 
         return null;
     }
@@ -493,7 +440,7 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
         return i;
     }
 
-    private void lineNumber(Position position, ByteOutput out) {
+    private void lineNumber(Position position, KDataOutput out) {
         long lineNumber = position.getLineNumber();
 
         if (lineNumber == lastLineNumber) return;
@@ -503,24 +450,24 @@ public class ExprCompiler implements ExprVisitor<Void, ByteOutput> {
         out.writeOpcode(LINE_NUMBER).writeLong(lineNumber);
     }
 
-    private void lineNumber(Expr expr, ByteOutput out) {
+    private void lineNumber(Expr expr, KDataOutput out) {
         lineNumber(expr.getPosition(), out);
     }
 
-    private void visit(ByteOutput out, Expr... exprs) {
+    private void visit(KDataOutput out, Expr... exprs) {
         for (Expr expr : exprs) visit(out, expr);
     }
 
-    private void visit(ByteOutput out, Iterable<? extends Expr> exprs) {
+    private void visit(KDataOutput out, Iterable<? extends Expr> exprs) {
         for (Expr expr : exprs) visit(out, expr);
     }
 
-    private void visit(ByteOutput out, Expr expr) {
+    private void visit(KDataOutput out, Expr expr) {
         lineNumber(expr.getPosition(), out);
         expr.accept(this, out);
     }
 
-    public void writeStringPool(ByteOutput out) {
+    public void writeStringPool(KDataOutput out) {
         out.writeShort(stringPool.size());
         for (String s : stringPool) out.writeString(s);
     }

@@ -15,6 +15,8 @@
 
 package xyz.avarel.kaiper.bytecode.opcodes;
 
+import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
+
 /**
  * The Bytecode Instructions of the Kaiper Patterns.
  *
@@ -44,6 +46,8 @@ public enum PatternOpcodes implements Opcode {
 
     VALUE,
     DEFAULT;
+
+    public static final OpcodeReader READER = new OpcodeReader(values());
 
     public int code() {
         return ordinal();
