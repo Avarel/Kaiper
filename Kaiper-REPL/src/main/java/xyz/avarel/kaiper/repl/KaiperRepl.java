@@ -64,10 +64,8 @@ public class KaiperRepl {
                 break;
             }
 
-            Obj result;
-
             try {
-                result = interpreter.eval(input);
+                Obj result = interpreter.eval(input);
 
                 System.out.println("    \u2514\u2500\u2500 " + result + " : " + result.getType());
             } catch (KaiperException e) {

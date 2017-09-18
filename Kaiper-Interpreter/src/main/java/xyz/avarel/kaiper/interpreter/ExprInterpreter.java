@@ -254,7 +254,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         }
 
         Obj value = resultOf(expr.getExpr(), scope);
-        if(!assign(scope, attr, value)) {
+        if(!ScopeUtils.assign(scope, attr, value)) {
             throw new ComputeException(attr + " is not defined, it must be declared first");
         }
 
@@ -491,18 +491,6 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         } catch (ComputeException e) {
             throw new InterpreterException(e.getMessage(), expr.getPosition());
         }
-    }
-
-    public static boolean assign(Scope target, String key, Obj value) {
-        if (target.getMap().containsKey(key)) {
-            target.put(key, value);
-            return true;
-        } else for (Scope parent : target.getParents()) {
-            if (assign(parent, key, value)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static void declare(Scope target, String key, Obj value) {

@@ -19,6 +19,7 @@ package xyz.avarel.kaiper.ast.pattern;
 import xyz.avarel.kaiper.Pair;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.interpreter.ScopeUtils;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
@@ -61,7 +62,7 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
         if (results == null) return false;
 
         for (Map.Entry<String, Obj> result : results.entrySet()) {
-            if(!ExprInterpreter.assign(scope, result.getKey(), result.getValue())) {
+            if(!ScopeUtils.assign(scope, result.getKey(), result.getValue())) {
                 throw new ComputeException(result.getKey() + " is not defined, it must be declared first");
             }
         }
