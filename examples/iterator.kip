@@ -1,0 +1,35 @@
+
+// Create a set of functions from an array representing an iterator
+
+def iterator(array) {
+    let index = 0
+    let max = array.length
+
+    return next: def() {
+        let returns = array[index]
+        if(max-1 == index) {
+            index = 0
+        } else {
+            index = index + 1
+        }
+        returns
+    },
+    hasNext: def() { index != max-1 },
+    index: index,
+    length: max
+}
+
+let iter = ["a","b","c","d"] |> iterator
+
+// We'll iterate 6 times
+for (i in 0..(iter.length+2)) {
+    // Get if the iterator is going to loop after "next()" is called
+    let looping = !iter.hasNext()
+
+    println iter.next()
+
+    // If it's going to loop, inform it's looping
+    if(looping) {
+        println "Looping!"
+    }
+}
