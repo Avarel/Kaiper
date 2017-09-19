@@ -29,7 +29,7 @@ public class GroupParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
         if (parser.match(TokenType.RIGHT_PAREN)) {
-            return new TupleExpr(token.getPosition(), Collections.emptyList(), Collections.emptyMap());
+            return new TupleExpr(token.getPosition(), Collections.emptyMap());
         }
 
         Expr expr = parser.parseExpr();

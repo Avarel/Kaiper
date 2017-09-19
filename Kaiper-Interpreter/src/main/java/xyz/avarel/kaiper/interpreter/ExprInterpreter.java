@@ -433,17 +433,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     public Obj visit(TupleExpr expr, Scope scope) {
         Map<String, Obj> map = new LinkedHashMap<>();
 
-        List<Single> unnamedElements = expr.getUnnamedElements();
-        for (int i = 0; i < unnamedElements.size(); i++) {
-            Single element = unnamedElements.get(i);
-            map.put("_" + i, resultOf(element, scope));
-        }
-
-        for (Map.Entry<String, Single> entry : expr.getNamedElements().entrySet()) {
-            if (map.containsKey(entry.getKey())) {
-                throw new InterpreterException("Duplicate field name " + entry.getKey(), entry.getValue().getPosition());
-            }
-
+        for (Map.Entry<String, Single> entry : expr.getElements().entrySet()) {
+            // confirmed by the compiler
             map.put(entry.getKey(), resultOf(entry.getValue(), scope));
         }
 

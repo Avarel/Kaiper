@@ -42,7 +42,7 @@ public class Precedence {
     /* a..b */
     public static final int RANGE_TO = 9;
 
-    /* is */
+    /* is | |> */
     public static final int INFIX = 8;
 
     /* a > b | a < b | a >= b | a <= b */

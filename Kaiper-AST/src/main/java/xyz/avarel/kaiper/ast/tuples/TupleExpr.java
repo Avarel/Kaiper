@@ -25,33 +25,19 @@ import java.util.List;
 import java.util.Map;
 
 public class TupleExpr extends Single {
-    private final List<Single> unnamedElements;
-    private final Map<String, Single> namedElements;
+    private final Map<String, Single> elements;
 
-    public TupleExpr(Position position, Single element) {
-        this(position, Collections.singletonList(element), Collections.emptyMap());
-    }
-
-    public TupleExpr(Position position, String name, Single element) {
-        this(position, Collections.emptyList(), Collections.singletonMap(name, element));
-    }
-
-    public TupleExpr(Position position, List<Single> unnamedElements, Map<String, Single> namedElements) {
+    public TupleExpr(Position position, Map<String, Single> elements) {
         super(position);
-        this.unnamedElements = unnamedElements;
-        this.namedElements = namedElements;
+        this.elements = elements;
     }
 
-    public List<Single> getUnnamedElements() {
-        return unnamedElements;
-    }
-
-    public Map<String, Single> getNamedElements() {
-        return namedElements;
+    public Map<String, Single> getElements() {
+        return elements;
     }
 
     public int size() {
-        return unnamedElements.size() + namedElements.size();
+        return elements.size();
     }
 
     @Override
@@ -61,6 +47,6 @@ public class TupleExpr extends Single {
 
     @Override
     public String toString() {
-        return unnamedElements.toString() + namedElements.toString();
+        return elements.toString();
     }
 }

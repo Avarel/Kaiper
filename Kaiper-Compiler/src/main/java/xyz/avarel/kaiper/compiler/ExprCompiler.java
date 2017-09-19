@@ -373,22 +373,7 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
     @Override
     public Void visit(TupleExpr expr, KDataOutput out) {
-        Map<String, Single> map = new LinkedHashMap<>();
-
-        List<Single> unnamedElements = expr.getUnnamedElements();
-        for (int i = 0; i < unnamedElements.size(); i++) {
-            Single element = unnamedElements.get(i);
-            map.put("_" + i, element);
-        }
-
-        for (Map.Entry<String, Single> entry : expr.getNamedElements().entrySet()) {
-            if (map.containsKey(entry.getKey())) {
-                throw new CompilerException("Duplicate field name " + entry.getKey(), entry.getValue().getPosition());
-            }
-
-            map.put(entry.getKey(), entry.getValue());
-        }
-
+        Map<String, Single> map = new LinkedHashMap<>(expr.getElements());
         lineNumber(expr, out);
 
         out.writeOpcode(NEW_TUPLE).writeInt(map.size());

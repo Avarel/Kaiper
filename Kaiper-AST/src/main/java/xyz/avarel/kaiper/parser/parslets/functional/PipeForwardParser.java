@@ -28,9 +28,7 @@ import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class PipeForwardParser extends BinaryParser {
     public PipeForwardParser() {
@@ -43,6 +41,8 @@ public class PipeForwardParser extends BinaryParser {
             throw new SyntaxException("Function invocation are disabled");
         }
 
+        // left |> right
+
         Single right = parser.parseSingle(getPrecedence());
 
         if (right instanceof Invocation) {
@@ -51,35 +51,51 @@ public class PipeForwardParser extends BinaryParser {
 
             if (argument instanceof TupleExpr) {
                 TupleExpr tuple = (TupleExpr) argument;
+                Map<String, Single> elements = new LinkedHashMap<>(tuple.getElements());
 
-                List<Single> unnamedElements = new ArrayList<>(tuple.getUnnamedElements());
-                unnamedElements.add(0, left);
+                if (left instanceof TupleExpr) {
+                    TupleExpr leftTuple = (TupleExpr) left;
+
+                    if (Collections.disjoint(elements.keySet(), leftTuple.getElements().keySet())) {
+                        elements.putAll(leftTuple.getElements());
+                    } else {
+                        throw new SyntaxException("Duplicate tuple field names", left.getPosition());
+                    }
+                } else {
+                    if (elements.put("value", left) != null) {
+                        throw new SyntaxException("Duplicate tuple field names", left.getPosition());
+                    }
+                }
 
                 return new Invocation(
                         token.getPosition(),
                         invocation.getLeft(),
                         new TupleExpr(
-                                argument.getPosition(),
-                                unnamedElements,
-                                tuple.getNamedElements()
-                        )
-                );
-            } else {
-                List<Single> unnamedElements = new ArrayList<>(2);
-                unnamedElements.add(left);
-                unnamedElements.add(argument);
-                return new Invocation(
-                        token.getPosition(),
-                        invocation.getLeft(),
-                        new TupleExpr(
-                                argument.getPosition(),
-                                unnamedElements,
-                                Collections.emptyMap()
+                                tuple.getPosition(),
+                                elements
                         )
                 );
             }
         } else if (right instanceof FunctionNode || right instanceof Identifier) {
-            return new Invocation(token.getPosition(), right, left);
+            if (left instanceof TupleExpr) {
+                return new Invocation(
+                        token.getPosition(),
+                        right,
+                        left
+                );
+            } else {
+                return new Invocation(
+                        token.getPosition(),
+                        right,
+                        new TupleExpr(
+                                token.getPosition(),
+                                Collections.singletonMap(
+                                        "value",
+                                        left
+                                )
+                        )
+                );
+            }
         }
 
         throw new SyntaxException(

@@ -57,32 +57,34 @@ public class AssignmentParser extends BinaryParser {
                     (GetOperation) left,
                     value
             );
-        } else if (left instanceof TupleExpr) {
-            TupleExpr tupleExpr = (TupleExpr) left;
-
-            if (!tupleExpr.getNamedElements().isEmpty() || tupleExpr.getUnnamedElements().isEmpty()) {
-                throw new SyntaxException("Invalid assignment target", left.getPosition());
-            }
-
-            List<Pattern> patterns = new ArrayList<>();
-
-            for (Single expr : tupleExpr.getUnnamedElements()) {
-                if (expr instanceof Identifier) {
-                    Identifier identifier = (Identifier) expr;
-                    patterns.add(new VariablePattern(identifier.getName()));
-                } else {
-                    throw new SyntaxException("Invalid assignment target", left.getPosition());
-                }
-            }
-
-            PatternCase patternCase = new PatternCase(patterns);
-
-            return new BindAssignmentExpr(
-                    token.getPosition(),
-                    patternCase,
-                    value
-            );
-        } else {
+        }
+//        else if (left instanceof TupleExpr) {
+//            TupleExpr tupleExpr = (TupleExpr) left;
+//
+//            if (!tupleExpr.getElements().isEmpty() || tupleExpr.getUnnamedElements().isEmpty()) {
+//                throw new SyntaxException("Invalid assignment target", left.getPosition());
+//            }
+//
+//            List<Pattern> patterns = new ArrayList<>();
+//
+//            for (Single expr : tupleExpr.getUnnamedElements()) {
+//                if (expr instanceof Identifier) {
+//                    Identifier identifier = (Identifier) expr;
+//                    patterns.add(new VariablePattern(identifier.getName()));
+//                } else {
+//                    throw new SyntaxException("Invalid assignment target", left.getPosition());
+//                }
+//            }
+//
+//            PatternCase patternCase = new PatternCase(patterns);
+//
+//            return new BindAssignmentExpr(
+//                    token.getPosition(),
+//                    patternCase,
+//                    value
+//            );
+//        }
+        else {
             throw new SyntaxException("Invalid assignment target", left.getPosition());
         }
     }
