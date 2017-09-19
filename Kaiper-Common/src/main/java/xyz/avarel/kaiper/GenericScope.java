@@ -1,64 +1,69 @@
-package xyz.avarel.kaiper;
-
 /*
- * Licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ *  Copyright 2017 An Tran and Adrian Todt
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
+package xyz.avarel.kaiper;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class GenericScope<T> {
-    private final GenericScope<T>[] parents;
-    private final Map<String, T> map;
+// inheritable map
+public class GenericScope<K, V> {
+    private final GenericScope<K, V>[] parents;
+    private final Map<K, V> map;
 
     @SafeVarargs
-    public GenericScope(GenericScope<T>... parents) {
+    public GenericScope(GenericScope<K, V>... parents) {
         this(new HashMap<>(), parents);
     }
 
     @SafeVarargs
-    public GenericScope(Map<String, T> map, GenericScope<T>... parents) {
+    public GenericScope(Map<K, V> map, GenericScope<K, V>... parents) {
         this.map = map;
         this.parents = parents;
     }
 
-    public T directLookup(String key) {
-        return map.get(key);
-    }
-
-    public T get(String key) {
-        if (map.containsKey(key)) {
-            return map.get(key);
-        } else for (GenericScope<T> parent : parents) {
-            if (parent.contains(key)) {
-                return parent.get(key);
+    public V get(K key) {
+        V value = map.get(key);
+        if (value != null) {
+            return value;
+        } else for (GenericScope<K, V> parent : parents) {
+            V value0 = parent.get(key);
+            if (value0 != null) {
+                return value0;
             }
         }
         return null;
     }
 
-    public GenericScope<T>[] getParents() {
+    public V put(K key, V value) {
+        return map.put(key, value);
+    }
+
+    public GenericScope<K, V>[] getParents() {
         return parents;
     }
 
-    public Map<String, T> getMap() {
+    public Map<K, V> getMap() {
         return map;
     }
 
-    public boolean contains(String key) {
+    public boolean contains(K key) {
         if (map.containsKey(key)) return true;
-        for (GenericScope<T> parent : parents) {
+        for (GenericScope<K,V> parent : parents) {
             if (parent.contains(key)) {
                 return true;
             }
@@ -66,9 +71,20 @@ public abstract class GenericScope<T> {
         return false;
     }
 
-    public abstract GenericScope<T> copy();
-    public abstract GenericScope<T> subPool();
-    public abstract GenericScope<T> combine(GenericScope<T> otherScope);
+    public GenericScope<K, V> copy() {
+        return new GenericScope<>(new HashMap<>(map), parents);
+    }
+
+    public GenericScope<K, V> subPool() {
+        return new GenericScope<>(this);
+    }
+
+    public GenericScope<K, V> combine(GenericScope<K, V> otherScope) {
+        GenericScope<K, V>[] array = Arrays.copyOf(parents, parents.length + 1);
+        array[array.length - 1] = otherScope;
+
+        return new GenericScope<>(new HashMap<>(map), array);
+    }
 
     @Override
     public String toString() {

@@ -1,31 +1,32 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ *  Copyright 2017 An Tran and Adrian Todt
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package xyz.avarel.kaiper.runtime.types;
 
+import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 
-// fuck inheritance
 public class CompiledObj implements Obj {
     private final CompiledType type;
     private final Scope scope;
 
     @SuppressWarnings("unchecked")
-    public CompiledObj(CompiledType type,Scope scope) {
+    public CompiledObj(CompiledType type, Scope scope) {
         this.type = type;
         this.scope = scope;
     }
@@ -36,7 +37,7 @@ public class CompiledObj implements Obj {
 
     @Override
     public Obj setAttr(String name, Obj value) {
-        scope.declare(name, value);
+        ExprInterpreter.declare(scope, name, value);
         return Null.VALUE;
     }
 
@@ -47,7 +48,7 @@ public class CompiledObj implements Obj {
 
     @Override
     public Obj getAttr(String name) {
-        Obj obj = scope.directLookup(name);
+        Obj obj = scope.getMap().get(name);
 
         return obj == null ? Obj.super.getAttr(name) : obj;
     }

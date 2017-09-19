@@ -1,16 +1,17 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ *  Copyright 2017 An Tran and Adrian Todt
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package xyz.avarel.kaiper.scope;
@@ -29,22 +30,22 @@ public class DefaultScope extends Scope {
     public static final DefaultScope INSTANCE = new DefaultScope();
 
     private DefaultScope() {
-        declare("not", DefaultFunctions.NOT.get());
-        declare("str", DefaultFunctions.STR.get());
+        put("not", DefaultFunctions.NOT.get());
+        put("str", DefaultFunctions.STR.get());
 
-        declare("Object", Obj.MODULE);
-        declare("Math", MathModule.INSTANCE);
-        declare("Tuple", Tuple.MODULE);
-        declare("Type", Type.MODULE);
-        declare("Int", Int.MODULE);
-        declare("Number", Number.MODULE);
-        declare("Boolean", Bool.MODULE);
-        declare("Array", Array.MODULE);
-        declare("Range", Range.MODULE);
-        declare("Dictionary", Dictionary.MODULE);
-        declare("String", Str.MODULE);
-        declare("Function", Func.MODULE);
-        declare("Undefined", Null.MODULE);
+        put("Object", Obj.MODULE);
+        put("Math", MathModule.INSTANCE);
+        put("Tuple", Tuple.MODULE);
+        put("Type", Type.MODULE);
+        put("Int", Int.MODULE);
+        put("Number", Number.MODULE);
+        put("Boolean", Bool.MODULE);
+        put("Array", Array.MODULE);
+        put("Range", Range.MODULE);
+        put("Dictionary", Dictionary.MODULE);
+        put("String", Str.MODULE);
+        put("Function", Func.MODULE);
+        put("Undefined", Null.MODULE);
     }
 
     @Deprecated

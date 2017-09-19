@@ -1,31 +1,17 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ *  Copyright 2017 An Tran and Adrian Todt
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-/*
- * Licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package xyz.avarel.kaiper.interpreter;
@@ -88,7 +74,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     @Override
     public Obj visit(FunctionNode expr, Scope scope) {
         Func func = new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope.subPool());
-        if (expr.getName() != null) scope.declare(expr.getName(), func);
+        if (expr.getName() != null) declare(scope, expr.getName(), func);
         return func;
     }
 
@@ -268,7 +254,10 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         }
 
         Obj value = resultOf(expr.getExpr(), scope);
-        scope.assign(attr, value);
+        if(!assign(scope, attr, value)) {
+            throw new ComputeException(attr + " is not defined, it must be declared first");
+        }
+
         return value;
     }
 
@@ -277,7 +266,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         String attr = expr.getName();
 
         Obj value = resultOf(expr.getExpr(), scope);
-        scope.declare(attr, value);
+        declare(scope, attr, value);
         return Null.VALUE;
     }
 
@@ -290,7 +279,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         resultOf(expr.getExpr(), subScope);
 
         Module module = new CompiledModule(name, subScope);
-        scope.declare(name, module);
+        declare(scope, name, module);
 
         return module;
     }
@@ -303,7 +292,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
         CompiledType type = new CompiledType(name, constructor);
 
-        scope.declare(name, type);
+        declare(scope, name, type);
 
         return type;
     }
@@ -384,7 +373,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
                 if (var instanceof Obj) {
                     Scope copy = scope.subPool();
-                    copy.declare(variant, (Obj) var);
+                    declare(copy, variant, (Obj) var);
                     resultOf(loopExpr, copy);
                     iteration++;
                 } else {
@@ -504,6 +493,25 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         }
     }
 
+    public static boolean assign(Scope target, String key, Obj value) {
+        if (target.getMap().containsKey(key)) {
+            target.put(key, value);
+            return true;
+        } else for (Scope parent : target.getParents()) {
+            if (assign(parent, key, value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void declare(Scope target, String key, Obj value) {
+        if (target.getMap().containsKey(key)) {
+            throw new ComputeException(key + " already exists in the scope");
+        }
+        target.put(key, value);
+    }
+    
     private void checkTimeout() {
         GlobalVisitorSettings.checkTimeout(timeout);
     }

@@ -1,6 +1,6 @@
 def fibMaker() {
     let a, b = 0, 1
-    return {
+    return def() {
         let r = a
         a, b = b, a + b
         r
