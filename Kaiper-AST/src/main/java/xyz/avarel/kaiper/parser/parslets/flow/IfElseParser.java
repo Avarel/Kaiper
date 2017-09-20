@@ -41,7 +41,7 @@ public class IfElseParser implements PrefixParser {
 
         Expr elseBranch = null;
 
-        if (parser.match(TokenType.ELSE)) {
+        if (parser.matchSignificant(TokenType.ELSE)) {
             if (parser.nextIs(TokenType.IF)) {
                 elseBranch = parser.parseExpr();
             } else {

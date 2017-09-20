@@ -64,6 +64,9 @@ public class Identifier extends Single {
 
     @Override
     public String toString() {
+        if (parent != null) {
+            return parent + "." + name;
+        }
         return name;
     }
 }

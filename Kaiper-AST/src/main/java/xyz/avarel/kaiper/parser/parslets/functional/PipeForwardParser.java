@@ -28,7 +28,9 @@ import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class PipeForwardParser extends BinaryParser {
     public PipeForwardParser() {
@@ -99,7 +101,7 @@ public class PipeForwardParser extends BinaryParser {
         }
 
         throw new SyntaxException(
-                "Pipe-forward requires the right operand to be either: invocation, function, or name",
+                "Invalid pipe-forward operand " + token.getType(),
                 token.getPosition());
     }
 }

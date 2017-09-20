@@ -21,6 +21,7 @@ import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
+import xyz.avarel.kaiper.runtime.pattern.VariableRuntimeLibPattern;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.Map;
@@ -33,63 +34,56 @@ public class Str implements Obj {
         declare("length", new NativeFunc("length", "string") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return Int.of(arguments.get(0).as(Str.TYPE).length());
+                return Int.of(arguments.get("string").as(Str.TYPE).length());
             }
         });
 
         declare("contains", new NativeFunc("contains", "string", "query") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get(0).as(Str.TYPE).contains((Str) arguments.get(1));
+                return arguments.get("string").as(Str.TYPE).contains(arguments.get("query").as(Str.TYPE));
             }
         });
         declare("indexOf", new NativeFunc("indexOf", "string", "query") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get(0).as(Str.TYPE).indexOf((Str) arguments.get(1));
+                return arguments.get("string").as(Str.TYPE).indexOf(arguments.get("query").as(Str.TYPE));
             }
         });
         declare("split", new NativeFunc("split", "string", "query") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get(0).as(Str.TYPE).split((Str) arguments.get(1));
+                return arguments.get("string").as(Str.TYPE).split(arguments.get("query").as(Str.TYPE));
             }
         });
-        declare("substring", new NativeFunc("substring", "string", "index") {
+        declare("substring", new NativeFunc("substring", new VariableRuntimeLibPattern("string"), new VariableRuntimeLibPattern("start"), new VariableRuntimeLibPattern("end")) {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                if (arguments.size() >= 3) {
-                    if (arguments.get(1) instanceof Int) {
-                        return arguments.get(0).as(Str.TYPE).substring((Int) arguments.get(1), (Int) arguments.get(2));
-                    }
-                    return Null.VALUE;
-                } else {
-                    return arguments.get(0).as(Str.TYPE).substring((Int) arguments.get(1));
-                }
+                return arguments.get("string").as(Str.TYPE).substring(arguments.get("start").as(Int.TYPE), arguments.get("end").as(Int.TYPE));
             }
         });
         declare("toVector", new NativeFunc("toVector", "string") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get(0).as(Str.TYPE).toVector();
+                return arguments.get("string").as(Str.TYPE).toVector();
             }
         });
         declare("toLowerCase", new NativeFunc("toLowerCase", "string") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get(0).as(Str.TYPE).toLowerCase();
+                return arguments.get("string").as(Str.TYPE).toLowerCase();
             }
         });
         declare("toUpperCase", new NativeFunc("toUpperCase", "string") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get(0).as(Str.TYPE).toUpperCase();
+                return arguments.get("string").as(Str.TYPE).toUpperCase();
             }
         });
         declare("trim", new NativeFunc("trim", "string") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get(0).as(Str.TYPE).trim();
+                return arguments.get("string").as(Str.TYPE).trim();
             }
         });
     }};

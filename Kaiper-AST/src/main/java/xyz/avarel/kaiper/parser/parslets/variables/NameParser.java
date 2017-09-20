@@ -16,62 +16,42 @@
 
 package xyz.avarel.kaiper.parser.parslets.variables;
 
-import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class NameParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
         Identifier id = new Identifier(token.getPosition(), token.getString());
 
-        if (parser.match(TokenType.COLON)) {
-            Map<String, Single> map = new LinkedHashMap<>();
-
-            Single value = parser.parseSingle(Precedence.INFIX);
-            map.put(id.getName(), value);
-
-            while (parser.match(TokenType.COMMA)) {
-                Token name = parser.eat(TokenType.IDENTIFIER);
-                parser.eat(TokenType.COLON);
-                value = parser.parseSingle(Precedence.INFIX);
-                if (map.put(name.getString(), value) != null) {
-                    throw new SyntaxException("Duplicate tuple field name", name.getPosition());
-                }
-            }
-
-            return new TupleExpr(token.getPosition(), map);
-        }
-
-        if (parser.nextIs(TokenType.IDENTIFIER)) {
-            Single argument = parser.parseSingle();
-            return new Invocation(token.getPosition(), id, argument);
-        } else if (parser.nextIsAny(TokenType.STRING, TokenType.INT,
+        if (parser.nextIsAny(TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
                 TokenType.NUMBER, TokenType.LEFT_BRACE, TokenType.FUNCTION)) {
             Single argument = parser.parseSingle();
-            return new Invocation(
-                    token.getPosition(),
-                    id,
-                    new TupleExpr(
-                            argument.getPosition(),
-                            Collections.singletonMap(
-                                    "value",
-                                    argument
-                            )
-                    )
-            );
+
+            if (argument instanceof TupleExpr) {
+                return new Invocation(token.getPosition(), id, argument);
+            } else {
+                return new Invocation(
+                        token.getPosition(),
+                        id,
+                        new TupleExpr(
+                                argument.getPosition(),
+                                Collections.singletonMap(
+                                        "value",
+                                        argument
+                                )
+                        )
+                );
+            }
         }
 
         return id;

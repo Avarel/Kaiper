@@ -42,6 +42,12 @@ public class Precedence {
     /* a..b */
     public static final int RANGE_TO = 9;
 
+    /* a: b */
+    public static final int TUPLE_PAIR = 3;
+
+    /* a, b */
+    public static final int TUPLE = 2;
+
     /* is | |> */
     public static final int INFIX = 8;
 
@@ -56,12 +62,6 @@ public class Precedence {
 
     /* a || b */
     public static final int DISJUNCTION = 4;
-
-//    /* a: b */
-//    public static final int TUPLE_PAIR = 3;
-//
-//    /* a, b */
-//    public static final int TUPLE = 2;
 
     public static final int ASSIGNMENT = 1;
 }

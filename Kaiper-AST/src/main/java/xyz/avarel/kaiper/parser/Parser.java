@@ -90,7 +90,7 @@ public abstract class Parser {
         if (token.getType() != expected) {
             return false;
         }
-        eat();
+        eatSignificant();
         return true;
     }
 
@@ -112,6 +112,13 @@ public abstract class Parser {
         return last = tokens.remove(0);
     }
 
+    public Token eatSignificant() {
+        while (peek(0).getType() == TokenType.LINE) {
+            eat();
+        }
+
+        return eat();
+    }
 
     public Token peek(int distance) {
         // Read in as many as needed.
