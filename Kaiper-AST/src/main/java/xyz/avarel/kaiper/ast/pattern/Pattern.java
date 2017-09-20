@@ -16,6 +16,16 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-public interface Pattern {
-    <R, C> R accept(PatternVisitor<R, C> visitor, C scope);
+public abstract class Pattern {
+    private final String name;
+
+    public Pattern(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public abstract <R, C> R accept(PatternVisitor<R, C> visitor, C scope);
 }

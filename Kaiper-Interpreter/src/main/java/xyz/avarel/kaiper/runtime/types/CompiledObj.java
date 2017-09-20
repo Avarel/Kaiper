@@ -60,11 +60,12 @@ public class CompiledObj implements Obj {
 
     @Override
     public String toString() {
-        Obj method = scope.get("toString");
-        if (method == null) {
-            return type.toString() + "$" + hashCode();
-        } else {
-            return method.invoke(this).toString();
-        }
+        return type.toString() + "$" + hashCode();
+//        Obj method = scope.get("toString");
+//        if (method == null) {
+//            return type.toString() + "$" + hashCode();
+//        } else {
+//            return method.invoke(this).toString();
+//        }
     }
 }

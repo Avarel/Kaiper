@@ -40,13 +40,13 @@ public class NameParser implements PrefixParser {
         if (parser.match(TokenType.COLON)) {
             Map<String, Single> map = new LinkedHashMap<>();
 
-            Single value = parser.parseSingle(Precedence.TUPLE_PAIR);
+            Single value = parser.parseSingle(Precedence.INFIX);
             map.put(id.getName(), value);
 
             while (parser.match(TokenType.COMMA)) {
                 Token name = parser.eat(TokenType.IDENTIFIER);
                 parser.eat(TokenType.COLON);
-                value = parser.parseSingle(Precedence.TUPLE_PAIR);
+                value = parser.parseSingle(Precedence.INFIX);
                 if (map.put(name.getString(), value) != null) {
                     throw new SyntaxException("Duplicate tuple field name", name.getPosition());
                 }

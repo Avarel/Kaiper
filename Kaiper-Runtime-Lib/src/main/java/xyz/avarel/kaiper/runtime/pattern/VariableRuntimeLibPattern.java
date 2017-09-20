@@ -17,7 +17,7 @@
 package xyz.avarel.kaiper.runtime.pattern;
 
 // x
-public class VariableRuntimeLibPattern extends NamedRuntimeLibPattern {
+public class VariableRuntimeLibPattern extends RuntimeLibPattern {
     public VariableRuntimeLibPattern(String name) {
         super(name);
     }

@@ -16,20 +16,22 @@
 
 package xyz.avarel.kaiper.runtime.pattern;
 
+import xyz.avarel.kaiper.runtime.Obj;
+
 // a: is Int
 // a: 2
 // a: x
 // a: (2, meme: 2, dank: 3)
-public class TupleRuntimeLibPattern extends NamedRuntimeLibPattern {
-    private final RuntimeLibPattern pattern;
+public class TupleRuntimeLibPattern extends RuntimeLibPattern {
+    private final Obj obj;
 
-    public TupleRuntimeLibPattern(String name, RuntimeLibPattern pattern) {
+    public TupleRuntimeLibPattern(String name, Obj obj) {
         super(name);
-        this.pattern = pattern;
+        this.obj = obj;
     }
 
-    public RuntimeLibPattern getPattern() {
-        return pattern;
+    public Obj getObj() {
+        return obj;
     }
 
     @Override
@@ -39,6 +41,6 @@ public class TupleRuntimeLibPattern extends NamedRuntimeLibPattern {
 
     @Override
     public String toString() {
-        return getName() + ": " + pattern;
+        return getName() + ": " + obj;
     }
 }

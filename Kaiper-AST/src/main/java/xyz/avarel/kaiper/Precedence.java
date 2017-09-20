@@ -57,11 +57,11 @@ public class Precedence {
     /* a || b */
     public static final int DISJUNCTION = 4;
 
-    /* a: b */
-    public static final int TUPLE_PAIR = 3;
-
-    /* a, b */
-    public static final int TUPLE = 2;
+//    /* a: b */
+//    public static final int TUPLE_PAIR = 3;
+//
+//    /* a, b */
+//    public static final int TUPLE = 2;
 
     public static final int ASSIGNMENT = 1;
 }

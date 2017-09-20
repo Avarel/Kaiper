@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 // multiple of patterns
-public class RuntimeLibPatternCase implements RuntimeLibPattern {
+public class RuntimeLibPatternCase {
     public static final RuntimeLibPatternCase EMPTY = new RuntimeLibPatternCase(Collections.emptyList());
 
     private final List<RuntimeLibPattern> patterns;
@@ -58,11 +58,6 @@ public class RuntimeLibPatternCase implements RuntimeLibPattern {
         }
 
         return sb.toString();
-    }
-
-    @Override
-    public <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope) {
-        return visitor.visit(this, scope);
     }
 
     public int size() {

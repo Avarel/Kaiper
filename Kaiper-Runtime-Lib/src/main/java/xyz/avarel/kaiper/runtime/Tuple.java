@@ -22,7 +22,6 @@ import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -76,23 +75,11 @@ public class Tuple implements Obj {
     }
 
     public Tuple(Obj value) {
-        this(Collections.singletonMap("_0", value));
+        this(Collections.singletonMap("value", value));
     }
 
     public Tuple(Map<String, Obj> map) {
        this.map = map;
-    }
-
-    public static Tuple of(Obj... fields) {
-        Map<String, Obj> map = new LinkedHashMap<>();
-
-        int position = 0;
-        for (Obj field : fields) {
-            map.put("_" + position, field);
-            position++;
-        }
-
-        return new Tuple(map);
     }
 
     public boolean hasAttr(String name) {
@@ -122,23 +109,21 @@ public class Tuple implements Obj {
 
         StringBuilder builder = new StringBuilder();
 
-        int position = 0;
 
         Iterator<Map.Entry<String, Obj>> iterator = map.entrySet().iterator();
         while (true) {
             Map.Entry<String, Obj> entry = iterator.next();
 
-            if (!entry.getKey().equals("_" + position)) {
-                builder.append(entry.getKey()).append(": ");
+            builder.append(entry.getKey());
+            builder.append(": ");
+
+            if (entry.getValue() instanceof Tuple) {
+                builder.append('(');
+                builder.append(entry.getValue());
+                builder.append(')');
             } else {
-                position++;
+                builder.append(entry.getValue());
             }
-
-            boolean isTuple = entry.getValue() instanceof Tuple;
-
-            if (isTuple) builder.append('(');
-            builder.append(entry.getValue());
-            if (isTuple) builder.append(')');
 
             if (iterator.hasNext()) {
                 builder.append(", ");

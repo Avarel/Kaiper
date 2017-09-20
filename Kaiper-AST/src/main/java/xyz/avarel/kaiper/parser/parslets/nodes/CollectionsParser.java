@@ -16,7 +16,6 @@
 
 package xyz.avarel.kaiper.parser.parslets.nodes;
 
-import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.collections.ArrayNode;
@@ -49,7 +48,7 @@ public class CollectionsParser implements PrefixParser {
             return new ArrayNode(token.getPosition(), Collections.emptyList());
         }
 
-        Single expr = parser.parseSingle(Precedence.TUPLE_PAIR);
+        Single expr = parser.parseSingle();
 
         if (parser.match(TokenType.COLON)) {
             if (!parser.getParserFlags().allowDictionary()) {
@@ -70,7 +69,7 @@ public class CollectionsParser implements PrefixParser {
         items.add(initItem);
 
         while (parser.match(TokenType.COMMA)) {
-            items.add(parser.parseSingle(Precedence.TUPLE_PAIR));
+            items.add(parser.parseSingle());
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
@@ -81,12 +80,12 @@ public class CollectionsParser implements PrefixParser {
     private Expr parseDictionary(KaiperParser parser, Token token, Single initKey) {
         Map<Single, Single> map = new HashMap<>();
 
-        map.put(initKey, parser.parseSingle(Precedence.TUPLE_PAIR));
+        map.put(initKey, parser.parseSingle());
 
         while (parser.match(TokenType.COMMA)) {
-            Single key = parser.parseSingle(Precedence.TUPLE_PAIR);
+            Single key = parser.parseSingle();
             parser.eat(TokenType.COLON);
-            Single value = parser.parseSingle(Precedence.TUPLE_PAIR);
+            Single value = parser.parseSingle();
 
             map.put(key, value);
         }

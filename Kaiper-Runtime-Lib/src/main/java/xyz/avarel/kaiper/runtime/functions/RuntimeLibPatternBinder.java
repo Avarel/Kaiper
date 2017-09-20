@@ -19,7 +19,6 @@ package xyz.avarel.kaiper.runtime.functions;
 import xyz.avarel.kaiper.Pair;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
-import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.pattern.*;
 
 import java.util.LinkedHashMap;
@@ -31,7 +30,8 @@ public class RuntimeLibPatternBinder implements RuntimePatternVisitor<Pair<Strin
     private final Map<String, Obj> scope;
 
     private final RuntimeLibPatternCase patternCase;
-    private int position = 0;
+
+    private boolean usedValue = false;
 
     public RuntimeLibPatternBinder(RuntimeLibPatternCase patternCase, Map<String, Obj> scope) {
         this.patternCase = patternCase;
@@ -60,55 +60,18 @@ public class RuntimeLibPatternBinder implements RuntimePatternVisitor<Pair<Strin
     }
 
     @Override
-    public Pair<String, Obj> visit(RuntimeLibPatternCase patternCase, Tuple obj) {
-        if (obj.hasAttr("_" + position)) {
-            Obj value = obj.getAttr("_" + position);
-
-            position++;
-
-            Tuple tuple = value instanceof Tuple ? (Tuple) value : new Tuple(value);
-
-            if (new RuntimeLibPatternBinder(patternCase, scope).bindFrom(tuple)) {
-                return SUCCESS_NO_ASSIGNMENT;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public Pair<String, Obj> visit(WildcardRuntimeLibPattern pattern, Tuple obj) {
-        position++;
-        return SUCCESS_NO_ASSIGNMENT;
-    }
-
-    @Override
-    public Pair<String, Obj> visit(ValueRuntimeLibPattern pattern, Tuple obj) {
-        if (obj.hasAttr("_" + position)) {
-            Obj value = obj.getAttr("_" + position);
-            Obj target = pattern.getValue();
-            position++;
-            return value.equals(target) ? SUCCESS_NO_ASSIGNMENT : null;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public Pair<String, Obj> visit(VariableRuntimeLibPattern pattern, Tuple obj) {
         Obj value;
 
         if (obj.hasAttr(pattern.getName())) {
             value = obj.getAttr(pattern.getName());
-        } else if (obj.hasAttr("_" + position)) {
-            value = obj.getAttr("_" + position);
+        } else if (!usedValue && obj.hasAttr("value")) {
+            value = obj.getAttr("value");
+            usedValue = true;
         } else {
             return null;
         }
 
-        position++;
         return new Pair<>(pattern.getName(), value);
     }
 
@@ -125,47 +88,23 @@ public class RuntimeLibPatternBinder implements RuntimePatternVisitor<Pair<Strin
     }
 
     @Override
-    public Pair<String, Obj> visit(RestRuntimeLibPattern pattern, Tuple obj) {
-        Obj value;
-
-        if (obj.hasAttr(pattern.getName())) {
-            Obj val = obj.getAttr(pattern.getName());
-            value = val instanceof Array ? val : Array.of(val);
-        } else { // empty
-            int endPosition = obj.size() - (patternCase.size() - (patternCase.getPatterns().indexOf(pattern) + 1));
-
-            if (position < endPosition) {
-                Array array = new Array();
-
-                do {
-                    array.add(obj.getAttr("_" + position));
-                    position++;
-                } while (position < endPosition);
-
-                value = array;
-            } else {
-                return new Pair<>(pattern.getName(), new Array());
-            }
-        }
-
-        return new Pair<>(pattern.getName(), value);
-    }
-
-    @Override
     public Pair<String, Obj> visit(TupleRuntimeLibPattern pattern, Tuple obj) {
         Obj value;
 
         if (obj.hasAttr(pattern.getName())) {
             value = obj.getAttr(pattern.getName());
+        }  else if (!usedValue && obj.hasAttr("value")) {
+            value = obj.getAttr("value");
+            usedValue = true;
         } else {
             return null;
         }
 
-        position++;
-
-        Tuple tuple = new Tuple(value);
-
         // check later
-        return pattern.getPattern().accept(new RuntimeLibPatternBinder(patternCase, scope), tuple);
+        if (pattern.getObj().equals(value)) {
+            return SUCCESS_NO_ASSIGNMENT;
+        } else {
+            return null;
+        }
     }
 }

@@ -16,6 +16,16 @@
 
 package xyz.avarel.kaiper.runtime.pattern;
 
-public interface RuntimeLibPattern {
-    <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope);
+public abstract class RuntimeLibPattern {
+    private final String name;
+
+    public RuntimeLibPattern(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public abstract <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope);
 }

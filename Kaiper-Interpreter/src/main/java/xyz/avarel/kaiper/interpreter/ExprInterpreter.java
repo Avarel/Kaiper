@@ -475,7 +475,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         return Null.VALUE;
     }
 
-    private Obj resultOf(Expr expr, Scope scope) {
+    public Obj resultOf(Expr expr, Scope scope) {
         checkTimeout();
         try {
             return expr.accept(this, scope);

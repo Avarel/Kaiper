@@ -209,17 +209,17 @@ public interface Obj {
         throw unimplemented("invocation");
     }
 
-    /**
-     * Invcoation operator in Kaiper. Default symbol is {@code a(b, c...)}.
-     * <br> Implementation should default to error if not implemented.
-     *
-     * @param   arguments
-     *          Array of {@link Obj} arguments.
-     * @return  The {@link Obj} result of the operation.
-     */
-    default Obj invoke(Obj... arguments) {
-        return invoke(Tuple.of(arguments));
-    }
+//    /**
+//     * Invcoation operator in Kaiper. Default symbol is {@code a(b, c...)}.
+//     * <br> Implementation should default to error if not implemented.
+//     *
+//     * @param   arguments
+//     *          Array of {@link Obj} arguments.
+//     * @return  The {@link Obj} result of the operation.
+//     */
+//    default Obj invoke(Obj... arguments) {
+//        return invoke(Tuple.of(arguments));
+//    }
 
     default Obj slice(Obj start, Obj end, Obj step) {
         throw unimplemented("slice");

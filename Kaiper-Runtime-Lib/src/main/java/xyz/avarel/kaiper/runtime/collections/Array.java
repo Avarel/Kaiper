@@ -25,7 +25,6 @@ import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
-import xyz.avarel.kaiper.runtime.pattern.RestRuntimeLibPattern;
 import xyz.avarel.kaiper.runtime.pattern.VariableRuntimeLibPattern;
 import xyz.avarel.kaiper.runtime.types.Type;
 
@@ -53,7 +52,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
             }
         });
 
-        declare("append", new NativeFunc("append", new VariableRuntimeLibPattern("array"), new RestRuntimeLibPattern("elements")) {
+        declare("append", new NativeFunc("append", new VariableRuntimeLibPattern("array"), new VariableRuntimeLibPattern("elements")) {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
                 Array array = arguments.get("array").as(Array.TYPE);
@@ -109,7 +108,8 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
                         Func operation = arguments.get("operation").as(Func.TYPE);
 
                         for (Obj obj : arguments.get("array").as(Array.TYPE)) {
-                            accumulator = operation.invoke(accumulator, obj);
+                            // todo
+                            //accumulator = operation.invoke(accumulator, obj);
                         }
                         return accumulator;
                     }

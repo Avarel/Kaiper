@@ -17,7 +17,7 @@
 package xyz.avarel.kaiper.ast.pattern;
 
 // x
-public class VariablePattern extends NamedPattern  {
+public class VariablePattern extends Pattern  {
     public VariablePattern(String name) {
         super(name);
     }

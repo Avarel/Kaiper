@@ -19,16 +19,17 @@ package xyz.avarel.kaiper.ast.pattern;
 import xyz.avarel.kaiper.ast.Expr;
 
 // (delegate) = (defaultExpr)
-public class DefaultPattern implements Pattern {
-    private final NamedPattern delegate;
+public class DefaultPattern extends Pattern {
+    private final Pattern delegate;
     private final Expr defaultExpr;
 
-    public DefaultPattern(NamedPattern delegate, Expr defaultExpr) {
+    public DefaultPattern(Pattern delegate, Expr defaultExpr) {
+        super(delegate.getName());
         this.delegate = delegate;
         this.defaultExpr = defaultExpr;
     }
 
-    public NamedPattern getDelegate() {
+    public Pattern getDelegate() {
         return delegate;
     }
 

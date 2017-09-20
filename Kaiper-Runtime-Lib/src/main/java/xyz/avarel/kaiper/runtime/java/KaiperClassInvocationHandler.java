@@ -17,6 +17,7 @@
 package xyz.avarel.kaiper.runtime.java;
 
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 
@@ -72,10 +73,10 @@ public class KaiperClassInvocationHandler implements InvocationHandler {
         if (toJava.getClass().isAssignableFrom(returnType)) return toJava;
 
         Obj returnObj;
-        if (args != null) {
-            returnObj = obj.invoke(JavaUtils.mapJavaToKaiperType(args).as(Array.TYPE));
+        if (args != null) { // todo not converted to tuple
+            returnObj = obj.invoke(new Tuple(JavaUtils.mapJavaToKaiperType(args).as(Array.TYPE)));
         } else {
-            returnObj = obj.invoke();
+            returnObj = obj.invoke(new Tuple());
         }
 
         if (returnObj.getClass().isAssignableFrom(returnType)) return returnObj;

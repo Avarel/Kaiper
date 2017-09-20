@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 // multiple of patterns
-public class PatternCase implements Pattern {
+public class PatternCase {
     public static final PatternCase EMPTY = new PatternCase(Collections.emptyList());
 
     private final List<Pattern> patterns;
@@ -58,11 +58,6 @@ public class PatternCase implements Pattern {
         }
 
         return sb.toString();
-    }
-
-    @Override
-    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
-        return visitor.visit(this, scope);
     }
 
     public int size() {
