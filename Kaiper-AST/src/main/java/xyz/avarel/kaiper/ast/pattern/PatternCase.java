@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 // multiple of patterns
-public class PatternCase {
+public class PatternCase implements Comparable<PatternCase> {
     public static final PatternCase EMPTY = new PatternCase(Collections.emptyList());
 
     private final List<Pattern> patterns;
@@ -62,5 +62,21 @@ public class PatternCase {
 
     public int size() {
         return patterns.size();
+    }
+
+    @Override
+    public int compareTo(PatternCase other) {
+        if (other.size() != size()) {
+            return Integer.compare(other.size(), size());
+        }
+
+        for (int i = 0; i < size(); i++) {
+            int b = patterns.get(i).compareTo(other.patterns.get(i));
+            if (b != 0) {
+                return b;
+            }
+        }
+
+        return 0;
     }
 }

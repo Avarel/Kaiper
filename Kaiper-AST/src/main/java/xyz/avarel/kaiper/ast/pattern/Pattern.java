@@ -16,7 +16,7 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-public abstract class Pattern {
+public abstract class Pattern implements Comparable<Pattern> {
     private final String name;
 
     public Pattern(String name) {
@@ -25,6 +25,11 @@ public abstract class Pattern {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public int compareTo(Pattern other) {
+        return other.getName().compareTo(getName());
     }
 
     public abstract <R, C> R accept(PatternVisitor<R, C> visitor, C scope);
