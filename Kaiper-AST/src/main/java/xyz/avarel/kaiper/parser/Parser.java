@@ -68,14 +68,6 @@ public abstract class Parser {
         return lexer;
     }
 
-    public Token eat(TokenType expected) {
-        Token token = peek(0);
-        if (token.getType() != expected) {
-            throw new SyntaxException("Expected token " + expected + " but found " + token.getType(), token.getPosition());
-        }
-        return eat();
-    }
-
     public boolean match(TokenType expected) {
         Token token = peek(0);
         if (token.getType() != expected) {
@@ -110,6 +102,14 @@ public abstract class Parser {
         peek(0);
 
         return last = tokens.remove(0);
+    }
+
+    public Token eat(TokenType expected) {
+        Token token = peek(0);
+        if (token.getType() != expected) {
+            throw new SyntaxException("Expected token " + expected + " but found " + token.getType(), token.getPosition());
+        }
+        return eat();
     }
 
     public Token eatSignificant() {

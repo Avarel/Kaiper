@@ -40,16 +40,8 @@ public class NameParser implements PrefixParser {
             if (argument instanceof TupleExpr) {
                 return new Invocation(token.getPosition(), id, argument);
             } else {
-                return new Invocation(
-                        token.getPosition(),
-                        id,
-                        new TupleExpr(
-                                argument.getPosition(),
-                                Collections.singletonMap(
-                                        "value",
-                                        argument
-                                )
-                        )
+                return new Invocation(token.getPosition(), id,
+                        new TupleExpr(argument.getPosition(), Collections.singletonMap("value", argument))
                 );
             }
         }
