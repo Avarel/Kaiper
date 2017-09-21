@@ -29,7 +29,12 @@ public abstract class Pattern implements Comparable<Pattern> {
 
     @Override
     public int compareTo(Pattern other) {
-        return other.getName().compareTo(getName());
+        if (name.equals("value") && !other.getName().equals("value")) {
+            return -1;
+        } else if (other.getName().equals("value")) {
+            return 1;
+        }
+        return getName().compareTo(other.getName());
     }
 
     public abstract <R, C> R accept(PatternVisitor<R, C> visitor, C scope);

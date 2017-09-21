@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-// multiple of patterns
 public class PatternCase implements Comparable<PatternCase> {
     public static final PatternCase EMPTY = new PatternCase(Collections.emptyList());
 
@@ -78,5 +77,10 @@ public class PatternCase implements Comparable<PatternCase> {
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof PatternCase && this.compareTo((PatternCase) obj) == 0;
     }
 }
