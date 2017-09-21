@@ -33,6 +33,7 @@ public class PatternOrderTest {
     public List<PatternCase> patterns = Arrays.asList(
             new PatternCase(new DefaultPattern(new VariablePattern("value"), NullNode.VALUE)),
             new PatternCase(new VariablePattern("x")),
+            new PatternCase(new TuplePattern("x", NullNode.VALUE)),
             new PatternCase(new VariablePattern("y")),
             new PatternCase(new VariablePattern("z")),
             new PatternCase(new VariablePattern("a")),

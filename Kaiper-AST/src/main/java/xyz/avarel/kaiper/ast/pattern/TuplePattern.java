@@ -43,4 +43,16 @@ public class TuplePattern extends Pattern {
     public String toString() {
         return getName() + ": " + getExpr();
     }
+
+    @Override
+    public int compareTo(Pattern other) {
+        int compare = super.compareTo(other);
+
+        if ((compare == 0 || getName().equals("value"))
+                && !(other instanceof TuplePattern)) {
+            return -1;
+        }
+
+        return compare;
+    }
 }

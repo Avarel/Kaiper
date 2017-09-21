@@ -27,6 +27,17 @@ import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.*;
 
+/**
+ * Visitor patterns for {@link Expr expression} AST classes.
+ * Each {@link Expr expression} implements the accept method which
+ * is normally {@code visitor.visit(this, context)}.
+ *
+ * @param <R> Return type.
+ * @param <C> Context type.
+ *
+ * @see Expr
+ * @author Avarel
+ */
 public interface ExprVisitor<R, C> {
     R visit(Statements expr, C scope);
 

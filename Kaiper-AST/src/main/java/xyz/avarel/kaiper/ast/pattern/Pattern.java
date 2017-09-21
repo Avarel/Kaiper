@@ -34,6 +34,7 @@ public abstract class Pattern implements Comparable<Pattern> {
         } else if (other.getName().equals("value")) {
             return 1;
         }
+
         return getName().compareTo(other.getName());
     }
 

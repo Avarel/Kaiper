@@ -33,8 +33,10 @@ public class NameParser implements PrefixParser {
     public Expr parse(KaiperParser parser, Token token) {
         Identifier id = new Identifier(token.getPosition(), token.getString());
 
-        if (parser.nextIsAny(TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
-                TokenType.NUMBER, TokenType.LEFT_BRACE, TokenType.FUNCTION)) {
+        if (parser.nextIsAny(
+                TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
+                TokenType.NUMBER, TokenType.FUNCTION, TokenType.NULL
+        )) {
             Single argument = parser.parseSingle();
 
             if (argument instanceof TupleExpr) {
