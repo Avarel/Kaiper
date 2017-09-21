@@ -18,8 +18,19 @@ package xyz.avarel.kaiper.ast.pattern;
 
 // x
 public class VariablePattern extends Pattern {
+    private final boolean nullable;
+
     public VariablePattern(String name) {
+        this(name, true);
+    }
+
+    public VariablePattern(String name, boolean nullable) {
         super(name);
+        this.nullable = nullable;
+    }
+
+    public boolean isNullable() {
+        return nullable;
     }
 
     @Override

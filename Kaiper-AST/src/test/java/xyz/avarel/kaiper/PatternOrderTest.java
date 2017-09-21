@@ -19,7 +19,9 @@ package xyz.avarel.kaiper;
 import org.junit.Test;
 import xyz.avarel.kaiper.ast.pattern.DefaultPattern;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
+import xyz.avarel.kaiper.ast.pattern.TuplePattern;
 import xyz.avarel.kaiper.ast.pattern.VariablePattern;
+import xyz.avarel.kaiper.ast.value.IntNode;
 import xyz.avarel.kaiper.ast.value.NullNode;
 
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class PatternOrderTest {
             new PatternCase(new VariablePattern("z"), new VariablePattern("c")),
             new PatternCase(new VariablePattern("value"), new VariablePattern("c")),
             new PatternCase(new VariablePattern("value"), new VariablePattern("b"), new VariablePattern("lol")),
-            new PatternCase(new VariablePattern("value"), new VariablePattern("c"), new VariablePattern("lol")),
+            new PatternCase(new TuplePattern("value", new IntNode(null, 5)), new VariablePattern("c"), new VariablePattern("lol")),
             new PatternCase(new VariablePattern("c"), new VariablePattern("c"), new VariablePattern("lol")),
             new PatternCase(new VariablePattern("b"), new VariablePattern("c"), new VariablePattern("lol")),
             new PatternCase(new VariablePattern("a"), new VariablePattern("c"), new VariablePattern("lol"))

@@ -47,7 +47,7 @@ public class PatternParser extends KaiperParser {
             // name: EXPR
             basePattern = new TuplePattern(name, parseSingle());
         } else {
-            basePattern = new VariablePattern(name);
+            basePattern = new VariablePattern(name, match(TokenType.QUESTION));
 
             if (match(TokenType.ASSIGN)) {
                 // name = EXPR

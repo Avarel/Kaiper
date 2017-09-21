@@ -19,6 +19,7 @@ package xyz.avarel.kaiper.ast.pattern;
 import xyz.avarel.kaiper.Pair;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
@@ -98,7 +99,11 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
             return null;
         }
 
-        return new Pair<>(pattern.getName(), value);
+        if (!pattern.isNullable() && value == Null.VALUE) {
+            return null;
+        } else {
+            return new Pair<>(pattern.getName(), value);
+        }
     }
 
     @Override
@@ -125,8 +130,6 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
         } else {
             return null;
         }
-
-        Tuple tuple = new Tuple(value);
 
         // check later
         if (interpreter.resultOf(pattern.getExpr(), scope).equals(value)) {
