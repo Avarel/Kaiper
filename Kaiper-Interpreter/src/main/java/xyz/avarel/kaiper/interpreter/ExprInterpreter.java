@@ -36,7 +36,7 @@ import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
 import xyz.avarel.kaiper.runtime.functions.CompiledFunc;
-import xyz.avarel.kaiper.runtime.functions.Func;
+import xyz.avarel.kaiper.runtime.functions.CompiledMultiMethod;
 import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -73,9 +73,25 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     // func print(str: String, n: Int) { for (x in 0..n) { print(str) } }
     @Override
     public Obj visit(FunctionNode expr, Scope scope) {
-        Func func = new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope.subPool());
-        if (expr.getName() != null) declare(scope, expr.getName(), func);
-        return func;
+        if (expr.getName() == null) {
+            return new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope);
+        }
+
+        CompiledMultiMethod multiMethod;
+        if (scope.get(expr.getName()) instanceof CompiledMultiMethod) {
+            multiMethod = (CompiledMultiMethod) scope.get(expr.getName());
+        } else {
+            multiMethod = new CompiledMultiMethod(expr.getName(), this, scope);
+            declare(scope, expr.getName(), multiMethod);
+        }
+
+        if (multiMethod.getMethodCases().containsKey(expr.getPatternCase())) {
+            throw new InterpreterException("Duplicate method definition", expr.getPosition());
+        }
+
+        multiMethod.addCase(expr.getPatternCase(), expr.getExpr());
+
+        return multiMethod;
     }
 
     @Override
@@ -460,19 +476,19 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     @Override
     public Obj visit(BindAssignmentExpr expr, Scope scope) {
-        Obj value = resultOf(expr.getExpr(), scope);
+//        Obj value = resultOf(expr.getExpr(), scope);
+//
+//        if (!(value instanceof Tuple)) {
+//            value = new Tuple(value);
+//        }
+//
+//        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).assignFrom((Tuple) value);
+//
+//        if (!result) {
+            throw new InterpreterException("unsupported", expr.getPosition());
+//        }
 
-        if (!(value instanceof Tuple)) {
-            value = new Tuple(value);
-        }
-
-        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).assignFrom((Tuple) value);
-
-        if (!result) {
-            throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());
-        }
-
-        return Null.VALUE;
+//        return Null.VALUE;
     }
 
     public Obj resultOf(Expr expr, Scope scope) {

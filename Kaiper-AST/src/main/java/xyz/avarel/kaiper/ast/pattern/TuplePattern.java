@@ -48,9 +48,10 @@ public class TuplePattern extends Pattern {
     public int compareTo(Pattern other) {
         int compare = super.compareTo(other);
 
-        if ((compare == 0 || getName().equals("value"))
-                && !(other instanceof TuplePattern)) {
-            return -1;
+        if (compare == 0
+                && (!(other instanceof TuplePattern)
+                || !expr.equals(((TuplePattern) other).expr))) {
+            return -1; // put tuple patterns with different values on different levels, so it doesnt matter
         }
 
         return compare;

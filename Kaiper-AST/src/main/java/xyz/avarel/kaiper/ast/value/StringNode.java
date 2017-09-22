@@ -38,6 +38,11 @@ public class StringNode extends Single {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj instanceof StringNode && value.equals(((StringNode) obj).value);
+    }
+
+    @Override
     public String toString() {
         return value;
     }

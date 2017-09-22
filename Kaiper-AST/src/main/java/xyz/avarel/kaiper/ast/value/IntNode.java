@@ -37,6 +37,7 @@ public class IntNode extends Single {
         return visitor.visit(this, scope);
     }
 
+
     @Override
     public String toString() {
         return String.valueOf(value);

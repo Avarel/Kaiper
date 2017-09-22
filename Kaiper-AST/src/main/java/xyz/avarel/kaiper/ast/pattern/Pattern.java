@@ -38,5 +38,6 @@ public abstract class Pattern implements Comparable<Pattern> {
         return getName().compareTo(other.getName());
     }
 
+
     public abstract <R, C> R accept(PatternVisitor<R, C> visitor, C scope);
 }

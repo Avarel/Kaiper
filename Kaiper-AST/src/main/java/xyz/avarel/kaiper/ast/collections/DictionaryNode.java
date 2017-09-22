@@ -45,6 +45,11 @@ public class DictionaryNode extends Single {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj instanceof DictionaryNode && map.equals(((DictionaryNode) obj).map);
+    }
+
+    @Override
     public String toString() {
         return map.toString();
     }

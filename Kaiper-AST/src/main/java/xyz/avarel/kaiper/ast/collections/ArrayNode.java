@@ -53,6 +53,11 @@ public class ArrayNode extends Single {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj instanceof ArrayNode && items.equals(((ArrayNode) obj).items);
+    }
+
+    @Override
     public String toString() {
         return items.toString();
     }

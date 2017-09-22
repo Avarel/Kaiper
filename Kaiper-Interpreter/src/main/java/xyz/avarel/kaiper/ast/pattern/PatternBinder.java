@@ -16,20 +16,13 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-import xyz.avarel.kaiper.Pair;
-import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
-    // dummy
-    private static final Pair<String, Obj> SUCCESS_NO_ASSIGNMENT = new Pair<>(null, null);
+public class PatternBinder implements PatternVisitor<Boolean, Tuple> {
 
     private final PatternCase patternCase;
     private final ExprInterpreter interpreter;
@@ -44,50 +37,19 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
     }
 
     public boolean declareFrom(Tuple tuple) {
-        Map<String, Obj> results = bindingsFrom(tuple);
-
-        if (results == null) return false;
-
-        for (Map.Entry<String, Obj> result : results.entrySet()) {
-            ExprInterpreter.declare(scope, result.getKey(), result.getValue());
-        }
-
-        return true;
-    }
-
-    public boolean assignFrom(Tuple tuple) {
-        Map<String, Obj> results = bindingsFrom(tuple);
-
-        if (results == null) return false;
-
-        for (Map.Entry<String, Obj> result : results.entrySet()) {
-            if(!ExprInterpreter.assign(scope, result.getKey(), result.getValue())) {
-                throw new ComputeException(result.getKey() + " is not defined, it must be declared first");
-            }
-        }
-
-        return true;
-    }
-
-    private Map<String, Obj> bindingsFrom(Tuple tuple) {
-        Map<String, Obj> results = new LinkedHashMap<>();
         for (Pattern pattern : patternCase.getPatterns()) {
-            Pair<String, Obj> result = pattern.accept(this, tuple);
+            boolean result = pattern.accept(this, tuple);
 
-            if (result != null) {
-                if (result != SUCCESS_NO_ASSIGNMENT) {
-                    results.put(result.getFirst(), result.getSecond());
-                }
-            } else {
-                return null;
+            if (!result) {
+                return false;
             }
         }
 
-        return results;
+        return true;
     }
 
     @Override
-    public Pair<String, Obj> visit(VariablePattern pattern, Tuple obj) {
+    public Boolean visit(VariablePattern pattern, Tuple obj) {
         Obj value;
 
         if (obj.hasAttr(pattern.getName())) {
@@ -96,30 +58,31 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
             value = obj.getAttr("value");
             usedValue = true;
         } else {
-            return null;
+            return false;
         }
 
         if (!pattern.isNullable() && value == Null.VALUE) {
-            return null;
+            return false;
         } else {
-            return new Pair<>(pattern.getName(), value);
+            ExprInterpreter.declare(scope, pattern.getName(), value);
+            return true;
         }
     }
 
     @Override
-    public Pair<String, Obj> visit(DefaultPattern pattern, Tuple obj) {
-        Pair<String, Obj> result = pattern.getDelegate().accept(this, obj);
+    public Boolean visit(DefaultPattern pattern, Tuple obj) {
+        boolean result = pattern.getDelegate().accept(this, obj);
 
-        if (result == null) {
+        if (!result) {
             Obj value = pattern.getDefault().accept(interpreter, scope);
-            return new Pair<>(pattern.getDelegate().getName(), value);
-        } else {
-            return result;
+            ExprInterpreter.declare(scope, pattern.getDelegate().getName(), value);
         }
+
+        return true;
     }
 
     @Override
-    public Pair<String, Obj> visit(TuplePattern pattern, Tuple obj) {
+    public Boolean visit(TuplePattern pattern, Tuple obj) {
         Obj value;
 
         if (obj.hasAttr(pattern.getName())) {
@@ -128,14 +91,9 @@ public class PatternBinder implements PatternVisitor<Pair<String, Obj>, Tuple> {
             value = obj.getAttr("value");
             usedValue = true;
         } else {
-            return null;
+            return false;
         }
 
-        // check later
-        if (interpreter.resultOf(pattern.getExpr(), scope).equals(value)) {
-            return SUCCESS_NO_ASSIGNMENT;
-        } else {
-            return null;
-        }
+        return interpreter.resultOf(pattern.getExpr(), scope).equals(value);
     }
 }

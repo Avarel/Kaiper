@@ -32,6 +32,11 @@ public class NullNode extends Single {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return this == obj;
+    }
+
+    @Override
     public String toString() {
         return "null";
     }

@@ -38,6 +38,11 @@ public class DecimalNode extends Single {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj instanceof DecimalNode && value == ((DecimalNode) obj).value;
+    }
+
+    @Override
     public String toString() {
         return String.valueOf(value);
     }
