@@ -19,6 +19,7 @@ package xyz.avarel.kaiper;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.exceptions.*;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.interpreter.VisitorSettings;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.runtime.Null;
@@ -53,7 +54,7 @@ public class KaiperEvaluator {
      */
     public KaiperEvaluator(Scope scope) {
         this.scope = scope;
-        this.visitor = new ExprInterpreter();
+        this.visitor = new ExprInterpreter(new VisitorSettings());
         this.answer = Null.VALUE;
     }
 

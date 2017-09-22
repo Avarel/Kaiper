@@ -23,6 +23,7 @@ import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.interpreter.VisitorSettings;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -60,7 +61,7 @@ public class ScriptExpr extends Expr {
     }
 
     public Obj compute() {
-        return accept(new ExprInterpreter(), scope.copy());
+        return accept(new ExprInterpreter(new VisitorSettings()), scope.copy());
     }
 
     @Override

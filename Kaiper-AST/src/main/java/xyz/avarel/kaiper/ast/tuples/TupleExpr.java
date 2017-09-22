@@ -20,8 +20,6 @@ import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class TupleExpr extends Single {
@@ -43,6 +41,11 @@ public class TupleExpr extends Single {
     @Override
     public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof TupleExpr && elements.equals(((TupleExpr) o).elements);
     }
 
     @Override

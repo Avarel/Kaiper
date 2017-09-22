@@ -62,6 +62,14 @@ public class BinaryOperation extends Single {
     }
 
     @Override
+    public boolean equals(Object o) {
+        return o instanceof BinaryOperation
+                && operator.equals(((BinaryOperation) o).operator)
+                && left.equals(((BinaryOperation) o).left)
+                && right.equals(((BinaryOperation) o).right);
+    }
+
+    @Override
     public String toString() {
         return operator + "(" + left + ", " + right + ")";
     }

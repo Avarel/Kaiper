@@ -50,11 +50,22 @@ import java.util.List;
 import java.util.Map;
 
 public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
+    private final VisitorSettings visitorSettings;
+
     private int recursionDepth = 0;
-    private long timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
+    private long timeout;
+
+    public ExprInterpreter(VisitorSettings visitorSettings) {
+        this.visitorSettings = visitorSettings;
+        resetTimeout();
+    }
+
+    public VisitorSettings getVisitorSettings() {
+        return visitorSettings;
+    }
 
     public void resetTimeout() {
-        timeout = System.currentTimeMillis() + GlobalVisitorSettings.MILLISECONDS_LIMIT;
+        timeout = System.currentTimeMillis() + visitorSettings.getMsLimit();
     }
 
     @Override
@@ -109,7 +120,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     @Override
     public Obj visit(Invocation expr, Scope scope) {
-        GlobalVisitorSettings.checkRecursionDepthLimit(recursionDepth);
+        visitorSettings.checkRecursionDepthLimit(recursionDepth);
 
         Obj target = resultOf(expr.getLeft(), scope);
 
@@ -212,7 +223,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             int start = ((Int) startObj).value();
             int end = ((Int) endObj).value();
 
-            GlobalVisitorSettings.checkSizeLimit(Math.abs(end - start));
+            visitorSettings.checkSizeLimit(Math.abs(end - start));
 
             return new Range(start, end);
         }
@@ -229,15 +240,15 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
             if (item instanceof Range) {
                 for (Int i : (Range) item) {
-                    GlobalVisitorSettings.checkSizeLimit(array.size());
+                    visitorSettings.checkSizeLimit(array.size());
 
-                    checkTimeout();
+                    visitorSettings.checkTimeout(timeout);
                     array.add(i);
                 }
                 continue;
             }
 
-            GlobalVisitorSettings.checkSizeLimit(array.size());
+            visitorSettings.checkSizeLimit(array.size());
 
             array.add(item);
         }
@@ -357,7 +368,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         Expr loopExpr = expr.getAction();
 
         while (true) {
-            GlobalVisitorSettings.checkIterationLimit(iteration);
+            visitorSettings.checkIterationLimit(iteration);
 
             Obj condition = resultOf(expr.getCondition(), scope.subPool());
             if (condition instanceof Bool && condition == Bool.TRUE) {
@@ -385,7 +396,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
             int iteration = 0;
             for (Object var : iterable) {
-                GlobalVisitorSettings.checkIterationLimit(iteration);
+                visitorSettings.checkIterationLimit(iteration);
 
                 if (var instanceof Obj) {
                     Scope copy = scope.subPool();
@@ -492,7 +503,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     public Obj resultOf(Expr expr, Scope scope) {
-        checkTimeout();
+        visitorSettings.checkTimeout(timeout);
         try {
             return expr.accept(this, scope);
         } catch (ComputeException e) {
@@ -517,9 +528,5 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
             throw new ComputeException(key + " already exists in the scope");
         }
         target.put(key, value);
-    }
-    
-    private void checkTimeout() {
-        GlobalVisitorSettings.checkTimeout(timeout);
     }
 }

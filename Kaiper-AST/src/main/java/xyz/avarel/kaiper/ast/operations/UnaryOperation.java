@@ -53,6 +53,13 @@ public class UnaryOperation extends Single {
     }
 
     @Override
+    public boolean equals(Object o) {
+        return o instanceof UnaryOperation
+                && operator.equals(((UnaryOperation) o).operator)
+                && target.equals(((UnaryOperation) o).target);
+    }
+
+    @Override
     public String toString() {
         return operator + "(" + target + ")";
     }

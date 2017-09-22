@@ -69,4 +69,11 @@ public class Identifier extends Single {
         }
         return name;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Identifier
+                && parent.equals(((Identifier) o).parent)
+                && name.equals(((Identifier) o).name);
+    }
 }
