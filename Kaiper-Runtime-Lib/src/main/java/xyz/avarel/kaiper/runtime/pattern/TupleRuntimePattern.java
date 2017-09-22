@@ -18,23 +18,20 @@ package xyz.avarel.kaiper.runtime.pattern;
 
 import xyz.avarel.kaiper.runtime.Obj;
 
-// (delegate) = (defaultExpr)
-public class DefaultRuntimeLibPattern extends RuntimeLibPattern {
-    private final RuntimeLibPattern delegate;
-    private final Obj defaultObj;
+// a: is Int
+// a: 2
+// a: x
+// a: (2, meme: 2, dank: 3)
+public class TupleRuntimePattern extends RuntimePattern {
+    private final Obj obj;
 
-    public DefaultRuntimeLibPattern(RuntimeLibPattern delegate, Obj defaultObj) {
-        super(delegate.getName());
-        this.delegate = delegate;
-        this.defaultObj = defaultObj;
+    public TupleRuntimePattern(String name, Obj obj) {
+        super(name);
+        this.obj = obj;
     }
 
-    public RuntimeLibPattern getDelegate() {
-        return delegate;
-    }
-
-    public Obj getDefault() {
-        return defaultObj;
+    public Obj getObj() {
+        return obj;
     }
 
     @Override
@@ -44,6 +41,19 @@ public class DefaultRuntimeLibPattern extends RuntimeLibPattern {
 
     @Override
     public String toString() {
-        return delegate + " = " + defaultObj;
+        return getName() + ": " + getObj();
+    }
+
+    @Override
+    public int compareTo(RuntimePattern other) {
+        int compare = super.compareTo(other);
+
+        if (compare == 0
+                && (!(other instanceof TupleRuntimePattern)
+                || !obj.equals(((TupleRuntimePattern) other).obj))) {
+            return -1; // put tuple patterns with different values on different levels, so it doesnt matter
+        }
+
+        return compare;
     }
 }

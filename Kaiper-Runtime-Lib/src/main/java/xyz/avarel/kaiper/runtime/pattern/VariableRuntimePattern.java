@@ -16,16 +16,30 @@
 
 package xyz.avarel.kaiper.runtime.pattern;
 
-public abstract class RuntimeLibPattern {
-    private final String name;
+// x
+public class VariableRuntimePattern extends RuntimePattern {
+    private final boolean nullable;
 
-    public RuntimeLibPattern(String name) {
-        this.name = name;
+    public VariableRuntimePattern(String name) {
+        this(name, true);
     }
 
-    public String getName() {
-        return name;
+    public VariableRuntimePattern(String name, boolean nullable) {
+        super(name);
+        this.nullable = nullable;
     }
 
-    public abstract <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope);
+    public boolean isNullable() {
+        return nullable;
+    }
+
+    @Override
+    public <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope) {
+        return visitor.visit(this, scope);
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

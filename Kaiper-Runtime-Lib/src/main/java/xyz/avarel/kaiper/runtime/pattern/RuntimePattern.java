@@ -16,31 +16,28 @@
 
 package xyz.avarel.kaiper.runtime.pattern;
 
-import xyz.avarel.kaiper.runtime.Obj;
+public abstract class RuntimePattern implements Comparable<RuntimePattern> {
+    private final String name;
 
-// a: is Int
-// a: 2
-// a: x
-// a: (2, meme: 2, dank: 3)
-public class TupleRuntimeLibPattern extends RuntimeLibPattern {
-    private final Obj obj;
-
-    public TupleRuntimeLibPattern(String name, Obj obj) {
-        super(name);
-        this.obj = obj;
+    public RuntimePattern(String name) {
+        this.name = name;
     }
 
-    public Obj getObj() {
-        return obj;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope) {
-        return visitor.visit(this, scope);
+    public int compareTo(RuntimePattern other) {
+        if (name.equals("value") && !other.getName().equals("value")) {
+            return -1;
+        } else if (other.getName().equals("value")) {
+            return 1;
+        }
+
+        return getName().compareTo(other.getName());
     }
 
-    @Override
-    public String toString() {
-        return getName() + ": " + obj;
-    }
+
+    public abstract <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope);
 }

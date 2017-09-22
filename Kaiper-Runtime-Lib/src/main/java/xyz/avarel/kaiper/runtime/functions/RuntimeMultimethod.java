@@ -16,39 +16,35 @@
 
 package xyz.avarel.kaiper.runtime.functions;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.pattern.PatternBinder;
-import xyz.avarel.kaiper.ast.pattern.PatternCase;
-import xyz.avarel.kaiper.exceptions.InterpreterException;
+import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
-import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
-import xyz.avarel.kaiper.scope.Scope;
+import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.function.Function;
 
-public class CompiledMultiMethod extends Func {
-    private final SortedMap<PatternCase, Expr> methodCases = new TreeMap<>();
-    private final ExprInterpreter visitor;
-    private final Scope scope;
+public class RuntimeMultimethod extends Func {
+    private final SortedMap<RuntimePatternCase, Function<Map<String, Obj>, Obj>> methodCases = new TreeMap<>();
 
-    public CompiledMultiMethod(String name, ExprInterpreter visitor, Scope scope) {
+    public RuntimeMultimethod(String name) {
         super(name);
-        this.visitor = visitor;
-        this.scope = scope;
     }
 
-    public Map<PatternCase, Expr> getMethodCases() {
+    public Map<RuntimePatternCase, Function<Map<String, Obj>, Obj>> getMethodCases() {
         return methodCases;
     }
 
-    public void addCase(PatternCase pattern, Expr expr) {
-        if (methodCases.put(pattern, expr) != null) {
-            throw new InterpreterException("Internal: duplicate definition for method " + getName());
+    public RuntimeMultimethod addCase(RuntimePatternCase pattern, Function<Map<String, Obj>, Obj> consumer) {
+        if (methodCases.put(pattern, consumer) != null) {
+            throw new ComputeException("Internal: duplicate definition for method " + getName());
         }
+
+        return this;
     }
 
     @Override
@@ -58,21 +54,21 @@ public class CompiledMultiMethod extends Func {
 
     @Override
     public Obj invoke(Tuple argument) {
-        for (Map.Entry<PatternCase, Expr> entry : methodCases.entrySet()) {
-            Scope scope = this.scope.subPool();
+        for (Map.Entry<RuntimePatternCase, Function<Map<String, Obj>, Obj>> entry : methodCases.entrySet()) {
+            Map<String, Obj> scope = new HashMap<>();
 
-            if (!new PatternBinder(entry.getKey(), visitor, scope).declareFrom(argument)) {
+            if (!new RuntimePatternBinder(entry.getKey(), scope).bindFrom(argument)) {
                 continue;
             }
 
             try {
-                return entry.getValue().accept(visitor, scope);
+                return entry.getValue().apply(scope);
             } catch (ReturnException re) {
                 return re.getValue();
             }
         }
 
-        throw new InterpreterException("Could not match arguments (" + argument + ") to any method cases");
+        throw new ComputeException("Could not match arguments (" + argument + ") to any method cases");
     }
 
     @Override

@@ -20,31 +20,31 @@ import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
-import xyz.avarel.kaiper.runtime.pattern.RuntimeLibPattern;
-import xyz.avarel.kaiper.runtime.pattern.RuntimeLibPatternCase;
-import xyz.avarel.kaiper.runtime.pattern.VariableRuntimeLibPattern;
+import xyz.avarel.kaiper.runtime.pattern.RuntimePattern;
+import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class NativeFunc extends Func {
-    private final RuntimeLibPatternCase pattern;
+    private final RuntimePatternCase pattern;
 
     public NativeFunc(String name) {
         this(name, new String[0]);
     }
 
-    public NativeFunc(String name, RuntimeLibPattern... parameters) {
-        super(name);
-        this.pattern = new RuntimeLibPatternCase(Arrays.asList(parameters));
+    public NativeFunc(String name, RuntimePattern... parameters) {
+        this(name, new RuntimePatternCase(Arrays.asList(parameters)));
     }
 
     public NativeFunc(String name, String... params) {
+        this(name, new RuntimePatternCase(params));
+    }
+
+    public NativeFunc(String name, RuntimePatternCase pattern) {
         super(name);
-        List<RuntimeLibPattern> patterns = new ArrayList<>(params.length);
-        for (String param : params) {
-            patterns.add(new VariableRuntimeLibPattern(param));
-        }
-        this.pattern = new RuntimeLibPatternCase(patterns);
+        this.pattern = pattern;
     }
 
     @Override
@@ -52,7 +52,7 @@ public abstract class NativeFunc extends Func {
         return pattern.size();
     }
 
-    public RuntimeLibPatternCase getPattern() {
+    public RuntimePatternCase getPattern() {
         return pattern;
     }
 
@@ -65,7 +65,7 @@ public abstract class NativeFunc extends Func {
     public Obj invoke(Tuple argument) {
         Map<String, Obj> scope = new HashMap<>(getArity());
 
-        if (!new RuntimeLibPatternBinder(pattern, scope).bindFrom(argument)) {
+        if (!new RuntimePatternBinder(pattern, scope).bindFrom(argument)) {
             throw new ComputeException("Could not match arguments (" + argument + ") to " + getName() + "(" + pattern + ")");
         }
 

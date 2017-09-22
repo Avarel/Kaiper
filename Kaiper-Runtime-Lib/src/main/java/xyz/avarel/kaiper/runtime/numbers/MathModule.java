@@ -20,7 +20,6 @@ import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
-import xyz.avarel.kaiper.runtime.pattern.VariableRuntimeLibPattern;
 
 import java.util.Map;
 
@@ -91,7 +90,7 @@ public class MathModule extends NativeModule {
             }
         });
 
-        declare("sum", new NativeFunc("sum", new VariableRuntimeLibPattern("numbers")) {
+        declare("sum", new NativeFunc("sum", "numbers") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
                 if (arguments.isEmpty()) return Int.of(0);
@@ -105,7 +104,7 @@ public class MathModule extends NativeModule {
             }
         });
 
-        declare("product", new NativeFunc("product", new VariableRuntimeLibPattern("numbers")) {
+        declare("product", new NativeFunc("product", "numbers") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
                 if (arguments.isEmpty()) return Int.of(0);

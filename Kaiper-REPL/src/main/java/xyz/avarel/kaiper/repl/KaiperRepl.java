@@ -18,10 +18,11 @@ package xyz.avarel.kaiper.repl;
 
 import xyz.avarel.kaiper.KaiperEvaluator;
 import xyz.avarel.kaiper.exceptions.KaiperException;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.functions.NativeFunc;
+import xyz.avarel.kaiper.runtime.functions.RuntimeMultimethod;
+import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
 
-import java.util.Map;
 import java.util.Scanner;
 
 public class KaiperRepl {
@@ -30,13 +31,16 @@ public class KaiperRepl {
 
         KaiperEvaluator interpreter = new KaiperEvaluator();
 
-        interpreter.getScope().put("println", new NativeFunc("println", "obj") {
-            @Override
-            protected Obj eval(Map<String, Obj> arguments) {
-                System.out.println(arguments.get("obj"));
-                return null;
-            }
-        });
+        interpreter.getScope().put("print", new RuntimeMultimethod("println")
+                .addCase(new RuntimePatternCase("value"), scope -> {
+                    System.out.print(scope.get("value"));
+                    return Null.VALUE;
+                })
+                .addCase(new RuntimePatternCase("ln"), scope -> {
+                    System.out.println(scope.get("ln"));
+                    return Null.VALUE;
+                })
+        );
 
         while (true) {
             System.out.print("kip \u2502 ");

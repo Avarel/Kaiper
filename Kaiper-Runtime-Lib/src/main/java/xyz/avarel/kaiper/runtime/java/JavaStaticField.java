@@ -19,9 +19,14 @@ package xyz.avarel.kaiper.runtime.java;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
+import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class JavaStaticField implements Obj {
     private final JavaType parent;
@@ -81,43 +86,43 @@ public class JavaStaticField implements Obj {
     }
 
     @Override
-    public Obj invoke(Tuple arguments) {
-        // fixme
-        return Null.VALUE;
-//        if (name == null) return Null.VALUE;
-//
-//        List<Object> nativeArgs = arguments.stream()
-//                .map(Obj::toJava)
-//                .map(o -> o != Null.VALUE ? o : null)
-//                .collect(Collectors.toList());
-//
-//        List<Class<?>> classes = nativeArgs.stream()
-//                .map(o -> o != null ? o.getClass() : null)
-//                .collect(Collectors.toList());
-//
-//        Object result = null;
-//
-//        outer:
-//        for (Method method : parent.getWrappedClass().getMethods()) {
-//            if (!method.getName().equals(name)) continue;
-//            if (classes.size() != method.getParameterCount()) continue;
-//
-//            Class<?>[] parameterTypes = method.getParameterTypes();
-//            for (int i = 0; i < method.getParameterCount(); i++) {
-//
-//                if (!JavaUtils.isAssignable(classes.get(i), parameterTypes[i])) {
-//                    continue outer;
-//                }
-//            }
-//
-//            try {
-//                result = method.invoke(null, nativeArgs.toArray());
-//                break;
-//            } catch (IllegalAccessException | InvocationTargetException ignore) {
-//            }
-//        }
-//
-//        return JavaUtils.mapJavaToKaiperType(result);
+    public Obj invoke(Tuple tuple) {
+        if (name == null) return Null.VALUE;
+
+        List<Obj> arguments = tuple.getAttr("value").as(Array.TYPE);
+
+        List<Object> nativeArgs = arguments.stream()
+                .map(Obj::toJava)
+                .map(o -> o != Null.VALUE ? o : null)
+                .collect(Collectors.toList());
+
+        List<Class<?>> classes = nativeArgs.stream()
+                .map(o -> o != null ? o.getClass() : null)
+                .collect(Collectors.toList());
+
+        Object result = null;
+
+        outer:
+        for (Method method : parent.getWrappedClass().getMethods()) {
+            if (!method.getName().equals(name)) continue;
+            if (classes.size() != method.getParameterCount()) continue;
+
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            for (int i = 0; i < method.getParameterCount(); i++) {
+
+                if (!JavaUtils.isAssignable(classes.get(i), parameterTypes[i])) {
+                    continue outer;
+                }
+            }
+
+            try {
+                result = method.invoke(null, nativeArgs.toArray());
+                break;
+            } catch (IllegalAccessException | InvocationTargetException ignore) {
+            }
+        }
+
+        return JavaUtils.mapJavaToKaiperType(result);
     }
 
     @Override

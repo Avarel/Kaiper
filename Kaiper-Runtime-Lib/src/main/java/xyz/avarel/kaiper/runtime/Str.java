@@ -18,10 +18,11 @@ package xyz.avarel.kaiper.runtime;
 
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
+import xyz.avarel.kaiper.runtime.functions.RuntimeMultimethod;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
-import xyz.avarel.kaiper.runtime.pattern.VariableRuntimeLibPattern;
+import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.Map;
@@ -56,12 +57,12 @@ public class Str implements Obj {
                 return arguments.get("string").as(Str.TYPE).split(arguments.get("query").as(Str.TYPE));
             }
         });
-        declare("substring", new NativeFunc("substring", new VariableRuntimeLibPattern("string"), new VariableRuntimeLibPattern("start"), new VariableRuntimeLibPattern("end")) {
-            @Override
-            protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get("string").as(Str.TYPE).substring(arguments.get("start").as(Int.TYPE), arguments.get("end").as(Int.TYPE));
-            }
-        });
+        declare("substring", new RuntimeMultimethod("substring")
+                .addCase(new RuntimePatternCase("string", "start"),
+                        scope -> scope.get("string").as(Str.TYPE).substring(scope.get("start").as(Int.TYPE)))
+                .addCase(new RuntimePatternCase("string", "start", "end"),
+                        scope -> scope.get("string").as(Str.TYPE).substring(scope.get("start").as(Int.TYPE), scope.get("end").as(Int.TYPE)))
+        );
         declare("toVector", new NativeFunc("toVector", "string") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {

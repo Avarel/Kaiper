@@ -20,22 +20,26 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-// multiple of patterns
-public class RuntimeLibPatternCase {
-    public static final RuntimeLibPatternCase EMPTY = new RuntimeLibPatternCase(Collections.emptyList());
+public class RuntimePatternCase implements Comparable<RuntimePatternCase> {
+    public static final RuntimePatternCase EMPTY = new RuntimePatternCase(Collections.emptyList());
 
-    private final List<RuntimeLibPattern> patterns;
+    private final List<RuntimePattern> patterns;
 
-    public RuntimeLibPatternCase(RuntimeLibPattern... patterns) {
+    public RuntimePatternCase(String... variables) {
+        this(Arrays.stream(variables).map(VariableRuntimePattern::new).collect(Collectors.toList()));
+    }
+
+    public RuntimePatternCase(RuntimePattern... patterns) {
         this(Arrays.asList(patterns));
     }
 
-    public RuntimeLibPatternCase(List<RuntimeLibPattern> patterns) {
+    public RuntimePatternCase(List<RuntimePattern> patterns) {
         this.patterns = patterns;
     }
 
-    public List<RuntimeLibPattern> getPatterns() {
+    public List<RuntimePattern> getPatterns() {
         return patterns;
     }
 
@@ -45,10 +49,10 @@ public class RuntimeLibPatternCase {
         }
 
         StringBuilder sb = new StringBuilder();
-        Iterator<RuntimeLibPattern> iterator = patterns.iterator();
+        Iterator<RuntimePattern> iterator = patterns.iterator();
 
         while (true) {
-            RuntimeLibPattern pattern = iterator.next();
+            RuntimePattern pattern = iterator.next();
             sb.append(pattern);
             if (iterator.hasNext()) {
                 sb.append(", ");
@@ -62,5 +66,26 @@ public class RuntimeLibPatternCase {
 
     public int size() {
         return patterns.size();
+    }
+
+    @Override
+    public int compareTo(RuntimePatternCase other) {
+        if (other.size() != size()) {
+            return Integer.compare(other.size(), size());
+        }
+
+        for (int i = 0; i < size(); i++) {
+            int b = patterns.get(i).compareTo(other.patterns.get(i));
+            if (b != 0) {
+                return b;
+            }
+        }
+
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof RuntimePatternCase && this.compareTo((RuntimePatternCase) obj) == 0;
     }
 }
