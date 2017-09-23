@@ -12,7 +12,6 @@ import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.*;
 import xyz.avarel.kaiper.bytecode.io.KDataOutput;
-import xyz.avarel.kaiper.exceptions.CompilerException;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 
@@ -50,8 +49,8 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(NEW_FUNCTION).writeShort(name);
 
-        new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END);
+        new PatternCompiler(this).compile(expr.getPatternCase(), out);
+        //out.writeOpcode(END);
 
         visit(out, expr.getExpr());
         out.writeOpcode(END);
@@ -347,8 +346,8 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(NEW_TYPE).writeShort(name);
 
-        new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END);
+        new PatternCompiler(this).compile(expr.getPatternCase(), out);
+        //out.writeOpcode(END);
 
         visit(out, expr.getExpr());
         out.writeOpcode(END);
@@ -396,8 +395,8 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(BIND_DECLARE);
 
-        new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END);
+        new PatternCompiler(this).compile(expr.getPatternCase(), out);
+        //out.writeOpcode(END);
 
         return null;
     }
@@ -410,8 +409,8 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(BIND_ASSIGN);
 
-        new PatternCompiler(this).visit(expr.getPatternCase(), out);
-        out.writeOpcode(END);
+        new PatternCompiler(this).compile(expr.getPatternCase(), out);
+        //out.writeOpcode(END);
 
         return null;
     }

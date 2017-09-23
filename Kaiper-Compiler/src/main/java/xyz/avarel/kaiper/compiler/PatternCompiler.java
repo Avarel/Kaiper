@@ -14,11 +14,10 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
         this.parent = parent;
     }
 
-    @Override
-    public Void visit(PatternCase patternCase, KDataOutput out) {
+    public void compile(PatternCase patternCase, KDataOutput out) {
         List<Pattern> patterns = patternCase.getPatterns();
 
-        out.writeOpcode(PATTERN_CASE).writeInt(patterns.size());
+        out.writeInt(patterns.size());
 
         for (Pattern pattern : patterns) {
             pattern.accept(this, out);
@@ -26,19 +25,11 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
 
         out.writeOpcode(END);
 
-        return null;
-    }
-
-    @Override
-    public Void visit(WildcardPattern pattern, KDataOutput out) {
-        out.writeOpcode(WILDCARD);
-
-        return null;
     }
 
     @Override
     public Void visit(VariablePattern pattern, KDataOutput out) {
-        out.writeOpcode(VARIABLE).writeShort(parent.stringConst(pattern.getName()));
+        out.writeOpcode(VARIABLE).writeBoolean(pattern.isNullable()).writeShort(parent.stringConst(pattern.getName()));
 
         return null;
     }
@@ -47,24 +38,7 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
     public Void visit(TuplePattern pattern, KDataOutput out) {
         out.writeOpcode(TUPLE).writeShort(parent.stringConst(pattern.getName()));
 
-        pattern.getPattern().accept(this, out);
-        out.writeOpcode(END);
-
-        return null;
-    }
-
-    @Override
-    public Void visit(RestPattern pattern, KDataOutput out) {
-        out.writeOpcode(REST).writeShort(parent.stringConst(pattern.getName()));
-
-        return null;
-    }
-
-    @Override
-    public Void visit(ValuePattern pattern, KDataOutput out) {
-        out.writeOpcode(VALUE);
-
-        pattern.getValue().accept(parent, out);
+        pattern.getExpr().accept(parent, out);
         out.writeOpcode(END);
 
         return null;
