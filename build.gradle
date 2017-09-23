@@ -22,34 +22,30 @@ plugins {
     id 'maven'
     id 'maven-publish'
     id 'signing'
-    id 'org.jetbrains.kotlin.jvm' version '1.1.4'
+    id 'org.jetbrains.kotlin.jvm' version '1.1.4' apply false
     id 'com.github.johnrengelman.shadow' version '2.0.0'
 }
 
-group = 'xyz.avarel'
-version = new Version(major: 1, minor: 1, revision: 0)
+def projectGroup = 'xyz.avarel'
+def projectVersion = new Version(major: 1, minor: 1, revision: 0)
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-repositories {
-    jcenter()
-}
+def dontPublish = [
+        'Kaiper-REPL'
+]
 
 if (!hasProperty('bintrayUsername')) bintrayUsername = ''
 if (!hasProperty('bintrayApiKey')) bintrayApiKey = ''
 
 dependencies {
-    project.childProjects.values().findAll {it.name != 'Kaiper-REPL'}.each { compile it }
-    //testCompile group: 'junit', name: 'junit', version: '4.12'
+    project.childProjects.values().findAll { !dontPublish.contains(it.name) }.each { compile it }
 }
 
 allprojects {
     apply plugin: 'java'
     if (hasProperty('requiresKotlin')) apply plugin: 'org.jetbrains.kotlin.jvm'
 
-    group = 'xyz.avarel.kaiper'
-    version = rootProject.version
+    group = projectGroup
+    version = projectVersion
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -103,7 +99,7 @@ allprojects {
 
 }
 
-configure(allprojects.findAll {it.name != 'Kaiper-REPL'})  {
+configure(allprojects.findAll { !dontPublish.contains(it.name) }) {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.bintray'

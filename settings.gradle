@@ -1,4 +1,5 @@
 rootProject.name = 'Kaiper'
+
 include 'Kaiper-Common', 'Kaiper-Runtime-Lib',
         'Kaiper-AST', 'Kaiper-Interpreter',
         'Kaiper-Bytecode', 'Kaiper-Compiler',
