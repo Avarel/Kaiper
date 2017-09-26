@@ -16,6 +16,7 @@
 
 package xyz.avarel.kaiper.parser;
 
+import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.pattern.*;
 import xyz.avarel.kaiper.lexer.TokenType;
 
@@ -41,18 +42,24 @@ public class PatternParser extends KaiperParser {
     private Pattern parsePattern() {
         Pattern basePattern;
 
-        String name = eat(TokenType.IDENTIFIER).getString();
 
-        if (match(TokenType.COLON)) {
-            // name: EXPR
-            basePattern = new TuplePattern(name, parseSingle());
-        } else {
-            basePattern = new VariablePattern(name, match(TokenType.QUESTION));
+        if (nextIs(TokenType.IDENTIFIER)) {
+            String name = eat(TokenType.IDENTIFIER).getString();
 
-            if (match(TokenType.ASSIGN)) {
-                // name = EXPR
-                basePattern = new DefaultPattern(basePattern, parseSingle());
+            if (match(TokenType.COLON)) {
+                // name: EXPR
+                basePattern = new TuplePattern(name, parseSingle());
+            } else {
+                basePattern = new VariablePattern(name, match(TokenType.QUESTION));
+
+                if (match(TokenType.ASSIGN)) {
+                    // name = EXPR
+                    basePattern = new DefaultPattern(basePattern, parseSingle());
+                }
             }
+        } else {
+            match(TokenType.EQUALS);
+            basePattern = new TuplePattern("value", parseSingle(Precedence.TUPLE_PAIR));
         }
 
         return basePattern;
