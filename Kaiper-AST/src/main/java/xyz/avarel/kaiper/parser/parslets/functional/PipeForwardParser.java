@@ -83,7 +83,7 @@ public class PipeForwardParser extends BinaryParser {
                 return new Invocation(
                         token.getPosition(),
                         right,
-                        left
+                        (TupleExpr) left
                 );
             } else {
                 return new Invocation(

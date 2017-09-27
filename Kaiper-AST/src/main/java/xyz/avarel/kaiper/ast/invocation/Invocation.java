@@ -18,13 +18,14 @@ package xyz.avarel.kaiper.ast.invocation;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.lexer.Position;
 
 public class Invocation extends Single {
     private final Single left;
     private final Single argument;
 
-    public Invocation(Position position, Single left, Single argument) {
+    public Invocation(Position position, Single left, TupleExpr argument) {
         super(position);
         this.left = left;
         this.argument = argument;

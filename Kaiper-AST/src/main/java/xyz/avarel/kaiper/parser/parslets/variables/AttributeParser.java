@@ -19,13 +19,13 @@ package xyz.avarel.kaiper.parser.parslets.variables;
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.Single;
-import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.parslets.functional.InvocationParser;
 
 public class AttributeParser extends BinaryParser {
     public AttributeParser() {
@@ -43,11 +43,10 @@ public class AttributeParser extends BinaryParser {
         Identifier id = new Identifier(token.getPosition(), left, name.getString());
 
         if (parser.nextIsAny(
-                TokenType.STRING, TokenType.INT, TokenType.NUMBER, TokenType.IDENTIFIER,
-                TokenType.LEFT_BRACE, TokenType.UNDERSCORE, TokenType.FUNCTION
+                TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
+                TokenType.NUMBER, TokenType.FUNCTION, TokenType.NULL
         )) {
-            Single argument = parser.parseSingle();
-            return new Invocation(token.getPosition(), id, argument);
+            return InvocationParser.tupleInvocationCheck(token, id, parser.parseSingle());
         }
 
         return id;

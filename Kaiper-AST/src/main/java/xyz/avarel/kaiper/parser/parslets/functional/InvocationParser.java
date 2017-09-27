@@ -40,15 +40,25 @@ public class InvocationParser extends BinaryParser {
             throw new SyntaxException("Function creation are disabled");
         }
 
-        Single arguments;
+        Single argument;
 
         if (parser.match(TokenType.RIGHT_PAREN)) {
-            arguments = new TupleExpr(left.getPosition(), Collections.emptyMap());
+            argument = new TupleExpr(left.getPosition(), Collections.emptyMap());
         } else {
-            arguments = parser.parseSingle();
+            argument = parser.parseSingle();
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return new Invocation(token.getPosition(), left, arguments);
+        return InvocationParser.tupleInvocationCheck(token, left, argument);
+    }
+
+    public static Invocation tupleInvocationCheck(Token token, Single left, Single argument) {
+        if (argument instanceof TupleExpr) {
+            return new Invocation(token.getPosition(), left, (TupleExpr) argument);
+        } else {
+            return new Invocation(token.getPosition(), left,
+                    new TupleExpr(argument.getPosition(), Collections.singletonMap("value", argument))
+            );
+        }
     }
 }

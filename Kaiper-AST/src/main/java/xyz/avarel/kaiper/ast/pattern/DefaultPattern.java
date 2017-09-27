@@ -43,6 +43,11 @@ public class DefaultPattern extends Pattern {
     }
 
     @Override
+    public int value() {
+        return 0;
+    }
+
+    @Override
     public String toString() {
         return delegate + " = " + defaultExpr;
     }

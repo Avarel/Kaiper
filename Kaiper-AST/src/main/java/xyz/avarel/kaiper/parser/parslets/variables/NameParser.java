@@ -17,16 +17,12 @@
 package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
-import xyz.avarel.kaiper.ast.invocation.Invocation;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
-
-import java.util.Collections;
+import xyz.avarel.kaiper.parser.parslets.functional.InvocationParser;
 
 public class NameParser implements PrefixParser {
     @Override
@@ -37,15 +33,7 @@ public class NameParser implements PrefixParser {
                 TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
                 TokenType.NUMBER, TokenType.FUNCTION, TokenType.NULL
         )) {
-            Single argument = parser.parseSingle();
-
-            if (argument instanceof TupleExpr) {
-                return new Invocation(token.getPosition(), id, argument);
-            } else {
-                return new Invocation(token.getPosition(), id,
-                        new TupleExpr(argument.getPosition(), Collections.singletonMap("value", argument))
-                );
-            }
+            return InvocationParser.tupleInvocationCheck(token, id, parser.parseSingle());
         }
 
         return id;
