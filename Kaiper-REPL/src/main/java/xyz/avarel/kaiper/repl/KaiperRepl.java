@@ -16,6 +16,7 @@
 
 package xyz.avarel.kaiper.repl;
 
+import com.kantenkugel.consoleutils.ConsoleUtils;
 import xyz.avarel.kaiper.KaiperEvaluator;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.runtime.Null;
@@ -23,11 +24,11 @@ import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.RuntimeMultimethod;
 import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
 
-import java.util.Scanner;
+import java.io.IOException;
 
 public class KaiperRepl {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        //Scanner sc = new Scanner(System.in);
 
         KaiperEvaluator interpreter = new KaiperEvaluator();
 
@@ -47,24 +48,29 @@ public class KaiperRepl {
 
             int openBrackets = 0;
 
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder entryBuffer = new StringBuilder();
 
             do {
                 if (openBrackets != 0) {
-                    buffer.append('\n');
+                    entryBuffer.append('\n');
                     System.out.print("    \u2502 ");
                 }
 
-                String line = sc.nextLine();
+                StringBuilder initialBuffer = new StringBuilder();
+                for (int i = 0; i < openBrackets; i++) {
+                    initialBuffer.append("    ");
+                }
 
-                buffer.append(line);
+                String line = ConsoleUtils.readWithInitialBuffer(initialBuffer.toString());
+                System.out.println();
+
+                entryBuffer.append(line);
                 openBrackets += countMatches(line, '{') - countMatches(line, '}');
             } while (openBrackets > 0);
 
+            String input = entryBuffer.toString();
 
-            String input = buffer.toString();
-
-            if (input.equals("quit")) {
+            if (input.equals("/quit")) {
                 break;
             }
 

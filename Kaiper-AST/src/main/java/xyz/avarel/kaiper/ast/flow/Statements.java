@@ -18,12 +18,18 @@ package xyz.avarel.kaiper.ast.flow;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
+import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Statements extends Expr {
     private final List<Expr> statements;
+
+    public Statements(Position position, List<Expr> statements) {
+        super(position);
+        this.statements = statements;
+    }
 
     public Statements(Expr before, Expr after) {
         super(before.getPosition());

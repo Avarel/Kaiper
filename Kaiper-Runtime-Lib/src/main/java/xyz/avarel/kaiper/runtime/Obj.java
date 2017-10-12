@@ -221,15 +221,9 @@ public interface Obj {
 //        return invoke(Tuple.of(arguments));
 //    }
 
+    @Deprecated
     default Obj slice(Obj start, Obj end, Obj step) {
         throw unimplemented("slice");
-    }
-
-    /**
-     * @return This {@link Obj}.
-     */
-    default Obj identity() {
-        return this;
     }
 
     /**

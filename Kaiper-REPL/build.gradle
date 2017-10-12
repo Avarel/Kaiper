@@ -24,6 +24,11 @@ jar {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
+    compile 'net.java.dev.jna:jna:4.5.0'
     compile project(":Kaiper-Interpreter")
 }

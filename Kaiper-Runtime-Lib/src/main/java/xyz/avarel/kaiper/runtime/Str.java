@@ -23,6 +23,7 @@ import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
+import xyz.avarel.kaiper.runtime.pattern.VariableRuntimePattern;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.Map;
@@ -31,6 +32,68 @@ public class Str implements Obj {
     public static final Type<Str> TYPE = new Type<>("String");
     public static final Module MODULE = new NativeModule("String") {{
         declare("TYPE", Str.TYPE);
+
+        // "string", "start", "end", "step"
+        declare("slice", new NativeFunc("slice",
+                new VariableRuntimePattern("string"),
+                new VariableRuntimePattern("start", true),
+                new VariableRuntimePattern("end", true),
+                new VariableRuntimePattern("step", true)
+        ) {
+            @Override
+            protected Obj eval(Map<String, Obj> arguments) {
+                Str str = arguments.get("string").as(Str.TYPE);
+                Obj startObj = arguments.get("start");
+                Obj endObj = arguments.get("end");
+                Obj stepObj = arguments.get("step");
+
+                int start, end, step;
+
+                if (startObj == Null.VALUE) {
+                    start = 0;
+                } else {
+                    start = startObj.as(Int.TYPE).value();
+                    if (start < 0) start += str.length();
+                }
+
+                if (endObj == Null.VALUE) {
+                    end = str.length();
+                } else {
+                    end = endObj.as(Int.TYPE).value();
+                    if (end < 0) end += str.length();
+                }
+
+                if (stepObj == Null.VALUE) {
+                    step = 1;
+                } else {
+                    step = stepObj.as(Int.TYPE).value();
+                }
+
+                if (step == 1) {
+                    return Str.of(str.value.substring(Math.max(0, start), Math.min(str.length(), end)));
+                } else {
+                    if (step > 0) {
+                        StringBuilder buffer = new StringBuilder();
+
+                        for (int i = start; i < end; i += step) {
+                            buffer.append(str.get(i));
+                        }
+
+                        return Str.of(buffer.toString());
+                    } else if (step < 0) {
+                        StringBuilder buffer = new StringBuilder();
+
+                        for (int i = end - 1; i >= start; i += step) {
+                            buffer.append(str.get(i));
+                        }
+
+                        return Str.of(buffer.toString());
+                    } else { // step == 0
+                        return Null.VALUE;
+                    }
+                }
+            }
+        });
 
         declare("length", new NativeFunc("length", "string") {
             @Override
@@ -147,73 +210,6 @@ public class Str implements Obj {
 
     public char get(int i) {
         return value().charAt(i);
-    }
-
-    @Override
-    public Obj slice(Obj startObj, Obj endObj, Obj stepObj) {
-        int start;
-        int end;
-        int step;
-
-        if (startObj == Null.VALUE) {
-            start = 0;
-        } else {
-            if (startObj instanceof Int) {
-                start = ((Int) startObj).value();
-                if (start < 0) {
-                    start += length();
-                }
-            } else {
-                return Null.VALUE;
-            }
-        }
-
-        if (endObj == Null.VALUE) {
-            end = length();
-        } else {
-            if (endObj instanceof Int) {
-                end = ((Int) endObj).value();
-                if (end < 0) {
-                    end += length();
-                }
-            } else {
-                return Null.VALUE;
-            }
-        }
-
-        if (stepObj == Null.VALUE) {
-            step = 1;
-        } else {
-            if (stepObj instanceof Int) {
-                step = ((Int) stepObj).value();
-            } else {
-                return Null.VALUE;
-            }
-        }
-
-        if (step == 1) {
-            return Str.of(value.substring(Math.max(0, start), Math.min(length(), end)));
-        } else {
-            if (step > 0) {
-                StringBuilder buffer = new StringBuilder();
-
-                for (int i = start; i < end; i += step) {
-                    buffer.append(get(i));
-                }
-
-                return Str.of(buffer.toString());
-            } else if (step < 0) {
-                StringBuilder buffer = new StringBuilder();
-
-                for (int i = end - 1; i >= start; i += step) {
-                    buffer.append(get(i));
-                }
-
-                return Str.of(buffer.toString());
-            } else { // step == 0
-                return Null.VALUE;
-            }
-        }
     }
 
     public Bool contains(Str str) {
