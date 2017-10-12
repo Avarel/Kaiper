@@ -23,7 +23,7 @@ import xyz.avarel.kaiper.lexer.Position;
 
 public class Invocation extends Single {
     private final Single left;
-    private final Single argument;
+    private final TupleExpr argument;
 
     public Invocation(Position position, Single left, TupleExpr argument) {
         super(position);
@@ -35,7 +35,7 @@ public class Invocation extends Single {
         return left;
     }
 
-    public Single getArgument() {
+    public TupleExpr getArgument() {
         return argument;
     }
 

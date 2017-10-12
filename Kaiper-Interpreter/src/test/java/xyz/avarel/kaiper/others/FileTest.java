@@ -18,42 +18,33 @@ package xyz.avarel.kaiper.others;
 
 import xyz.avarel.kaiper.KaiperScript;
 import xyz.avarel.kaiper.ScriptExpr;
-import xyz.avarel.kaiper.lexer.KaiperLexer;
-import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.functions.NativeFunc;
+import xyz.avarel.kaiper.runtime.Null;
+import xyz.avarel.kaiper.runtime.functions.RuntimeMultimethod;
+import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public class FileTest {
     public static void main(String[] args) throws Exception {
-        System.out.println("Kaiper FILE");
-        System.out.println();
-
-        System.out.println(new KaiperLexer(new FileReader(new File("script.kip"))).getTokens().toString());
-
         KaiperScript exp = new KaiperScript(new FileReader(new File("script.kip")));
 
-        exp.add("println", new NativeFunc("print","string") {
-            @Override
-            protected Obj eval(Map<String, Obj> arguments) {
-                System.out.println(arguments.get("string"));
-                return null;
-            }
-        });
+        exp.getScope().put("print", new RuntimeMultimethod("println")
+                .addCase(new RuntimePatternCase("value"), scope -> {
+                    System.out.print(scope.get("value"));
+                    return Null.VALUE;
+                })
+                .addCase(new RuntimePatternCase("ln"), scope -> {
+                    System.out.println(scope.get("ln"));
+                    return Null.VALUE;
+                })
+        );
 
         ScriptExpr expr = exp.compile();
 
         StringBuilder sb = new StringBuilder();
         expr.ast(sb, "", true);
-        System.out.println(sb);
 
-        Future<Obj> future = CompletableFuture.supplyAsync(expr::compute);
-
-        System.out.println("\n\t\tRESULT |> " + future.get(500, TimeUnit.MILLISECONDS));
+        System.out.println(expr.compute());
     }
 }

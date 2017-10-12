@@ -51,33 +51,31 @@ public class PipeForwardParser extends BinaryParser {
             Invocation invocation = (Invocation) right;
             Single argument = invocation.getArgument();
 
-            if (argument instanceof TupleExpr) {
-                TupleExpr tuple = (TupleExpr) argument;
-                Map<String, Single> elements = new LinkedHashMap<>(tuple.getElements());
+            TupleExpr tuple = (TupleExpr) argument;
+            Map<String, Single> elements = new LinkedHashMap<>(tuple.getElements());
 
-                if (left instanceof TupleExpr) {
-                    TupleExpr leftTuple = (TupleExpr) left;
+            if (left instanceof TupleExpr) {
+                TupleExpr leftTuple = (TupleExpr) left;
 
-                    if (Collections.disjoint(elements.keySet(), leftTuple.getElements().keySet())) {
-                        elements.putAll(leftTuple.getElements());
-                    } else {
-                        throw new SyntaxException("Duplicate tuple field names", left.getPosition());
-                    }
+                if (Collections.disjoint(elements.keySet(), leftTuple.getElements().keySet())) {
+                    elements.putAll(leftTuple.getElements());
                 } else {
-                    if (elements.put("value", left) != null) {
-                        throw new SyntaxException("Duplicate tuple field names", left.getPosition());
-                    }
+                    throw new SyntaxException("Duplicate tuple field names", left.getPosition());
                 }
-
-                return new Invocation(
-                        token.getPosition(),
-                        invocation.getLeft(),
-                        new TupleExpr(
-                                tuple.getPosition(),
-                                elements
-                        )
-                );
+            } else {
+                if (elements.put("value", left) != null) {
+                    throw new SyntaxException("Duplicate tuple field names", left.getPosition());
+                }
             }
+
+            return new Invocation(
+                    token.getPosition(),
+                    invocation.getLeft(),
+                    new TupleExpr(
+                            tuple.getPosition(),
+                            elements
+                    )
+            );
         } else if (right instanceof FunctionNode || right instanceof Identifier) {
             if (left instanceof TupleExpr) {
                 return new Invocation(
