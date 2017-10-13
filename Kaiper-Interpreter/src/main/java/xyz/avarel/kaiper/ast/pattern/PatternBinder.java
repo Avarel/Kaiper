@@ -30,7 +30,7 @@ public class PatternBinder implements PatternVisitor<Boolean, Tuple> {
 
     private boolean usedValue = false;
 
-    public PatternBinder(PatternCase patternCase, ExprInterpreter interpreter, Scope scope) {
+    public PatternBinder(PatternCase patternCase, ExprInterpreter interpreter, Scope<String, Obj> scope) {
         this.patternCase = patternCase;
         this.interpreter = interpreter;
         this.scope = scope;

@@ -17,7 +17,6 @@
 package xyz.avarel.kaiper.parser.parslets.flow;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.flow.ForEachExpr;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -40,7 +39,7 @@ public class ForEachParser implements PrefixParser {
 
         parser.eatSoftKeyword("in");
 
-        Single iterable = parser.parseSingle();
+        Expr iterable = parser.parseExpr();
 
         if (match) parser.eat(TokenType.RIGHT_PAREN);
 

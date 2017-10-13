@@ -24,7 +24,6 @@ import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.java.JavaType;
 import xyz.avarel.kaiper.runtime.java.JavaUtils;
 import xyz.avarel.kaiper.scope.DefaultScope;
-import xyz.avarel.kaiper.scope.Scope;
 
 import java.util.Map;
 import java.util.Scanner;

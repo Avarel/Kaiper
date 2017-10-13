@@ -16,21 +16,21 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.ast.Expr;
 
 // a: is Int
 // a: 2
 // a: x
 // a: (2, meme: 2, dank: 3)
 public class TuplePattern extends Pattern {
-    private final Single expr;
+    private final Expr expr;
 
-    public TuplePattern(String name, Single expr) {
+    public TuplePattern(String name, Expr expr) {
         super(name);
         this.expr = expr;
     }
 
-    public Single getExpr() {
+    public Expr getExpr() {
         return expr;
     }
 

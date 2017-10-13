@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
@@ -33,11 +32,11 @@ public class AttributeParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
         Token name = parser.eat(TokenType.IDENTIFIER);
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new AssignmentExpr(token.getPosition(), left, name.getString(), parser.parseSingle());
+            return new AssignmentExpr(token.getPosition(), left, name.getString(), parser.parseExpr());
         }
 
         Identifier id = new Identifier(token.getPosition(), left, name.getString());
@@ -46,7 +45,7 @@ public class AttributeParser extends BinaryParser {
                 TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
                 TokenType.NUMBER, TokenType.FUNCTION, TokenType.NULL
         )) {
-            return InvocationParser.tupleInvocationCheck(token, id, parser.parseSingle());
+            return InvocationParser.tupleInvocationCheck(token, id, parser.parseExpr());
         }
 
         return id;

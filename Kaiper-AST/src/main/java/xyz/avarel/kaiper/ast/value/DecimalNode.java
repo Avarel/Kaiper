@@ -16,11 +16,11 @@
 
 package xyz.avarel.kaiper.ast.value;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-public class DecimalNode extends Single {
+public class DecimalNode extends Expr {
     private final double value;
 
     public DecimalNode(Position position, double value) {

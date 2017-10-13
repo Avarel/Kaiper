@@ -16,22 +16,22 @@
 
 package xyz.avarel.kaiper.ast.operations;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.operations.UnaryOperatorType;
 
-public class UnaryOperation extends Single {
-    private final Single target;
+public class UnaryOperation extends Expr {
+    private final Expr target;
     private final UnaryOperatorType operator;
 
-    public UnaryOperation(Position position, Single target, UnaryOperatorType operator) {
+    public UnaryOperation(Position position, Expr target, UnaryOperatorType operator) {
         super(position);
         this.target = target;
         this.operator = operator;
     }
 
-    public Single getTarget() {
+    public Expr getTarget() {
         return target;
     }
 

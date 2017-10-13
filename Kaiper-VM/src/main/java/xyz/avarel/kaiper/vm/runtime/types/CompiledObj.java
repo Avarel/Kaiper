@@ -19,7 +19,6 @@ package xyz.avarel.kaiper.vm.runtime.types;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.types.Type;
-import xyz.avarel.kaiper.scope.Scope;
 
 // fuck inheritance
 public class CompiledObj implements Obj {

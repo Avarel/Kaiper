@@ -18,11 +18,10 @@ package xyz.avarel.kaiper.ast.functions;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.lexer.Position;
 
-public class FunctionNode extends Single {
+public class FunctionNode extends Expr {
     private final String name;
     private final PatternCase patternCase;
     private final Expr expr;

@@ -16,7 +16,6 @@
 
 package xyz.avarel.kaiper.ast;
 
-import xyz.avarel.kaiper.ast.flow.Statements;
 import xyz.avarel.kaiper.lexer.Position;
 
 public abstract class Expr {
@@ -27,10 +26,6 @@ public abstract class Expr {
     }
 
     public abstract <R, C> R accept(ExprVisitor<R, C> visitor, C scope);
-
-    public Expr andThen(Expr after) {
-        return new Statements(this, after);
-    }
 
     public void ast(StringBuilder builder, String indent, boolean isTail) {
         builder.append(indent).append(isTail ? "└── " : "├── ").append(toString());

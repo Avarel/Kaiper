@@ -18,15 +18,14 @@ package xyz.avarel.kaiper.ast.variables;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.lexer.Position;
 
 public class BindDeclarationExpr extends Expr {
     private final PatternCase patternCase;
-    private final Single expr;
+    private final Expr expr;
 
-    public BindDeclarationExpr(Position position, PatternCase patternCase, Single expr) {
+    public BindDeclarationExpr(Position position, PatternCase patternCase, Expr expr) {
         super(position);
         this.patternCase = patternCase;
         this.expr = expr;
@@ -36,7 +35,7 @@ public class BindDeclarationExpr extends Expr {
         return patternCase;
     }
 
-    public Single getExpr() {
+    public Expr getExpr() {
         return expr;
     }
 

@@ -16,11 +16,11 @@
 
 package xyz.avarel.kaiper.ast.value;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-public class IntNode extends Single {
+public class IntNode extends Expr {
     private final int value;
 
     public IntNode(Position position, int value) {

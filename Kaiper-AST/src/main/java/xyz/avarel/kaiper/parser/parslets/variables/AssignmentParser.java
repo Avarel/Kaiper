@@ -18,23 +18,14 @@ package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.collections.GetOperation;
 import xyz.avarel.kaiper.ast.collections.SetOperation;
-import xyz.avarel.kaiper.ast.pattern.Pattern;
-import xyz.avarel.kaiper.ast.pattern.PatternCase;
-import xyz.avarel.kaiper.ast.pattern.VariablePattern;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
-import xyz.avarel.kaiper.ast.variables.BindAssignmentExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AssignmentParser extends BinaryParser {
     public AssignmentParser() {
@@ -42,8 +33,8 @@ public class AssignmentParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
-        Single value = parser.parseSingle();
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
+        Expr value = parser.parseExpr();
 
         if (left instanceof Identifier) {
             return new AssignmentExpr(
@@ -67,7 +58,7 @@ public class AssignmentParser extends BinaryParser {
 //
 //            List<Pattern> patterns = new ArrayList<>();
 //
-//            for (Single expr : tupleExpr.getUnnamedElements()) {
+//            for (Expr expr : tupleExpr.getUnnamedElements()) {
 //                if (expr instanceof Identifier) {
 //                    Identifier identifier = (Identifier) expr;
 //                    patterns.add(new VariablePattern(identifier.getName()));

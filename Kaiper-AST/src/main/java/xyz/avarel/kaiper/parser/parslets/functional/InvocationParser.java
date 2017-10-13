@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets.functional;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
@@ -35,24 +34,24 @@ public class InvocationParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
         if (!parser.getParserFlags().allowInvocation()) {
             throw new SyntaxException("Function creation are disabled");
         }
 
-        Single argument;
+        Expr argument;
 
         if (parser.match(TokenType.RIGHT_PAREN)) {
             argument = new TupleExpr(left.getPosition(), Collections.emptyMap());
         } else {
-            argument = parser.parseSingle();
+            argument = parser.parseExpr();
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
         return InvocationParser.tupleInvocationCheck(token, left, argument);
     }
 
-    public static Invocation tupleInvocationCheck(Token token, Single left, Single argument) {
+    public static Invocation tupleInvocationCheck(Token token, Expr left, Expr argument) {
         if (argument instanceof TupleExpr) {
             return new Invocation(token.getPosition(), left, (TupleExpr) argument);
         } else {

@@ -16,21 +16,21 @@
 
 package xyz.avarel.kaiper.ast.collections;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.List;
 
-public class ArrayNode extends Single {
-    private final List<Single> items;
+public class ArrayNode extends Expr {
+    private final List<Expr> items;
 
-    public ArrayNode(Position position, List<Single> items) {
+    public ArrayNode(Position position, List<Expr> items) {
         super(position);
         this.items = items;
     }
 
-    public List<Single> getItems() {
+    public List<Expr> getItems() {
         return items;
     }
 

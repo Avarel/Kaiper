@@ -48,18 +48,18 @@ public class PatternParser extends KaiperParser {
 
             if (match(TokenType.COLON)) {
                 // name: EXPR
-                basePattern = new TuplePattern(name, parseSingle());
+                basePattern = new TuplePattern(name, parseExpr());
             } else {
                 basePattern = new VariablePattern(name, match(TokenType.QUESTION));
 
                 if (match(TokenType.ASSIGN)) {
                     // name = EXPR
-                    basePattern = new DefaultPattern(basePattern, parseSingle());
+                    basePattern = new DefaultPattern(basePattern, parseExpr());
                 }
             }
         } else {
             match(TokenType.EQUALS);
-            basePattern = new TuplePattern("value", parseSingle(Precedence.TUPLE_PAIR));
+            basePattern = new TuplePattern("value", parseExpr(Precedence.TUPLE_PAIR));
         }
 
         return basePattern;

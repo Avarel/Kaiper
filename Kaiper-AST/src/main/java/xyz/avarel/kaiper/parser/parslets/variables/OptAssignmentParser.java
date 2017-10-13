@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.collections.GetOperation;
 import xyz.avarel.kaiper.ast.collections.SetOperation;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
@@ -38,10 +37,10 @@ public class OptAssignmentParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
-        Single value = parser.parseSingle();
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
+        Expr value = parser.parseExpr();
 
-        Single setOp;
+        Expr setOp;
         if (left instanceof Identifier) {
             setOp = new AssignmentExpr(
                     parser.getLast().getPosition(),

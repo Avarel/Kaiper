@@ -16,21 +16,21 @@
 
 package xyz.avarel.kaiper.ast.tuples;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.Map;
 
-public class TupleExpr extends Single {
-    private final Map<String, Single> elements;
+public class TupleExpr extends Expr {
+    private final Map<String, Expr> elements;
 
-    public TupleExpr(Position position, Map<String, Single> elements) {
+    public TupleExpr(Position position, Map<String, Expr> elements) {
         super(position);
         this.elements = elements;
     }
 
-    public Map<String, Single> getElements() {
+    public Map<String, Expr> getElements() {
         return elements;
     }
 

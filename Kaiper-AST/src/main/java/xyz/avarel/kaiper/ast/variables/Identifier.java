@@ -16,25 +16,25 @@
 
 package xyz.avarel.kaiper.ast.variables;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-public class Identifier extends Single {
-    private final Single parent;
+public class Identifier extends Expr {
+    private final Expr parent;
     private final String name;
 
     public Identifier(Position position, String name) {
         this(position, null, name);
     }
 
-    public Identifier(Position position, Single parent, String name) {
+    public Identifier(Position position, Expr parent, String name) {
         super(position);
         this.parent = parent;
         this.name = name;
     }
 
-    public Single getParent() {
+    public Expr getParent() {
         return parent;
     }
 

@@ -33,9 +33,9 @@ import java.util.TreeMap;
 public class CompiledMultiMethod extends Func {
     private final SortedMap<PatternCase, Expr> methodCases = new TreeMap<>();
     private final ExprInterpreter visitor;
-    private final Scope scope;
+    private final Scope<String, Obj> scope;
 
-    public CompiledMultiMethod(String name, ExprInterpreter visitor, Scope scope) {
+    public CompiledMultiMethod(String name, ExprInterpreter visitor, Scope<String, Obj> scope) {
         super(name);
         this.visitor = visitor;
         this.scope = scope;
@@ -59,7 +59,7 @@ public class CompiledMultiMethod extends Func {
     @Override
     public Obj invoke(Tuple argument) {
         for (Map.Entry<PatternCase, Expr> entry : methodCases.entrySet()) {
-            Scope scope = this.scope.subPool();
+            Scope<String, Obj> scope = this.scope.subScope();
 
             if (!new PatternBinder(entry.getKey(), visitor, scope).declareFrom(argument)) {
                 continue;

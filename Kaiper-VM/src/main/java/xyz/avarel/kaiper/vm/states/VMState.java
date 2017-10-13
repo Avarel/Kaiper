@@ -16,7 +16,6 @@
 
 package xyz.avarel.kaiper.vm.states;
 
-import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
 
 public class VMState {

@@ -16,25 +16,26 @@
 
 package xyz.avarel.kaiper.ast.collections;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-public class RangeNode extends Single {
-    private final Single left;
-    private final Single right;
+@Deprecated
+public class RangeNode extends Expr {
+    private final Expr left;
+    private final Expr right;
 
-    public RangeNode(Position position, Single left, Single right) {
+    public RangeNode(Position position, Expr left, Expr right) {
         super(position);
         this.left = left;
         this.right = right;
     }
 
-    public Single getLeft() {
+    public Expr getLeft() {
         return left;
     }
 
-    public Single getRight() {
+    public Expr getRight() {
         return right;
     }
 

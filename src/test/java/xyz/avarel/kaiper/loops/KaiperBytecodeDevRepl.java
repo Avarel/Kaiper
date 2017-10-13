@@ -25,7 +25,6 @@ import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.scope.DefaultScope;
-import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.tools.outliner.BytecodeOutliner;
 import xyz.avarel.kaiper.vm.KaiperVM;
 

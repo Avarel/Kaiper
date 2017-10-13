@@ -33,7 +33,7 @@ public class NameParser implements PrefixParser {
                 TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
                 TokenType.NUMBER, TokenType.FUNCTION, TokenType.NULL
         )) {
-            return InvocationParser.tupleInvocationCheck(token, id, parser.parseSingle());
+            return InvocationParser.tupleInvocationCheck(token, id, parser.parseExpr());
         }
 
         return id;

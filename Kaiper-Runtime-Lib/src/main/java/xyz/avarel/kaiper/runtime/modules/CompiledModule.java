@@ -21,9 +21,9 @@ import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.Scope;
 
 public class CompiledModule extends Module {
-    public final Scope scope;
+    public final Scope<String, Obj> scope;
 
-    public CompiledModule(String name, Scope scope) {
+    public CompiledModule(String name, Scope<String, Obj> scope) {
         super(name);
         this.scope = scope;
     }

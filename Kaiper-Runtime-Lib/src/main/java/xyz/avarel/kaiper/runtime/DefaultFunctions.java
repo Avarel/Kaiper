@@ -16,7 +16,9 @@
 
 package xyz.avarel.kaiper.runtime;
 
+import xyz.avarel.kaiper.runtime.collections.Range;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
+import xyz.avarel.kaiper.runtime.numbers.Int;
 
 import java.util.Map;
 
@@ -31,6 +33,24 @@ public enum DefaultFunctions {
             return Str.of(obj.toString());
         }
     }),
+
+    RANGE(new NativeFunc("range", "from", "to") {
+        @Override
+        protected Obj eval(Map<String, Obj> arguments) {
+            int start = arguments.get("from").as(Int.TYPE).value();
+            int end = arguments.get("to").as(Int.TYPE).value();
+            return new Range(start, end);
+        }
+    }),
+    RANGE_EX(new NativeFunc("rangeex", "from", "to") {
+        @Override
+        protected Obj eval(Map<String, Obj> arguments) {
+            int start = arguments.get("from").as(Int.TYPE).value();
+            int end = arguments.get("to").as(Int.TYPE).value() - 1;
+            return new Range(start, end);
+        }
+    }),
+
 
     NOT(new NativeFunc("not", "function") {
         @Override

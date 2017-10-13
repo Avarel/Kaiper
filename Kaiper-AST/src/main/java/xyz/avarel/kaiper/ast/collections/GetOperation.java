@@ -16,25 +16,25 @@
 
 package xyz.avarel.kaiper.ast.collections;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-public class GetOperation extends Single {
-    private final Single left;
-    private final Single key;
+public class GetOperation extends Expr {
+    private final Expr left;
+    private final Expr key;
 
-    public GetOperation(Position position, Single left, Single key) {
+    public GetOperation(Position position, Expr left, Expr key) {
         super(position);
         this.left = left;
         this.key = key;
     }
 
-    public Single getLeft() {
+    public Expr getLeft() {
         return left;
     }
 
-    public Single getKey() {
+    public Expr getKey() {
         return key;
     }
 

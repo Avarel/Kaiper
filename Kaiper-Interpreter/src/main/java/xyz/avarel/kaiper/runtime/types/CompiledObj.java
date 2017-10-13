@@ -14,58 +14,58 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.runtime.types;
-
-import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.runtime.Null;
-import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.scope.Scope;
-
-public class CompiledObj implements Obj {
-    private final CompiledType type;
-    private final Scope scope;
-
-    @SuppressWarnings("unchecked")
-    public CompiledObj(CompiledType type, Scope scope) {
-        this.type = type;
-        this.scope = scope;
-    }
-
-    public Scope getScope() {
-        return scope;
-    }
-
-    @Override
-    public Obj setAttr(String name, Obj value) {
-        ExprInterpreter.declare(scope, name, value);
-        return Null.VALUE;
-    }
-
-//    @Override
-//    public boolean hasAttr(String name) {
-//        return scope.contains(name);
+//package xyz.avarel.kaiper.runtime.types;
+//
+//import xyz.avarel.kaiper.scope.Scope;
+//import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+//import xyz.avarel.kaiper.runtime.Null;
+//import xyz.avarel.kaiper.runtime.Obj;
+//
+//public class CompiledObj implements Obj {
+//    private final CompiledType type;
+//    private final Scope<String, Obj> scope;
+//
+//    @SuppressWarnings("unchecked")
+//    public CompiledObj(CompiledType type, Scope<String, Obj> scope) {
+//        this.type = type;
+//        this.scope = scope;
 //    }
-
-    @Override
-    public Obj getAttr(String name) {
-        Obj obj = scope.getMap().get(name);
-
-        return obj == null ? Obj.super.getAttr(name) : obj;
-    }
-
-    @Override
-    public Type getType() {
-        return type;
-    }
-
-    @Override
-    public String toString() {
-        return type.toString() + "$" + hashCode();
-//        Obj method = scope.get("toString");
-//        if (method == null) {
-//            return type.toString() + "$" + hashCode();
-//        } else {
-//            return method.invoke(this).toString();
-//        }
-    }
-}
+//
+//    public Scope<String, Obj> getScope() {
+//        return scope;
+//    }
+//
+//    @Override
+//    public Obj setAttr(String name, Obj value) {
+//        ExprInterpreter.declare(scope, name, value);
+//        return Null.VALUE;
+//    }
+//
+////    @Override
+////    public boolean hasAttr(String name) {
+////        return scope.contains(name);
+////    }
+//
+//    @Override
+//    public Obj getAttr(String name) {
+//        Obj obj = scope.getMap().get(name);
+//
+//        return obj == null ? Obj.super.getAttr(name) : obj;
+//    }
+//
+//    @Override
+//    public Type getType() {
+//        return type;
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return type.toString() + "$" + hashCode();
+////        Obj method = scope.get("toString");
+////        if (method == null) {
+////            return type.toString() + "$" + hashCode();
+////        } else {
+////            return method.invoke(this).toString();
+////        }
+//    }
+//}

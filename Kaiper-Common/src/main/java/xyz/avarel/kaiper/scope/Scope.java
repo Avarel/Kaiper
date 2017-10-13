@@ -14,24 +14,26 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper;
+package xyz.avarel.kaiper.scope;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO Javadocs
+// TODO inherit map
 // inheritable map
-public class GenericScope<K, V> {
-    private final GenericScope<K, V>[] parents;
+public class Scope<K, V> {
+    private final Scope<K, V>[] parents;
     private final Map<K, V> map;
 
     @SafeVarargs
-    public GenericScope(GenericScope<K, V>... parents) {
+    public Scope(Scope<K, V>... parents) {
         this(new HashMap<>(), parents);
     }
 
     @SafeVarargs
-    public GenericScope(Map<K, V> map, GenericScope<K, V>... parents) {
+    public Scope(Map<K, V> map, Scope<K, V>... parents) {
         this.map = map;
         this.parents = parents;
     }
@@ -40,7 +42,7 @@ public class GenericScope<K, V> {
         V value = map.get(key);
         if (value != null) {
             return value;
-        } else for (GenericScope<K, V> parent : parents) {
+        } else for (Scope<K, V> parent : parents) {
             V value0 = parent.get(key);
             if (value0 != null) {
                 return value0;
@@ -53,7 +55,11 @@ public class GenericScope<K, V> {
         return map.put(key, value);
     }
 
-    public GenericScope<K, V>[] getParents() {
+    public V remove(K key) {
+        return map.remove(key);
+    }
+
+    public Scope<K, V>[] getParents() {
         return parents;
     }
 
@@ -63,7 +69,7 @@ public class GenericScope<K, V> {
 
     public boolean contains(K key) {
         if (map.containsKey(key)) return true;
-        for (GenericScope<K,V> parent : parents) {
+        for (Scope<K,V> parent : parents) {
             if (parent.contains(key)) {
                 return true;
             }
@@ -71,19 +77,19 @@ public class GenericScope<K, V> {
         return false;
     }
 
-    public GenericScope<K, V> copy() {
-        return new GenericScope<>(new HashMap<>(map), parents);
+    public Scope<K, V> copy() {
+        return new Scope<>(new HashMap<>(map), parents);
     }
 
-    public GenericScope<K, V> subPool() {
-        return new GenericScope<>(this);
+    public Scope<K, V> subScope() {
+        return new Scope<>(this);
     }
 
-    public GenericScope<K, V> combine(GenericScope<K, V> otherScope) {
-        GenericScope<K, V>[] array = Arrays.copyOf(parents, parents.length + 1);
+    public Scope<K, V> copyWithParent(Scope<K, V> otherScope) {
+        Scope<K, V>[] array = Arrays.copyOf(parents, parents.length + 1);
         array[array.length - 1] = otherScope;
 
-        return new GenericScope<>(new HashMap<>(map), array);
+        return new Scope<>(new HashMap<>(map), array);
     }
 
     @Override

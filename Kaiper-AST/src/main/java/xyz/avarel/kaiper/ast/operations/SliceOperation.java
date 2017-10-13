@@ -16,18 +16,18 @@
 
 package xyz.avarel.kaiper.ast.operations;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
 // todo fixme
-public class SliceOperation extends Single {
-    private final Single left;
-    private final Single start;
-    private final Single end;
-    private final Single step;
+public class SliceOperation extends Expr {
+    private final Expr left;
+    private final Expr start;
+    private final Expr end;
+    private final Expr step;
 
-    public SliceOperation(Position position, Single left, Single start, Single end, Single step) {
+    public SliceOperation(Position position, Expr left, Expr start, Expr end, Expr step) {
         super(position);
         this.left = left;
         this.start = start;
@@ -35,19 +35,19 @@ public class SliceOperation extends Single {
         this.step = step;
     }
 
-    public Single getLeft() {
+    public Expr getLeft() {
         return left;
     }
 
-    public Single getStart() {
+    public Expr getStart() {
         return start;
     }
 
-    public Single getEnd() {
+    public Expr getEnd() {
         return end;
     }
 
-    public Single getStep() {
+    public Expr getStep() {
         return step;
     }
 

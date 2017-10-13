@@ -17,7 +17,6 @@
 package xyz.avarel.kaiper.parser.parslets.operators;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
@@ -33,8 +32,8 @@ public class BinaryOperatorParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
-        Single right = parser.parseSingle(getPrecedence() - (isLeftAssoc() ? 0 : 1));
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
+        Expr right = parser.parseExpr(getPrecedence() - (isLeftAssoc() ? 0 : 1));
         return new BinaryOperation(token.getPosition(), left, right, operator);
     }
 }

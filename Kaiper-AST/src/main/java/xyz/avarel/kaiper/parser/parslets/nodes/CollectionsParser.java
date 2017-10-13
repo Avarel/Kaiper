@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets.nodes;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.collections.ArrayNode;
 import xyz.avarel.kaiper.ast.collections.DictionaryNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
@@ -49,7 +48,7 @@ public class CollectionsParser implements PrefixParser {
             return new ArrayNode(token.getPosition(), Collections.emptyList());
         }
 
-        Single expr = parser.parseSingle(Precedence.TUPLE);
+        Expr expr = parser.parseExpr(Precedence.TUPLE);
 
         if (parser.match(TokenType.COLON)) {
             if (!parser.getParserFlags().allowDictionary()) {
@@ -64,13 +63,13 @@ public class CollectionsParser implements PrefixParser {
         }
     }
 
-    private Expr parseVector(KaiperParser parser, Token token, Single initItem) {
-        List<Single> items = new ArrayList<>();
+    private Expr parseVector(KaiperParser parser, Token token, Expr initItem) {
+        List<Expr> items = new ArrayList<>();
 
         items.add(initItem);
 
         while (parser.match(TokenType.COMMA)) {
-            items.add(parser.parseSingle(Precedence.TUPLE));
+            items.add(parser.parseExpr(Precedence.TUPLE));
         }
 
         parser.eat(TokenType.RIGHT_BRACKET);
@@ -78,15 +77,15 @@ public class CollectionsParser implements PrefixParser {
         return new ArrayNode(token.getPosition(), items);
     }
 
-    private Expr parseDictionary(KaiperParser parser, Token token, Single initKey) {
-        Map<Single, Single> map = new HashMap<>();
+    private Expr parseDictionary(KaiperParser parser, Token token, Expr initKey) {
+        Map<Expr, Expr> map = new HashMap<>();
 
-        map.put(initKey, parser.parseSingle(Precedence.TUPLE));
+        map.put(initKey, parser.parseExpr(Precedence.TUPLE));
 
         while (parser.match(TokenType.COMMA)) {
-            Single key = parser.parseSingle(Precedence.TUPLE);
+            Expr key = parser.parseExpr(Precedence.TUPLE);
             parser.eat(TokenType.COLON);
-            Single value = parser.parseSingle(Precedence.TUPLE);
+            Expr value = parser.parseExpr(Precedence.TUPLE);
 
             map.put(key, value);
         }

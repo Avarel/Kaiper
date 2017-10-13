@@ -18,7 +18,7 @@ package xyz.avarel.kaiper.ast;
 
 import xyz.avarel.kaiper.lexer.Position;
 
-public class ModuleNode extends Single {
+public class ModuleNode extends Expr {
     private final String name;
     private final Expr expr;
 

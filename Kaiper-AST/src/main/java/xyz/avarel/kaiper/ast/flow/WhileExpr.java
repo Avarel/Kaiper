@@ -18,20 +18,19 @@ package xyz.avarel.kaiper.ast.flow;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-public class WhileExpr extends Single {
-    private final Single condition;
+public class WhileExpr extends Expr {
+    private final Expr condition;
     private final Expr action;
 
-    public WhileExpr(Position position, Single condition, Expr action) {
+    public WhileExpr(Position position, Expr condition, Expr action) {
         super(position);
         this.condition = condition;
         this.action = action;
     }
 
-    public Single getCondition() {
+    public Expr getCondition() {
         return condition;
     }
 

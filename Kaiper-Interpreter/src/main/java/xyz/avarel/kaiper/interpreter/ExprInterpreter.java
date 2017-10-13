@@ -16,7 +16,10 @@
 
 package xyz.avarel.kaiper.interpreter;
 
-import xyz.avarel.kaiper.ast.*;
+import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.ExprVisitor;
+import xyz.avarel.kaiper.ast.ModuleNode;
+import xyz.avarel.kaiper.ast.TypeNode;
 import xyz.avarel.kaiper.ast.collections.*;
 import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
@@ -41,15 +44,13 @@ import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
-import xyz.avarel.kaiper.runtime.types.CompiledConstructor;
-import xyz.avarel.kaiper.runtime.types.CompiledType;
 import xyz.avarel.kaiper.scope.Scope;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
+public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
     private final VisitorSettings visitorSettings;
 
     private int recursionDepth = 0;
@@ -69,7 +70,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(Statements expr, Scope scope) {
+    public Obj visit(Statements expr, Scope<String, Obj> scope) {
         List<Expr> exprs = expr.getExprs();
 
         if (exprs.isEmpty()) return Null.VALUE;
@@ -83,7 +84,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 
     // func print(str: String, n: Int) { for (x in 0..n) { print(str) } }
     @Override
-    public Obj visit(FunctionNode expr, Scope scope) {
+    public Obj visit(FunctionNode expr, Scope<String, Obj> scope) {
         if (expr.getName() == null) {
             return new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope);
         }
@@ -106,7 +107,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(Identifier expr, Scope scope) {
+    public Obj visit(Identifier expr, Scope<String, Obj> scope) {
         if (expr.getParent() != null) {
             return resultOf(expr.getParent(), scope).getAttr(expr.getName());
         }
@@ -119,7 +120,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(Invocation expr, Scope scope) {
+    public Obj visit(Invocation expr, Scope<String, Obj> scope) {
         visitorSettings.checkRecursionDepthLimit(recursionDepth);
 
         Obj target = resultOf(expr.getLeft(), scope);
@@ -136,7 +137,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(BinaryOperation expr, Scope scope) {
+    public Obj visit(BinaryOperation expr, Scope<String, Obj> scope) {
         switch (expr.getOperator()) {
             case OR: {
                 Obj left = resultOf(expr.getLeft(), scope);
@@ -199,7 +200,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(UnaryOperation expr, Scope scope) {
+    public Obj visit(UnaryOperation expr, Scope<String, Obj> scope) {
         Obj operand = resultOf(expr.getTarget(), scope);
 
         switch (expr.getOperator()) {
@@ -215,7 +216,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(RangeNode expr, Scope scope) {
+    public Obj visit(RangeNode expr, Scope<String, Obj> scope) {
         Obj startObj = resultOf(expr.getLeft(), scope);
         Obj endObj = resultOf(expr.getRight(), scope);
 
@@ -232,7 +233,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(ArrayNode expr, Scope scope) {
+    public Obj visit(ArrayNode expr, Scope<String, Obj> scope) {
         Array array = new Array();
 
         for (Expr itemExpr : expr.getItems()) {
@@ -257,7 +258,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(SliceOperation expr, Scope scope) {
+    public Obj visit(SliceOperation expr, Scope<String, Obj> scope) {
         Obj obj = resultOf(expr.getLeft(), scope);
         Obj start = resultOf(expr.getStart(), scope);
         Obj end = resultOf(expr.getEnd(), scope);
@@ -267,7 +268,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(AssignmentExpr expr, Scope scope) {
+    public Obj visit(AssignmentExpr expr, Scope<String, Obj> scope) {
         String attr = expr.getName();
 
         if (expr.getParent() != null) {
@@ -289,7 +290,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(DeclarationExpr expr, Scope scope) {
+    public Obj visit(DeclarationExpr expr, Scope<String, Obj> scope) {
         String attr = expr.getName();
 
         Obj value = resultOf(expr.getExpr(), scope);
@@ -298,10 +299,10 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(ModuleNode expr, Scope scope) {
+    public Obj visit(ModuleNode expr, Scope<String, Obj> scope) {
         String name = expr.getName();
 
-        Scope subScope = scope.subPool();
+        Scope<String, Obj> subScope = scope.subScope();
 
         resultOf(expr.getExpr(), subScope);
 
@@ -311,21 +312,23 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         return module;
     }
 
+    // TODO REWORK
     @Override
-    public Obj visit(TypeNode expr, Scope scope) {
-        String name = expr.getName();
-
-        CompiledConstructor constructor = new CompiledConstructor(expr.getPatternCase(), expr.getExpr(), this, scope.subPool());
-
-        CompiledType type = new CompiledType(name, constructor);
-
-        declare(scope, name, type);
-
-        return type;
+    public Obj visit(TypeNode expr, Scope<String, Obj> scope) {
+        throw new UnsupportedOperationException("TODO");
+//        String name = expr.getName();
+//
+////        CompiledConstructor constructor = new CompiledConstructor(expr.getPatternCase(), expr.getExpr(), this, scope.subPool());
+////
+////        CompiledType type = new CompiledType(name, constructor);
+////
+////        declare(scope, name, type);
+//
+//        return type;
     }
 
     @Override
-    public Obj visit(GetOperation expr, Scope scope) {
+    public Obj visit(GetOperation expr, Scope<String, Obj> scope) {
         Obj target = resultOf(expr.getLeft(), scope);
         Obj key = resultOf(expr.getKey(), scope);
 
@@ -333,7 +336,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(SetOperation expr, Scope scope) {
+    public Obj visit(SetOperation expr, Scope<String, Obj> scope) {
         Obj target = resultOf(expr.getLeft(), scope);
         Obj key = resultOf(expr.getKey(), scope);
         Obj value = resultOf(expr.getExpr(), scope);
@@ -342,37 +345,37 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(ReturnExpr expr, Scope scope) {
+    public Obj visit(ReturnExpr expr, Scope<String, Obj> scope) {
         Obj obj = resultOf(expr.getExpr(), scope);
 
         throw new ReturnException(obj);
     }
 
     @Override
-    public Obj visit(ConditionalExpr expr, Scope scope) {
-        Obj condition = resultOf(expr.getCondition(), scope.subPool());
+    public Obj visit(ConditionalExpr expr, Scope<String, Obj> scope) {
+        Obj condition = resultOf(expr.getCondition(), scope.subScope());
 
         if (condition instanceof Bool && condition == Bool.TRUE) {
-            return resultOf(expr.getIfBranch(), scope.subPool());
+            return resultOf(expr.getIfBranch(), scope.subScope());
         }
         if (expr.getElseBranch() != null) {
-            return resultOf(expr.getElseBranch(), scope.subPool());
+            return resultOf(expr.getElseBranch(), scope.subScope());
         }
 
         return Null.VALUE;
     }
 
     @Override
-    public Obj visit(WhileExpr expr, Scope scope) {
+    public Obj visit(WhileExpr expr, Scope<String, Obj> scope) {
         int iteration = 0;
         Expr loopExpr = expr.getAction();
 
         while (true) {
             visitorSettings.checkIterationLimit(iteration);
 
-            Obj condition = resultOf(expr.getCondition(), scope.subPool());
+            Obj condition = resultOf(expr.getCondition(), scope.subScope());
             if (condition instanceof Bool && condition == Bool.TRUE) {
-                Scope copy = scope.subPool();
+                Scope<String, Obj> copy = scope.subScope();
                 resultOf(loopExpr, copy);
             } else {
                 break;
@@ -385,7 +388,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(ForEachExpr expr, Scope scope) {
+    public Obj visit(ForEachExpr expr, Scope<String, Obj> scope) {
         Obj iterableObj = resultOf(expr.getIterable(), scope);
 
         if (iterableObj instanceof Iterable) {
@@ -399,7 +402,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
                 visitorSettings.checkIterationLimit(iteration);
 
                 if (var instanceof Obj) {
-                    Scope copy = scope.subPool();
+                    Scope<String, Obj> copy = scope.subScope();
                     declare(copy, variant, (Obj) var);
                     resultOf(loopExpr, copy);
                     iteration++;
@@ -413,12 +416,12 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(DictionaryNode expr, Scope scope) {
-        Map<Single, Single> map = expr.getMap();
+    public Obj visit(DictionaryNode expr, Scope<String, Obj> scope) {
+        Map<Expr, Expr> map = expr.getMap();
 
         Dictionary dict = new Dictionary();
 
-        for (Map.Entry<Single, Single> entry : map.entrySet()) {
+        for (Map.Entry<Expr, Expr> entry : map.entrySet()) {
             Obj key = resultOf(entry.getKey(), scope);
             Obj value = resultOf(entry.getValue(), scope);
             dict.put(key, value);
@@ -428,22 +431,22 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(NullNode expr, Scope scope) {
+    public Obj visit(NullNode expr, Scope<String, Obj> scope) {
         return Null.VALUE;
     }
 
     @Override
-    public Obj visit(IntNode expr, Scope scope) {
+    public Obj visit(IntNode expr, Scope<String, Obj> scope) {
         return Int.of(expr.getValue());
     }
 
     @Override
-    public Obj visit(DecimalNode expr, Scope scope) {
+    public Obj visit(DecimalNode expr, Scope<String, Obj> scope) {
         return Number.of(expr.getValue());
     }
 
     @Override
-    public Obj visit(BooleanNode expr, Scope scope) {
+    public Obj visit(BooleanNode expr, Scope<String, Obj> scope) {
         if (expr == BooleanNode.TRUE) {
             return Bool.TRUE;
         } else {
@@ -452,15 +455,15 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(StringNode expr, Scope scope) {
+    public Obj visit(StringNode expr, Scope<String, Obj> scope) {
         return Str.of(expr.getValue());
     }
 
     @Override
-    public Obj visit(TupleExpr expr, Scope scope) {
+    public Obj visit(TupleExpr expr, Scope<String, Obj> scope) {
         Map<String, Obj> map = new LinkedHashMap<>();
 
-        for (Map.Entry<String, Single> entry : expr.getElements().entrySet()) {
+        for (Map.Entry<String, Expr> entry : expr.getElements().entrySet()) {
             // confirmed by the compiler
             map.put(entry.getKey(), resultOf(entry.getValue(), scope));
         }
@@ -469,7 +472,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(BindDeclarationExpr expr, Scope scope) {
+    public Obj visit(BindDeclarationExpr expr, Scope<String, Obj> scope) {
         Obj value = resultOf(expr.getExpr(), scope);
 
         if (!(value instanceof Tuple)) {
@@ -486,7 +489,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
     }
 
     @Override
-    public Obj visit(BindAssignmentExpr expr, Scope scope) {
+    public Obj visit(BindAssignmentExpr expr, Scope<String, Obj> scope) {
 //        Obj value = resultOf(expr.getExpr(), scope);
 //
 //        if (!(value instanceof Tuple)) {
@@ -502,7 +505,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
 //        return Null.VALUE;
     }
 
-    public Obj resultOf(Expr expr, Scope scope) {
+    public Obj resultOf(Expr expr, Scope<String, Obj> scope) {
         visitorSettings.checkTimeout(timeout);
         try {
             return expr.accept(this, scope);
@@ -511,11 +514,11 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         }
     }
 
-    public static boolean assign(Scope target, String key, Obj value) {
+    public static boolean assign(Scope<String, Obj> target, String key, Obj value) {
         if (target.getMap().containsKey(key)) {
             target.put(key, value);
             return true;
-        } else for (Scope parent : target.getParents()) {
+        } else for (Scope<String, Obj> parent : target.getParents()) {
             if (assign(parent, key, value)) {
                 return true;
             }
@@ -523,7 +526,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope> {
         return false;
     }
 
-    public static void declare(Scope target, String key, Obj value) {
+    public static void declare(Scope<String, Obj> target, String key, Obj value) {
         if (target.getMap().containsKey(key)) {
             throw new ComputeException(key + " already exists in the scope");
         }

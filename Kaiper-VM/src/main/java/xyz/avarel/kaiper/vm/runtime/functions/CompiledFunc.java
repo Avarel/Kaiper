@@ -23,7 +23,6 @@ import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.functions.Parameter;
-import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
 import xyz.avarel.kaiper.vm.compiled.PreparedPatternExecution;
 

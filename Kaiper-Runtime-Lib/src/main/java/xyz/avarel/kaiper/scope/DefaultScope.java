@@ -26,12 +26,14 @@ import xyz.avarel.kaiper.runtime.numbers.MathModule;
 import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.runtime.types.Type;
 
-public class DefaultScope extends Scope {
+public class DefaultScope extends Scope<String, Obj> {
     public static final DefaultScope INSTANCE = new DefaultScope();
 
     private DefaultScope() {
         put("not", DefaultFunctions.NOT.get());
         put("str", DefaultFunctions.STR.get());
+        put("range", DefaultFunctions.RANGE.get());
+        put("rangeex", DefaultFunctions.RANGE_EX.get());
 
         put("Object", Obj.MODULE);
         put("Math", MathModule.INSTANCE);
@@ -45,12 +47,11 @@ public class DefaultScope extends Scope {
         put("Dictionary", Dictionary.MODULE);
         put("String", Str.MODULE);
         put("Function", Func.MODULE);
-        put("Undefined", Null.MODULE);
+        put("Null", Null.MODULE);
     }
 
-    @Deprecated
     @Override
-    public Scope subPool() {
+    public Scope<String, Obj> subScope() {
         throw new UnsupportedOperationException();
     }
 }

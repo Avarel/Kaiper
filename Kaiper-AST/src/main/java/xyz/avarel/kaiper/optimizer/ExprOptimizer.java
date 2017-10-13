@@ -16,7 +16,10 @@
 
 package xyz.avarel.kaiper.optimizer;
 
-import xyz.avarel.kaiper.ast.*;
+import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.ExprVisitor;
+import xyz.avarel.kaiper.ast.ModuleNode;
+import xyz.avarel.kaiper.ast.TypeNode;
 import xyz.avarel.kaiper.ast.collections.*;
 import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
@@ -44,7 +47,7 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
            list.add(optimize(statement));
         }
 
-        return new Statements(expr.getPosition(), list);
+        return new Statements(list);
     }
 
     @Override
@@ -64,8 +67,8 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
 
     @Override
     public Expr visit(BinaryOperation expr, Void scope) {
-        Single left = optimize(expr.getLeft());
-        Single right = optimize(expr.getRight());
+        Expr left = optimize(expr.getLeft());
+        Expr right = optimize(expr.getRight());
 
         if ((left instanceof IntNode || left instanceof DecimalNode)
                 && (right instanceof IntNode || right instanceof DecimalNode)) {
@@ -161,9 +164,9 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
 
     @Override
     public Expr visit(ArrayNode expr, Void scope) {
-        List<Single> list = new ArrayList<>(expr.getItems().size());
+        List<Expr> list = new ArrayList<>(expr.getItems().size());
 
-        for (Single single : expr.getItems()) {
+        for (Expr single : expr.getItems()) {
             list.add(optimize(single));
         }
 
@@ -207,9 +210,9 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
 
     @Override
     public DictionaryNode visit(DictionaryNode expr, Void scope) {
-        Map<Single, Single> map = new HashMap<>(expr.getMap().size());
+        Map<Expr, Expr> map = new HashMap<>(expr.getMap().size());
 
-        for (Map.Entry<Single, Single> entry : expr.getMap().entrySet()) {
+        for (Map.Entry<Expr, Expr> entry : expr.getMap().entrySet()) {
             map.put(optimize(entry.getKey()), optimize(entry.getValue()));
         }
 
@@ -263,9 +266,9 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
 
     @Override
     public TupleExpr visit(TupleExpr expr, Void scope) {
-        Map<String, Single> map = new HashMap<>(expr.getElements().size());
+        Map<String, Expr> map = new HashMap<>(expr.getElements().size());
 
-        for (Map.Entry<String, Single> entry : expr.getElements().entrySet()) {
+        for (Map.Entry<String, Expr> entry : expr.getElements().entrySet()) {
             map.put(entry.getKey(), optimize(entry.getValue()));
         }
 
@@ -284,9 +287,5 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
 
     private Expr optimize(Expr expr) {
         return expr.accept(this, null);
-    }
-
-    private Single optimize(Single single) {
-        return (Single) single.accept(this, null);
     }
 }

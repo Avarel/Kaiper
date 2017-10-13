@@ -37,13 +37,13 @@ import java.io.Reader;
  */
 public class KaiperScript {
     private final KaiperParser parser;
-    private final Scope scope;
+    private final Scope<String, Obj> scope;
     private ScriptExpr expr;
 
     /**
      * Creates a script based on a string. The expression uses a copy of the {@link DefaultScope default scope}
      * and its values. This constructor is a shortcut for
-     * {@link KaiperScript#KaiperScript(String, Scope) Expression(String, DefaultScope.INSTANCE.copy())}
+     * {@link KaiperScript#(String, Scope ) Expression(String, DefaultScope.INSTANCE.copy())}
      *
      * @param   script
      *          The {@link String string} of Kaiper expression.
@@ -72,7 +72,7 @@ public class KaiperScript {
      * @param   scope
      *          The {@link Scope scope} to evaluate the script from.
      */
-    public KaiperScript(String script, Scope scope) {
+    public KaiperScript(String script, Scope<String, Obj> scope) {
         this(new KaiperLexer(script), scope);
     }
 
@@ -84,7 +84,7 @@ public class KaiperScript {
      * @param   scope
      *          The {@link Scope scope} to evaluate the script from.
      */
-    public KaiperScript(Reader reader, Scope scope) {
+    public KaiperScript(Reader reader, Scope<String, Obj> scope) {
         this(new KaiperLexer(reader), scope);
     }
 
@@ -96,7 +96,7 @@ public class KaiperScript {
      * @param   scope
      *          The {@link Scope scope} to evaluate the script from.
      */
-    public KaiperScript(KaiperLexer lexer, Scope scope) {
+    public KaiperScript(KaiperLexer lexer, Scope<String, Obj> scope) {
         this(new KaiperParser(lexer), scope);
     }
 
@@ -108,7 +108,7 @@ public class KaiperScript {
      * @param   scope
      *          The {@link Scope scope} to evaluate the script from.
      */
-    public KaiperScript(KaiperParser parser, Scope scope) {
+    public KaiperScript(KaiperParser parser, Scope<String, Obj> scope) {
         this.parser = parser;
         this.scope = scope;
     }
@@ -139,7 +139,7 @@ public class KaiperScript {
      * @return  The current {@link KaiperScript} builder instance. Useful for chaining.
      */
     public KaiperScript add(String name, KaiperScript script) {
-        ScopeUtils.declare(scope, name, new KaiperScript(script.parser, script.scope.combine(scope)).compute());
+        ScopeUtils.declare(scope, name, new KaiperScript(script.parser, script.scope.copyWithParent(scope)).compute());
         return this;
     }
 

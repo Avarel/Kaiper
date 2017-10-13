@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.value.NullNode;
@@ -33,7 +32,7 @@ public class ElvisParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
         return new ConditionalExpr(
                 token.getPosition(),
                 new BinaryOperation(

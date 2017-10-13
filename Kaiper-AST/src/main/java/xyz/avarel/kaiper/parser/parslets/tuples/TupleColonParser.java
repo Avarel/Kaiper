@@ -17,7 +17,6 @@ package xyz.avarel.kaiper.parser.parslets.tuples;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
@@ -33,12 +32,12 @@ public class TupleColonParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
         if (!(left instanceof Identifier)) {
             throw new SyntaxException("Tuple entry names must be valid identifiers", left.getPosition());
         }
 
-        Single value = parser.parseSingle(getPrecedence());
+        Expr value = parser.parseExpr(getPrecedence());
 
         return new TupleExpr(left.getPosition(), Collections.singletonMap(((Identifier) left).getName(), value));
     }

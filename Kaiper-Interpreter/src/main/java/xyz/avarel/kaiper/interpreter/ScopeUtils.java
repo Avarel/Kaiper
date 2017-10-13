@@ -22,11 +22,11 @@ import xyz.avarel.kaiper.scope.Scope;
 
 public class ScopeUtils {
     //
-    public static boolean assign(Scope target, String key, Obj value) {
+    public static boolean assign(Scope<String, Obj> target, String key, Obj value) {
         if (target.getMap().containsKey(key)) {
             target.put(key, value);
             return true;
-        } else for (Scope parent : target.getParents()) {
+        } else for (Scope<String, Obj> parent : target.getParents()) {
             if (assign(parent, key, value)) {
                 return true;
             }
@@ -34,7 +34,7 @@ public class ScopeUtils {
         return false;
     }
 
-    public static void declare(Scope target, String key, Obj value) {
+    public static void declare(Scope<String, Obj> target, String key, Obj value) {
         if (target.getMap().containsKey(key)) {
             throw new ComputeException(key + " already exists in the scope");
         }

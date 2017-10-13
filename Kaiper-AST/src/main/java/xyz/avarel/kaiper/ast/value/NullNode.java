@@ -16,10 +16,10 @@
 
 package xyz.avarel.kaiper.ast.value;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 
-public class NullNode extends Single {
+public class NullNode extends Expr {
     public static final NullNode VALUE = new NullNode();
 
     private NullNode() {

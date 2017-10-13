@@ -38,7 +38,6 @@ import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
-import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.GlobalExecutionSettings;
 import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
 import xyz.avarel.kaiper.vm.compiled.PreparedPatternExecution;

@@ -32,7 +32,7 @@ public class CompiledFunc extends Func {
     private final ExprInterpreter visitor;
     private final PatternCase patternCase;
 
-    public CompiledFunc(String name, PatternCase patternCase, Expr expr, ExprInterpreter visitor, Scope scope) {
+    public CompiledFunc(String name, PatternCase patternCase, Expr expr, ExprInterpreter visitor, Scope<String, Obj> scope) {
         super(name);
         this.patternCase = patternCase;
         this.expr = expr;
@@ -52,7 +52,7 @@ public class CompiledFunc extends Func {
     // def fun(x, ...y, z = 5) { println x; println y; println z }
     @Override
     public Obj invoke(Tuple argument) {
-        Scope scope = this.scope.subPool();
+        Scope scope = this.scope.subScope();
 
         if (!new PatternBinder(patternCase, visitor, scope).declareFrom(argument)) {
             throw new InterpreterException("Could not match arguments (" + argument + ") to " + getName() + "(" + patternCase + ")");

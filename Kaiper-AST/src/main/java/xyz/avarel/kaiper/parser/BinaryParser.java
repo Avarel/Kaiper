@@ -16,11 +16,6 @@
 
 package xyz.avarel.kaiper.parser;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
-import xyz.avarel.kaiper.lexer.Token;
-
 public abstract class BinaryParser implements InfixParser {
     private final int precedence;
     private final boolean leftAssoc;
@@ -33,16 +28,6 @@ public abstract class BinaryParser implements InfixParser {
         this.precedence = precedence;
         this.leftAssoc = leftAssoc;
     }
-
-    @Override
-    public Expr parse(KaiperParser parser, Expr left, Token token) {
-        if (!(left instanceof Single)) {
-            throw new SyntaxException("Internal compiler error", token.getPosition());
-        }
-        return parse(parser, (Single) left, token);
-    }
-
-    public abstract Expr parse(KaiperParser parser, Single left, Token token);
 
     @Override
     public int getPrecedence() {

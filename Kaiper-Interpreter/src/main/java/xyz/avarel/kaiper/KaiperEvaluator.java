@@ -36,7 +36,7 @@ import java.io.*;
  */
 public class KaiperEvaluator {
     private final ExprInterpreter visitor;
-    private final Scope scope;
+    private final Scope<String, Obj> scope;
     private Obj answer;
 
     /**
@@ -52,7 +52,7 @@ public class KaiperEvaluator {
      * @param   scope
      *          The initial {@link Scope} values to copy from.
      */
-    public KaiperEvaluator(Scope scope) {
+    public KaiperEvaluator(Scope<String, Obj> scope) {
         this.scope = scope;
         this.visitor = new ExprInterpreter(new VisitorSettings());
         this.answer = Null.VALUE;
@@ -66,7 +66,7 @@ public class KaiperEvaluator {
      *          The parent {@link KaiperEvaluator}.
      */
     public KaiperEvaluator(KaiperEvaluator parent) {
-        this(parent.scope.subPool());
+        this(parent.scope.subScope());
     }
 
     /**
@@ -139,7 +139,7 @@ public class KaiperEvaluator {
      *          Error during the lexing or parsing process of the expression.
      */
     public Obj eval(KaiperScript script) {
-        return eval(new KaiperScript(script.getParser(), getScope().combine(scope)).compile());
+        return eval(new KaiperScript(script.getParser(), getScope().copyWithParent(scope)).compile());
     }
 
     /**
@@ -198,7 +198,7 @@ public class KaiperEvaluator {
     /**
      * @return  The current {@link Scope} of the evaluator.
      */
-    public Scope getScope() {
+    public Scope<String, Obj> getScope() {
         return scope;
     }
 }

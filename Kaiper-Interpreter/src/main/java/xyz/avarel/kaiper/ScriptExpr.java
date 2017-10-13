@@ -18,7 +18,6 @@ package xyz.avarel.kaiper;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.flow.Statements;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
@@ -29,21 +28,12 @@ import xyz.avarel.kaiper.scope.Scope;
 
 public class ScriptExpr extends Expr {
     private final Expr expr;
-    private final Scope scope;
+    private final Scope<String, Obj> scope;
 
-    public ScriptExpr(Scope scope, Expr expr) {
+    public ScriptExpr(Scope<String, Obj> scope, Expr expr) {
         super(expr.getPosition());
         this.scope = scope;
         this.expr = expr;
-    }
-
-    @Override
-    public Expr andThen(Expr after) {
-        if (expr instanceof Statements) {
-            ((Statements) expr).getExprs().add(after);
-            return this;
-        }
-        return new ScriptExpr(scope, new Statements(expr, after));
     }
 
     @Override

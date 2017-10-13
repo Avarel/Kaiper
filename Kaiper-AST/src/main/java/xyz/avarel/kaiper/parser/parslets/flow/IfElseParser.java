@@ -17,7 +17,6 @@
 package xyz.avarel.kaiper.parser.parslets.flow;
 
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -31,8 +30,8 @@ public class IfElseParser implements PrefixParser {
         if (!parser.getParserFlags().allowControlFlows()) {
             throw new SyntaxException("Control flows are disabled");
         }
-        
-        Single condition = parser.parseSingle();
+
+        Expr condition = parser.parseExpr();
 
 
         parser.eat(TokenType.LEFT_BRACE);

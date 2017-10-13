@@ -17,7 +17,6 @@ package xyz.avarel.kaiper.parser.parslets.tuples;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -34,8 +33,8 @@ public class TupleCommaParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
-        Map<String, Single> elements = new HashMap<>();
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
+        Map<String, Expr> elements = new HashMap<>();
 
         if (left instanceof TupleExpr) { // x: 1, __
             TupleExpr tuple = (TupleExpr) left;
@@ -47,7 +46,7 @@ public class TupleCommaParser extends BinaryParser {
         do {
             Token name = parser.eat(TokenType.IDENTIFIER);
             parser.eat(TokenType.COLON);
-            Single element = parser.parseSingle(Precedence.INFIX);
+            Expr element = parser.parseExpr(Precedence.INFIX);
             if (elements.put(name.getString(), element) != null) {
                 throw new SyntaxException("Duplicate tuple field name", name.getPosition());
             }

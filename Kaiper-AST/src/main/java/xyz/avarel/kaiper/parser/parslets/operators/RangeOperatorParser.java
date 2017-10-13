@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets.operators;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.collections.RangeNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -31,12 +30,12 @@ public class RangeOperatorParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
         if (!parser.getParserFlags().allowRanges()) {
             throw new SyntaxException("Ranges are disabled");
         }
 
-        Single right = parser.parseSingle(getPrecedence());
+        Expr right = parser.parseExpr(getPrecedence());
         return new RangeNode(token.getPosition(), left, right);
     }
 }

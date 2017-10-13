@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets.functional;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
@@ -38,21 +37,19 @@ public class PipeForwardParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
         if (!parser.getParserFlags().allowInvocation()) {
             throw new SyntaxException("Function invocation are disabled");
         }
 
         // left |> right
 
-        Single right = parser.parseSingle(getPrecedence());
+        Expr right = parser.parseExpr(getPrecedence());
 
         if (right instanceof Invocation) {
             Invocation invocation = (Invocation) right;
-            Single argument = invocation.getArgument();
-
-            TupleExpr tuple = (TupleExpr) argument;
-            Map<String, Single> elements = new LinkedHashMap<>(tuple.getElements());
+            TupleExpr argument = invocation.getArgument();
+            Map<String, Expr> elements = new LinkedHashMap<>(argument.getElements());
 
             if (left instanceof TupleExpr) {
                 TupleExpr leftTuple = (TupleExpr) left;
@@ -62,17 +59,15 @@ public class PipeForwardParser extends BinaryParser {
                 } else {
                     throw new SyntaxException("Duplicate tuple field names", left.getPosition());
                 }
-            } else {
-                if (elements.put("value", left) != null) {
-                    throw new SyntaxException("Duplicate tuple field names", left.getPosition());
-                }
+            } else if (elements.put("value", left) != null) {
+                throw new SyntaxException("Duplicate tuple field names", left.getPosition());
             }
 
             return new Invocation(
                     token.getPosition(),
                     invocation.getLeft(),
                     new TupleExpr(
-                            tuple.getPosition(),
+                            argument.getPosition(),
                             elements
                     )
             );
@@ -89,10 +84,7 @@ public class PipeForwardParser extends BinaryParser {
                         right,
                         new TupleExpr(
                                 token.getPosition(),
-                                Collections.singletonMap(
-                                        "value",
-                                        left
-                                )
+                                Collections.singletonMap("value", left)
                         )
                 );
             }

@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.ast.collections.GetOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.value.NullNode;
@@ -34,12 +33,12 @@ public class GetSetParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Single left, Token token) {
+    public Expr parse(KaiperParser parser, Expr left, Token token) {
         if (parser.match(TokenType.COLON)) {
             return parseEnd(parser, token.getPosition(), left, NullNode.VALUE);
         }
 
-        Single key = parser.parseSingle();
+        Expr key = parser.parseExpr();
 
         if (parser.match(TokenType.COLON)) {
             return parseEnd(parser, token.getPosition(), left, key);
@@ -54,7 +53,7 @@ public class GetSetParser extends BinaryParser {
         );
     }
 
-    private Single parseEnd(KaiperParser parser, Position position, Single left, Single start) {
+    private Expr parseEnd(KaiperParser parser, Position position, Expr left, Expr start) {
         if (parser.match(TokenType.COLON)) {
             return parseStep(parser, position, left, start, NullNode.VALUE);
         } else if (parser.match(TokenType.RIGHT_BRACKET)) {
@@ -67,7 +66,7 @@ public class GetSetParser extends BinaryParser {
             );
         }
 
-        Single end = parser.parseSingle();
+        Expr end = parser.parseExpr();
 
         if (parser.match(TokenType.COLON)) {
             return parseStep(parser, position, left, start, end);
@@ -83,7 +82,7 @@ public class GetSetParser extends BinaryParser {
         );
     }
 
-    private Single parseStep(KaiperParser parser, Position position, Single left, Single start, Single end) {
+    private Expr parseStep(KaiperParser parser, Position position, Expr left, Expr start, Expr end) {
         if (parser.match(TokenType.RIGHT_BRACKET)) {
             return new SliceOperation(
                     position,
@@ -94,7 +93,7 @@ public class GetSetParser extends BinaryParser {
             );
         }
 
-        Single step = parser.parseSingle();
+        Expr step = parser.parseExpr();
 
         parser.eat(TokenType.RIGHT_BRACKET);
         return new SliceOperation(

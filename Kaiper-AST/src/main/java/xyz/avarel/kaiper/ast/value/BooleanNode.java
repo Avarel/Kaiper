@@ -16,10 +16,10 @@
 
 package xyz.avarel.kaiper.ast.value;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 
-public class BooleanNode extends Single {
+public class BooleanNode extends Expr {
     public static final BooleanNode TRUE = new BooleanNode();
     public static final BooleanNode FALSE = new BooleanNode();
 

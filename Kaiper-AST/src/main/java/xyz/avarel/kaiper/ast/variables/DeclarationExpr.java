@@ -16,15 +16,15 @@
 
 package xyz.avarel.kaiper.ast.variables;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-public class DeclarationExpr extends Single {
+public class DeclarationExpr extends Expr {
     private final String name;
-    private final Single expr;
+    private final Expr expr;
 
-    public DeclarationExpr(Position position, String name, Single expr) {
+    public DeclarationExpr(Position position, String name, Expr expr) {
         super(position);
         this.name = name;
         this.expr = expr;
@@ -34,7 +34,7 @@ public class DeclarationExpr extends Single {
         return name;
     }
 
-    public Single getExpr() {
+    public Expr getExpr() {
         return expr;
     }
 

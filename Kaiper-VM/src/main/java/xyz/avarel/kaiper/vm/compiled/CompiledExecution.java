@@ -19,7 +19,6 @@ package xyz.avarel.kaiper.vm.compiled;
 import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
 import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
 import xyz.avarel.kaiper.vm.states.StatelessStackMachines;
 import xyz.avarel.kaiper.vm.states.VMState;

@@ -16,31 +16,31 @@
 
 package xyz.avarel.kaiper.ast.variables;
 
+import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.Single;
 import xyz.avarel.kaiper.lexer.Position;
 
-public class AssignmentExpr extends Single {
-    private final Single parent;
+public class AssignmentExpr extends Expr {
+    private final Expr parent;
     private final String name;
-    private final Single expr;
+    private final Expr expr;
 
-    public AssignmentExpr(Position position, String name, Single expr) {
+    public AssignmentExpr(Position position, String name, Expr expr) {
         this(position, null, name, expr);
     }
 
-    public AssignmentExpr(Position position, Single parent, String name, Single expr) {
+    public AssignmentExpr(Position position, Expr parent, String name, Expr expr) {
         super(position);
         this.parent = parent;
         this.name = name;
         this.expr = expr;
     }
 
-    public AssignmentExpr(Position position, Identifier identifier, Single expr) {
+    public AssignmentExpr(Position position, Identifier identifier, Expr expr) {
         this(position, identifier.getParent(), identifier.getName(), expr);
     }
 
-    public Single getParent() {
+    public Expr getParent() {
         return parent;
     }
 
@@ -48,7 +48,7 @@ public class AssignmentExpr extends Single {
         return name;
     }
 
-    public Single getExpr() {
+    public Expr getExpr() {
         return expr;
     }
 

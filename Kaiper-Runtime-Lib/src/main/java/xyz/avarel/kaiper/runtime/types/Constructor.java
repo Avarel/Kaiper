@@ -18,6 +18,7 @@ package xyz.avarel.kaiper.runtime.types;
 
 import xyz.avarel.kaiper.runtime.functions.Func;
 
+@Deprecated
 public abstract class Constructor extends Func {
     protected Type targetType;
 

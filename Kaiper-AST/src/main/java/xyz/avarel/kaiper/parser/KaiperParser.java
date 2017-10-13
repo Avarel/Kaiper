@@ -18,7 +18,7 @@ package xyz.avarel.kaiper.parser;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.Single;
+import xyz.avarel.kaiper.ast.flow.Statements;
 import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
@@ -27,6 +27,8 @@ import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class KaiperParser extends Parser {
@@ -64,15 +66,21 @@ public class KaiperParser extends Parser {
     public Expr parseStatements() {
         if (match(TokenType.EOF)) return NullNode.VALUE;
 
-        Expr any = parseExpr();
+        Expr expr = parseExpr();
 
-        while (match(TokenType.LINE)) {
-            if (match(TokenType.EOF)) break;
+        if (match(TokenType.LINE)) {
+            List<Expr> exprList = new ArrayList<>();
+            exprList.add(expr);
 
-            any = any.andThen(parseExpr());
+            do {
+                if (match(TokenType.EOF)) break;
+                exprList.add(parseExpr());
+            } while (match(TokenType.LINE));
+
+            return new Statements(exprList);
         }
 
-        return any;
+        return expr;
     }
 
     public Expr parseExpr() {
@@ -97,19 +105,6 @@ public class KaiperParser extends Parser {
             eat(TokenType.RIGHT_BRACE);
         }
         return expr;
-    }
-
-    public Single parseSingle() {
-        return parseSingle(0);
-    }
-
-    public Single parseSingle(int precedence) {
-        Expr expr = parseExpr(precedence);
-        if (expr instanceof Single) {
-            return (Single) expr;
-        } else {
-            throw new SyntaxException("Internal compiler error");
-        }
     }
 
     public Expr parseExpr(int precedence) {

@@ -47,7 +47,7 @@ public class DeclarationParser implements PrefixParser {
 
             parser.eat(TokenType.ASSIGN);
 
-            return new BindDeclarationExpr(token.getPosition(), patternCase, parser.parseSingle());
+            return new BindDeclarationExpr(token.getPosition(), patternCase, parser.parseExpr());
         }
 
         Token name = parser.eat(TokenType.IDENTIFIER);
@@ -68,12 +68,12 @@ public class DeclarationParser implements PrefixParser {
             return new BindDeclarationExpr(
                     token.getPosition(),
                     patternCase,
-                    parser.parseSingle()
+                    parser.parseExpr()
             );
         }
 
         if (parser.match(TokenType.ASSIGN)) {
-            return new DeclarationExpr(token.getPosition(), name.getString(), parser.parseSingle());
+            return new DeclarationExpr(token.getPosition(), name.getString(), parser.parseExpr());
         }
 
         return new DeclarationExpr(token.getPosition(), name.getString(), NullNode.VALUE);
