@@ -18,12 +18,14 @@ package xyz.avarel.kaiper.loops;
 
 import xyz.avarel.kaiper.KaiperScript;
 import xyz.avarel.kaiper.ScriptExpr;
-import xyz.avarel.kaiper.interop.JavaModel;
+import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.interpreter.VisitorSettings;
+import xyz.avarel.kaiper.optimizer.ExprOptimizer;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
-import xyz.avarel.kaiper.runtime.java.JavaType;
-import xyz.avarel.kaiper.runtime.java.JavaUtils;
 import xyz.avarel.kaiper.scope.DefaultScope;
+import xyz.avarel.kaiper.scope.Scope;
 
 import java.util.Map;
 import java.util.Scanner;
@@ -37,9 +39,9 @@ public class KaiperDevRepl {
 
         boolean running = true;
 
-        Scope scope = DefaultScope.INSTANCE.copy();
+        Scope<String, Obj> scope = DefaultScope.INSTANCE.copy();
 
-        scope.declare("println", new NativeFunc("print", "string") {
+        scope.put("println", new NativeFunc("print", "string") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
                 System.out.println(arguments.get("string"));
@@ -47,7 +49,7 @@ public class KaiperDevRepl {
             }
         });
 
-        scope.declare("JavaModel", JavaUtils.JAVA_PROTOTYPES.computeIfAbsent(JavaModel.class, JavaType::new));
+//        scope.declare("JavaModel", JavaUtils.JAVA_PROTOTYPES.computeIfAbsent(JavaModel.class, JavaType::new));
 
         while (running) {
             try {
@@ -62,23 +64,43 @@ public class KaiperDevRepl {
                 }
 
                 KaiperScript exp = new KaiperScript(input, scope);
+
                 ScriptExpr expr = exp.compile();
+                {
+                    StringBuilder builder = new StringBuilder();
+                    expr.ast(builder, "\t\t ", true);
+                    System.out.println("   AST > +\n" + builder);
+                }
 
-                StringBuilder builder = new StringBuilder();
-                expr.ast(builder, "\t\t ", true);
-                System.out.println("   AST > +\n" + builder);
+                Expr optimized = expr.accept(new ExprOptimizer(), null);
+                {
+                    StringBuilder builder = new StringBuilder();
+                    optimized.ast(builder, "\t\t ", true);
+                    System.out.println(" OPAST > +\n" + builder);
+                }
 
-                long start = System.nanoTime();
-                Obj result = expr.compute();
-                long end = System.nanoTime();
+                {
+                    long start = System.nanoTime();
+                    Obj result = expr.compute();
+                    long end = System.nanoTime();
 
-                long ns =  (end - start);
-                double ms = ns / 1000000D;
+                    long ns = (end - start);
+                    double ms = ns / 1000000D;
 
-                System.out.println("RESULT | " + result + " : " + result.getType());
-                System.out.println("  TIME | " + ms + "ms " + ns + "ns" );
+                    System.out.println("RESULT | " + result + " : " + result.getType());
+                    System.out.println("  TIME | " + ms + "ms " + ns + "ns");
+                }
+                {
+                    long start = System.nanoTime();
+                    Obj result = optimized.accept(new ExprInterpreter(new VisitorSettings()), scope);
+                    long end = System.nanoTime();
 
+                    long ns =  (end - start);
+                    double ms = ns / 1000000D;
 
+                    System.out.println("RESULT | " + result + " : " + result.getType());
+                    System.out.println("  TIME | " + ms + "ms " + ns + "ns" );
+                }
 
                 System.out.println();
             } catch (RuntimeException e) {

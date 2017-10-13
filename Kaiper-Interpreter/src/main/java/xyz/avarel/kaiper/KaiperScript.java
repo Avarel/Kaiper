@@ -175,7 +175,7 @@ public class KaiperScript {
         return parser;
     }
 
-    public Scope getScope() {
+    public Scope<String, Obj> getScope() {
         return scope;
     }
 

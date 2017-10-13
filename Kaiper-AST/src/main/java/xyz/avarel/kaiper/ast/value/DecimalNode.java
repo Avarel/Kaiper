@@ -43,6 +43,11 @@ public class DecimalNode extends Expr {
     }
 
     @Override
+    public int weight() {
+        return 0;
+    }
+
+    @Override
     public String toString() {
         return String.valueOf(value);
     }

@@ -18,6 +18,11 @@ package xyz.avarel.kaiper.lexer;
 
 import java.util.Objects;
 
+/**
+ * Position token, containing the index, line and line index for a node.
+ *
+ * @see xyz.avarel.kaiper.ast.Expr
+ */
 public class Position {
     private final long line;
     private final long lineIndex;

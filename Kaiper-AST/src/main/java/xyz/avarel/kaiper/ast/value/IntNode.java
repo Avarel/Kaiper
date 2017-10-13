@@ -37,6 +37,10 @@ public class IntNode extends Expr {
         return visitor.visit(this, scope);
     }
 
+    @Override
+    public int weight() {
+        return 0;
+    }
 
     @Override
     public String toString() {

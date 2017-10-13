@@ -43,8 +43,15 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
     @Override
     public Expr visit(Statements expr, Void scope) {
         List<Expr> list = new ArrayList<>(expr.getExprs().size());
-        for (Expr statement : expr.getExprs()) {
-           list.add(optimize(statement));
+        List<Expr> exprs = expr.getExprs();
+        for (int i = 0; i < exprs.size() - 1; i++) {
+            Expr statement = exprs.get(i);
+            Expr optimized = optimize(statement);
+            if (optimized.weight() != 0) list.add(optimized);
+        }
+
+        if (exprs.size() >= 1) {
+            list.add(optimize(exprs.get(exprs.size() - 1)));
         }
 
         return new Statements(list);
@@ -57,12 +64,15 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
 
     @Override
     public Expr visit(Identifier expr, Void scope) {
-        return new Identifier(expr.getPosition(), optimize(expr.getParent()), expr.getName());
+        return new Identifier(
+                expr.getPosition(),
+                expr.getParent() != null ? optimize(expr.getParent()) : null,
+                expr.getName());
     }
 
     @Override
     public Expr visit(Invocation expr, Void scope) {
-        return new Invocation(expr.getPosition(), optimize(expr.getLeft()), (TupleExpr) optimize(expr.getArgument()));
+        return new Invocation(expr.getPosition(), optimize(expr.getLeft()), visit(expr.getArgument(), null));
     }
 
     @Override
@@ -184,32 +194,35 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
     }
 
     @Override
-    public GetOperation visit(GetOperation expr, Void scope) {
+    public Expr visit(GetOperation expr, Void scope) {
         return new GetOperation(expr.getPosition(), optimize(expr.getLeft()), expr.getKey());
     }
 
     @Override
-    public SetOperation visit(SetOperation expr, Void scope) {
+    public Expr visit(SetOperation expr, Void scope) {
         return new SetOperation(expr.getPosition(), optimize(expr.getLeft()), expr.getKey(), optimize(expr.getExpr()));
     }
 
     @Override
-    public ReturnExpr visit(ReturnExpr expr, Void scope) {
+    public Expr visit(ReturnExpr expr, Void scope) {
         return new ReturnExpr(expr.getPosition(), optimize(expr.getExpr()));
     }
 
     @Override
-    public ConditionalExpr visit(ConditionalExpr expr, Void scope) {
+    public Expr visit(ConditionalExpr expr, Void scope) {
+        if (expr.getCondition() == BooleanNode.TRUE) {
+            return expr.getIfBranch();
+        }
+        return expr;
+    }
+
+    @Override
+    public Expr visit(ForEachExpr expr, Void scope) {
         return null;
     }
 
     @Override
-    public ForEachExpr visit(ForEachExpr expr, Void scope) {
-        return null;
-    }
-
-    @Override
-    public DictionaryNode visit(DictionaryNode expr, Void scope) {
+    public Expr visit(DictionaryNode expr, Void scope) {
         Map<Expr, Expr> map = new HashMap<>(expr.getMap().size());
 
         for (Map.Entry<Expr, Expr> entry : expr.getMap().entrySet()) {
@@ -220,47 +233,47 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
     }
 
     @Override
-    public NullNode visit(NullNode expr, Void scope) {
+    public Expr visit(NullNode expr, Void scope) {
         return expr;
     }
 
     @Override
-    public IntNode visit(IntNode expr, Void scope) {
+    public Expr visit(IntNode expr, Void scope) {
         return expr;
     }
 
     @Override
-    public DecimalNode visit(DecimalNode expr, Void scope) {
+    public Expr visit(DecimalNode expr, Void scope) {
         return expr;
     }
 
     @Override
-    public BooleanNode visit(BooleanNode expr, Void scope) {
+    public Expr visit(BooleanNode expr, Void scope) {
         return expr;
     }
 
     @Override
-    public StringNode visit(StringNode expr, Void scope) {
+    public Expr visit(StringNode expr, Void scope) {
         return expr;
     }
 
     @Override
-    public DeclarationExpr visit(DeclarationExpr expr, Void scope) {
+    public Expr visit(DeclarationExpr expr, Void scope) {
         return new DeclarationExpr(expr.getPosition(), expr.getName(), optimize(expr.getExpr()));
     }
 
     @Override
-    public ModuleNode visit(ModuleNode expr, Void scope) {
+    public Expr visit(ModuleNode expr, Void scope) {
         return new ModuleNode(expr.getPosition(), expr.getName(), optimize(expr.getExpr()));
     }
 
     @Override
-    public TypeNode visit(TypeNode expr, Void scope) {
+    public Expr visit(TypeNode expr, Void scope) {
         throw new UnsupportedOperationException("deprecated");
     }
 
     @Override
-    public WhileExpr visit(WhileExpr expr, Void scope) {
+    public Expr visit(WhileExpr expr, Void scope) {
         throw new UnsupportedOperationException("deprecated");
     }
 
