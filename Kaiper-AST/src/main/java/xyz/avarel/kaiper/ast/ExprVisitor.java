@@ -16,7 +16,10 @@
 
 package xyz.avarel.kaiper.ast;
 
-import xyz.avarel.kaiper.ast.collections.*;
+import xyz.avarel.kaiper.ast.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.collections.GetOperation;
+import xyz.avarel.kaiper.ast.collections.SetOperation;
 import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
@@ -50,8 +53,6 @@ public interface ExprVisitor<R, C> {
     R visit(BinaryOperation expr, C scope);
 
     R visit(UnaryOperation expr, C scope);
-
-    R visit(RangeNode expr, C scope);
 
     R visit(ArrayNode expr, C scope);
 

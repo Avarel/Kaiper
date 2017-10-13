@@ -25,6 +25,6 @@ import xyz.avarel.kaiper.parser.PrefixParser;
 public class StrParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
-        return new StringNode(token.getPosition(), token.getString());
+        return new StringNode(token.getString());
     }
 }

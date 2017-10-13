@@ -20,7 +20,10 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.ModuleNode;
 import xyz.avarel.kaiper.ast.TypeNode;
-import xyz.avarel.kaiper.ast.collections.*;
+import xyz.avarel.kaiper.ast.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.collections.GetOperation;
+import xyz.avarel.kaiper.ast.collections.SetOperation;
 import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
@@ -213,23 +216,6 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             default:
                 throw new InterpreterException("Unknown unary operator", expr.getPosition());
         }
-    }
-
-    @Override
-    public Obj visit(RangeNode expr, Scope<String, Obj> scope) {
-        Obj startObj = resultOf(expr.getLeft(), scope);
-        Obj endObj = resultOf(expr.getRight(), scope);
-
-        if (startObj instanceof Int && endObj instanceof Int) {
-            int start = ((Int) startObj).value();
-            int end = ((Int) endObj).value();
-
-            visitorSettings.checkSizeLimit(Math.abs(end - start));
-
-            return new Range(start, end);
-        }
-
-        return Null.VALUE;
     }
 
     @Override

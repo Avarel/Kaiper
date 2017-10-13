@@ -37,11 +37,6 @@ public class NullNode extends Expr {
     }
 
     @Override
-    public int weight() {
-        return 0;
-    }
-
-    @Override
     public String toString() {
         return "null";
     }

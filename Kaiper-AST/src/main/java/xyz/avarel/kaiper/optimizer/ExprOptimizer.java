@@ -20,7 +20,10 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.ModuleNode;
 import xyz.avarel.kaiper.ast.TypeNode;
-import xyz.avarel.kaiper.ast.collections.*;
+import xyz.avarel.kaiper.ast.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.collections.GetOperation;
+import xyz.avarel.kaiper.ast.collections.SetOperation;
 import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
@@ -33,21 +36,21 @@ import xyz.avarel.kaiper.ast.variables.*;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.operations.UnaryOperatorType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 // IN PROGRESS
 public class ExprOptimizer implements ExprVisitor<Expr, Void> {
+    private static final Set<Class<?>> nodes = new HashSet<>(
+            Arrays.asList(BooleanNode.class, DecimalNode.class, IntNode.class, NullNode.class, StringNode.class, Identifier.class)
+    );
+
     @Override
     public Expr visit(Statements expr, Void scope) {
         List<Expr> list = new ArrayList<>(expr.getExprs().size());
         List<Expr> exprs = expr.getExprs();
         for (int i = 0; i < exprs.size() - 1; i++) {
-            Expr statement = exprs.get(i);
-            Expr optimized = optimize(statement);
-            if (optimized.weight() != 0) list.add(optimized);
+            Expr optimized = optimize(exprs.get(i));
+            if (!nodes.contains(optimized.getClass())) list.add(optimized);
         }
 
         if (exprs.size() >= 1) {
@@ -67,7 +70,8 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
         return new Identifier(
                 expr.getPosition(),
                 expr.getParent() != null ? optimize(expr.getParent()) : null,
-                expr.getName());
+                expr.getName()
+        );
     }
 
     @Override
@@ -80,70 +84,62 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
         Expr left = optimize(expr.getLeft());
         Expr right = optimize(expr.getRight());
 
-        if ((left instanceof IntNode || left instanceof DecimalNode)
-                && (right instanceof IntNode || right instanceof DecimalNode)) {
-            boolean endInt = left instanceof IntNode && right instanceof IntNode;
-            double leftValue;
-            if (left instanceof IntNode) {
-                leftValue = ((IntNode) left).getValue();
-            } else {
-                leftValue = ((DecimalNode) left).getValue();
-            }
-
-            double rightValue;
+        if (left instanceof IntNode) {
             if (right instanceof IntNode) {
-                rightValue = ((IntNode) right).getValue();
-            } else {
-                rightValue = ((DecimalNode) right).getValue();
+                return opInt(((IntNode) left).getValue(), ((IntNode) right).getValue(), expr);
+            } else if (right instanceof DecimalNode) {
+                return opDecimal(((IntNode) left).getValue(), ((DecimalNode) right).getValue(), expr);
             }
-
-            double finalValue;
-
-            switch (expr.getOperator()) {
-                case PLUS:
-                    finalValue = leftValue + rightValue;
-                    break;
-                case MINUS:
-                    finalValue = leftValue - rightValue;
-                    break;
-                case TIMES:
-                    finalValue = leftValue * rightValue;
-                    break;
-                case DIVIDE:
-                    if (endInt && rightValue == 0) throw new SyntaxException("Division by 0", expr.getPosition());
-                    finalValue = leftValue / rightValue;
-                    break;
-                case MODULUS:
-                    finalValue = leftValue % rightValue;
-                    break;
-                case POWER:
-                    finalValue = Math.pow(leftValue, rightValue);
-                    break;
-
-                case EQUALS:
-                    return BooleanNode.of(leftValue == rightValue);
-                case NOT_EQUALS:
-                    return BooleanNode.of(leftValue != rightValue);
-                case GREATER_THAN:
-                    return BooleanNode.of(leftValue > rightValue);
-                case GREATER_THAN_EQUAL:
-                    return BooleanNode.of(leftValue >= rightValue);
-                case LESS_THAN:
-                    return BooleanNode.of(leftValue < rightValue);
-                case LESS_THAN_EQUAL:
-                    return BooleanNode.of(leftValue <= rightValue);
-
-                default: return expr;
-            }
-
-            if (endInt) {
-                return new IntNode(expr.getPosition(), (int) finalValue);
-            } else {
-                return new DecimalNode(expr.getPosition(), finalValue);
+        } else if (left instanceof DecimalNode) {
+            if (right instanceof IntNode) {
+                return opDecimal(((DecimalNode) left).getValue(), ((IntNode) right).getValue(), expr);
+            } else if (right instanceof DecimalNode) {
+                return opDecimal(((DecimalNode) left).getValue(), ((DecimalNode) right).getValue(), expr);
             }
         }
-
         return expr;
+    }
+
+    private Expr opInt(int a, int b, BinaryOperation originOp) {
+        switch (originOp.getOperator()) {
+            case PLUS: return new IntNode(a + b);
+            case MINUS: return new IntNode(a - b);
+            case TIMES: return new IntNode(a * b);
+            case DIVIDE:
+                if (b == 0) throw new SyntaxException("Division by 0");
+                return new IntNode(a / b);
+            case MODULUS: return new IntNode(a % b);
+            case POWER: return new IntNode((int) Math.pow(a, b));
+            case EQUALS: return BooleanNode.of(a == b);
+            case NOT_EQUALS: return BooleanNode.of(a != b);
+            case GREATER_THAN: return BooleanNode.of(a > b);
+            case GREATER_THAN_EQUAL: return BooleanNode.of(a >= b);
+            case LESS_THAN: return BooleanNode.of(a < b);
+            case LESS_THAN_EQUAL: return BooleanNode.of(a <= b);
+            case SHL: return new IntNode(a << b);
+            case SHR: return new IntNode(a >> b);
+        }
+
+        return originOp;
+    }
+
+    private Expr opDecimal(double a, double b, BinaryOperation originOp) {
+        switch (originOp.getOperator()) {
+            case PLUS: return new DecimalNode(a + b);
+            case MINUS: return new DecimalNode(a - b);
+            case TIMES: return new DecimalNode(a * b);
+            case DIVIDE: return new DecimalNode(a / b);
+            case MODULUS: return new DecimalNode(a % b);
+            case POWER: return new DecimalNode((int) Math.pow(a, b));
+            case EQUALS: return BooleanNode.of(a == b);
+            case NOT_EQUALS: return BooleanNode.of(a != b);
+            case GREATER_THAN: return BooleanNode.of(a > b);
+            case GREATER_THAN_EQUAL: return BooleanNode.of(a >= b);
+            case LESS_THAN: return BooleanNode.of(a < b);
+            case LESS_THAN_EQUAL: return BooleanNode.of(a <= b);
+        }
+
+        return originOp;
     }
 
     @Override
@@ -151,12 +147,12 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
         if (expr.getTarget() instanceof IntNode) {
             if (expr.getOperator() == UnaryOperatorType.MINUS) {
                 IntNode target = (IntNode) expr.getTarget();
-                return new IntNode(target.getPosition(), -target.getValue());
+                return new IntNode(-target.getValue());
             }
         } else if (expr.getTarget() instanceof DecimalNode) {
             if (expr.getOperator() == UnaryOperatorType.MINUS) {
                 DecimalNode target = (DecimalNode) expr.getTarget();
-                return new DecimalNode(target.getPosition(), -target.getValue());
+                return new DecimalNode(-target.getValue());
             }
         } else if (expr.getTarget() instanceof BooleanNode) {
             if (expr.getOperator() == UnaryOperatorType.NEGATE) {
@@ -165,11 +161,6 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
             }
         }
         return expr;
-    }
-
-    @Override
-    public Expr visit(RangeNode expr, Void scope) {
-        throw new UnsupportedOperationException("deprecated");
     }
 
     @Override
@@ -195,12 +186,12 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
 
     @Override
     public Expr visit(GetOperation expr, Void scope) {
-        return new GetOperation(expr.getPosition(), optimize(expr.getLeft()), expr.getKey());
+        return new GetOperation(expr.getPosition(), optimize(expr.getLeft()), optimize(expr.getKey()));
     }
 
     @Override
     public Expr visit(SetOperation expr, Void scope) {
-        return new SetOperation(expr.getPosition(), optimize(expr.getLeft()), expr.getKey(), optimize(expr.getExpr()));
+        return new SetOperation(expr.getPosition(), optimize(expr.getLeft()), optimize(expr.getKey()), optimize(expr.getExpr()));
     }
 
     @Override
@@ -210,10 +201,17 @@ public class ExprOptimizer implements ExprVisitor<Expr, Void> {
 
     @Override
     public Expr visit(ConditionalExpr expr, Void scope) {
-        if (expr.getCondition() == BooleanNode.TRUE) {
-            return expr.getIfBranch();
+        Expr condition = optimize(expr.getCondition());
+        Expr ifBranch = optimize(expr.getIfBranch());
+        if (condition == BooleanNode.TRUE) {
+            return ifBranch;
         }
-        return expr;
+
+        Expr elseBranch = expr.getElseBranch() != null ? optimize(expr.getElseBranch()) : NullNode.VALUE;
+        if (condition == BooleanNode.FALSE) {
+            return elseBranch;
+        }
+        return new ConditionalExpr(expr.getPosition(), condition, ifBranch, elseBranch);
     }
 
     @Override

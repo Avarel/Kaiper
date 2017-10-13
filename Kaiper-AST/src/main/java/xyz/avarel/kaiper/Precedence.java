@@ -20,7 +20,10 @@ package xyz.avarel.kaiper;
  * Default precedence table for the Kaiper parser.
  */
 public class Precedence {
-    public static final int DOT = 16;
+    public static final int DOT = 17;
+
+    /* :: */
+    public static final int REF = 16;
 
     /* a(b) */
     public static final int POSTFIX = 15;

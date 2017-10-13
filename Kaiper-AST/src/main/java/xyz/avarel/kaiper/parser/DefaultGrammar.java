@@ -29,7 +29,6 @@ import xyz.avarel.kaiper.parser.parslets.functional.PipeForwardParser;
 import xyz.avarel.kaiper.parser.parslets.functions.FunctionParser;
 import xyz.avarel.kaiper.parser.parslets.nodes.*;
 import xyz.avarel.kaiper.parser.parslets.operators.BinaryOperatorParser;
-import xyz.avarel.kaiper.parser.parslets.operators.RangeOperatorParser;
 import xyz.avarel.kaiper.parser.parslets.operators.UnaryOperatorParser;
 import xyz.avarel.kaiper.parser.parslets.tuples.TupleColonParser;
 import xyz.avarel.kaiper.parser.parslets.tuples.TupleCommaParser;
@@ -85,7 +84,6 @@ public class DefaultGrammar extends Grammar {
         infix(TokenType.CARET, new BinaryOperatorParser(Precedence.EXPONENTIAL, false, BinaryOperatorType.POWER));
         infix(TokenType.SHIFT_RIGHT, new BinaryOperatorParser(Precedence.SHIFT, true, BinaryOperatorType.SHR));
         infix(TokenType.SHIFT_LEFT, new BinaryOperatorParser(Precedence.SHIFT, true, BinaryOperatorType.SHL));
-        infix(TokenType.RANGE_TO, new RangeOperatorParser());
 
         // RELATIONAL
         infix(TokenType.EQUALS, new BinaryOperatorParser(Precedence.EQUALITY, true, BinaryOperatorType.EQUALS));
