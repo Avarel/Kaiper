@@ -44,8 +44,7 @@ public class CompiledFunc extends Func {
 
     @Override
     public int getArity() {
-        if (parameters.isEmpty()) return 0;
-        return parameters.get(parameters.size() - 1).isRest() ? parameters.size() - 1 : parameters.size();
+        return patternExecutor.getPatternArity();
     }
 
     @Override

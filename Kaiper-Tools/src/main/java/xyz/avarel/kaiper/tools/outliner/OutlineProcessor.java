@@ -304,16 +304,6 @@ public class OutlineProcessor extends MultiOpcodeProcessorAdapter {
     }
 
     @Override
-    public ReadResult opcodePatternCase(OpcodeReader reader, KDataInput in) {
-        return null;
-    }
-
-    @Override
-    public ReadResult opcodeWildcardPattern(OpcodeReader reader, KDataInput in) {
-        return null;
-    }
-
-    @Override
     public ReadResult opcodeVariablePattern(OpcodeReader reader, KDataInput in) {
         return null;
     }

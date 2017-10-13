@@ -38,8 +38,6 @@ public enum PatternOpcodes implements Opcode {
      */
     BREAKPOINT,
 
-    PATTERN_CASE,
-    WILDCARD,
     VARIABLE,
     TUPLE,
     REST,

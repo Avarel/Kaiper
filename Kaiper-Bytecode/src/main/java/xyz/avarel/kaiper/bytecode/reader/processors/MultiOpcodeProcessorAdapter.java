@@ -92,10 +92,6 @@ public abstract class MultiOpcodeProcessorAdapter implements OpcodeProcessor, KO
             switch ((PatternOpcodes) opcode) {
                 case END:
                     return opcodeEnd(reader, in);
-                case PATTERN_CASE:
-                    return opcodePatternCase(reader, in);
-                case WILDCARD:
-                    return opcodeWildcardPattern(reader, in);
                 case VARIABLE:
                     return opcodeVariablePattern(reader, in);
                 case TUPLE:

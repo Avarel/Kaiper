@@ -25,10 +25,12 @@ import xyz.avarel.kaiper.vm.states.VMState;
 import java.io.ByteArrayInputStream;
 
 public class PreparedPatternExecution {
+    private final int patternArity;
     private final byte[] bytecode;
     private final String[] stringPool;
 
-    public PreparedPatternExecution(byte[] bytecode, String[] stringPool) {
+    public PreparedPatternExecution(int patternArity, byte[] bytecode, String[] stringPool) {
+        this.patternArity = patternArity;
         this.bytecode = bytecode;
         this.stringPool = stringPool;
     }
@@ -40,7 +42,7 @@ public class PreparedPatternExecution {
         machine.scope = scope;
 
         try {
-            return machine.patternProcessor.assignFrom(tuple, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+            return machine.patternProcessor.assignFrom(tuple, patternArity, new KDataInputStream(new ByteArrayInputStream(bytecode)));
         } finally {
             StatelessStackMachines.release(machine);
         }
@@ -52,7 +54,7 @@ public class PreparedPatternExecution {
         machine.scope = scope;
 
         try {
-            return machine.patternProcessor.declareFrom(tuple, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+            return machine.patternProcessor.declareFrom(tuple, patternArity, new KDataInputStream(new ByteArrayInputStream(bytecode)));
         } finally {
             StatelessStackMachines.release(machine);
         }
@@ -70,7 +72,7 @@ public class PreparedPatternExecution {
         machine.stringPool = stringPool;
 
         try {
-            return machine.patternProcessor.assignFrom(tuple, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+            return machine.patternProcessor.assignFrom(tuple, patternArity, new KDataInputStream(new ByteArrayInputStream(bytecode)));
         } finally {
             state.load(machine);
         }
@@ -88,9 +90,13 @@ public class PreparedPatternExecution {
         machine.stringPool = stringPool;
 
         try {
-            return machine.patternProcessor.declareFrom(tuple, new KDataInputStream(new ByteArrayInputStream(bytecode)));
+            return machine.patternProcessor.declareFrom(tuple, patternArity, new KDataInputStream(new ByteArrayInputStream(bytecode)));
         } finally {
             state.load(machine);
         }
+    }
+
+    public int getPatternArity() {
+        return patternArity;
     }
 }

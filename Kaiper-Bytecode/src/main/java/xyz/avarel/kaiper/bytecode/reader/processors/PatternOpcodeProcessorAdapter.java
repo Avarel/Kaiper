@@ -16,10 +16,6 @@ public abstract class PatternOpcodeProcessorAdapter implements OpcodeProcessor, 
                     return opcodeEnd(reader, in);
                 case BREAKPOINT:
                     return opcodeBreakpoint(reader, in);
-                case PATTERN_CASE:
-                    return opcodePatternCase(reader, in);
-                case WILDCARD:
-                    return opcodeWildcardPattern(reader, in);
                 case VARIABLE:
                     return opcodeVariablePattern(reader, in);
                 case TUPLE:

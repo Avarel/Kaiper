@@ -24,7 +24,7 @@ import static xyz.avarel.kaiper.operations.BinaryOperatorType.OR;
 public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
     private final List<String> stringPool = new LinkedList<>();
-
+    private final PatternCompiler patternCompiler = new PatternCompiler(this);
     private long lastLineNumber;
 
     @Override
@@ -49,7 +49,7 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(NEW_FUNCTION).writeShort(name);
 
-        new PatternCompiler(this).compile(expr.getPatternCase(), out);
+        patternCompiler.compile(expr.getPatternCase(), out);
         //out.writeOpcode(END);
 
         visit(out, expr.getExpr());
@@ -346,7 +346,7 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(NEW_TYPE).writeShort(name);
 
-        new PatternCompiler(this).compile(expr.getPatternCase(), out);
+        patternCompiler.compile(expr.getPatternCase(), out);
         //out.writeOpcode(END);
 
         visit(out, expr.getExpr());
@@ -395,7 +395,7 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(BIND_DECLARE);
 
-        new PatternCompiler(this).compile(expr.getPatternCase(), out);
+        patternCompiler.compile(expr.getPatternCase(), out);
         //out.writeOpcode(END);
 
         return null;
@@ -409,7 +409,7 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(BIND_ASSIGN);
 
-        new PatternCompiler(this).compile(expr.getPatternCase(), out);
+        patternCompiler.compile(expr.getPatternCase(), out);
         //out.writeOpcode(END);
 
         return null;

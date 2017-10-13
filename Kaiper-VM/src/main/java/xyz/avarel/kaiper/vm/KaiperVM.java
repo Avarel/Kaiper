@@ -67,7 +67,7 @@ public class KaiperVM {
             KDataInputStream input = new KDataInputStream(inputStream);
             versionHeaderAndCheck(input);
 
-            StackMachine stackMachine = new StackMachine(scope, readStringPool(input));
+            StackMachine stackMachine = new StackMachine(readStringPool(input), scope);
             KOpcodes.READER.read(stackMachine, input);
             return stackMachine.stack.peek();
         } catch (UncheckedIOException e) {
@@ -79,12 +79,12 @@ public class KaiperVM {
 
     //region HEADERS
 
-    private void versionHeaderAndCheck(KDataInput input) throws IOException {
+    private void versionHeaderAndCheck(KDataInput input) {
         KaiperBytecode.validateInit(input);
         KaiperBytecode.validateVersion(input);
     }
 
-    private List<String> readStringPool(KDataInput input) throws IOException {
+    private String[] readStringPool(KDataInput input) {
         int poolSize = input.readShort();
         List<String> constants = new ArrayList<>(poolSize);
 
@@ -92,7 +92,7 @@ public class KaiperVM {
             constants.add(input.readString());
         }
 
-        return constants;
+        return constants.toArray(new String[0]);
     }
 
     //endregion

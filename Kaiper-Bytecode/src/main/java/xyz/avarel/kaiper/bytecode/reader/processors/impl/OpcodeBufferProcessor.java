@@ -240,18 +240,6 @@ public class OpcodeBufferProcessor extends MultiOpcodeProcessorAdapter {
     }
 
     @Override
-    public ReadResult opcodePatternCase(OpcodeReader reader, KDataInput in) {
-        reader.read(this, in);
-
-        return CONTINUE;
-    }
-
-    @Override
-    public ReadResult opcodeWildcardPattern(OpcodeReader reader, KDataInput in) {
-        return CONTINUE;
-    }
-
-    @Override
     public ReadResult opcodeVariablePattern(OpcodeReader reader, KDataInput in) {
         out.writeShort(in.readShort());
         return CONTINUE;

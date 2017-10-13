@@ -10,10 +10,6 @@ public interface PatternOpcodeProcessor {
 
     ReadResult opcodeBreakpoint(OpcodeReader reader, KDataInput in);
 
-    ReadResult opcodePatternCase(OpcodeReader reader, KDataInput in);
-
-    ReadResult opcodeWildcardPattern(OpcodeReader reader, KDataInput in);
-
     ReadResult opcodeVariablePattern(OpcodeReader reader, KDataInput in);
 
     ReadResult opcodeTuplePattern(OpcodeReader reader, KDataInput in);

@@ -23,7 +23,6 @@ import xyz.avarel.kaiper.bytecode.opcodes.Opcode;
 import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
 import xyz.avarel.kaiper.bytecode.reader.processors.PatternOpcodeProcessorAdapter;
 import xyz.avarel.kaiper.bytecode.reader.processors.ReadResult;
-import xyz.avarel.kaiper.exceptions.InvalidBytecodeException;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
@@ -31,7 +30,6 @@ import xyz.avarel.kaiper.runtime.collections.Array;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes.PATTERN_CASE;
 import static xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes.READER;
 import static xyz.avarel.kaiper.bytecode.reader.processors.ReadResult.*;
 
@@ -64,38 +62,8 @@ public class PatternProcessor extends PatternOpcodeProcessorAdapter {
     }
 
     @Override
-    public ReadResult opcodePatternCase(OpcodeReader reader, KDataInput in) {
-        if (!obj.hasAttr("_" + position)) {
-            return ERRORED;
-        }
-
-        Obj value = obj.getAttr("_" + position);
-        position++;
-
-        Tuple tuple = value instanceof Tuple ? (Tuple) value : new Tuple(value);
-
-        PatternProcessor processor = new PatternProcessor(parent);
-        if (processor.doRead(tuple, in, false) == ERRORED) return ERRORED;
-
-        //Copied from declareFrom method
-        for (Map.Entry<String, Obj> result : processor.results.entrySet()) {
-            parent.scope.declare(result.getKey(), result.getValue());
-        }
-
-        current++;
-        return CONTINUE;
-    }
-
-    @Override
-    public ReadResult opcodeWildcardPattern(OpcodeReader reader, KDataInput in) {
-        position++;
-        current++;
-        return CONTINUE;
-    }
-
-    @Override
     public ReadResult opcodeVariablePattern(OpcodeReader reader, KDataInput in) {
-        String name = parent.stringPool.get(in.readUnsignedShort());
+        String name = parent.stringPool[in.readUnsignedShort()];
         Obj value;
 
         if (obj.hasAttr(name)) {
@@ -115,7 +83,7 @@ public class PatternProcessor extends PatternOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeTuplePattern(OpcodeReader reader, KDataInput in) {
-        String name = parent.stringPool.get(in.readUnsignedShort());
+        String name = parent.stringPool[in.readUnsignedShort()];
         Obj value;
 
         if (!obj.hasAttr(name)) {
@@ -145,7 +113,7 @@ public class PatternProcessor extends PatternOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeRestPattern(OpcodeReader reader, KDataInput in) {
-        String name = parent.stringPool.get(in.readUnsignedShort());
+        String name = parent.stringPool[in.readUnsignedShort()];
         Obj value;
 
         if (obj.hasAttr(name)) {
@@ -189,7 +157,7 @@ public class PatternProcessor extends PatternOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeDefaultPattern(OpcodeReader reader, KDataInput in) {
-        String name = parent.stringPool.get(in.readUnsignedShort());
+        String name = parent.stringPool[in.readUnsignedShort()];
 
         ReadResult result = reader.readNext(this, in);
 
@@ -204,26 +172,17 @@ public class PatternProcessor extends PatternOpcodeProcessorAdapter {
         return CONTINUE;
     }
 
-    private ReadResult doRead(Tuple tuple, KDataInput input, boolean eatOpcode) {
+    private ReadResult doRead(Tuple tuple, int size, KDataInput input) {
         this.obj = tuple;
         this.results = new LinkedHashMap<>();
         this.position = 0;
         this.current = 0;
 
-        if (eatOpcode) {
-            Opcode opcode;
-            if ((opcode = READER.next(input)) != PATTERN_CASE) {
-                throw new InvalidBytecodeException(opcode);
-            }
-        }
-
-        this.size = input.readInt();
-
         return READER.read(this, input);
     }
 
-    public boolean declareFrom(Tuple tuple, KDataInput input) {
-        if (doRead(tuple, input, true) == ERRORED) return false;
+    public boolean declareFrom(Tuple tuple, int size, KDataInput input) {
+        if (doRead(tuple, size, input) == ERRORED) return false;
 
         for (Map.Entry<String, Obj> result : results.entrySet()) {
             parent.scope.declare(result.getKey(), result.getValue());
@@ -234,8 +193,8 @@ public class PatternProcessor extends PatternOpcodeProcessorAdapter {
         return true;
     }
 
-    public boolean assignFrom(Tuple tuple, KDataInput input) {
-        if (doRead(tuple, input, true) == ERRORED) return false;
+    public boolean assignFrom(Tuple tuple, int size, KDataInput input) {
+        if (doRead(tuple, size, input) == ERRORED) return false;
 
         for (Map.Entry<String, Obj> result : results.entrySet()) {
             parent.scope.assign(result.getKey(), result.getValue());

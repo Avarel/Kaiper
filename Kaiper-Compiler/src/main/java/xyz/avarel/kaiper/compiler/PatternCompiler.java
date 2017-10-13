@@ -24,7 +24,6 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
         }
 
         out.writeOpcode(END);
-
     }
 
     @Override
