@@ -77,6 +77,8 @@ public enum TokenType {
     QUESTION,
     COLON,
     COMMA,
+
+    REF,
     DOT,
 
     UNDERSCORE,

@@ -32,22 +32,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class KaiperParser extends Parser {
-    private ParserFlags parserFlags = ParserFlags.ALL_FLAGS;
-
     public KaiperParser(KaiperLexer tokens) {
         super(tokens, DefaultGrammar.INSTANCE);
     }
 
     public KaiperParser(KaiperParser proxy) {
         super(proxy);
-    }
-
-    public ParserFlags getParserFlags() {
-        return parserFlags;
-    }
-
-    public void setParserFlags(ParserFlags parserFlags) {
-        this.parserFlags = parserFlags;
     }
 
     public Expr parse() {

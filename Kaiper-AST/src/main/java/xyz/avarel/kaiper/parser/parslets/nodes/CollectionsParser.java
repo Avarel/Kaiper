@@ -20,7 +20,6 @@ import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.collections.ArrayNode;
 import xyz.avarel.kaiper.ast.collections.DictionaryNode;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
@@ -33,34 +32,20 @@ public class CollectionsParser implements PrefixParser {
     public Expr parse(KaiperParser parser, Token token) {
         // EMPTY DICTIONARY
         if (parser.match(TokenType.COLON)) {
-            if (!parser.getParserFlags().allowDictionary()) {
-                throw new SyntaxException("Dictionaries are disabled");
-            }
             parser.eat(TokenType.RIGHT_BRACKET);
             return new DictionaryNode(token.getPosition(), Collections.emptyMap());
         }
 
         // EMPTY ARRAY
         if (parser.match(TokenType.RIGHT_BRACKET)) {
-            if (!parser.getParserFlags().allowArray()) {
-                throw new SyntaxException("Arrays are disabled");
-            }
             return new ArrayNode(token.getPosition(), Collections.emptyList());
         }
 
         Expr expr = parser.parseExpr(Precedence.TUPLE);
 
-        if (parser.match(TokenType.COLON)) {
-            if (!parser.getParserFlags().allowDictionary()) {
-                throw new SyntaxException("Dictionaries are disabled");
-            }
-            return parseDictionary(parser, token, expr);
-        } else {
-            if (!parser.getParserFlags().allowArray()) {
-                throw new SyntaxException("Arrays are disabled");
-            }
-            return parseVector(parser, token, expr);
-        }
+        return parser.match(TokenType.COLON)
+                ? parseDictionary(parser, token, expr)
+                : parseVector(parser, token, expr);
     }
 
     private Expr parseVector(KaiperParser parser, Token token, Expr initItem) {

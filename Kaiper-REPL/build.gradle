@@ -25,10 +25,10 @@ jar {
 }
 
 repositories {
-    mavenCentral()
+    maven { url = "https://dl.bintray.com/kantenkugel/maven/" }
 }
 
 dependencies {
-    compile 'net.java.dev.jna:jna:4.5.0'
+    compile 'com.kantenkugel:ConsoleUtils:1.2'
     compile project(":Kaiper-Interpreter")
 }

@@ -19,7 +19,6 @@ package xyz.avarel.kaiper.parser.parslets.functions;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
@@ -32,10 +31,6 @@ public class FunctionParser implements PrefixParser {
 
     @Override
     public Expr parse(KaiperParser parser, Token token) {
-        if (!parser.getParserFlags().allowFunctionCreation()) {
-            throw new SyntaxException("Function creation are disabled");
-        }
-
         if (parser.matchSignificant(TokenType.LEFT_BRACE)) {
             return lambda.parse(parser, parser.getLast());
         } else if (parser.match(TokenType.UNDERSCORE)) {

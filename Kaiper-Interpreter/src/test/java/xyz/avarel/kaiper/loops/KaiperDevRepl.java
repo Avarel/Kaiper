@@ -18,10 +18,6 @@ package xyz.avarel.kaiper.loops;
 
 import xyz.avarel.kaiper.KaiperScript;
 import xyz.avarel.kaiper.ScriptExpr;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.interpreter.VisitorSettings;
-import xyz.avarel.kaiper.optimizer.ExprOptimizer;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.scope.DefaultScope;
@@ -66,41 +62,21 @@ public class KaiperDevRepl {
                 KaiperScript exp = new KaiperScript(input, scope);
 
                 ScriptExpr expr = exp.compile();
-                {
-                    StringBuilder builder = new StringBuilder();
-                    expr.ast(builder, "\t\t ", true);
-                    System.out.println("   AST > +\n" + builder);
-                }
+                StringBuilder builder = new StringBuilder();
+                expr.ast(builder, "\t\t ", true);
+                System.out.println("   AST > +\n" + builder);
 
-                Expr optimized = expr.accept(new ExprOptimizer(), null);
-                {
-                    StringBuilder builder = new StringBuilder();
-                    optimized.ast(builder, "\t\t ", true);
-                    System.out.println(" OPAST > +\n" + builder);
-                }
 
-                {
-                    long start = System.nanoTime();
-                    Obj result = expr.compute();
-                    long end = System.nanoTime();
 
-                    long ns = (end - start);
-                    double ms = ns / 1000000D;
+                long start = System.nanoTime();
+                Obj result = expr.compute();
+                long end = System.nanoTime();
 
-                    System.out.println("RESULT | " + result + " : " + result.getType());
-                    System.out.println("  TIME | " + ms + "ms " + ns + "ns");
-                }
-                {
-                    long start = System.nanoTime();
-                    Obj result = optimized.accept(new ExprInterpreter(new VisitorSettings()), scope);
-                    long end = System.nanoTime();
+                long ns = (end - start);
+                double ms = ns / 1000000D;
 
-                    long ns =  (end - start);
-                    double ms = ns / 1000000D;
-
-                    System.out.println("RESULT | " + result + " : " + result.getType());
-                    System.out.println("  TIME | " + ms + "ms " + ns + "ns" );
-                }
+                System.out.println("RESULT | " + result + " : " + result.getType());
+                System.out.println("  TIME | " + ms + "ms " + ns + "ns");
 
                 System.out.println();
             } catch (RuntimeException e) {

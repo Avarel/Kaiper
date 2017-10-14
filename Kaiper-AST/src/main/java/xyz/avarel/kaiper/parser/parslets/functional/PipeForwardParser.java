@@ -38,10 +38,6 @@ public class PipeForwardParser extends BinaryParser {
 
     @Override
     public Expr parse(KaiperParser parser, Expr left, Token token) {
-        if (!parser.getParserFlags().allowInvocation()) {
-            throw new SyntaxException("Function invocation are disabled");
-        }
-
         // left |> right
 
         Expr right = parser.parseExpr(getPrecedence());

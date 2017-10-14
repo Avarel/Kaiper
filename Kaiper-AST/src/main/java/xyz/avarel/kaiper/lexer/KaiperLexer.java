@@ -248,10 +248,12 @@ public class KaiperLexer {
             }
 
             case ':': {
-                push(make(TokenType.COLON));
+                Token token = match(':')
+                        ? make(TokenType.REF)
+                        : make(TokenType.COLON);
+                push(token);
                 return;
             }
-
 
             case '=': {
                 Token token = match('=') // ==

@@ -20,7 +20,6 @@ import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
@@ -35,10 +34,6 @@ public class InvocationParser extends BinaryParser {
 
     @Override
     public Expr parse(KaiperParser parser, Expr left, Token token) {
-        if (!parser.getParserFlags().allowInvocation()) {
-            throw new SyntaxException("Function creation are disabled");
-        }
-
         Expr argument;
 
         if (parser.match(TokenType.RIGHT_PAREN)) {

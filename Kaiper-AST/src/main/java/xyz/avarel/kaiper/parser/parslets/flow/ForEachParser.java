@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets.flow;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.flow.ForEachExpr;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
@@ -27,12 +26,6 @@ import xyz.avarel.kaiper.parser.PrefixParser;
 public class ForEachParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
-        if (!parser.getParserFlags().allowControlFlows()) {
-            throw new SyntaxException("Control flows are disabled");
-        } else if (!parser.getParserFlags().allowLoops()) {
-            throw new SyntaxException("Loops are disabled");
-        }
-
         boolean match = parser.match(TokenType.LEFT_PAREN);
 
         String variant = parser.eat(TokenType.IDENTIFIER).getString();
