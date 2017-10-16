@@ -93,18 +93,14 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
         }
 
         CompiledMultiMethod multiMethod;
-        if (scope.get(expr.getName()) instanceof CompiledMultiMethod) {
+        if (scope.getMap().get(expr.getName()) instanceof CompiledMultiMethod) {
             multiMethod = (CompiledMultiMethod) scope.get(expr.getName());
         } else {
-            multiMethod = new CompiledMultiMethod(expr.getName(), this, scope);
+            multiMethod = new CompiledMultiMethod(expr.getName());
             declare(scope, expr.getName(), multiMethod);
         }
 
-        if (multiMethod.getMethodCases().containsKey(expr.getPatternCase())) {
-            throw new InterpreterException("Duplicate method definition", expr.getPosition());
-        }
-
-        multiMethod.addCase(expr.getPatternCase(), expr.getExpr());
+        multiMethod.addCase(new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope));
 
         return multiMethod;
     }

@@ -16,74 +16,72 @@
 
 package xyz.avarel.kaiper.loops;
 
-import xyz.avarel.kaiper.KaiperScript;
-import xyz.avarel.kaiper.ScriptExpr;
+import xyz.avarel.kaiper.KaiperEvaluator;
+import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
-import xyz.avarel.kaiper.scope.DefaultScope;
-import xyz.avarel.kaiper.scope.Scope;
 
 import java.util.Map;
 import java.util.Scanner;
 
 public class KaiperDevRepl {
     public static void main(String[] args) {
-        System.out.println("Kaiper REPL - Developer");
-        System.out.println();
-
         Scanner sc = new Scanner(System.in);
 
-        boolean running = true;
+        KaiperEvaluator interpreter = new KaiperEvaluator();
 
-        Scope<String, Obj> scope = DefaultScope.INSTANCE.copy();
-
-        scope.put("println", new NativeFunc("print", "string") {
+        interpreter.getScope().put("println", new NativeFunc("println", "obj") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                System.out.println(arguments.get("string"));
+                System.out.println(arguments.get("obj"));
                 return null;
             }
         });
 
-//        scope.declare("JavaModel", JavaUtils.JAVA_PROTOTYPES.computeIfAbsent(JavaModel.class, JavaType::new));
+        while (true) {
+            System.out.print("kip \u2502 ");
 
-        while (running) {
-            try {
-                System.out.print("  REPL | ");
+            int openBrackets = 0;
 
-                String input = sc.nextLine();
+            StringBuilder buffer = new StringBuilder();
 
-                switch (input) {
-                    case "exit":
-                        running = false;
-                        continue;
+            do {
+                if (openBrackets != 0) {
+                    buffer.append('\n');
+                    System.out.print("    \u2502 ");
                 }
 
-                KaiperScript exp = new KaiperScript(input, scope);
+                String line = sc.nextLine();
 
-                ScriptExpr expr = exp.compile();
-                StringBuilder builder = new StringBuilder();
-                expr.ast(builder, "\t\t ", true);
-                System.out.println("   AST > +\n" + builder);
+                buffer.append(line);
+                openBrackets += countMatches(line, '{') - countMatches(line, '}');
+            } while (openBrackets > 0);
 
+            String input = buffer.toString();
 
-
-                long start = System.nanoTime();
-                Obj result = expr.compute();
-                long end = System.nanoTime();
-
-                long ns = (end - start);
-                double ms = ns / 1000000D;
-
-                System.out.println("RESULT | " + result + " : " + result.getType());
-                System.out.println("  TIME | " + ms + "ms " + ns + "ns");
-
-                System.out.println();
-            } catch (RuntimeException e) {
-                System.out.println(" ERROR | " + e.getMessage() + "\n");
-                e.printStackTrace();
-                return;
+            if (input.equals("quit")) {
+                break;
             }
+
+            Obj result;
+
+            try {
+                result = interpreter.eval(input);
+
+                System.out.println("    \u2514\u2500\u2500 " + result + " : " + result.getType());
+            } catch (KaiperException e) {
+                System.out.println("err \u2514\u2500\u2500 " + e.getMessage());
+            }
+
+            System.out.println();
         }
+    }
+
+    private static int countMatches(String target, char character) {
+        int count = 0;
+        for (int i = 0; i < target.length(); i++) {
+            if (target.charAt(i) == character) count++;
+        }
+        return count;
     }
 }

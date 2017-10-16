@@ -26,11 +26,12 @@ import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
-public class CompiledFunc extends Func {
-    private final Expr expr;
-    private final Scope scope;
-    private final ExprInterpreter visitor;
+public class CompiledFunc extends Func implements Comparable<CompiledFunc> {
     private final PatternCase patternCase;
+    private final Expr expr;
+
+    private final Scope<String, Obj> scope;
+    private final ExprInterpreter visitor;
 
     public CompiledFunc(String name, PatternCase patternCase, Expr expr, ExprInterpreter visitor, Scope<String, Obj> scope) {
         super(name);
@@ -52,7 +53,7 @@ public class CompiledFunc extends Func {
     // def fun(x, ...y, z = 5) { println x; println y; println z }
     @Override
     public Obj invoke(Tuple argument) {
-        Scope scope = this.scope.subScope();
+        Scope<String, Obj> scope = this.scope.subScope();
 
         if (!new PatternBinder(patternCase, visitor, scope).declareFrom(argument)) {
             throw new InterpreterException("Could not match arguments (" + argument + ") to " + getName() + "(" + patternCase + ")");
@@ -67,6 +68,23 @@ public class CompiledFunc extends Func {
 
     @Override
     public String toString() {
-        return super.toString() + "(" + getPattern() + ")"  + " { ... }";
+        return super.toString() + getPattern() + " { ... }";
+    }
+
+    @Override
+    public int compareTo(CompiledFunc o) {
+        return patternCase.compareTo(o.patternCase);
+    }
+
+    public Scope<String, Obj> getScope() {
+        return scope;
+    }
+
+    public ExprInterpreter getVisitor() {
+        return visitor;
+    }
+
+    public Expr getExpr() {
+        return expr;
     }
 }

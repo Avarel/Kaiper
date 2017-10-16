@@ -8,7 +8,6 @@ import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.parser.KaiperParser;
-import xyz.avarel.kaiper.parser.ParserFlags;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
@@ -116,9 +115,5 @@ public class KaiperCompiler {
 
     public Scope getScope() {
         return scope;
-    }
-
-    public void setParserFlags(short flags) {
-        parser.setParserFlags(new ParserFlags(flags));
     }
 }

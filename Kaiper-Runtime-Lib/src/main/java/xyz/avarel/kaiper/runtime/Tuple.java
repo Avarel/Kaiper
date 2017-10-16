@@ -63,10 +63,13 @@ import java.util.Map;
 //
 
 public class Tuple implements Obj {
-    public static final Type<Bool> TYPE = new Type<>("Tuple");
+    public static final Type<Tuple> TYPE = new Type<>("Tuple");
     public static final Module MODULE = new NativeModule("Tuple") {{
         declare("TYPE", Tuple.TYPE);
     }};
+
+    // String.trim("hello")
+    // "hello"::trim
 
     private final Map<String, Obj> map;
 

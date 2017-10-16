@@ -16,57 +16,77 @@
 
 package xyz.avarel.kaiper.runtime.functions;
 
-import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.pattern.PatternBinder;
-import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
-import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
+import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.scope.Scope;
 
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class CompiledMultiMethod extends Func {
-    private final SortedMap<PatternCase, Expr> methodCases = new TreeMap<>();
-    private final ExprInterpreter visitor;
-    private final Scope<String, Obj> scope;
+    private final SortedSet<CompiledFunc> branches;
 
-    public CompiledMultiMethod(String name, ExprInterpreter visitor, Scope<String, Obj> scope) {
+    public CompiledMultiMethod(String name) {
+        this(name, new TreeSet<>());
+    }
+
+    public CompiledMultiMethod(String name, SortedSet<CompiledFunc> branches) {
         super(name);
-        this.visitor = visitor;
-        this.scope = scope;
+        this.branches = branches;
     }
 
-    public Map<PatternCase, Expr> getMethodCases() {
-        return methodCases;
+    public SortedSet<CompiledFunc> getBranches() {
+        return branches;
     }
 
-    public void addCase(PatternCase pattern, Expr expr) {
-        if (methodCases.put(pattern, expr) != null) {
+    public void addCase(CompiledFunc func) {
+        if (!branches.add(func)) {
             throw new InterpreterException("Internal: duplicate definition for method " + getName());
         }
     }
 
     @Override
     public int getArity() {
-        return methodCases.firstKey().size();
+        return branches.first().getPattern().size();
+    }
+
+    @Override
+    public Obj divide(Obj other) {
+       if (other instanceof Int) {
+           return specificArity(((Int) other));
+       }
+       return super.divide(other);
+    }
+
+    public Func specificArity(Int other) {
+        SortedSet<CompiledFunc> b = new TreeSet<>();
+        for (CompiledFunc func : branches) {
+            if (func.getArity() == other.value()) {
+                b.add(func);
+            }
+        }
+        return b.size() == 1 ? b.first() : new CompiledMultiMethod(getName(), b);
     }
 
     @Override
     public Obj invoke(Tuple argument) {
-        for (Map.Entry<PatternCase, Expr> entry : methodCases.entrySet()) {
-            Scope<String, Obj> scope = this.scope.subScope();
+        for (CompiledFunc entry : branches) {
+            if (entry.getPattern().weight() > argument.size()) {
+                continue;
+            }
 
-            if (!new PatternBinder(entry.getKey(), visitor, scope).declareFrom(argument)) {
+            Scope<String, Obj> scope = entry.getScope().subScope();
+
+            if (!new PatternBinder(entry.getPattern(), entry.getVisitor(), scope).declareFrom(argument)) {
                 continue;
             }
 
             try {
-                return entry.getValue().accept(visitor, scope);
+                return entry.getExpr().accept(entry.getVisitor(), scope);
             } catch (ReturnException re) {
                 return re.getValue();
             }
@@ -77,6 +97,10 @@ public class CompiledMultiMethod extends Func {
 
     @Override
     public String toString() {
-        return super.toString() + "(" + (methodCases.size() == 1 ? methodCases.firstKey() : methodCases.size() + " definitions") + ")";
+        return super.toString() + (
+                branches.size() == 1
+                        ? branches.first().getPattern()
+                        : "(" + branches.size() + " definitions)"
+        );
     }
 }

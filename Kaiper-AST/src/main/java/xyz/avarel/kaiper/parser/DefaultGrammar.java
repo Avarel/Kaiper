@@ -26,6 +26,7 @@ import xyz.avarel.kaiper.parser.parslets.flow.IfElseParser;
 import xyz.avarel.kaiper.parser.parslets.flow.ReturnParser;
 import xyz.avarel.kaiper.parser.parslets.functional.InvocationParser;
 import xyz.avarel.kaiper.parser.parslets.functional.PipeForwardParser;
+import xyz.avarel.kaiper.parser.parslets.functional.ReferenceParser;
 import xyz.avarel.kaiper.parser.parslets.functions.FunctionParser;
 import xyz.avarel.kaiper.parser.parslets.nodes.*;
 import xyz.avarel.kaiper.parser.parslets.operators.BinaryOperatorParser;
@@ -102,6 +103,7 @@ public class DefaultGrammar extends Grammar {
 
         // Functional
         infix(TokenType.LEFT_PAREN, new InvocationParser());
+        infix(TokenType.REF, new ReferenceParser());
         //infix(TokenType.LEFT_BRACE, new BlockParameterParser());
 
         infix(TokenType.LEFT_BRACKET, new GetSetParser());

@@ -31,4 +31,5 @@ public interface PatternVisitor<R, C> {
     R visit(VariablePattern pattern, C context);
     R visit(TuplePattern pattern, C context);
     R visit(DefaultPattern pattern, C context);
+    R visit(NestedPattern pattern, C context);
 }

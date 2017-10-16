@@ -21,20 +21,24 @@ import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
-public class PatternBinder implements PatternVisitor<Boolean, Tuple> {
+public class PatternTester implements PatternVisitor<Boolean, Tuple> {
     private final PatternCase patternCase;
     private final ExprInterpreter interpreter;
     private final Scope<String, Obj> scope;
 
     private boolean usedValue = false;
 
-    public PatternBinder(PatternCase patternCase, ExprInterpreter interpreter, Scope<String, Obj> scope) {
+    public PatternTester(PatternCase patternCase, ExprInterpreter interpreter, Scope<String, Obj> scope) {
         this.patternCase = patternCase;
         this.interpreter = interpreter;
         this.scope = scope;
     }
 
-    public boolean declareFrom(Tuple tuple) {
+    public boolean test(Tuple tuple) {
+        if (tuple.size() < patternCase.weight()) {
+            return false;
+        }
+
         for (Pattern pattern : patternCase.getPatterns()) {
             boolean result = pattern.accept(this, tuple);
 
@@ -48,30 +52,18 @@ public class PatternBinder implements PatternVisitor<Boolean, Tuple> {
 
     @Override
     public Boolean visit(VariablePattern pattern, Tuple obj) {
-        Obj value;
-
         if (obj.hasAttr(pattern.getName())) {
-            value = obj.getAttr(pattern.getName());
+            return true;
         } else if (!usedValue && obj.hasAttr("value")) {
-            value = obj.getAttr("value");
             usedValue = true;
+            return true;
         } else {
             return false;
         }
-
-        ExprInterpreter.declare(scope, pattern.getName(), value);
-        return true;
     }
 
     @Override
     public Boolean visit(DefaultPattern pattern, Tuple obj) {
-        boolean result = pattern.getDelegate().accept(this, obj);
-
-        if (!result) {
-            Obj value = pattern.getDefault().accept(interpreter, scope);
-            ExprInterpreter.declare(scope, pattern.getDelegate().getName(), value);
-        }
-
         return true;
     }
 
@@ -104,12 +96,6 @@ public class PatternBinder implements PatternVisitor<Boolean, Tuple> {
             return false;
         }
 
-        // def conjugate(self: (re, im)) = re: self.re, im: -self.im
-        if (new PatternTester(pattern.getPattern(), interpreter, scope).test(value)) {
-            ExprInterpreter.declare(scope, pattern.getName(), value);
-            return true;
-        } else {
-            return false;
-        }
+        return new PatternTester(pattern.getPattern(), interpreter, scope).test(value);
     }
 }

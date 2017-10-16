@@ -24,7 +24,7 @@ import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TupleCommaParser extends BinaryParser {
@@ -34,7 +34,7 @@ public class TupleCommaParser extends BinaryParser {
 
     @Override
     public Expr parse(KaiperParser parser, Expr left, Token token) {
-        Map<String, Expr> elements = new HashMap<>();
+        Map<String, Expr> elements = new LinkedHashMap<>();
 
         if (left instanceof TupleExpr) { // x: 1, __
             TupleExpr tuple = (TupleExpr) left;

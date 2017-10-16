@@ -68,6 +68,6 @@ public class FunctionNode extends Expr {
 
     @Override
     public String toString() {
-        return "def" + (name != null ? " " + name : "") + "(" + patternCase + ")";
+        return "def" + (name != null ? " " + name : "") + patternCase;
     }
 }

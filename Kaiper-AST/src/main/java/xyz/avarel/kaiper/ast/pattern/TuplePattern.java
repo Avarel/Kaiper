@@ -45,15 +45,16 @@ public class TuplePattern extends Pattern {
     }
 
     @Override
-    public int compareTo(Pattern other) {
-        int compare = super.compareTo(other);
+    public int nodeWeight() {
+        return 1;
+    }
 
-        if (compare == 0
-                && (!(other instanceof TuplePattern)
-                || !expr.equals(((TuplePattern) other).expr))) {
-            return -1; // put tuple patterns with different values on different levels, so it doesnt matter
-        }
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TuplePattern)) return false;
+        TuplePattern other = (TuplePattern) obj;
 
-        return compare;
+        return getName().equals(other.getName())
+                && getExpr().equals(other.getExpr());
     }
 }

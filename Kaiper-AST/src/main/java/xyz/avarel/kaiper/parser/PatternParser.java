@@ -18,20 +18,30 @@ package xyz.avarel.kaiper.parser;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.pattern.*;
+import xyz.avarel.kaiper.exceptions.SyntaxException;
+import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PatternParser extends KaiperParser {
-    // proxy the parser
+    private final KaiperParser parser;
+    private final Set<String> usedIdentifiers;
+
     public PatternParser(KaiperParser parser) {
         super(parser);
+        this.parser = parser;
+        this.usedIdentifiers = new HashSet<>();
     }
 
     public PatternCase parsePatternCase() {
-        List<Pattern> patterns = new ArrayList<>();
+        return parsePatternCase(new ArrayList<>());
+    }
 
+    public PatternCase parsePatternCase(List<Pattern> patterns) {
         do {
             patterns.add(parsePattern());
         } while (match(TokenType.COMMA));
@@ -42,18 +52,27 @@ public class PatternParser extends KaiperParser {
     private Pattern parsePattern() {
         Pattern basePattern;
 
-
         if (nextIs(TokenType.IDENTIFIER)) {
-            String name = eat(TokenType.IDENTIFIER).getString();
+            Token token = eat(TokenType.IDENTIFIER);
+            String name = token.getString();
+
+            if (usedIdentifiers.contains(name)) {
+                throw new SyntaxException("Duplicate pattern name", token.getPosition());
+            } else {
+                usedIdentifiers.add(name);
+            }
 
             if (match(TokenType.COLON)) {
-                // name: EXPR
-                basePattern = new TuplePattern(name, parseExpr());
+                if (match(TokenType.LEFT_PAREN)) {
+                    basePattern = new NestedPattern(name, new PatternParser(parser).parsePatternCase());
+                    eat(TokenType.RIGHT_PAREN);
+                } else {
+                    basePattern = new TuplePattern(name, parseExpr());
+                }
             } else {
-                basePattern = new VariablePattern(name, match(TokenType.QUESTION));
+                basePattern = new VariablePattern(name);
 
                 if (match(TokenType.ASSIGN)) {
-                    // name = EXPR
                     basePattern = new DefaultPattern(basePattern, parseExpr());
                 }
             }

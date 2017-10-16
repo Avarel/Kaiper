@@ -19,7 +19,6 @@ package xyz.avarel.kaiper.parser.parslets.variables;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 import xyz.avarel.kaiper.parser.parslets.functional.InvocationParser;
@@ -29,11 +28,8 @@ public class NameParser implements PrefixParser {
     public Expr parse(KaiperParser parser, Token token) {
         Identifier id = new Identifier(token.getPosition(), token.getString());
 
-        if (parser.nextIsAny(
-                TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
-                TokenType.NUMBER, TokenType.FUNCTION, TokenType.NULL
-        )) {
-            return InvocationParser.tupleInvocationCheck(token, id, parser.parseExpr());
+        if (parser.nextIsAny(InvocationParser.argumentTokens)) {
+            return InvocationParser.tupleInvocationCheck(id, parser.parseExpr());
         }
 
         return id;

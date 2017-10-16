@@ -43,6 +43,6 @@ public class StringNode extends Expr {
 
     @Override
     public String toString() {
-        return value;
+        return "\"" + value + "\"";
     }
 }

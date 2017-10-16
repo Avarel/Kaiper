@@ -29,7 +29,7 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
 
     @Override
     public Void visit(VariablePattern pattern, KDataOutput out) {
-        out.writeOpcode(VARIABLE).writeBoolean(pattern.isNullable()).writeShort(parent.stringConst(pattern.getName()));
+        out.writeOpcode(VARIABLE).writeShort(parent.stringConst(pattern.getName()));
 
         return null;
     }
@@ -54,5 +54,10 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
         out.writeOpcode(END);
 
         return null;
+    }
+
+    @Override
+    public Void visit(NestedPattern pattern, KDataOutput context) {
+        throw new UnsupportedOperationException("Adrian pls");
     }
 }

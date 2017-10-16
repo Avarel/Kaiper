@@ -43,12 +43,22 @@ public class DefaultPattern extends Pattern {
     }
 
     @Override
-    public int value() {
-        return 0;
+    public boolean optional() {
+        return true;
     }
 
     @Override
     public String toString() {
         return delegate + " = " + defaultExpr;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof DefaultPattern)) return false;
+        DefaultPattern other = (DefaultPattern) obj;
+
+        return getName().equals(other.getName())
+                && getDelegate().equals(other.getDelegate())
+                && getDefault().equals(other.getDefault());
     }
 }

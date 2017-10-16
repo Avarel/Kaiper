@@ -28,6 +28,11 @@ import xyz.avarel.kaiper.parser.KaiperParser;
 import java.util.Collections;
 
 public class InvocationParser extends BinaryParser {
+    public static final TokenType[] argumentTokens = {
+            TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
+            TokenType.NUMBER, TokenType.FUNCTION, TokenType.NULL
+    };
+
     public InvocationParser() {
         super(Precedence.POSTFIX);
     }
@@ -43,14 +48,14 @@ public class InvocationParser extends BinaryParser {
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return InvocationParser.tupleInvocationCheck(token, left, argument);
+        return InvocationParser.tupleInvocationCheck(left, argument);
     }
 
-    public static Invocation tupleInvocationCheck(Token token, Expr left, Expr argument) {
+    public static Invocation tupleInvocationCheck(Expr left, Expr argument) {
         if (argument instanceof TupleExpr) {
-            return new Invocation(token.getPosition(), left, (TupleExpr) argument);
+            return new Invocation(argument.getPosition(), left, (TupleExpr) argument);
         } else {
-            return new Invocation(token.getPosition(), left,
+            return new Invocation(argument.getPosition(), left,
                     new TupleExpr(argument.getPosition(), Collections.singletonMap("value", argument))
             );
         }

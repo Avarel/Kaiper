@@ -16,23 +16,40 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-// x
-public class VariablePattern extends Pattern {
-    public VariablePattern(String name) {
+// (delegate) = (defaultExpr)
+public class NestedPattern extends Pattern {
+    private final PatternCase pattern;
+
+    public NestedPattern(String name, PatternCase pattern) {
         super(name);
+        this.pattern = pattern;
     }
 
+    public PatternCase getPattern() {
+        return pattern;
+    }
+
+    @Override
     public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
     }
 
     @Override
+    public int nodeWeight() {
+        return 1;
+    }
+
+    @Override
     public String toString() {
-        return getName();
+        return getName() + ": " + pattern;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof VariablePattern && getName().equals(((VariablePattern) obj).getName());
+        if (!(obj instanceof NestedPattern)) return false;
+
+        NestedPattern other = (NestedPattern) obj;
+        return getName().equals(other.getName())
+                && getPattern().equals(other.getPattern());
     }
 }

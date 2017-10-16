@@ -64,7 +64,7 @@ public class LambdaFunctionParser implements PrefixParser {
                 parser.eat(TokenType.ARROW);
             }
         } else {
-            patternCase =  new PatternCase(new DefaultPattern(new VariablePattern("it", true), NullNode.VALUE));
+            patternCase =  new PatternCase(new DefaultPattern(new VariablePattern("it"), NullNode.VALUE));
         }
 
         Expr expr = parser.parseStatements();
