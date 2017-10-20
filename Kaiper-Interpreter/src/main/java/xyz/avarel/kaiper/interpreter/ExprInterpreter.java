@@ -20,7 +20,10 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.ModuleNode;
 import xyz.avarel.kaiper.ast.TypeNode;
-import xyz.avarel.kaiper.ast.collections.*;
+import xyz.avarel.kaiper.ast.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.collections.GetOperation;
+import xyz.avarel.kaiper.ast.collections.SetOperation;
 import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
@@ -28,6 +31,7 @@ import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
 import xyz.avarel.kaiper.ast.pattern.PatternBinder;
+import xyz.avarel.kaiper.ast.tuples.FreeFormStruct;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.*;
@@ -46,7 +50,7 @@ import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.scope.Scope;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -90,18 +94,14 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
         }
 
         CompiledMultiMethod multiMethod;
-        if (scope.get(expr.getName()) instanceof CompiledMultiMethod) {
+        if (scope.getMap().get(expr.getName()) instanceof CompiledMultiMethod) {
             multiMethod = (CompiledMultiMethod) scope.get(expr.getName());
         } else {
-            multiMethod = new CompiledMultiMethod(expr.getName(), this, scope);
+            multiMethod = new CompiledMultiMethod(expr.getName());
             declare(scope, expr.getName(), multiMethod);
         }
 
-        if (multiMethod.getMethodCases().containsKey(expr.getPatternCase())) {
-            throw new InterpreterException("Duplicate method definition", expr.getPosition());
-        }
-
-        multiMethod.addCase(expr.getPatternCase(), expr.getExpr());
+        multiMethod.addCase(new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope));
 
         return multiMethod;
     }
@@ -213,23 +213,6 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             default:
                 throw new InterpreterException("Unknown unary operator", expr.getPosition());
         }
-    }
-
-    @Override
-    public Obj visit(RangeNode expr, Scope<String, Obj> scope) {
-        Obj startObj = resultOf(expr.getLeft(), scope);
-        Obj endObj = resultOf(expr.getRight(), scope);
-
-        if (startObj instanceof Int && endObj instanceof Int) {
-            int start = ((Int) startObj).value();
-            int end = ((Int) endObj).value();
-
-            visitorSettings.checkSizeLimit(Math.abs(end - start));
-
-            return new Range(start, end);
-        }
-
-        return Null.VALUE;
     }
 
     @Override
@@ -461,14 +444,27 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
     @Override
     public Obj visit(TupleExpr expr, Scope<String, Obj> scope) {
-        Map<String, Obj> map = new LinkedHashMap<>();
+        List<Obj> list = new ArrayList<>(expr.size());
 
-        for (Map.Entry<String, Expr> entry : expr.getElements().entrySet()) {
-            // confirmed by the compiler
-            map.put(entry.getKey(), resultOf(entry.getValue(), scope));
+        for (Expr element : expr.getElements()) {
+            list.add(resultOf(element, scope));
         }
 
-        return new Tuple(map);
+        return new Tuple(list);
+    }
+
+    @Override
+    public Obj visit(FreeFormStruct expr, Scope<String, Obj> scope) {
+        throw new UnsupportedOperationException("in progress");
+
+//        Map<String, Obj> map = new LinkedHashMap<>();
+//
+//        for (Map.Entry<String, Expr> entry : expr.getElements().entrySet()) {
+//            // confirmed by the compiler
+//            map.put(entry.getKey(), resultOf(entry.getValue(), scope));
+//        }
+//
+//        return new Dictionary(map);
     }
 
     @Override
@@ -479,7 +475,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             value = new Tuple(value);
         }
 
-        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).declareFrom((Tuple) value);
+        boolean result = new PatternBinder(expr.getPatternCase()).declareFrom( this, scope, (Tuple) value);
 
         if (!result) {
             throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());

@@ -16,6 +16,10 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
+// Tuple Patterns
+//
+//
+//
 public abstract class Pattern implements Comparable<Pattern> {
     private final String name;
 
@@ -29,17 +33,25 @@ public abstract class Pattern implements Comparable<Pattern> {
 
     @Override
     public int compareTo(Pattern other) {
-        if (name.equals("value") && !other.getName().equals("value")) {
-            return -1;
-        } else if (other.getName().equals("value")) {
-            return 1;
+        int compare = 0;
+        if (name != null && other.name != null) {
+            compare = name.compareTo(other.name);
         }
 
-        return getName().compareTo(other.getName());
+        if (compare == 0) {
+            int weight = Integer.compare(other.nodeWeight(), nodeWeight());
+            return weight == 0 && !this.equals(other) ? -1 : weight;
+        }
+
+        return compare;
     }
 
-    public int value() {
-        return 1;
+    public boolean optional() {
+        return false;
+    }
+
+    public int nodeWeight() {
+        return 0;
     }
 
     public abstract <R, C> R accept(PatternVisitor<R, C> visitor, C scope);

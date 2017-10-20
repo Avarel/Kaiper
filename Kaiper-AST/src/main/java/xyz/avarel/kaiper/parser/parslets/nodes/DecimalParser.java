@@ -25,6 +25,6 @@ import xyz.avarel.kaiper.parser.PrefixParser;
 public class DecimalParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
-        return new DecimalNode(token.getPosition(), Double.parseDouble(token.getString()));
+        return new DecimalNode(Double.parseDouble(token.getString()));
     }
 }

@@ -14,42 +14,36 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.ast.tuples;
+package xyz.avarel.kaiper.runtime.pattern;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.lexer.Position;
+import xyz.avarel.kaiper.runtime.Obj;
 
-import java.util.List;
+// (delegate) = (defaultExpr)
+public class DefaultRTPattern extends RTPattern {
+    private final RTPattern delegate;
+    private final Obj defaultObj;
 
-public class TupleExpr extends Expr {
-    private final List<Expr> elements;
-
-    public TupleExpr(Position position, List<Expr> elements) {
-        super(position);
-        this.elements = elements;
+    public DefaultRTPattern(RTPattern delegate, Obj defaultObj) {
+        super(delegate.getName());
+        this.delegate = delegate;
+        this.defaultObj = defaultObj;
     }
 
-    public List<Expr> getElements() {
-        return elements;
+    public RTPattern getDelegate() {
+        return delegate;
     }
 
-    public int size() {
-        return elements.size();
+    public Obj getDefault() {
+        return defaultObj;
     }
 
     @Override
-    public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
+    public <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
     }
 
     @Override
-    public boolean equals(Object o) {
-        return o instanceof TupleExpr && elements.equals(((TupleExpr) o).elements);
-    }
-
-    @Override
     public String toString() {
-        return elements.toString();
+        return delegate + " = " + defaultObj;
     }
 }

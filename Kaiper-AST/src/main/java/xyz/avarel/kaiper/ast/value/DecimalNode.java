@@ -18,13 +18,12 @@ package xyz.avarel.kaiper.ast.value;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.lexer.Position;
 
 public class DecimalNode extends Expr {
     private final double value;
 
-    public DecimalNode(Position position, double value) {
-        super(position);
+    public DecimalNode(double value) {
+        super(null);
         this.value = value;
     }
 
@@ -40,11 +39,6 @@ public class DecimalNode extends Expr {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof DecimalNode && value == ((DecimalNode) obj).value;
-    }
-
-    @Override
-    public int weight() {
-        return 0;
     }
 
     @Override

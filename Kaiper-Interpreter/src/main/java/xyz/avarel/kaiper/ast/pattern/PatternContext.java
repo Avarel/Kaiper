@@ -16,23 +16,21 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-// x
-public class VariablePattern extends Pattern {
-    public VariablePattern(String name) {
-        super(name);
-    }
+import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
+import xyz.avarel.kaiper.scope.Scope;
 
-    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
-        return visitor.visit(this, scope);
-    }
+class PatternContext {
+    final ExprInterpreter interpreter;
+    final Scope<String, Obj> scope;
+    final Tuple tuple;
+    int position;
 
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof VariablePattern && getName().equals(((VariablePattern) obj).getName());
+    PatternContext(ExprInterpreter interpreter, Scope<String, Obj> scope, Tuple tuple, int position) {
+        this.interpreter = interpreter;
+        this.scope = scope;
+        this.tuple = tuple;
+        this.position = position;
     }
 }

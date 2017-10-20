@@ -20,7 +20,6 @@ import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
@@ -29,34 +28,35 @@ import xyz.avarel.kaiper.parser.KaiperParser;
 import java.util.Collections;
 
 public class InvocationParser extends BinaryParser {
+    public static final TokenType[] argumentTokens = {
+            TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
+            TokenType.NUMBER, TokenType.FUNCTION, TokenType.NULL
+    };
+
     public InvocationParser() {
         super(Precedence.POSTFIX);
     }
 
     @Override
     public Expr parse(KaiperParser parser, Expr left, Token token) {
-        if (!parser.getParserFlags().allowInvocation()) {
-            throw new SyntaxException("Function creation are disabled");
-        }
-
         Expr argument;
 
         if (parser.match(TokenType.RIGHT_PAREN)) {
-            argument = new TupleExpr(left.getPosition(), Collections.emptyMap());
+            argument = new TupleExpr(left.getPosition(), Collections.emptyList());
         } else {
             argument = parser.parseExpr();
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return InvocationParser.tupleInvocationCheck(token, left, argument);
+        return InvocationParser.tupleInvocationCheck(left, argument);
     }
 
-    public static Invocation tupleInvocationCheck(Token token, Expr left, Expr argument) {
+    public static Invocation tupleInvocationCheck(Expr left, Expr argument) {
         if (argument instanceof TupleExpr) {
-            return new Invocation(token.getPosition(), left, (TupleExpr) argument);
+            return new Invocation(argument.getPosition(), left, (TupleExpr) argument);
         } else {
-            return new Invocation(token.getPosition(), left,
-                    new TupleExpr(argument.getPosition(), Collections.singletonMap("value", argument))
+            return new Invocation(argument.getPosition(), left,
+                    new TupleExpr(argument.getPosition(), Collections.singletonList(argument))
             );
         }
     }

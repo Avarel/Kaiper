@@ -37,10 +37,6 @@ import java.util.Set;
 public class ImplicitFunctionParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
-        if (!parser.getParserFlags().allowFunctionCreation()) {
-            throw new SyntaxException("Function creation are disabled");
-        }
-
         ParserProxy ip = new ParserProxy(parser, token);
 
         Expr expr = ip.parseInfix(0, new Identifier(token.getPosition(), token.getString()));

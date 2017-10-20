@@ -57,7 +57,7 @@ public class RuntimeMultimethod extends Func {
         for (Map.Entry<RuntimePatternCase, Function<Map<String, Obj>, Obj>> entry : methodCases.entrySet()) {
             Map<String, Obj> scope = new HashMap<>();
 
-            if (!new RuntimePatternBinder(entry.getKey(), scope).bindFrom(argument)) {
+            if (!new RuntimePatternBinder(entry.getKey()).bindFrom(scope, argument)) {
                 continue;
             }
 

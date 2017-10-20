@@ -20,7 +20,7 @@ import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
-import xyz.avarel.kaiper.runtime.pattern.RuntimePattern;
+import xyz.avarel.kaiper.runtime.pattern.RTPattern;
 import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
 
 import java.util.Arrays;
@@ -34,7 +34,7 @@ public abstract class NativeFunc extends Func {
         this(name, new String[0]);
     }
 
-    public NativeFunc(String name, RuntimePattern... parameters) {
+    public NativeFunc(String name, RTPattern... parameters) {
         this(name, new RuntimePatternCase(Arrays.asList(parameters)));
     }
 
@@ -65,7 +65,7 @@ public abstract class NativeFunc extends Func {
     public Obj invoke(Tuple argument) {
         Map<String, Obj> scope = new HashMap<>(getArity());
 
-        if (!new RuntimePatternBinder(pattern, scope).bindFrom(argument)) {
+        if (!new RuntimePatternBinder(pattern).bindFrom(scope, argument)) {
             throw new ComputeException("Could not match arguments (" + argument + ") to " + getName() + "(" + pattern + ")");
         }
 

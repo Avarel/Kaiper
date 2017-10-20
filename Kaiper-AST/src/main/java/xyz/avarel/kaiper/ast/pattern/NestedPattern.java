@@ -16,22 +16,17 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-import xyz.avarel.kaiper.ast.Expr;
+// (delegate) = (defaultExpr)
+public class NestedPattern extends Pattern {
+    private final PatternCase pattern;
 
-// a: is Int
-// a: 2
-// a: x
-// a: (2, meme: 2, dank: 3)
-public class TuplePattern extends Pattern {
-    private final Expr expr;
-
-    public TuplePattern(String name, Expr expr) {
+    public NestedPattern(String name, PatternCase pattern) {
         super(name);
-        this.expr = expr;
+        this.pattern = pattern;
     }
 
-    public Expr getExpr() {
-        return expr;
+    public PatternCase getPattern() {
+        return pattern;
     }
 
     @Override
@@ -40,20 +35,21 @@ public class TuplePattern extends Pattern {
     }
 
     @Override
-    public String toString() {
-        return getName() + ": " + getExpr();
+    public int nodeWeight() {
+        return 1;
     }
 
     @Override
-    public int compareTo(Pattern other) {
-        int compare = super.compareTo(other);
+    public String toString() {
+        return getName() + ": " + pattern;
+    }
 
-        if (compare == 0
-                && (!(other instanceof TuplePattern)
-                || !expr.equals(((TuplePattern) other).expr))) {
-            return -1; // put tuple patterns with different values on different levels, so it doesnt matter
-        }
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof NestedPattern)) return false;
 
-        return compare;
+        NestedPattern other = (NestedPattern) obj;
+        return getName().equals(other.getName())
+                && getPattern().equals(other.getPattern());
     }
 }

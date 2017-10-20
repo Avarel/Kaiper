@@ -18,13 +18,12 @@ package xyz.avarel.kaiper.ast.value;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.lexer.Position;
 
 public class IntNode extends Expr {
     private final int value;
 
-    public IntNode(Position position, int value) {
-        super(position);
+    public IntNode(int value) {
+        super(null);
         this.value = value;
     }
 
@@ -35,11 +34,6 @@ public class IntNode extends Expr {
     @Override
     public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
-    }
-
-    @Override
-    public int weight() {
-        return 0;
     }
 
     @Override

@@ -14,25 +14,21 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.ast.pattern;
+package xyz.avarel.kaiper.runtime.functions;
 
-// x
-public class VariablePattern extends Pattern {
-    public VariablePattern(String name) {
-        super(name);
-    }
+import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 
-    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
-        return visitor.visit(this, scope);
-    }
+import java.util.Map;
 
-    @Override
-    public String toString() {
-        return getName();
-    }
+class RTPatternContext {
+    final Map<String, Obj> scope;
+    final Tuple tuple;
+    int position;
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof VariablePattern && getName().equals(((VariablePattern) obj).getName());
+    RTPatternContext(Map<String, Obj> scope, Tuple tuple, int position) {
+        this.scope = scope;
+        this.tuple = tuple;
+        this.position = position;
     }
 }

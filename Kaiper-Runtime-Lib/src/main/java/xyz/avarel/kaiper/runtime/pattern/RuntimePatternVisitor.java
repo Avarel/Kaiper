@@ -17,18 +17,18 @@
 package xyz.avarel.kaiper.runtime.pattern;
 
 /**
- * Visitor patterns for {@link RuntimePattern patern} AST classes.
- * Each {@link RuntimePattern pattern} implements the accept method which
+ * Visitor patterns for {@link RTPattern patern} AST classes.
+ * Each {@link RTPattern pattern} implements the accept method which
  * is normally {@code visitor.visit(this, context)}.
  *
  * @param <R> Return type.
  * @param <C> Context type.
  *
- * @see RuntimePattern
+ * @see RTPattern
  * @author Avarel
  */
 public interface RuntimePatternVisitor<R, C> {
-    R visit(VariableRuntimePattern pattern, C context);
-    R visit(TupleRuntimePattern pattern, C context);
-    R visit(DefaultRuntimePattern pattern, C context);
+    R visit(VariableRTPattern pattern, C context);
+    R visit(ValueRTPattern pattern, C context);
+    R visit(DefaultRTPattern pattern, C context);
 }

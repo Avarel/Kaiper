@@ -23,7 +23,6 @@ import xyz.avarel.kaiper.ast.pattern.VariablePattern;
 import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.ast.variables.BindDeclarationExpr;
 import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
@@ -36,10 +35,6 @@ import java.util.List;
 public class DeclarationParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
-        if (!parser.getParserFlags().allowVariables()) {
-            throw new SyntaxException("Variables are disabled");
-        }
-
         if (parser.match(TokenType.LEFT_PAREN)) {
             PatternCase patternCase = new PatternParser(parser).parsePatternCase();
 

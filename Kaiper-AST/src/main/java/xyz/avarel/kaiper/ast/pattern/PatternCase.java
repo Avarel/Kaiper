@@ -43,7 +43,7 @@ public class PatternCase implements Comparable<PatternCase> {
             return "";
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("(");
         Iterator<Pattern> iterator = patterns.iterator();
 
         while (true) {
@@ -56,11 +56,21 @@ public class PatternCase implements Comparable<PatternCase> {
             }
         }
 
+        sb.append(")");
+
         return sb.toString();
     }
 
     public int size() {
         return patterns.size();
+    }
+
+    public int weight() {
+        int sum = 0;
+        for (Pattern pattern : patterns) {
+            sum += pattern.optional() ? 1 : 0;
+        }
+        return sum;
     }
 
     @Override
@@ -70,6 +80,9 @@ public class PatternCase implements Comparable<PatternCase> {
         }
 
         for (int i = 0; i < size(); i++) {
+            if (patterns.get(i).getClass().equals(other.patterns.get(i).getClass())) {
+                continue;
+            }
             int b = patterns.get(i).compareTo(other.patterns.get(i));
             if (b != 0) {
                 return b;

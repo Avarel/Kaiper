@@ -41,11 +41,8 @@ public class AttributeParser extends BinaryParser {
 
         Identifier id = new Identifier(token.getPosition(), left, name.getString());
 
-        if (parser.nextIsAny(
-                TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
-                TokenType.NUMBER, TokenType.FUNCTION, TokenType.NULL
-        )) {
-            return InvocationParser.tupleInvocationCheck(token, id, parser.parseExpr());
+        if (parser.nextIsAny(InvocationParser.argumentTokens)) {
+            return InvocationParser.tupleInvocationCheck(id, parser.parseExpr());
         }
 
         return id;

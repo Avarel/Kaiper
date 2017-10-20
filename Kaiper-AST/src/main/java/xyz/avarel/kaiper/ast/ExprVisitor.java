@@ -16,13 +16,17 @@
 
 package xyz.avarel.kaiper.ast;
 
-import xyz.avarel.kaiper.ast.collections.*;
+import xyz.avarel.kaiper.ast.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.collections.GetOperation;
+import xyz.avarel.kaiper.ast.collections.SetOperation;
 import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
+import xyz.avarel.kaiper.ast.tuples.FreeFormStruct;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.*;
@@ -50,8 +54,6 @@ public interface ExprVisitor<R, C> {
     R visit(BinaryOperation expr, C scope);
 
     R visit(UnaryOperation expr, C scope);
-
-    R visit(RangeNode expr, C scope);
 
     R visit(ArrayNode expr, C scope);
 
@@ -89,9 +91,11 @@ public interface ExprVisitor<R, C> {
 
     R visit(WhileExpr expr, C scope);
 
-    R visit(TupleExpr expr, C scope);
+    R visit(FreeFormStruct expr, C scope);
 
     R visit(BindDeclarationExpr expr, C scope);
 
     R visit(BindAssignmentExpr expr, C scope);
+
+    R visit(TupleExpr expr, C scope);
 }

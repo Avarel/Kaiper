@@ -1,14 +1,20 @@
 package xyz.avarel.kaiper.compiler;
 
-import xyz.avarel.kaiper.ast.*;
-import xyz.avarel.kaiper.ast.collections.*;
+import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.ExprVisitor;
+import xyz.avarel.kaiper.ast.ModuleNode;
+import xyz.avarel.kaiper.ast.TypeNode;
+import xyz.avarel.kaiper.ast.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.collections.GetOperation;
+import xyz.avarel.kaiper.ast.collections.SetOperation;
 import xyz.avarel.kaiper.ast.flow.*;
 import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.invocation.Invocation;
 import xyz.avarel.kaiper.ast.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
+import xyz.avarel.kaiper.ast.tuples.FreeFormStruct;
 import xyz.avarel.kaiper.ast.value.*;
 import xyz.avarel.kaiper.ast.variables.*;
 import xyz.avarel.kaiper.bytecode.io.KDataOutput;
@@ -120,7 +126,6 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
         return null;
     }
 
-    @Override
     public Void visit(RangeNode expr, KDataOutput out) {
         visit(out, expr.getLeft(), expr.getRight());
 
@@ -371,7 +376,7 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
     }
 
     @Override
-    public Void visit(TupleExpr expr, KDataOutput out) {
+    public Void visit(FreeFormStruct expr, KDataOutput out) {
         Map<String, Single> map = new LinkedHashMap<>(expr.getElements());
         lineNumber(expr, out);
 

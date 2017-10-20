@@ -30,8 +30,8 @@ public class Grammar {
     }
 
     public Grammar(Map<TokenType, PrefixParser> prefixParsers, Map<TokenType, InfixParser> infixParsers) {
-        this.prefixParsers = new HashMap<>(prefixParsers);
-        this.infixParsers = new HashMap<>(infixParsers);
+        this.prefixParsers = prefixParsers;
+        this.infixParsers = infixParsers;
     }
 
     public void prefix(TokenType token, PrefixParser parselet) {
@@ -57,6 +57,6 @@ public class Grammar {
     }
 
     public Grammar copy() {
-        return new Grammar(prefixParsers, infixParsers);
+        return new Grammar(new HashMap<>(prefixParsers), new HashMap<>(infixParsers));
     }
 }

@@ -31,20 +31,6 @@ public abstract class Expr {
     public abstract <R, C> R accept(ExprVisitor<R, C> visitor, C scope);
 
     /**
-     * The weight of the node is used for optimization purposes.
-     * <ul>
-     *     <li>0 - Lowest priority, removal if it is on its own in a statement</li>
-     *     <li>1 - Contextual optimization</li>
-     *     <li>2 - Never optimize</li>
-     * </ul>
-     *
-     * @return The weight of the node.
-     */
-    public int weight() {
-        return 1;
-    }
-
-    /**
      * Appends the AST information of the node to the buffer.
      *
      * @param builder Target buffer.

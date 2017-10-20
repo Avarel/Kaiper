@@ -34,5 +34,6 @@ public enum BinaryOperatorType {
     SHL,
     SHR,
 
+    REF,
     IS
 }

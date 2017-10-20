@@ -19,6 +19,9 @@ package xyz.avarel.kaiper.parser.parslets.operators;
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.operations.UnaryOperation;
+import xyz.avarel.kaiper.ast.value.BooleanNode;
+import xyz.avarel.kaiper.ast.value.DecimalNode;
+import xyz.avarel.kaiper.ast.value.IntNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.operations.UnaryOperatorType;
 import xyz.avarel.kaiper.parser.KaiperParser;
@@ -34,6 +37,23 @@ public class UnaryOperatorParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
         Expr left = parser.parseExpr(Precedence.PREFIX);
+
+        if (left instanceof IntNode) {
+            if (operator == UnaryOperatorType.MINUS) {
+                IntNode target = (IntNode) left;
+                return new IntNode(-target.getValue());
+            }
+        } else if (left instanceof DecimalNode) {
+            if (operator == UnaryOperatorType.MINUS) {
+                DecimalNode target = (DecimalNode) left;
+                return new DecimalNode(-target.getValue());
+            }
+        } else if (left instanceof BooleanNode) {
+            if (operator == UnaryOperatorType.NEGATE) {
+                return left == BooleanNode.TRUE ? BooleanNode.FALSE : BooleanNode.TRUE;
+            }
+        }
+
         return new UnaryOperation(token.getPosition(), left, operator);
     }
 }

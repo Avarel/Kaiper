@@ -20,10 +20,8 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
-import xyz.avarel.kaiper.interpreter.ScopeUtils;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.parser.KaiperParser;
-import xyz.avarel.kaiper.parser.ParserFlags;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
@@ -123,7 +121,7 @@ public class KaiperScript {
      * @return  The current {@link KaiperScript} builder instance. Useful for chaining.
      */
     public KaiperScript add(String name, Obj object) {
-        ScopeUtils.declare(scope, name, object);
+        scope.put(name, object);
         return this;
     }
 
@@ -139,7 +137,7 @@ public class KaiperScript {
      * @return  The current {@link KaiperScript} builder instance. Useful for chaining.
      */
     public KaiperScript add(String name, KaiperScript script) {
-        ScopeUtils.declare(scope, name, new KaiperScript(script.parser, script.scope.copyWithParent(scope)).compute());
+        scope.put(name, new KaiperScript(script.parser, script.scope.copyWithParent(scope)).compute());
         return this;
     }
 
@@ -177,16 +175,5 @@ public class KaiperScript {
 
     public Scope<String, Obj> getScope() {
         return scope;
-    }
-
-    /**
-     * Sets the parser flags, which controls what features of Kaiper are enabled for this expression.
-     * Useful for limiting end-user's abilities to ensure that performance-expensive features are not abused.
-     *
-     * @param flags The flags to be set
-     * @see ParserFlags
-     */
-    public void setParserFlags(short flags) {
-        parser.setParserFlags(new ParserFlags(flags));
     }
 }

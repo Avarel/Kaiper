@@ -17,28 +17,21 @@
 package xyz.avarel.kaiper.ast.pattern;
 
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
-public class PatternBinder implements PatternVisitor<Boolean, Tuple> {
-
+public class PatternBinder implements PatternVisitor<Boolean, PatternContext> {
     private final PatternCase patternCase;
-    private final ExprInterpreter interpreter;
-    private final Scope scope;
 
-    private boolean usedValue = false;
-
-    public PatternBinder(PatternCase patternCase, ExprInterpreter interpreter, Scope<String, Obj> scope) {
+    public PatternBinder(PatternCase patternCase) {
         this.patternCase = patternCase;
-        this.interpreter = interpreter;
-        this.scope = scope;
     }
 
-    public boolean declareFrom(Tuple tuple) {
+    public boolean declareFrom(ExprInterpreter interpreter, Scope<String, Obj> scope, Tuple tuple) {
+        PatternContext context = new PatternContext(interpreter, scope, tuple, 0);
         for (Pattern pattern : patternCase.getPatterns()) {
-            boolean result = pattern.accept(this, tuple);
+            boolean result = pattern.accept(this, context);
 
             if (!result) {
                 return false;
@@ -49,51 +42,33 @@ public class PatternBinder implements PatternVisitor<Boolean, Tuple> {
     }
 
     @Override
-    public Boolean visit(VariablePattern pattern, Tuple obj) {
-        Obj value;
-
-        if (obj.hasAttr(pattern.getName())) {
-            value = obj.getAttr(pattern.getName());
-        } else if (!usedValue && obj.hasAttr("value")) {
-            value = obj.getAttr("value");
-            usedValue = true;
-        } else {
+    public Boolean visit(VariablePattern pattern, PatternContext patternContext) {
+        if (patternContext.tuple.size() <= patternContext.position) {
             return false;
         }
 
-        if (!pattern.isNullable() && value == Null.VALUE) {
-            return false;
-        } else {
-            ExprInterpreter.declare(scope, pattern.getName(), value);
-            return true;
-        }
+        ExprInterpreter.declare(patternContext.scope, pattern.getName(), patternContext.tuple.get(patternContext.position++));
+        return true;
     }
 
     @Override
-    public Boolean visit(DefaultPattern pattern, Tuple obj) {
-        boolean result = pattern.getDelegate().accept(this, obj);
-
-        if (!result) {
-            Obj value = pattern.getDefault().accept(interpreter, scope);
-            ExprInterpreter.declare(scope, pattern.getDelegate().getName(), value);
+    public Boolean visit(DefaultPattern pattern, PatternContext patternContext) {
+        if (!pattern.getDelegate().accept(this, patternContext)) {
+            ExprInterpreter.declare(patternContext.scope, pattern.getName(), pattern.getDefault().accept(patternContext.interpreter, patternContext.scope));
         }
 
         return true;
     }
 
     @Override
-    public Boolean visit(TuplePattern pattern, Tuple obj) {
-        Obj value;
+    public Boolean visit(ValuePattern pattern, PatternContext patternContext) {
+        Obj obj = patternContext.interpreter.resultOf(pattern.getExpr(), patternContext.scope);
 
-        if (obj.hasAttr(pattern.getName())) {
-            value = obj.getAttr(pattern.getName());
-        }  else if (!usedValue && obj.hasAttr("value")) {
-            value = obj.getAttr("value");
-            usedValue = true;
-        } else {
-            return false;
-        }
+        return obj.equals(patternContext.tuple.get(patternContext.position++));
+    }
 
-        return interpreter.resultOf(pattern.getExpr(), scope).equals(value);
+    @Override
+    public Boolean visit(NestedPattern pattern, PatternContext patternContext) {
+        return null;
     }
 }

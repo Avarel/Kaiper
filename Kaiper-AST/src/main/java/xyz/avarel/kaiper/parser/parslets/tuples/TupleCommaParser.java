@@ -18,14 +18,13 @@ package xyz.avarel.kaiper.parser.parslets.tuples;
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.tuples.TupleExpr;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TupleCommaParser extends BinaryParser {
     public TupleCommaParser() {
@@ -34,24 +33,14 @@ public class TupleCommaParser extends BinaryParser {
 
     @Override
     public Expr parse(KaiperParser parser, Expr left, Token token) {
-        Map<String, Expr> elements = new HashMap<>();
+        List<Expr> exprs = new ArrayList<>();
 
-        if (left instanceof TupleExpr) { // x: 1, __
-            TupleExpr tuple = (TupleExpr) left;
-            elements.putAll(tuple.getElements());
-        } else {
-            elements.put("value", left);
-        }
+        exprs.add(left);
 
         do {
-            Token name = parser.eat(TokenType.IDENTIFIER);
-            parser.eat(TokenType.COLON);
-            Expr element = parser.parseExpr(Precedence.INFIX);
-            if (elements.put(name.getString(), element) != null) {
-                throw new SyntaxException("Duplicate tuple field name", name.getPosition());
-            }
+            exprs.add(parser.parseExpr(Precedence.TUPLE));
         } while (parser.match(TokenType.COMMA));
 
-        return new TupleExpr(left.getPosition(), elements);
+        return new TupleExpr(left.getPosition(), exprs);
     }
 }

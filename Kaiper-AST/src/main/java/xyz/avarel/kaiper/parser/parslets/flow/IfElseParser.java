@@ -18,7 +18,8 @@ package xyz.avarel.kaiper.parser.parslets.flow;
 
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
+import xyz.avarel.kaiper.ast.value.BooleanNode;
+import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.KaiperParser;
@@ -27,12 +28,7 @@ import xyz.avarel.kaiper.parser.PrefixParser;
 public class IfElseParser implements PrefixParser {
     @Override
     public Expr parse(KaiperParser parser, Token token) {
-        if (!parser.getParserFlags().allowControlFlows()) {
-            throw new SyntaxException("Control flows are disabled");
-        }
-
         Expr condition = parser.parseExpr();
-
 
         parser.eat(TokenType.LEFT_BRACE);
         Expr ifBranch = parser.parseStatements();
@@ -48,6 +44,12 @@ public class IfElseParser implements PrefixParser {
                 elseBranch = parser.parseStatements();
                 parser.eat(TokenType.RIGHT_BRACE);
             }
+        }
+
+        if (condition == BooleanNode.TRUE) {
+            return ifBranch;
+        } else if (condition == BooleanNode.FALSE) {
+            return elseBranch != null ? elseBranch : NullNode.VALUE;
         }
 
         return new ConditionalExpr(token.getPosition(), condition, ifBranch, elseBranch);

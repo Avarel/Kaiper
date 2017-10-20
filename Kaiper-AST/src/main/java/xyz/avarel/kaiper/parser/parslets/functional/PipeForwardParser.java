@@ -18,18 +18,9 @@ package xyz.avarel.kaiper.parser.parslets.functional;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.functions.FunctionNode;
-import xyz.avarel.kaiper.ast.invocation.Invocation;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
-import xyz.avarel.kaiper.ast.variables.Identifier;
-import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class PipeForwardParser extends BinaryParser {
     public PipeForwardParser() {
@@ -38,60 +29,58 @@ public class PipeForwardParser extends BinaryParser {
 
     @Override
     public Expr parse(KaiperParser parser, Expr left, Token token) {
-        if (!parser.getParserFlags().allowInvocation()) {
-            throw new SyntaxException("Function invocation are disabled");
-        }
-
         // left |> right
 
-        Expr right = parser.parseExpr(getPrecedence());
+        throw new UnsupportedOperationException("in progress");
 
-        if (right instanceof Invocation) {
-            Invocation invocation = (Invocation) right;
-            TupleExpr argument = invocation.getArgument();
-            Map<String, Expr> elements = new LinkedHashMap<>(argument.getElements());
-
-            if (left instanceof TupleExpr) {
-                TupleExpr leftTuple = (TupleExpr) left;
-
-                if (Collections.disjoint(elements.keySet(), leftTuple.getElements().keySet())) {
-                    elements.putAll(leftTuple.getElements());
-                } else {
-                    throw new SyntaxException("Duplicate tuple field names", left.getPosition());
-                }
-            } else if (elements.put("value", left) != null) {
-                throw new SyntaxException("Duplicate tuple field names", left.getPosition());
-            }
-
-            return new Invocation(
-                    token.getPosition(),
-                    invocation.getLeft(),
-                    new TupleExpr(
-                            argument.getPosition(),
-                            elements
-                    )
-            );
-        } else if (right instanceof FunctionNode || right instanceof Identifier) {
-            if (left instanceof TupleExpr) {
-                return new Invocation(
-                        token.getPosition(),
-                        right,
-                        (TupleExpr) left
-                );
-            } else {
-                return new Invocation(
-                        token.getPosition(),
-                        right,
-                        new TupleExpr(
-                                token.getPosition(),
-                                Collections.singletonMap("value", left)
-                        )
-                );
-            }
-        }
-
-        throw new SyntaxException(
-                "Invalid pipe-forward operand " + token.getType(),
-                token.getPosition());
+//        Expr right = parser.parseExpr(getPrecedence());
+//
+//        if (right instanceof Invocation) {
+//            Invocation invocation = (Invocation) right;
+//            FreeFormStruct argument = invocation.getArgument();
+//            Map<String, Expr> elements = new LinkedHashMap<>(argument.getElements());
+//
+//            if (left instanceof FreeFormStruct) {
+//                FreeFormStruct leftTuple = (FreeFormStruct) left;
+//
+//                if (Collections.disjoint(elements.keySet(), leftTuple.getElements().keySet())) {
+//                    elements.putAll(leftTuple.getElements());
+//                } else {
+//                    throw new SyntaxException("Duplicate tuple field names", left.getPosition());
+//                }
+//            } else if (elements.put("value", left) != null) {
+//                throw new SyntaxException("Duplicate tuple field names", left.getPosition());
+//            }
+//
+//            return new Invocation(
+//                    token.getPosition(),
+//                    invocation.getLeft(),
+//                    new FreeFormStruct(
+//                            argument.getPosition(),
+//                            elements
+//                    )
+//            );
+//        } else if (right instanceof FunctionNode || right instanceof Identifier) {
+//            if (left instanceof FreeFormStruct) {
+//                return new Invocation(
+//                        token.getPosition(),
+//                        right,
+//                        (FreeFormStruct) left
+//                );
+//            } else {
+//                return new Invocation(
+//                        token.getPosition(),
+//                        right,
+//                        new FreeFormStruct(
+//                                token.getPosition(),
+//                                Collections.singletonMap("value", left)
+//                        )
+//                );
+//            }
+//        }
+//
+//        throw new SyntaxException(
+//                "Invalid pipe-forward operand " + token.getType(),
+//                token.getPosition());
     }
 }

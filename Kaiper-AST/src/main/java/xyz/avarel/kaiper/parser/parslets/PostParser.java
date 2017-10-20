@@ -14,25 +14,11 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.ast.pattern;
+package xyz.avarel.kaiper.parser.parslets;
 
-// x
-public class VariablePattern extends Pattern {
-    public VariablePattern(String name) {
-        super(name);
-    }
+import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.parser.KaiperParser;
 
-    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
-        return visitor.visit(this, scope);
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof VariablePattern && getName().equals(((VariablePattern) obj).getName());
-    }
+public interface PostParser {
+    Expr process(KaiperParser parser, Expr expr);
 }

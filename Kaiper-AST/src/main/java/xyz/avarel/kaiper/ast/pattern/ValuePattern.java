@@ -14,32 +14,46 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.runtime.pattern;
+package xyz.avarel.kaiper.ast.pattern;
 
-// x
-public class VariableRuntimePattern extends RuntimePattern {
-    private final boolean nullable;
+import xyz.avarel.kaiper.ast.Expr;
 
-    public VariableRuntimePattern(String name) {
-        this(name, true);
+// a: is Int
+// a: 2
+// a: x
+// a: (2, meme: 2, dank: 3)
+public class ValuePattern extends Pattern {
+    private final Expr expr;
+
+    public ValuePattern(Expr expr) {
+        super(null);
+        this.expr = expr;
     }
 
-    public VariableRuntimePattern(String name, boolean nullable) {
-        super(name);
-        this.nullable = nullable;
-    }
-
-    public boolean isNullable() {
-        return nullable;
+    public Expr getExpr() {
+        return expr;
     }
 
     @Override
-    public <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope) {
+    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
     }
 
     @Override
     public String toString() {
-        return getName();
+        return getExpr().toString();
+    }
+
+    @Override
+    public int nodeWeight() {
+        return 1;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ValuePattern)) return false;
+        ValuePattern other = (ValuePattern) obj;
+
+        return getExpr().equals(other.getExpr());
     }
 }
