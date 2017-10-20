@@ -80,6 +80,9 @@ public class PatternCase implements Comparable<PatternCase> {
         }
 
         for (int i = 0; i < size(); i++) {
+            if (patterns.get(i).getClass().equals(other.patterns.get(i).getClass())) {
+                continue;
+            }
             int b = patterns.get(i).compareTo(other.patterns.get(i));
             if (b != 0) {
                 return b;
