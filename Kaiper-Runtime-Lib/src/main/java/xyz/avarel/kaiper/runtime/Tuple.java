@@ -18,11 +18,13 @@ package xyz.avarel.kaiper.runtime;
 
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
+import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.types.Type;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 
 // Pattern - the anti tuple / destructive
@@ -71,28 +73,42 @@ public class Tuple implements Obj {
     // String.trim("hello")
     // "hello"::trim
 
-    private final Map<String, Obj> map;
+    private final List<Obj> list;
 
     public Tuple() {
-        this(Collections.emptyMap());
+        this(Collections.emptyList());
     }
 
     public Tuple(Obj value) {
-        this(Collections.singletonMap("value", value));
+        this(Collections.singletonList(value));
     }
 
-    public Tuple(Map<String, Obj> map) {
-       this.map = map;
+    public Tuple(Obj... values) {
+        this(Arrays.asList(values));
     }
 
-    public boolean hasAttr(String name) {
-        return map.containsKey(name);
+    public Tuple(List<Obj> list) {
+       this.list = list;
+    }
+
+    public int size() {
+        return list.size();
     }
 
     @Override
-    public Obj getAttr(String name) {
-        Obj obj = map.get(name);
-        return obj == null ? Obj.super.getAttr(name) : obj;
+    public Obj get(Obj key) {
+        if (key instanceof Int) {
+            return get((Int) key);
+        }
+        return Null.VALUE;
+    }
+
+    private Obj get(Int index) {
+        return get(index.value());
+    }
+
+    public Obj get(int index) {
+        return list.get(index);
     }
 
     @Override
@@ -100,33 +116,17 @@ public class Tuple implements Obj {
         return TYPE;
     }
 
-    public int size() {
-        return map.size();
-    }
-
     @Override
     public String toString() {
-        if (map.isEmpty()) {
+        if (list.isEmpty()) {
             return "()";
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder("(");
 
-
-        Iterator<Map.Entry<String, Obj>> iterator = map.entrySet().iterator();
+        Iterator<Obj> iterator = list.iterator();
         while (true) {
-            Map.Entry<String, Obj> entry = iterator.next();
-
-            builder.append(entry.getKey());
-            builder.append(": ");
-
-            if (entry.getValue() instanceof Tuple) {
-                builder.append('(');
-                builder.append(entry.getValue());
-                builder.append(')');
-            } else {
-                builder.append(entry.getValue());
-            }
+            builder.append(iterator.next());
 
             if (iterator.hasNext()) {
                 builder.append(", ");
@@ -134,6 +134,8 @@ public class Tuple implements Obj {
                 break;
             }
         }
+
+        builder.append(')');
 
         return builder.toString();
     }

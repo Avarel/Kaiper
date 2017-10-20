@@ -20,17 +20,17 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.lexer.Position;
 
-import java.util.List;
+import java.util.Map;
 
-public class TupleExpr extends Expr {
-    private final List<Expr> elements;
+public class FreeFormStruct extends Expr {
+    private final Map<String, Expr> elements;
 
-    public TupleExpr(Position position, List<Expr> elements) {
+    public FreeFormStruct(Position position, Map<String, Expr> elements) {
         super(position);
         this.elements = elements;
     }
 
-    public List<Expr> getElements() {
+    public Map<String, Expr> getElements() {
         return elements;
     }
 
@@ -45,7 +45,7 @@ public class TupleExpr extends Expr {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof TupleExpr && elements.equals(((TupleExpr) o).elements);
+        return o instanceof FreeFormStruct && elements.equals(((FreeFormStruct) o).elements);
     }
 
     @Override

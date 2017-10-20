@@ -58,7 +58,7 @@ public enum DefaultFunctions {
             return new NativeFunc("not") {
                 @Override
                 protected Obj eval(Map<String, Obj> arguments0) {
-                    return arguments.get("function").invoke(new Tuple(arguments0)).negate();
+                    return arguments.get("function").invoke(new Tuple(arguments.get("function"))).negate();
                 }
             };
         }

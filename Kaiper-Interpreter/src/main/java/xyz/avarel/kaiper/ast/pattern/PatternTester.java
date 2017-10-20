@@ -52,14 +52,7 @@ public class PatternTester implements PatternVisitor<Boolean, Tuple> {
 
     @Override
     public Boolean visit(VariablePattern pattern, Tuple obj) {
-        if (obj.hasAttr(pattern.getName())) {
-            return true;
-        } else if (!usedValue && obj.hasAttr("value")) {
-            usedValue = true;
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
 
     @Override
@@ -68,34 +61,12 @@ public class PatternTester implements PatternVisitor<Boolean, Tuple> {
     }
 
     @Override
-    public Boolean visit(TuplePattern pattern, Tuple obj) {
-        Obj value;
-
-        if (obj.hasAttr(pattern.getName())) {
-            value = obj.getAttr(pattern.getName());
-        }  else if (!usedValue && obj.hasAttr("value")) {
-            value = obj.getAttr("value");
-            usedValue = true;
-        } else {
-            return false;
-        }
-
-        return interpreter.resultOf(pattern.getExpr(), scope).equals(value);
+    public Boolean visit(ValuePattern pattern, Tuple obj) {
+        return true;
     }
 
     @Override
     public Boolean visit(NestedPattern pattern, Tuple context) {
-        Tuple value;
-
-        if (context.hasAttr(pattern.getName())) {
-            value = context.getAttr(pattern.getName()).as(Tuple.TYPE);
-        }  else if (!usedValue && context.hasAttr("value")) {
-            value = context.getAttr("value").as(Tuple.TYPE);
-            usedValue = true;
-        } else {
-            return false;
-        }
-
-        return new PatternTester(pattern.getPattern(), interpreter, scope).test(value);
+        return true;
     }
 }

@@ -16,25 +16,21 @@
 
 package xyz.avarel.kaiper.runtime.pattern;
 
-import xyz.avarel.kaiper.runtime.Obj;
+// x
+public class VariableRTPattern extends RTPattern {
+    private final boolean nullable;
 
-// (delegate) = (defaultExpr)
-public class DefaultRuntimePattern extends RuntimePattern {
-    private final RuntimePattern delegate;
-    private final Obj defaultObj;
-
-    public DefaultRuntimePattern(RuntimePattern delegate, Obj defaultObj) {
-        super(delegate.getName());
-        this.delegate = delegate;
-        this.defaultObj = defaultObj;
+    public VariableRTPattern(String name) {
+        this(name, true);
     }
 
-    public RuntimePattern getDelegate() {
-        return delegate;
+    public VariableRTPattern(String name, boolean nullable) {
+        super(name);
+        this.nullable = nullable;
     }
 
-    public Obj getDefault() {
-        return defaultObj;
+    public boolean isNullable() {
+        return nullable;
     }
 
     @Override
@@ -44,6 +40,6 @@ public class DefaultRuntimePattern extends RuntimePattern {
 
     @Override
     public String toString() {
-        return delegate + " = " + defaultObj;
+        return getName();
     }
 }

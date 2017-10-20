@@ -17,28 +17,43 @@ package xyz.avarel.kaiper.parser.parslets.tuples;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
+import xyz.avarel.kaiper.ast.tuples.FreeFormStruct;
 import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
+import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
 
-import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class TupleColonParser extends BinaryParser {
     public TupleColonParser() {
-        super(Precedence.TUPLE_PAIR);
+        super(Precedence.FREEFORM_STRUCT);
     }
 
     @Override
     public Expr parse(KaiperParser parser, Expr left, Token token) {
-        if (!(left instanceof Identifier)) {
-            throw new SyntaxException("Tuple entry names must be valid identifiers", left.getPosition());
+        if (!(left instanceof Identifier) || ((Identifier) left).getParent() != null) {
+            throw new SyntaxException("Tuple entry names must be simple names", left.getPosition());
         }
+
+        Map<String, Expr> elements = new LinkedHashMap<>();
 
         Expr value = parser.parseExpr(getPrecedence());
 
-        return new TupleExpr(left.getPosition(), Collections.singletonMap(((Identifier) left).getName(), value));
+        elements.put(((Identifier) left).getName(), value);
+
+        do {
+            Token name = parser.eat(TokenType.IDENTIFIER);
+            parser.eat(TokenType.COLON);
+            Expr element = parser.parseExpr(Precedence.INFIX);
+            if (elements.put(name.getString(), element) != null) {
+                throw new SyntaxException("Duplicate tuple field name", name.getPosition());
+            }
+        } while (parser.match(TokenType.COMMA));
+
+        return new FreeFormStruct(left.getPosition(), elements);
     }
 }

@@ -81,7 +81,7 @@ public class CompiledMultiMethod extends Func {
 
             Scope<String, Obj> scope = entry.getScope().subScope();
 
-            if (!new PatternBinder(entry.getPattern(), entry.getVisitor(), scope).declareFrom(argument)) {
+            if (!new PatternBinder(entry.getPattern()).declareFrom(entry.getVisitor(), scope, argument)) {
                 continue;
             }
 

@@ -18,17 +18,9 @@ package xyz.avarel.kaiper.parser.parslets.functional;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.invocation.Invocation;
-import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
-import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.KaiperParser;
-
-import java.util.LinkedHashMap;
 
 // def (re, im)::conjugate() = re: self.re, im: -self.im
 // def conjugate(self: (re, im)) = re: self.re, im: -self.im
@@ -39,35 +31,36 @@ public class ReferenceParser extends BinaryParser {
 
     @Override
     public Expr parse(KaiperParser parser, Expr left, Token token) {
-        Identifier identifier = parser.parseIdentifier();
-
-        boolean leftParen = parser.match(TokenType.LEFT_PAREN);
-        if (leftParen || parser.nextIsAny(InvocationParser.argumentTokens)) {
-            Expr expr;
-            if (leftParen) {
-                if (parser.match(TokenType.RIGHT_PAREN)) {
-                    expr = new TupleExpr(parser.getLast().getPosition(), new LinkedHashMap<>());
-                } else {
-                    expr = parser.parseExpr();
-                    parser.eat(TokenType.RIGHT_PAREN);
-                }
-            } else {
-                expr = parser.parseExpr();
-            }
-
-            TupleExpr tuple;
-
-            if (expr instanceof TupleExpr) {
-                tuple = (TupleExpr) expr;
-            } else {
-                tuple = new TupleExpr(expr.getPosition(), new LinkedHashMap<>());
-            }
-
-            tuple.getElements().put("self", left);
-
-            return new Invocation(tuple.getPosition(), identifier, tuple);
-        }
-
-        return new BinaryOperation(token.getPosition(), left, identifier, BinaryOperatorType.REF);
+        throw new UnsupportedOperationException("in progress");
+//        Identifier identifier = parser.parseIdentifier();
+//
+//        boolean leftParen = parser.match(TokenType.LEFT_PAREN);
+//        if (leftParen || parser.nextIsAny(InvocationParser.argumentTokens)) {
+//            Expr expr;
+//            if (leftParen) {
+//                if (parser.match(TokenType.RIGHT_PAREN)) {
+//                    expr = new FreeFormStruct(parser.getLast().getPosition(), new LinkedHashMap<>());
+//                } else {
+//                    expr = parser.parseExpr();
+//                    parser.eat(TokenType.RIGHT_PAREN);
+//                }
+//            } else {
+//                expr = parser.parseExpr();
+//            }
+//
+//            FreeFormStruct tuple;
+//
+//            if (expr instanceof FreeFormStruct) {
+//                tuple = (FreeFormStruct) expr;
+//            } else {
+//                tuple = new FreeFormStruct(expr.getPosition(), new LinkedHashMap<>());
+//            }
+//
+//            tuple.getElements().put("self", left);
+//
+//            return new Invocation(tuple.getPosition(), identifier, tuple);
+//        }
+//
+//        return new BinaryOperation(token.getPosition(), left, identifier, BinaryOperatorType.REF);
     }
 }

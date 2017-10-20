@@ -22,11 +22,11 @@ import xyz.avarel.kaiper.runtime.Obj;
 // a: 2
 // a: x
 // a: (2, meme: 2, dank: 3)
-public class TupleRuntimePattern extends RuntimePattern {
+public class ValueRTPattern extends RTPattern {
     private final Obj obj;
 
-    public TupleRuntimePattern(String name, Obj obj) {
-        super(name);
+    public ValueRTPattern(Obj obj) {
+        super(null);
         this.obj = obj;
     }
 
@@ -45,15 +45,10 @@ public class TupleRuntimePattern extends RuntimePattern {
     }
 
     @Override
-    public int compareTo(RuntimePattern other) {
-        int compare = super.compareTo(other);
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ValueRTPattern)) return false;
+        ValueRTPattern other = (ValueRTPattern) obj;
 
-        if (compare == 0
-                && (!(other instanceof TupleRuntimePattern)
-                || !obj.equals(((TupleRuntimePattern) other).obj))) {
-            return -1; // put tuple patterns with different values on different levels, so it doesnt matter
-        }
-
-        return compare;
+        return getObj().equals(other.getObj());
     }
 }

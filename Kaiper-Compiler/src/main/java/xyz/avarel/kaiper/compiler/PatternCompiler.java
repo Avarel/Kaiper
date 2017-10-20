@@ -35,7 +35,7 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
     }
 
     @Override
-    public Void visit(TuplePattern pattern, KDataOutput out) {
+    public Void visit(ValuePattern pattern, KDataOutput out) {
         out.writeOpcode(TUPLE).writeShort(parent.stringConst(pattern.getName()));
 
         pattern.getExpr().accept(parent, out);

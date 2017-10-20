@@ -42,7 +42,7 @@ public class InvocationParser extends BinaryParser {
         Expr argument;
 
         if (parser.match(TokenType.RIGHT_PAREN)) {
-            argument = new TupleExpr(left.getPosition(), Collections.emptyMap());
+            argument = new TupleExpr(left.getPosition(), Collections.emptyList());
         } else {
             argument = parser.parseExpr();
             parser.eat(TokenType.RIGHT_PAREN);
@@ -56,7 +56,7 @@ public class InvocationParser extends BinaryParser {
             return new Invocation(argument.getPosition(), left, (TupleExpr) argument);
         } else {
             return new Invocation(argument.getPosition(), left,
-                    new TupleExpr(argument.getPosition(), Collections.singletonMap("value", argument))
+                    new TupleExpr(argument.getPosition(), Collections.singletonList(argument))
             );
         }
     }

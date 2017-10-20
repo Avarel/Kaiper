@@ -46,7 +46,7 @@ public class Precedence {
     public static final int RANGE_TO = 9;
 
     /* a: b */
-    public static final int TUPLE_PAIR = 3;
+    public static final int FREEFORM_STRUCT = 3;
 
     /* a, b */
     public static final int TUPLE = 2;

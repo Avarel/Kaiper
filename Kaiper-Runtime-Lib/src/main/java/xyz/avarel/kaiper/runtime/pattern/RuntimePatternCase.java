@@ -25,21 +25,21 @@ import java.util.stream.Collectors;
 public class RuntimePatternCase implements Comparable<RuntimePatternCase> {
     public static final RuntimePatternCase EMPTY = new RuntimePatternCase(Collections.emptyList());
 
-    private final List<RuntimePattern> patterns;
+    private final List<RTPattern> patterns;
 
     public RuntimePatternCase(String... variables) {
-        this(Arrays.stream(variables).map(VariableRuntimePattern::new).collect(Collectors.toList()));
+        this(Arrays.stream(variables).map(VariableRTPattern::new).collect(Collectors.toList()));
     }
 
-    public RuntimePatternCase(RuntimePattern... patterns) {
+    public RuntimePatternCase(RTPattern... patterns) {
         this(Arrays.asList(patterns));
     }
 
-    public RuntimePatternCase(List<RuntimePattern> patterns) {
+    public RuntimePatternCase(List<RTPattern> patterns) {
         this.patterns = patterns;
     }
 
-    public List<RuntimePattern> getPatterns() {
+    public List<RTPattern> getPatterns() {
         return patterns;
     }
 
@@ -49,10 +49,10 @@ public class RuntimePatternCase implements Comparable<RuntimePatternCase> {
         }
 
         StringBuilder sb = new StringBuilder();
-        Iterator<RuntimePattern> iterator = patterns.iterator();
+        Iterator<RTPattern> iterator = patterns.iterator();
 
         while (true) {
-            RuntimePattern pattern = iterator.next();
+            RTPattern pattern = iterator.next();
             sb.append(pattern);
             if (iterator.hasNext()) {
                 sb.append(", ");

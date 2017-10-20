@@ -62,23 +62,23 @@ public class PatternParser extends KaiperParser {
                 usedIdentifiers.add(name);
             }
 
-            if (match(TokenType.COLON)) {
-                if (match(TokenType.LEFT_PAREN)) {
-                    basePattern = new NestedPattern(name, new PatternParser(parser).parsePatternCase());
-                    eat(TokenType.RIGHT_PAREN);
-                } else {
-                    basePattern = new TuplePattern(name, parseExpr());
-                }
-            } else {
-                basePattern = new VariablePattern(name);
+//            if (match(TokenType.COLON)) {
+//                if (match(TokenType.LEFT_PAREN)) {
+//                    basePattern = new NestedPattern(name, new PatternParser(parser).parsePatternCase());
+//                    eat(TokenType.RIGHT_PAREN);
+//                } else {
+//                    basePattern = new TuplePattern(name, parseExpr());
+//                }
+//            } else {
+            basePattern = new VariablePattern(name);
 
-                if (match(TokenType.ASSIGN)) {
-                    basePattern = new DefaultPattern(basePattern, parseExpr());
-                }
+            if (match(TokenType.ASSIGN)) {
+                basePattern = new DefaultPattern(basePattern, parseExpr());
             }
+//            }
         } else {
             match(TokenType.EQUALS);
-            basePattern = new TuplePattern("value", parseExpr(Precedence.TUPLE_PAIR));
+            basePattern = new ValuePattern(parseExpr(Precedence.FREEFORM_STRUCT));
         }
 
         return basePattern;

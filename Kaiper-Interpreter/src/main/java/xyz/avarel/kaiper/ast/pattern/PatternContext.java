@@ -14,21 +14,23 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.runtime.pattern;
+package xyz.avarel.kaiper.ast.pattern;
 
-/**
- * Visitor patterns for {@link RTPattern patern} AST classes.
- * Each {@link RTPattern pattern} implements the accept method which
- * is normally {@code visitor.visit(this, context)}.
- *
- * @param <R> Return type.
- * @param <C> Context type.
- *
- * @see RTPattern
- * @author Avarel
- */
-public interface RuntimePatternVisitor<R, C> {
-    R visit(VariableRTPattern pattern, C context);
-    R visit(ValueRTPattern pattern, C context);
-    R visit(DefaultRTPattern pattern, C context);
+import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
+import xyz.avarel.kaiper.scope.Scope;
+
+class PatternContext {
+    final ExprInterpreter interpreter;
+    final Scope<String, Obj> scope;
+    final Tuple tuple;
+    int position;
+
+    PatternContext(ExprInterpreter interpreter, Scope<String, Obj> scope, Tuple tuple, int position) {
+        this.interpreter = interpreter;
+        this.scope = scope;
+        this.tuple = tuple;
+        this.position = position;
+    }
 }

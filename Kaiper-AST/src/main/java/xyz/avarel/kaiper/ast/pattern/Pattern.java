@@ -33,13 +33,15 @@ public abstract class Pattern implements Comparable<Pattern> {
 
     @Override
     public int compareTo(Pattern other) {
-        if (name.equals("value") && !other.getName().equals("value")) {
-            return -1;
-        } else if (other.getName().equals("value")) {
-            return 1;
+        int compare = 0;
+        if (name != null && other.name != null) {
+            if (name.equals("value") && !other.name.equals("value")) {
+                return -1;
+            } else if (other.name.equals("value")) {
+                return 1;
+            }
+            compare = name.compareTo(other.name);
         }
-
-        int compare = getName().compareTo(other.getName());
 
         if (compare == 0) {
             int weight = Integer.compare(nodeWeight(), other.nodeWeight());

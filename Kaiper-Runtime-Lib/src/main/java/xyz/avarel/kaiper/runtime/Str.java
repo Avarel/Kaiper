@@ -23,7 +23,7 @@ import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
-import xyz.avarel.kaiper.runtime.pattern.VariableRuntimePattern;
+import xyz.avarel.kaiper.runtime.pattern.VariableRTPattern;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.Map;
@@ -33,16 +33,16 @@ public class Str implements Obj {
     public static final Module MODULE = new NativeModule("String") {{
         declare("TYPE", Str.TYPE);
 
-        // "string", "start", "end", "step"
+        // "self", "start", "end", "step"
         declare("slice", new NativeFunc("slice",
-                new VariableRuntimePattern("string"),
-                new VariableRuntimePattern("start", true),
-                new VariableRuntimePattern("end", true),
-                new VariableRuntimePattern("step", true)
+                new VariableRTPattern("self"),
+                new VariableRTPattern("start", true),
+                new VariableRTPattern("end", true),
+                new VariableRTPattern("step", true)
         ) {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                Str str = arguments.get("string").as(Str.TYPE);
+                Str str = arguments.get("self").as(Str.TYPE);
                 Obj startObj = arguments.get("start");
                 Obj endObj = arguments.get("end");
                 Obj stepObj = arguments.get("step");
@@ -95,59 +95,59 @@ public class Str implements Obj {
             }
         });
 
-        declare("length", new NativeFunc("length", "string") {
+        declare("length", new NativeFunc("length", "self") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return Int.of(arguments.get("string").as(Str.TYPE).length());
+                return Int.of(arguments.get("self").as(Str.TYPE).length());
             }
         });
 
-        declare("contains", new NativeFunc("contains", "string", "query") {
+        declare("contains", new NativeFunc("contains", "self", "query") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get("string").as(Str.TYPE).contains(arguments.get("query").as(Str.TYPE));
+                return arguments.get("self").as(Str.TYPE).contains(arguments.get("query").as(Str.TYPE));
             }
         });
-        declare("indexOf", new NativeFunc("indexOf", "string", "query") {
+        declare("indexOf", new NativeFunc("indexOf", "self", "query") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get("string").as(Str.TYPE).indexOf(arguments.get("query").as(Str.TYPE));
+                return arguments.get("self").as(Str.TYPE).indexOf(arguments.get("query").as(Str.TYPE));
             }
         });
-        declare("split", new NativeFunc("split", "string", "query") {
+        declare("split", new NativeFunc("split", "self", "query") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get("string").as(Str.TYPE).split(arguments.get("query").as(Str.TYPE));
+                return arguments.get("self").as(Str.TYPE).split(arguments.get("query").as(Str.TYPE));
             }
         });
         declare("substring", new RuntimeMultimethod("substring")
-                .addCase(new RuntimePatternCase("string", "start"),
-                        scope -> scope.get("string").as(Str.TYPE).substring(scope.get("start").as(Int.TYPE)))
-                .addCase(new RuntimePatternCase("string", "start", "end"),
-                        scope -> scope.get("string").as(Str.TYPE).substring(scope.get("start").as(Int.TYPE), scope.get("end").as(Int.TYPE)))
+                .addCase(new RuntimePatternCase("self", "start"),
+                        scope -> scope.get("self").as(Str.TYPE).substring(scope.get("start").as(Int.TYPE)))
+                .addCase(new RuntimePatternCase("self", "start", "end"),
+                        scope -> scope.get("self").as(Str.TYPE).substring(scope.get("start").as(Int.TYPE), scope.get("end").as(Int.TYPE)))
         );
-        declare("toVector", new NativeFunc("toVector", "string") {
+        declare("toVector", new NativeFunc("toVector", "self") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get("string").as(Str.TYPE).toVector();
+                return arguments.get("self").as(Str.TYPE).toVector();
             }
         });
-        declare("toLowerCase", new NativeFunc("toLowerCase", "string") {
+        declare("toLowerCase", new NativeFunc("toLowerCase", "self") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get("string").as(Str.TYPE).toLowerCase();
+                return arguments.get("self").as(Str.TYPE).toLowerCase();
             }
         });
-        declare("toUpperCase", new NativeFunc("toUpperCase", "string") {
+        declare("toUpperCase", new NativeFunc("toUpperCase", "self") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get("string").as(Str.TYPE).toUpperCase();
+                return arguments.get("self").as(Str.TYPE).toUpperCase();
             }
         });
-        declare("trim", new NativeFunc("trim", "string") {
+        declare("trim", new NativeFunc("trim", "self") {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
-                return arguments.get("string").as(Str.TYPE).trim();
+                return arguments.get("self").as(Str.TYPE).trim();
             }
         });
     }};
