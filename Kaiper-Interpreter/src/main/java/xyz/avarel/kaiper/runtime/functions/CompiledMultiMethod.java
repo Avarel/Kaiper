@@ -75,13 +75,13 @@ public class CompiledMultiMethod extends Func {
     @Override
     public Obj invoke(Tuple argument) {
         for (CompiledFunc entry : branches) {
-            if (entry.getPattern().weight() > argument.size()) {
+            if (argument.size() < entry.getPattern().arity()) {
                 continue;
             }
 
             Scope<String, Obj> scope = entry.getScope().subScope();
 
-            if (!new PatternBinder(entry.getPattern()).declareFrom(entry.getVisitor(), scope, argument)) {
+            if (!new PatternBinder(entry.getVisitor(), scope).declareFrom(entry.getPattern(), argument)) {
                 continue;
             }
 

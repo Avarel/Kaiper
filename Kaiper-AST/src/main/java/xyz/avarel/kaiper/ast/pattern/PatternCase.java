@@ -65,10 +65,10 @@ public class PatternCase implements Comparable<PatternCase> {
         return patterns.size();
     }
 
-    public int weight() {
+    public int arity() {
         int sum = 0;
         for (Pattern pattern : patterns) {
-            sum += pattern.optional() ? 1 : 0;
+            sum += pattern.optional() ? 0 : 1;
         }
         return sum;
     }
@@ -80,9 +80,6 @@ public class PatternCase implements Comparable<PatternCase> {
         }
 
         for (int i = 0; i < size(); i++) {
-            if (patterns.get(i).getClass().equals(other.patterns.get(i).getClass())) {
-                continue;
-            }
             int b = patterns.get(i).compareTo(other.patterns.get(i));
             if (b != 0) {
                 return b;

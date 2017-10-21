@@ -35,7 +35,7 @@ public class PatternTester implements PatternVisitor<Boolean, Tuple> {
     }
 
     public boolean test(Tuple tuple) {
-        if (tuple.size() < patternCase.weight()) {
+        if (tuple.size() < patternCase.arity()) {
             return false;
         }
 

@@ -16,30 +16,14 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-// (delegate) = (defaultExpr)
-public class NestedPattern extends Pattern {
-    private final PatternCase pattern;
+public abstract class NamedPattern extends Pattern {
+    private final String name;
 
-    public NestedPattern(PatternCase pattern) {
-        this.pattern = pattern;
+    public NamedPattern(String name) {
+        this.name = name;
     }
 
-    public PatternCase getPattern() {
-        return pattern;
-    }
-
-    @Override
-    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
-        return visitor.visit(this, scope);
-    }
-
-    @Override
-    public int nodeWeight() {
-        return 2;
-    }
-
-    @Override
-    public String toString() {
-        return pattern.toString();
+    public String getName() {
+        return name;
     }
 }

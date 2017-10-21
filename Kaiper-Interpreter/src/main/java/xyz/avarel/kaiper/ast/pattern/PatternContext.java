@@ -16,20 +16,15 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
-import xyz.avarel.kaiper.scope.Scope;
 
 class PatternContext {
-    final ExprInterpreter interpreter;
-    final Scope<String, Obj> scope;
+    final PatternCase patternCase;
     final Tuple tuple;
     int position;
 
-    PatternContext(ExprInterpreter interpreter, Scope<String, Obj> scope, Tuple tuple, int position) {
-        this.interpreter = interpreter;
-        this.scope = scope;
+    PatternContext(PatternCase patternCase, Tuple tuple, int position) {
+        this.patternCase = patternCase;
         this.tuple = tuple;
         this.position = position;
     }

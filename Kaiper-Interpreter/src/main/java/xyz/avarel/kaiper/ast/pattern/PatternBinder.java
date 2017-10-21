@@ -22,18 +22,20 @@ import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
 public class PatternBinder implements PatternVisitor<Boolean, PatternContext> {
-    private final PatternCase patternCase;
+    private final ExprInterpreter interpreter;
+    private final Scope<String, Obj> scope;
 
-    public PatternBinder(PatternCase patternCase) {
-        this.patternCase = patternCase;
+    public PatternBinder(ExprInterpreter interpreter, Scope<String, Obj> scope) {
+        this.interpreter = interpreter;
+        this.scope = scope;
     }
 
-    public boolean declareFrom(ExprInterpreter interpreter, Scope<String, Obj> scope, Tuple tuple) {
-        PatternContext context = new PatternContext(interpreter, scope, tuple, 0);
-        for (Pattern pattern : patternCase.getPatterns()) {
-            boolean result = pattern.accept(this, context);
+    public boolean declareFrom(PatternCase patternCase, Tuple tuple) {
+        System.out.println(patternCase);
 
-            if (!result) {
+        PatternContext context = new PatternContext(patternCase, tuple, 0);
+        for (Pattern pattern : patternCase.getPatterns()) {
+            if (!pattern.accept(this, context)) {
                 return false;
             }
         }
@@ -47,14 +49,14 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternContext> {
             return false;
         }
 
-        ExprInterpreter.declare(patternContext.scope, pattern.getName(), patternContext.tuple.get(patternContext.position++));
+        ExprInterpreter.declare(scope, pattern.getName(), patternContext.tuple.get(patternContext.position++));
         return true;
     }
 
     @Override
     public Boolean visit(DefaultPattern pattern, PatternContext patternContext) {
         if (!pattern.getDelegate().accept(this, patternContext)) {
-            ExprInterpreter.declare(patternContext.scope, pattern.getName(), pattern.getDefault().accept(patternContext.interpreter, patternContext.scope));
+            ExprInterpreter.declare(scope, pattern.getName(), pattern.getDefault().accept(interpreter, scope));
         }
 
         return true;
@@ -62,13 +64,21 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternContext> {
 
     @Override
     public Boolean visit(ValuePattern pattern, PatternContext patternContext) {
-        Obj obj = patternContext.interpreter.resultOf(pattern.getExpr(), patternContext.scope);
+        if (patternContext.tuple.size() <= patternContext.position) {
+            return false;
+        }
 
+        Obj obj = interpreter.resultOf(pattern.getExpr(), scope);
         return obj.equals(patternContext.tuple.get(patternContext.position++));
     }
 
     @Override
     public Boolean visit(NestedPattern pattern, PatternContext patternContext) {
-        return null;
+        return patternContext.tuple.size() > patternContext.position &&
+                new PatternBinder(interpreter, scope).declareFrom(
+                        pattern.getPattern(),
+                        patternContext.tuple.get(patternContext.position++)
+                                .as(Tuple.TYPE)
+        );
     }
 }

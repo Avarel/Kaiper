@@ -19,11 +19,11 @@ package xyz.avarel.kaiper.ast.pattern;
 import xyz.avarel.kaiper.ast.Expr;
 
 // (delegate) = (defaultExpr)
-public class DefaultPattern extends Pattern {
+public class DefaultPattern extends NamedPattern {
     private final Pattern delegate;
     private final Expr defaultExpr;
 
-    public DefaultPattern(Pattern delegate, Expr defaultExpr) {
+    public DefaultPattern(NamedPattern delegate, Expr defaultExpr) {
         super(delegate.getName());
         this.delegate = delegate;
         this.defaultExpr = defaultExpr;
@@ -50,15 +50,5 @@ public class DefaultPattern extends Pattern {
     @Override
     public String toString() {
         return delegate + " = " + defaultExpr;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof DefaultPattern)) return false;
-        DefaultPattern other = (DefaultPattern) obj;
-
-        return getName().equals(other.getName())
-                && getDelegate().equals(other.getDelegate())
-                && getDefault().equals(other.getDefault());
     }
 }

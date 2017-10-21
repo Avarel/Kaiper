@@ -26,7 +26,6 @@ public class ValuePattern extends Pattern {
     private final Expr expr;
 
     public ValuePattern(Expr expr) {
-        super(null);
         this.expr = expr;
     }
 
@@ -47,13 +46,5 @@ public class ValuePattern extends Pattern {
     @Override
     public int nodeWeight() {
         return 1;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof ValuePattern)) return false;
-        ValuePattern other = (ValuePattern) obj;
-
-        return getExpr().equals(other.getExpr());
     }
 }

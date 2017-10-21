@@ -50,8 +50,6 @@ public class PatternParser extends KaiperParser {
     }
 
     private Pattern parsePattern() {
-        Pattern basePattern;
-
         if (nextIs(TokenType.IDENTIFIER)) {
             Token token = eat(TokenType.IDENTIFIER);
             String name = token.getString();
@@ -70,17 +68,26 @@ public class PatternParser extends KaiperParser {
 //                    basePattern = new TuplePattern(name, parseExpr());
 //                }
 //            } else {
-            basePattern = new VariablePattern(name);
+            VariablePattern pattern = new VariablePattern(name);
 
             if (match(TokenType.ASSIGN)) {
-                basePattern = new DefaultPattern(basePattern, parseExpr());
+                return new DefaultPattern(pattern, parseExpr());
             }
-//            }
+
+            return pattern;
+        } else if (match(TokenType.LEFT_PAREN)) {
+            PatternCase patternCase = parsePatternCase();
+
+            eat(TokenType.RIGHT_PAREN);
+
+            if (patternCase.size() < 2) {
+                throw new SyntaxException("Nested patterns needs to have 2 or more parameters");
+            }
+
+            return new NestedPattern(patternCase);
         } else {
             match(TokenType.EQUALS);
-            basePattern = new ValuePattern(parseExpr(Precedence.FREEFORM_STRUCT));
+            return new ValuePattern(parseExpr(Precedence.FREEFORM_STRUCT));
         }
-
-        return basePattern;
     }
 }

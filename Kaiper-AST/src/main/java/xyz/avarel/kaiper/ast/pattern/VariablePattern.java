@@ -17,7 +17,7 @@
 package xyz.avarel.kaiper.ast.pattern;
 
 // x
-public class VariablePattern extends Pattern {
+public class VariablePattern extends NamedPattern {
     public VariablePattern(String name) {
         super(name);
     }
@@ -29,10 +29,5 @@ public class VariablePattern extends Pattern {
     @Override
     public String toString() {
         return getName();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof VariablePattern && getName().equals(((VariablePattern) obj).getName());
     }
 }
