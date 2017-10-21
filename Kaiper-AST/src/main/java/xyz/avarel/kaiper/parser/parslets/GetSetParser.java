@@ -25,7 +25,7 @@ import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 
 public class GetSetParser extends BinaryParser {
     public GetSetParser() {
@@ -33,7 +33,7 @@ public class GetSetParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Expr left, Token token) {
+    public Expr parse(ExprParser parser, Expr left, Token token) {
         if (parser.match(TokenType.COLON)) {
             return parseEnd(parser, token.getPosition(), left, NullNode.VALUE);
         }
@@ -53,7 +53,7 @@ public class GetSetParser extends BinaryParser {
         );
     }
 
-    private Expr parseEnd(KaiperParser parser, Position position, Expr left, Expr start) {
+    private Expr parseEnd(ExprParser parser, Position position, Expr left, Expr start) {
         if (parser.match(TokenType.COLON)) {
             return parseStep(parser, position, left, start, NullNode.VALUE);
         } else if (parser.match(TokenType.RIGHT_BRACKET)) {
@@ -82,7 +82,7 @@ public class GetSetParser extends BinaryParser {
         );
     }
 
-    private Expr parseStep(KaiperParser parser, Position position, Expr left, Expr start, Expr end) {
+    private Expr parseStep(ExprParser parser, Position position, Expr left, Expr start, Expr end) {
         if (parser.match(TokenType.RIGHT_BRACKET)) {
             return new SliceOperation(
                     position,

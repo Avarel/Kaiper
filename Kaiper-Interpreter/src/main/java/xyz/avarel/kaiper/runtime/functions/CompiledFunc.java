@@ -55,7 +55,7 @@ public class CompiledFunc extends Func implements Comparable<CompiledFunc> {
     public Obj invoke(Tuple argument) {
         Scope<String, Obj> scope = this.scope.subScope();
 
-        if (!new PatternBinder(visitor, scope).declareFrom(patternCase, argument)) {
+        if (!new PatternBinder(visitor, scope).bind(patternCase, argument)) {
             throw new InterpreterException("Could not match arguments " + argument + " to " + getName() + patternCase);
         }
 

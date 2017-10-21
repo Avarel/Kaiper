@@ -31,12 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class KaiperParser extends Parser {
-    public KaiperParser(KaiperLexer tokens) {
+public class ExprParser extends Parser {
+    public ExprParser(KaiperLexer tokens) {
         super(tokens, DefaultGrammar.INSTANCE);
     }
 
-    public KaiperParser(KaiperParser proxy) {
+    public ExprParser(ExprParser proxy) {
         super(proxy);
     }
 

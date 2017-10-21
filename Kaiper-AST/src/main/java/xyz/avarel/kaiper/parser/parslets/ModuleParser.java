@@ -21,12 +21,12 @@ import xyz.avarel.kaiper.ast.ModuleNode;
 import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 public class ModuleParser implements PrefixParser {
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
+    public Expr parse(ExprParser parser, Token token) {
         String name = parser.eat(TokenType.IDENTIFIER).getString();
 
         Expr expr = NullNode.VALUE;

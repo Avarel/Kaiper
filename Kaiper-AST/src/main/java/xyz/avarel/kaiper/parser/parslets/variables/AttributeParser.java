@@ -23,7 +23,7 @@ import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.parslets.functional.InvocationParser;
 
 public class AttributeParser extends BinaryParser {
@@ -32,7 +32,7 @@ public class AttributeParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Expr left, Token token) {
+    public Expr parse(ExprParser parser, Expr left, Token token) {
         Token name = parser.eat(TokenType.IDENTIFIER);
 
         if (parser.match(TokenType.ASSIGN)) {

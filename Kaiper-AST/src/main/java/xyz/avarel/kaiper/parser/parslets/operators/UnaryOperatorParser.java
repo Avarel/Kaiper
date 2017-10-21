@@ -24,7 +24,7 @@ import xyz.avarel.kaiper.ast.value.DecimalNode;
 import xyz.avarel.kaiper.ast.value.IntNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.operations.UnaryOperatorType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 public class UnaryOperatorParser implements PrefixParser {
@@ -35,7 +35,7 @@ public class UnaryOperatorParser implements PrefixParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
+    public Expr parse(ExprParser parser, Token token) {
         Expr left = parser.parseExpr(Precedence.PREFIX);
 
         if (left instanceof IntNode) {

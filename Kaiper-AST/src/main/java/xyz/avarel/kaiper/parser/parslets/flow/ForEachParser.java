@@ -20,12 +20,12 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.flow.ForEachExpr;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 public class ForEachParser implements PrefixParser {
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
+    public Expr parse(ExprParser parser, Token token) {
         boolean match = parser.match(TokenType.LEFT_PAREN);
 
         String variant = parser.eat(TokenType.IDENTIFIER).getString();

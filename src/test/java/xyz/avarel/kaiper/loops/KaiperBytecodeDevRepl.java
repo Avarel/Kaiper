@@ -21,7 +21,7 @@ package xyz.avarel.kaiper.loops;
 
 import xyz.avarel.kaiper.KaiperCompiler;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.scope.DefaultScope;
@@ -63,7 +63,7 @@ public class KaiperBytecodeDevRepl {
                         continue;
                 }
 
-                byte[] bytecode = KaiperCompiler.compile(new KaiperParser(new KaiperLexer(input)).parse());
+                byte[] bytecode = KaiperCompiler.compile(new ExprParser(new KaiperLexer(input)).parse());
                 long start = System.nanoTime();
                 Obj result = new KaiperVM().executeBytecode(bytecode, scope);
                 long end = System.nanoTime();

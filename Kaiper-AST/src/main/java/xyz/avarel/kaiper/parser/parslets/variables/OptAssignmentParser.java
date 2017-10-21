@@ -29,7 +29,7 @@ import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.parser.BinaryParser;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 
 public class OptAssignmentParser extends BinaryParser {
     public OptAssignmentParser() {
@@ -37,7 +37,7 @@ public class OptAssignmentParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Expr left, Token token) {
+    public Expr parse(ExprParser parser, Expr left, Token token) {
         Expr value = parser.parseExpr();
 
         Expr setOp;

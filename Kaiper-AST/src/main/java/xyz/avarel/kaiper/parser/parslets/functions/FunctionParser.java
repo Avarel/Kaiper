@@ -21,7 +21,7 @@ import xyz.avarel.kaiper.ast.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
@@ -30,7 +30,7 @@ public class FunctionParser implements PrefixParser {
     private ImplicitFunctionParser implicit = new ImplicitFunctionParser();
 
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
+    public Expr parse(ExprParser parser, Token token) {
         if (parser.matchSignificant(TokenType.LEFT_BRACE)) {
             return lambda.parse(parser, parser.getLast());
         } else if (parser.match(TokenType.UNDERSCORE)) {

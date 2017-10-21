@@ -81,7 +81,7 @@ public class CompiledMultiMethod extends Func {
 
             Scope<String, Obj> scope = entry.getScope().subScope();
 
-            if (!new PatternBinder(entry.getVisitor(), scope).declareFrom(entry.getPattern(), argument)) {
+            if (!new PatternBinder(entry.getVisitor(), scope).bind(entry.getPattern(), argument)) {
                 continue;
             }
 
@@ -92,7 +92,7 @@ public class CompiledMultiMethod extends Func {
             }
         }
 
-        throw new InterpreterException("Could not match arguments (" + argument + ") to any method cases");
+        throw new InterpreterException("Could not match arguments " + argument + " to any method cases");
     }
 
     @Override

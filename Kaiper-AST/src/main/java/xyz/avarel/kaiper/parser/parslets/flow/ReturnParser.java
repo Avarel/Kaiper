@@ -21,12 +21,12 @@ import xyz.avarel.kaiper.ast.flow.ReturnExpr;
 import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 public class ReturnParser implements PrefixParser {
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
+    public Expr parse(ExprParser parser, Token token) {
         Expr expr;
         if (parser.nextIsAny(TokenType.LINE, TokenType.RIGHT_BRACE)) {
             expr = NullNode.VALUE;

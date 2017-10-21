@@ -27,13 +27,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class PatternParser extends KaiperParser {
-    private final KaiperParser parser;
+public class PatternParser extends ExprParser {
     private final Set<String> usedIdentifiers;
 
-    public PatternParser(KaiperParser parser) {
+    public PatternParser(ExprParser parser) {
         super(parser);
-        this.parser = parser;
         this.usedIdentifiers = new HashSet<>();
     }
 
@@ -55,23 +53,15 @@ public class PatternParser extends KaiperParser {
             String name = token.getString();
 
             if (usedIdentifiers.contains(name)) {
-                throw new SyntaxException("Duplicate pattern name", token.getPosition());
+                throw new SyntaxException("Duplicate argument name", token.getPosition());
             } else {
                 usedIdentifiers.add(name);
             }
 
-//            if (match(TokenType.COLON)) {
-//                if (match(TokenType.LEFT_PAREN)) {
-//                    basePattern = new NestedPattern(name, new PatternParser(parser).parsePatternCase());
-//                    eat(TokenType.RIGHT_PAREN);
-//                } else {
-//                    basePattern = new TuplePattern(name, parseExpr());
-//                }
-//            } else {
             VariablePattern pattern = new VariablePattern(name);
 
             if (match(TokenType.ASSIGN)) {
-                return new DefaultPattern(pattern, parseExpr());
+                return new DefaultPattern(pattern, parseExpr(Precedence.FREEFORM_STRUCT));
             }
 
             return pattern;

@@ -7,7 +7,7 @@ import xyz.avarel.kaiper.compiler.ExprCompiler;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
@@ -50,7 +50,7 @@ public class KaiperCompiler {
         return stream.toByteArray();
     }
 
-    private final KaiperParser parser;
+    private final ExprParser parser;
     private final Scope scope;
     private byte[] compiledBytes;
 
@@ -71,10 +71,10 @@ public class KaiperCompiler {
     }
 
     public KaiperCompiler(KaiperLexer lexer, Scope scope) {
-        this(new KaiperParser(lexer), scope);
+        this(new ExprParser(lexer), scope);
     }
 
-    public KaiperCompiler(KaiperParser parser, Scope scope) {
+    public KaiperCompiler(ExprParser parser, Scope scope) {
         this.parser = parser;
         this.scope = scope;
     }
@@ -109,7 +109,7 @@ public class KaiperCompiler {
         }
     }
 
-    public KaiperParser getParser() {
+    public ExprParser getParser() {
         return parser;
     }
 

@@ -21,7 +21,7 @@ import xyz.avarel.kaiper.exceptions.*;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.interpreter.VisitorSettings;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.DefaultScope;
@@ -156,7 +156,7 @@ public class KaiperEvaluator {
      *          Error during the lexing or parsing process of the expression.
      */
     public Obj eval(KaiperLexer lexer) {
-        return eval(new KaiperParser(lexer).parse());
+        return eval(new ExprParser(lexer).parse());
     }
 
     // comment

@@ -26,7 +26,7 @@ import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.parser.BinaryParser;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 
 public class BinaryOperatorParser extends BinaryParser {
     private final BinaryOperatorType operator;
@@ -37,7 +37,7 @@ public class BinaryOperatorParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Expr left, Token token) {
+    public Expr parse(ExprParser parser, Expr left, Token token) {
         Expr right = parser.parseExpr(getPrecedence() - (isLeftAssoc() ? 0 : 1));
 
         if (left instanceof IntNode) {

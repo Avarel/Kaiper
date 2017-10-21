@@ -38,9 +38,17 @@ public class PatternCase implements Comparable<PatternCase> {
         return patterns;
     }
 
+    public PatternCase subList(int start) {
+        return subList(start, size());
+    }
+
+    public PatternCase subList(int start, int end) {
+        return new PatternCase(patterns.subList(start, end));
+    }
+
     public String toString() {
         if (patterns.isEmpty()) {
-            return "";
+            return "()";
         }
 
         StringBuilder sb = new StringBuilder("(");

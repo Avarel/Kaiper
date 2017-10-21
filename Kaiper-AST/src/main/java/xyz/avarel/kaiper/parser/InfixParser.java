@@ -20,7 +20,7 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.lexer.Token;
 
 public interface InfixParser {
-    Expr parse(KaiperParser parser, Expr left, Token token);
+    Expr parse(ExprParser parser, Expr left, Token token);
 
     int getPrecedence();
 }

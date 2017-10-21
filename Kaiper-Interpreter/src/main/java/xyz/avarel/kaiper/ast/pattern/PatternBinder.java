@@ -21,7 +21,7 @@ import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
-public class PatternBinder implements PatternVisitor<Boolean, PatternContext> {
+public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.PatternContext> {
     private final ExprInterpreter interpreter;
     private final Scope<String, Obj> scope;
 
@@ -30,14 +30,13 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternContext> {
         this.scope = scope;
     }
 
-    public boolean declareFrom(PatternCase patternCase, Tuple tuple) {
-        System.out.println(patternCase);
-
-        PatternContext context = new PatternContext(patternCase, tuple, 0);
+    public boolean bind(PatternCase patternCase, Tuple tuple) {
+        PatternContext context = new PatternContext(patternCase, tuple);
         for (Pattern pattern : patternCase.getPatterns()) {
             if (!pattern.accept(this, context)) {
                 return false;
             }
+            context.currentPatternIndex++;
         }
 
         return true;
@@ -45,17 +44,23 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternContext> {
 
     @Override
     public Boolean visit(VariablePattern pattern, PatternContext patternContext) {
-        if (patternContext.tuple.size() <= patternContext.position) {
+        if (patternContext.tuple.size() <= patternContext.tupleIndex) {
             return false;
         }
 
-        ExprInterpreter.declare(scope, pattern.getName(), patternContext.tuple.get(patternContext.position++));
+        ExprInterpreter.declare(scope, pattern.getName(), patternContext.tuple.get(patternContext.tupleIndex++));
         return true;
     }
 
     @Override
     public Boolean visit(DefaultPattern pattern, PatternContext patternContext) {
-        if (!pattern.getDelegate().accept(this, patternContext)) {
+        // def what(x = 1, y = 2, z) = "$x $y $z"
+        //def what(a, b=2, c=3,d=4,e) = [a,b,c,d,e]
+        // def what(a, b=2, c,d=4,e) = [a,b,c,d,e]
+
+        int remainingRequiredArgs = patternContext.patternCase.subList(patternContext.currentPatternIndex).arity();
+        int remainingTupleElements = patternContext.tuple.size() - patternContext.tupleIndex;
+        if (remainingRequiredArgs >= remainingTupleElements || !pattern.getDelegate().accept(this, patternContext)) {
             ExprInterpreter.declare(scope, pattern.getName(), pattern.getDefault().accept(interpreter, scope));
         }
 
@@ -64,21 +69,34 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternContext> {
 
     @Override
     public Boolean visit(ValuePattern pattern, PatternContext patternContext) {
-        if (patternContext.tuple.size() <= patternContext.position) {
+        if (patternContext.tuple.size() <= patternContext.tupleIndex) {
             return false;
         }
 
         Obj obj = interpreter.resultOf(pattern.getExpr(), scope);
-        return obj.equals(patternContext.tuple.get(patternContext.position++));
+        return obj.equals(patternContext.tuple.get(patternContext.tupleIndex++));
     }
 
     @Override
     public Boolean visit(NestedPattern pattern, PatternContext patternContext) {
-        return patternContext.tuple.size() > patternContext.position &&
-                new PatternBinder(interpreter, scope).declareFrom(
+        return patternContext.tuple.size() > patternContext.tupleIndex &&
+                new PatternBinder(interpreter, scope).bind(
                         pattern.getPattern(),
-                        patternContext.tuple.get(patternContext.position++)
+                        patternContext.tuple.get(patternContext.tupleIndex++)
                                 .as(Tuple.TYPE)
         );
+    }
+
+    static class PatternContext {
+        private final PatternCase patternCase;
+        private final Tuple tuple;
+
+        private int currentPatternIndex;
+        private int tupleIndex;
+
+        private PatternContext(PatternCase patternCase, Tuple tuple) {
+            this.patternCase = patternCase;
+            this.tuple = tuple;
+        }
     }
 }

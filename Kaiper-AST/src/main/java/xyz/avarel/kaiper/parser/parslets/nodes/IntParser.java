@@ -19,12 +19,12 @@ package xyz.avarel.kaiper.parser.parslets.nodes;
 import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.value.IntNode;
 import xyz.avarel.kaiper.lexer.Token;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 public class IntParser implements PrefixParser {
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
+    public Expr parse(ExprParser parser, Token token) {
         return new IntNode(Integer.parseInt(token.getString()));
     }
 }
