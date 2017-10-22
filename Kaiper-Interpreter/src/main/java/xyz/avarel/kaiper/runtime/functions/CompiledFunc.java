@@ -16,7 +16,7 @@
 
 package xyz.avarel.kaiper.runtime.functions;
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.pattern.PatternBinder;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.InterpreterException;

@@ -16,7 +16,7 @@
 
 package xyz.avarel.kaiper;
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.SyntaxException;

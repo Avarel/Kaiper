@@ -16,8 +16,8 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.value.NullNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.value.NullNode;
 
 // a: is Int
 // a: 2

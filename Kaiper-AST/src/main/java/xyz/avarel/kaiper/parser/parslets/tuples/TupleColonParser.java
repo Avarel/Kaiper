@@ -16,9 +16,9 @@
 package xyz.avarel.kaiper.parser.parslets.tuples;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.tuples.FreeFormStruct;
-import xyz.avarel.kaiper.ast.variables.Identifier;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
+import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;

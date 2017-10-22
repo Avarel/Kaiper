@@ -19,7 +19,6 @@ package xyz.avarel.kaiper.runtime.java;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
-import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.lang.reflect.Field;
@@ -89,9 +88,7 @@ public class JavaStaticField implements Obj {
     public Obj invoke(Tuple tuple) {
         if (name == null) return Null.VALUE;
 
-        List<Obj> arguments = tuple.getAttr("value").as(Array.TYPE);
-
-        List<Object> nativeArgs = arguments.stream()
+        List<Object> nativeArgs = tuple.asList().stream()
                 .map(Obj::toJava)
                 .map(o -> o != Null.VALUE ? o : null)
                 .collect(Collectors.toList());

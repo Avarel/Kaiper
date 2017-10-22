@@ -1,6 +1,6 @@
 package xyz.avarel.kaiper;
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.bytecode.KaiperBytecode;
 import xyz.avarel.kaiper.bytecode.io.KDataOutputStream;
 import xyz.avarel.kaiper.compiler.ExprCompiler;

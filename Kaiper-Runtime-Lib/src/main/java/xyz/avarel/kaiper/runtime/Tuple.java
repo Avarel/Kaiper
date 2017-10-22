@@ -95,6 +95,11 @@ public class Tuple implements Obj {
         return list.size();
     }
 
+    // INTERNAL
+    public List<Obj> asList() {
+        return list;
+    }
+
     @Override
     public Obj get(Obj key) {
         if (key instanceof Int) {

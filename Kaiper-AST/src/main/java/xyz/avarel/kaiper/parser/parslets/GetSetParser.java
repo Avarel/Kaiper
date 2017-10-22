@@ -17,10 +17,10 @@
 package xyz.avarel.kaiper.parser.parslets;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.collections.GetOperation;
-import xyz.avarel.kaiper.ast.operations.SliceOperation;
-import xyz.avarel.kaiper.ast.value.NullNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.collections.GetOperation;
+import xyz.avarel.kaiper.ast.expr.operations.SliceOperation;
+import xyz.avarel.kaiper.ast.expr.value.NullNode;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;

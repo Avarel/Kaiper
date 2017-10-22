@@ -16,7 +16,7 @@
 
 package xyz.avarel.kaiper.parser.parslets;
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.parser.ExprParser;
 
 public interface PostParser {

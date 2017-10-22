@@ -16,7 +16,7 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 
 // (delegate) = (defaultExpr)
 public class DefaultPattern extends NamedPattern {

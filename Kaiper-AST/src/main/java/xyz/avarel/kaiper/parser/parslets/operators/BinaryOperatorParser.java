@@ -16,11 +16,11 @@
 
 package xyz.avarel.kaiper.parser.parslets.operators;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.value.BooleanNode;
-import xyz.avarel.kaiper.ast.value.DecimalNode;
-import xyz.avarel.kaiper.ast.value.IntNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
+import xyz.avarel.kaiper.ast.expr.value.BooleanNode;
+import xyz.avarel.kaiper.ast.expr.value.DecimalNode;
+import xyz.avarel.kaiper.ast.expr.value.IntNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;

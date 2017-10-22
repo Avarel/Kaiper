@@ -17,7 +17,7 @@
 package xyz.avarel.kaiper.parser.parslets.functional;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.ExprParser;

@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -74,7 +75,7 @@ public class KaiperClassInvocationHandler implements InvocationHandler {
 
         Obj returnObj;
         if (args != null) { // todo not converted to tuple
-            returnObj = obj.invoke(new Tuple(JavaUtils.mapJavaToKaiperType(args).as(Array.TYPE)));
+            returnObj = obj.invoke(new Tuple((List<Obj>) JavaUtils.mapJavaToKaiperType(args).as(Array.TYPE)));
         } else {
             returnObj = obj.invoke(new Tuple());
         }

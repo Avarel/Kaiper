@@ -16,8 +16,8 @@
 
 package xyz.avarel.kaiper.parser.parslets.flow;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.flow.ForEachExpr;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.flow.ForEachExpr;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;

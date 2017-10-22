@@ -16,20 +16,23 @@
 
 package xyz.avarel.kaiper.ast;
 
-import xyz.avarel.kaiper.ast.collections.ArrayNode;
-import xyz.avarel.kaiper.ast.collections.DictionaryNode;
-import xyz.avarel.kaiper.ast.collections.GetOperation;
-import xyz.avarel.kaiper.ast.collections.SetOperation;
-import xyz.avarel.kaiper.ast.flow.*;
-import xyz.avarel.kaiper.ast.functions.FunctionNode;
-import xyz.avarel.kaiper.ast.invocation.Invocation;
-import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.operations.SliceOperation;
-import xyz.avarel.kaiper.ast.operations.UnaryOperation;
-import xyz.avarel.kaiper.ast.tuples.FreeFormStruct;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
-import xyz.avarel.kaiper.ast.value.*;
-import xyz.avarel.kaiper.ast.variables.*;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.ModuleNode;
+import xyz.avarel.kaiper.ast.expr.TypeNode;
+import xyz.avarel.kaiper.ast.expr.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.expr.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.expr.collections.GetOperation;
+import xyz.avarel.kaiper.ast.expr.collections.SetOperation;
+import xyz.avarel.kaiper.ast.expr.flow.*;
+import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
+import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
+import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
+import xyz.avarel.kaiper.ast.expr.operations.SliceOperation;
+import xyz.avarel.kaiper.ast.expr.operations.UnaryOperation;
+import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
+import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
+import xyz.avarel.kaiper.ast.expr.value.*;
+import xyz.avarel.kaiper.ast.expr.variables.*;
 
 /**
  * Visitor patterns for {@link Expr expression} AST classes.

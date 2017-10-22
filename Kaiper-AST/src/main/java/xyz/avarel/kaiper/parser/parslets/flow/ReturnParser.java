@@ -16,9 +16,9 @@
 
 package xyz.avarel.kaiper.parser.parslets.flow;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.flow.ReturnExpr;
-import xyz.avarel.kaiper.ast.value.NullNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.flow.ReturnExpr;
+import xyz.avarel.kaiper.ast.expr.value.NullNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;

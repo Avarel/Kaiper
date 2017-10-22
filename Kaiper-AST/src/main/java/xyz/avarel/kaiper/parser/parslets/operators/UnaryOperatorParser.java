@@ -17,11 +17,11 @@
 package xyz.avarel.kaiper.parser.parslets.operators;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.operations.UnaryOperation;
-import xyz.avarel.kaiper.ast.value.BooleanNode;
-import xyz.avarel.kaiper.ast.value.DecimalNode;
-import xyz.avarel.kaiper.ast.value.IntNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.operations.UnaryOperation;
+import xyz.avarel.kaiper.ast.expr.value.BooleanNode;
+import xyz.avarel.kaiper.ast.expr.value.DecimalNode;
+import xyz.avarel.kaiper.ast.expr.value.IntNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.operations.UnaryOperatorType;
 import xyz.avarel.kaiper.parser.ExprParser;

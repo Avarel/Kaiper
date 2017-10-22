@@ -16,8 +16,8 @@
 package xyz.avarel.kaiper.parser.parslets.tuples;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;

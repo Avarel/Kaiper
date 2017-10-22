@@ -17,11 +17,11 @@
 package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.collections.GetOperation;
-import xyz.avarel.kaiper.ast.collections.SetOperation;
-import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
-import xyz.avarel.kaiper.ast.variables.Identifier;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.collections.GetOperation;
+import xyz.avarel.kaiper.ast.expr.collections.SetOperation;
+import xyz.avarel.kaiper.ast.expr.variables.AssignmentExpr;
+import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;

@@ -16,8 +16,8 @@
 
 package xyz.avarel.kaiper.parser.parslets.nodes;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.value.IntNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.value.IntNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PrefixParser;

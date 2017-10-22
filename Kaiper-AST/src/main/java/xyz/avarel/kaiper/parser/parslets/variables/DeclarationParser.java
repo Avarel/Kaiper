@@ -16,13 +16,13 @@
 
 package xyz.avarel.kaiper.parser.parslets.variables;
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.value.NullNode;
+import xyz.avarel.kaiper.ast.expr.variables.BindDeclarationExpr;
+import xyz.avarel.kaiper.ast.expr.variables.DeclarationExpr;
 import xyz.avarel.kaiper.ast.pattern.Pattern;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.ast.pattern.VariablePattern;
-import xyz.avarel.kaiper.ast.value.NullNode;
-import xyz.avarel.kaiper.ast.variables.BindDeclarationExpr;
-import xyz.avarel.kaiper.ast.variables.DeclarationExpr;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;

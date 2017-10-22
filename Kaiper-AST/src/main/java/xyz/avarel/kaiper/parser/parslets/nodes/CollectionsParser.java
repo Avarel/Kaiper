@@ -17,9 +17,9 @@
 package xyz.avarel.kaiper.parser.parslets.nodes;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.collections.ArrayNode;
-import xyz.avarel.kaiper.ast.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.expr.collections.DictionaryNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;

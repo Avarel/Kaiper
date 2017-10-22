@@ -20,7 +20,7 @@
 package xyz.avarel.kaiper.others;
 
 import xyz.avarel.kaiper.KaiperCompiler;
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.parser.ExprParser;

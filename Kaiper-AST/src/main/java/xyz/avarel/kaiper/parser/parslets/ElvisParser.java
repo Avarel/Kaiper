@@ -17,10 +17,10 @@
 package xyz.avarel.kaiper.parser.parslets;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.flow.ConditionalExpr;
-import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.value.NullNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.flow.ConditionalExpr;
+import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
+import xyz.avarel.kaiper.ast.expr.value.NullNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.parser.BinaryParser;

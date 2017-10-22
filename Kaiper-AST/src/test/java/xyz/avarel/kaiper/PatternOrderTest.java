@@ -17,12 +17,12 @@
 package xyz.avarel.kaiper;
 
 import org.junit.Test;
+import xyz.avarel.kaiper.ast.expr.value.IntNode;
+import xyz.avarel.kaiper.ast.expr.value.NullNode;
 import xyz.avarel.kaiper.ast.pattern.DefaultPattern;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.ast.pattern.ValuePattern;
 import xyz.avarel.kaiper.ast.pattern.VariablePattern;
-import xyz.avarel.kaiper.ast.value.IntNode;
-import xyz.avarel.kaiper.ast.value.NullNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;

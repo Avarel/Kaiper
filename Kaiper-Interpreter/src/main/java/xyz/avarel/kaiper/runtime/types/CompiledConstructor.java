@@ -17,7 +17,7 @@
 //package xyz.avarel.kaiper.runtime.types;
 //
 //import xyz.avarel.kaiper.GenericScope;
-//import xyz.avarel.kaiper.ast.Expr;
+//import xyz.avarel.kaiper.ast.expr.Expr;
 //import xyz.avarel.kaiper.ast.pattern.PatternBinder;
 //import xyz.avarel.kaiper.ast.pattern.PatternCase;
 //import xyz.avarel.kaiper.exceptions.ComputeException;
