@@ -20,7 +20,8 @@ import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.lexer.Position;
 
-// todo fixme
+// todo REMOVE
+@Deprecated
 public class SliceOperation extends Expr {
     private final Expr left;
     private final Expr start;

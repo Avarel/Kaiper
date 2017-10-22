@@ -56,6 +56,22 @@ public class Invocation extends Expr {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Invocation)) return false;
+
+        Invocation that = (Invocation) o;
+        return left.equals(that.left) && argument.equals(that.argument);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = left.hashCode();
+        result = 31 * result + argument.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         return left + "(" + argument + ")";
     }

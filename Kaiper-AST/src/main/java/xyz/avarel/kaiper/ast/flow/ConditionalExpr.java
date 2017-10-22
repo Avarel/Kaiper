@@ -66,6 +66,26 @@ public class ConditionalExpr extends Expr {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ConditionalExpr)) return false;
+
+        ConditionalExpr that = (ConditionalExpr) o;
+
+        return condition.equals(that.condition)
+                && ifBranch.equals(that.ifBranch)
+                && (elseBranch != null ? elseBranch.equals(that.elseBranch) : that.elseBranch == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = condition.hashCode();
+        result = 31 * result + ifBranch.hashCode();
+        result = 31 * result + (elseBranch != null ? elseBranch.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "conditional";
     }

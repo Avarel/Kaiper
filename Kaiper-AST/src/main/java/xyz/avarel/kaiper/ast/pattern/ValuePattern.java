@@ -17,6 +17,7 @@
 package xyz.avarel.kaiper.ast.pattern;
 
 import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.value.NullNode;
 
 // a: is Int
 // a: 2
@@ -36,6 +37,26 @@ public class ValuePattern extends Pattern {
     @Override
     public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
+    }
+
+    @Override
+    public int compareTo(Pattern other) {
+        int compare = super.compareTo(other);
+
+        if (compare == 0 && other instanceof ValuePattern) {
+            ValuePattern value = (ValuePattern) other;
+
+            // special workaround for null value atterns
+            if (expr == NullNode.VALUE) {
+                return expr == value.expr ? 0 : 1;
+            } else if (value.expr == NullNode.VALUE) {
+                return expr == value.expr ? 0 : -1;
+            }
+
+            return Integer.compare(expr.hashCode(), value.expr.hashCode());
+        }
+
+        return compare;
     }
 
     @Override

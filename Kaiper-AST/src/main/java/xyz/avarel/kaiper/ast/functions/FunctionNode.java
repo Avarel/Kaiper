@@ -67,6 +67,26 @@ public class FunctionNode extends Expr {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FunctionNode)) return false;
+
+        FunctionNode that = (FunctionNode) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (!patternCase.equals(that.patternCase)) return false;
+        return expr.equals(that.expr);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + patternCase.hashCode();
+        result = 31 * result + expr.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "def" + (name != null ? " " + name : "") + patternCase;
     }

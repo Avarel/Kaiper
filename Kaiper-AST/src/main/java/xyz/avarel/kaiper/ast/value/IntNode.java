@@ -37,6 +37,11 @@ public class IntNode extends Expr {
     }
 
     @Override
+    public int hashCode() {
+        return Integer.hashCode(value);
+    }
+
+    @Override
     public String toString() {
         return String.valueOf(value);
     }

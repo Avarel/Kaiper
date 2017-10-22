@@ -74,6 +74,23 @@ public class AssignmentExpr extends Expr {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AssignmentExpr)) return false;
+
+        AssignmentExpr that = (AssignmentExpr) o;
+        return (parent != null ? parent.equals(that.parent) : that.parent == null) && name.equals(that.name) && expr.equals(that.expr);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = parent != null ? parent.hashCode() : 0;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + expr.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         if (parent == null)
         return name + " = " + expr;

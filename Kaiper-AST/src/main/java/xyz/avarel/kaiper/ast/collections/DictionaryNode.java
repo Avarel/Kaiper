@@ -50,6 +50,11 @@ public class DictionaryNode extends Expr {
     }
 
     @Override
+    public int hashCode() {
+        return map.hashCode();
+    }
+
+    @Override
     public String toString() {
         return map.toString();
     }

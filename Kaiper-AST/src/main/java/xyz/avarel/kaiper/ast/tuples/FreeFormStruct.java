@@ -49,6 +49,11 @@ public class FreeFormStruct extends Expr {
     }
 
     @Override
+    public int hashCode() {
+        return elements.hashCode();
+    }
+
+    @Override
     public String toString() {
         return elements.toString();
     }

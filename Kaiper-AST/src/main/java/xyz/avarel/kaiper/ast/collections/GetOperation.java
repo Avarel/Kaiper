@@ -55,6 +55,22 @@ public class GetOperation extends Expr {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GetOperation)) return false;
+
+        GetOperation that = (GetOperation) o;
+        return left.equals(that.left) && key.equals(that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = left.hashCode();
+        result = 31 * result + key.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         return left + "[" + key + "]";
     }

@@ -72,8 +72,15 @@ public class Identifier extends Expr {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof Identifier
+        return this == o || o instanceof Identifier
                 && parent.equals(((Identifier) o).parent)
                 && name.equals(((Identifier) o).name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = parent != null ? parent.hashCode() : 0;
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }

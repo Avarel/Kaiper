@@ -56,6 +56,24 @@ public class SetOperation extends GetOperation {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SetOperation)) return false;
+        if (!super.equals(o)) return false;
+
+        SetOperation that = (SetOperation) o;
+
+        return expr.equals(that.expr);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + expr.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         return super.toString() + " = " + expr;
     }

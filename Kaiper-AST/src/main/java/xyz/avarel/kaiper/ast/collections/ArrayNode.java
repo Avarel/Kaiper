@@ -58,6 +58,11 @@ public class ArrayNode extends Expr {
     }
 
     @Override
+    public int hashCode() {
+        return items.hashCode();
+    }
+
+    @Override
     public String toString() {
         return items.toString();
     }

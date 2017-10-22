@@ -42,6 +42,11 @@ public class DecimalNode extends Expr {
     }
 
     @Override
+    public int hashCode() {
+        return Double.hashCode(value);
+    }
+
+    @Override
     public String toString() {
         return String.valueOf(value);
     }

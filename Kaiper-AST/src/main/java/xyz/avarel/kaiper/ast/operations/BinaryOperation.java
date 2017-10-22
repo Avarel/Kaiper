@@ -70,6 +70,14 @@ public class BinaryOperation extends Expr {
     }
 
     @Override
+    public int hashCode() {
+        int result = left.hashCode();
+        result = 31 * result + right.hashCode();
+        result = 31 * result + operator.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         return operator + "(" + left + ", " + right + ")";
     }
