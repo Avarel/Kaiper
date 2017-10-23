@@ -1,7 +1,9 @@
-let tuple = 1, 2
+let x = 4
 
-match () {
-    (1, 2) -> "WOAH"
-    3 -> "WHAT"
-    _ -> "oh well"
+match x {
+    1 -> "one"
+    2 -> "two"
+    3 -> "three"
+    4 -> "four"
+    x -> "what is $x?"
 }

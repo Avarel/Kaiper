@@ -52,7 +52,6 @@ import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.scope.Scope;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -442,13 +441,14 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
     @Override
     public Obj visit(TupleExpr expr, Scope<String, Obj> scope) {
-        List<Obj> list = new ArrayList<>(expr.size());
+        Obj[] values = new Obj[expr.size()];
 
-        for (Expr element : expr.getElements()) {
-            list.add(resultOf(element, scope));
+        List<Expr> elements = expr.getElements();
+        for (int i = 0; i < elements.size(); i++) {
+            values[i] = resultOf(elements.get(i), scope);
         }
 
-        return new Tuple(list);
+        return new Tuple(values);
     }
 
     @Override

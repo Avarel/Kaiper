@@ -38,6 +38,15 @@ public class PatternCase implements Comparable<PatternCase> {
         return patterns;
     }
 
+    public boolean isNested() {
+        for (Pattern i : patterns) {
+            if (i instanceof NestedPattern) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public PatternCase subList(int start) {
         return subList(start, size());
     }

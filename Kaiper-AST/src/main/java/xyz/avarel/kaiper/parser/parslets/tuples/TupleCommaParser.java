@@ -38,6 +38,10 @@ public class TupleCommaParser extends BinaryParser {
         exprs.add(left);
 
         do {
+            if (parser.getPrefixParsers().get(parser.peek(0).getType()) == null) {
+                break;
+            }
+
             exprs.add(parser.parseExpr(Precedence.TUPLE));
         } while (parser.match(TokenType.COMMA));
 

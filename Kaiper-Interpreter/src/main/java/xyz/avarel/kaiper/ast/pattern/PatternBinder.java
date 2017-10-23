@@ -94,7 +94,7 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
 
         Tuple tuple = (Tuple) obj;
 
-        return new PatternBinder(interpreter, scope).bind(pattern.getPattern(), tuple);
+        return bind(pattern.getPattern(), tuple);
     }
 
     static class PatternContext {
