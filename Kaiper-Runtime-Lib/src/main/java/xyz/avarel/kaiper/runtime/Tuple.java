@@ -100,6 +100,7 @@ public class Tuple implements Obj {
         if (key instanceof Int) {
             return get((Int) key);
         }
+
         return Null.VALUE;
     }
 

@@ -74,10 +74,6 @@ public class PatternParser extends ExprParser {
 
             eat(TokenType.RIGHT_PAREN);
 
-            if (patternCase.size() < 2) {
-                throw new SyntaxException("Nested patterns needs to have 2 or more parameters");
-            }
-
             return new NestedPattern(patternCase);
         } else if (match(TokenType.UNDERSCORE)) {
             return WildcardPattern.INSTANCE;
