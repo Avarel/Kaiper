@@ -23,6 +23,7 @@ import xyz.avarel.kaiper.operations.UnaryOperatorType;
 import xyz.avarel.kaiper.parser.parslets.*;
 import xyz.avarel.kaiper.parser.parslets.flow.ForEachParser;
 import xyz.avarel.kaiper.parser.parslets.flow.IfElseParser;
+import xyz.avarel.kaiper.parser.parslets.flow.MatchParser;
 import xyz.avarel.kaiper.parser.parslets.flow.ReturnParser;
 import xyz.avarel.kaiper.parser.parslets.functional.InvocationParser;
 import xyz.avarel.kaiper.parser.parslets.functional.PipeForwardParser;
@@ -48,6 +49,7 @@ public class DefaultGrammar extends Grammar {
         infix(TokenType.COLON, new TupleColonParser());
 
         // FLOW CONTROL
+        prefix(TokenType.MATCH, new MatchParser());
         prefix(TokenType.IF, new IfElseParser());
         prefix(TokenType.FOR, new ForEachParser());
         prefix(TokenType.RETURN, new ReturnParser());

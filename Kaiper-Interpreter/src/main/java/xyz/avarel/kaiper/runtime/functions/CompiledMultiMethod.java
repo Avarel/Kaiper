@@ -43,10 +43,8 @@ public class CompiledMultiMethod extends Func {
         return branches;
     }
 
-    public void addCase(CompiledFunc func) {
-        if (!branches.add(func)) {
-            throw new InterpreterException("Internal: duplicate definition for method " + getName());
-        }
+    public boolean addCase(CompiledFunc func) {
+        return branches.add(func);
     }
 
     @Override

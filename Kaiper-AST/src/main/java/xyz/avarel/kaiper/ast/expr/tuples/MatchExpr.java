@@ -14,37 +14,35 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.ast.expr.value;
+package xyz.avarel.kaiper.ast.expr.tuples;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
+import xyz.avarel.kaiper.lexer.Position;
 
-import java.util.Objects;
+import java.util.Map;
 
-public class NullNode extends Expr {
-    public static final NullNode VALUE = new NullNode();
+public class MatchExpr extends Expr {
+    private final TupleExpr target;
+    private final Map<PatternCase, Expr> cases;
 
-    private NullNode() {
-        super(null);
+    public MatchExpr(Position position, TupleExpr target, Map<PatternCase, Expr> cases) {
+        super(position);
+        this.target = target;
+        this.cases = cases;
+    }
+
+    public TupleExpr getTarget() {
+        return target;
+    }
+
+    public Map<PatternCase, Expr> getCases() {
+        return cases;
     }
 
     @Override
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return this == obj;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(null);
-    }
-
-    @Override
-    public String toString() {
-        return "null";
     }
 }

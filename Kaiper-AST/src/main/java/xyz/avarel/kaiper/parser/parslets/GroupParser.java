@@ -17,7 +17,7 @@
 package xyz.avarel.kaiper.parser.parslets;
 
 import xyz.avarel.kaiper.ast.expr.Expr;
-import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
+import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;
@@ -29,7 +29,7 @@ public class GroupParser implements PrefixParser {
     @Override
     public Expr parse(ExprParser parser, Token token) {
         if (parser.match(TokenType.RIGHT_PAREN)) {
-            return new FreeFormStruct(token.getPosition(), Collections.emptyMap());
+            return new TupleExpr(token.getPosition(), Collections.emptyList());
         }
 
         Expr expr = parser.parseExpr();

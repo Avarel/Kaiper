@@ -39,6 +39,17 @@ public class NestedPattern extends Pattern {
     }
 
     @Override
+    public int compareTo(Pattern other) {
+        int compare = super.compareTo(other);
+
+        if (compare == 0 && other instanceof NestedPattern) {
+            return pattern.compareTo(((NestedPattern) other).pattern);
+        }
+
+        return compare;
+    }
+
+    @Override
     public String toString() {
         return pattern.toString();
     }

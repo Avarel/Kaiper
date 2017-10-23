@@ -38,9 +38,9 @@ public class ScriptExpr extends Expr {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
+    public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         try {
-            return expr.accept(visitor, scope);
+            return expr.accept(visitor, context);
         } catch (ReturnException re) {
             return (R) re.getValue();
         } catch (KaiperException re) {

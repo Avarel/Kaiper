@@ -31,10 +31,12 @@ import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.expr.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.expr.operations.UnaryOperation;
 import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
+import xyz.avarel.kaiper.ast.expr.tuples.MatchExpr;
 import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.expr.value.*;
 import xyz.avarel.kaiper.ast.expr.variables.*;
 import xyz.avarel.kaiper.ast.pattern.PatternBinder;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
@@ -101,7 +103,9 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             declare(scope, expr.getName(), multiMethod);
         }
 
-        multiMethod.addCase(new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope));
+        if (!multiMethod.addCase(new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope))) {
+            throw new InterpreterException("Ambiguous pattern for function " + multiMethod.getName() + expr.getPosition());
+        }
 
         return multiMethod;
     }
@@ -126,8 +130,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
         Obj target = resultOf(expr.getLeft(), scope);
 
         Obj argument = resultOf(expr.getArgument(), scope);
-
-        Tuple tuple = argument instanceof Tuple ? (Tuple) argument : new Tuple(argument);
+        Tuple tuple = (Tuple) argument;
 
         recursionDepth++;
         Obj result = target.invoke(tuple);
@@ -242,12 +245,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
     @Override
     public Obj visit(SliceOperation expr, Scope<String, Obj> scope) {
-        Obj obj = resultOf(expr.getLeft(), scope);
-        Obj start = resultOf(expr.getStart(), scope);
-        Obj end = resultOf(expr.getEnd(), scope);
-        Obj step = resultOf(expr.getStep(), scope);
-
-        return obj.slice(start, end, step);
+        throw new UnsupportedOperationException("Up for removal");
     }
 
     @Override
@@ -456,15 +454,6 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
     @Override
     public Obj visit(FreeFormStruct expr, Scope<String, Obj> scope) {
         throw new UnsupportedOperationException("in progress");
-
-//        Map<String, Obj> map = new LinkedHashMap<>();
-//
-//        for (Map.Entry<String, Expr> entry : expr.getElements().entrySet()) {
-//            // confirmed by the compiler
-//            map.put(entry.getKey(), resultOf(entry.getValue(), scope));
-//        }
-//
-//        return new Dictionary(map);
     }
 
     @Override
@@ -486,19 +475,24 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
     @Override
     public Obj visit(BindAssignmentExpr expr, Scope<String, Obj> scope) {
-//        Obj value = resultOf(expr.getExpr(), scope);
-//
-//        if (!(value instanceof Tuple)) {
-//            value = new Tuple(value);
-//        }
-//
-//        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).assignFrom((Tuple) value);
-//
-//        if (!result) {
-            throw new InterpreterException("unsupported", expr.getPosition());
-//        }
+        throw new InterpreterException("Up for removal", expr.getPosition());
+    }
 
-//        return Null.VALUE;
+    @Override
+    public Obj visit(MatchExpr expr, Scope<String, Obj> scope) {
+        Obj argument = resultOf(expr.getTarget(), scope);
+        Tuple tuple = (Tuple) argument;
+
+
+        for (Map.Entry<PatternCase, Expr> entry : expr.getCases().entrySet()) {
+            Scope<String, Obj> subScope = scope.subScope();
+
+            if (new PatternBinder(this, subScope).bind(entry.getKey(), tuple)) {
+                return resultOf(entry.getValue(), subScope);
+            }
+        }
+
+        throw new InterpreterException("No match cases", expr.getPosition());
     }
 
     public Obj resultOf(Expr expr, Scope<String, Obj> scope) {

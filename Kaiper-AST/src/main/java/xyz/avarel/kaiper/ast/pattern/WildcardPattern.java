@@ -14,11 +14,25 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.parser.parslets;
+package xyz.avarel.kaiper.ast.pattern;
 
-import xyz.avarel.kaiper.ast.expr.Expr;
-import xyz.avarel.kaiper.parser.ExprParser;
+public class WildcardPattern extends Pattern {
+    public static WildcardPattern INSTANCE = new WildcardPattern();
 
-public interface PostParser {
-    Expr process(ExprParser parser, Expr expr);
+    private WildcardPattern() {}
+
+    @Override
+    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
+        return visitor.visit(this, scope);
+    }
+
+    @Override
+    public String toString() {
+        return "_";
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 }

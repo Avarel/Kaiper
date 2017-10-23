@@ -20,6 +20,7 @@ import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.lexer.Position;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class TupleExpr extends Expr {
@@ -39,8 +40,8 @@ public class TupleExpr extends Expr {
     }
 
     @Override
-    public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
-        return visitor.visit(this, scope);
+    public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
+        return visitor.visit(this, context);
     }
 
     @Override
@@ -55,6 +56,34 @@ public class TupleExpr extends Expr {
 
     @Override
     public String toString() {
-        return elements.toString();
+        StringBuilder sb = new StringBuilder("(");
+
+        Iterator<Expr> iterator = elements.iterator();
+
+        while (true) {
+            sb.append(iterator.next());
+            if (iterator.hasNext()) {
+                sb.append(", ");
+            } else {
+                break;
+            }
+        }
+
+        sb.append(')');
+
+        return sb.toString();
+    }
+
+    @Override
+    public void ast(StringBuilder builder, String indent, boolean isTail) {
+        builder.append(indent).append(isTail ? "└── " : "├── ").append("list");
+        for (int i = 0; i < elements.size() - 1; i++) {
+            builder.append('\n');
+            elements.get(i).ast(builder, indent + (isTail ? "    " : "│   "), false);
+        }
+        if (elements.size() > 0) {
+            builder.append('\n');
+            elements.get(elements.size() - 1).ast(builder, indent + (isTail ? "    " : "│   "), true);
+        }
     }
 }

@@ -1,5 +1,7 @@
-def fib(1) = 1
-def fib(0) = 0
-def fib(x) = fib(x - 1) + fib(x - 2)
+let tuple = 1, 2
 
-fib(15)
+match () {
+    (1, 2) -> "WOAH"
+    3 -> "WHAT"
+    _ -> "oh well"
+}

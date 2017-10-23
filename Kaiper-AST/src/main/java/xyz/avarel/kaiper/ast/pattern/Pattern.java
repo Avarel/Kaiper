@@ -16,10 +16,10 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-// Tuple Patterns
-//
-//
-//
+// Nested Patterns
+// Value Patterns
+// Variable Pattern, Default Patterns, Wildcards
+// Lower arity
 public abstract class Pattern implements Comparable<Pattern> {
     @Override
     public int compareTo(Pattern other) {

@@ -29,13 +29,9 @@ public class FileTest {
     public static void main(String[] args) throws Exception {
         KaiperScript exp = new KaiperScript(new FileReader(new File("script.kip")));
 
-        exp.getScope().put("print", new RuntimeMultimethod("println")
+        exp.getScope().put("println", new RuntimeMultimethod("println")
                 .addCase(new RuntimePatternCase("value"), scope -> {
-                    System.out.print(scope.get("value"));
-                    return Null.VALUE;
-                })
-                .addCase(new RuntimePatternCase("ln"), scope -> {
-                    System.out.println(scope.get("ln"));
+                    System.out.println(scope.get("value"));
                     return Null.VALUE;
                 })
         );

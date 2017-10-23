@@ -66,6 +66,10 @@ public class PatternParser extends ExprParser {
 
             return pattern;
         } else if (match(TokenType.LEFT_PAREN)) {
+            if (match(TokenType.RIGHT_PAREN)) {
+                return new NestedPattern(PatternCase.EMPTY);
+            }
+
             PatternCase patternCase = parsePatternCase();
 
             eat(TokenType.RIGHT_PAREN);
@@ -75,6 +79,8 @@ public class PatternParser extends ExprParser {
             }
 
             return new NestedPattern(patternCase);
+        } else if (match(TokenType.UNDERSCORE)) {
+            return WildcardPattern.INSTANCE;
         } else {
             match(TokenType.EQUALS);
             return new ValuePattern(parseExpr(Precedence.FREEFORM_STRUCT));

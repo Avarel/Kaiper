@@ -122,6 +122,21 @@ public class Tuple implements Obj {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tuple)) return false;
+
+        Tuple tuple = (Tuple) o;
+
+        return list.equals(tuple.list);
+    }
+
+    @Override
+    public int hashCode() {
+        return list != null ? list.hashCode() : 0;
+    }
+
+    @Override
     public String toString() {
         if (list.isEmpty()) {
             return "()";

@@ -45,8 +45,8 @@ public class ConditionalExpr extends Expr {
     }
 
     @Override
-    public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
-        return visitor.visit(this, scope);
+    public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
+        return visitor.visit(this, context);
     }
 
     @Override

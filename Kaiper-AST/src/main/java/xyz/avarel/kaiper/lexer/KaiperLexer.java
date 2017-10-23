@@ -503,6 +503,9 @@ public class KaiperLexer {
                 token = make(TokenType.MODULE, "module");
                 break;
 
+            case "match":
+                token = make(TokenType.MATCH, "match");
+                break;
             case "if":
                 token = make(TokenType.IF, "if");
                 break;
@@ -522,9 +525,8 @@ public class KaiperLexer {
                 token = make(TokenType.NULL, "null");
                 break;
 
-            case "fn":
             case "def":
-                token = make(TokenType.FUNCTION);
+                token = make(TokenType.FUNCTION, "def");
                 break;
 
             case "true":

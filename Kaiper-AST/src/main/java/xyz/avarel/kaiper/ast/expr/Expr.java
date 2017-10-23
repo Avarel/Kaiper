@@ -29,7 +29,7 @@ public abstract class Expr {
         this.position = position;
     }
 
-    public abstract <R, C> R accept(ExprVisitor<R, C> visitor, C scope);
+    public abstract <R, C> R accept(ExprVisitor<R, C> visitor, C context);
 
     /**
      * Appends the AST information of the node to the buffer.

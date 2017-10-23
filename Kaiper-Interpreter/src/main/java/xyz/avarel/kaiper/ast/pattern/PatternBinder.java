@@ -78,13 +78,23 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
     }
 
     @Override
+    public Boolean visit(WildcardPattern wildcardPattern, PatternContext context) {
+        return context.tuple.size() > context.tupleIndex++;
+    }
+
+    @Override
     public Boolean visit(NestedPattern pattern, PatternContext patternContext) {
-        return patternContext.tuple.size() > patternContext.tupleIndex &&
-                new PatternBinder(interpreter, scope).bind(
-                        pattern.getPattern(),
-                        patternContext.tuple.get(patternContext.tupleIndex++)
-                                .as(Tuple.TYPE)
-        );
+        if (patternContext.tuple.size() <= patternContext.tupleIndex) {
+            return false;
+        }
+
+        Obj obj = patternContext.tuple.get(patternContext.tupleIndex++);
+
+        if (!(obj instanceof Tuple)) return false;
+
+        Tuple tuple = (Tuple) obj;
+
+        return new PatternBinder(interpreter, scope).bind(pattern.getPattern(), tuple);
     }
 
     static class PatternContext {
