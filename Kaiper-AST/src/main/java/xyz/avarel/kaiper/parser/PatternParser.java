@@ -40,6 +40,7 @@ public class PatternParser extends ExprParser {
     }
 
     public PatternCase parsePatternCase(List<Pattern> patterns) {
+        usedIdentifiers.clear();
         do {
             patterns.add(parsePattern());
         } while (match(TokenType.COMMA));

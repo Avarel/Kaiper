@@ -17,16 +17,15 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 
 import java.util.Map;
 
 class RTPatternContext {
     final Map<String, Obj> scope;
-    final Tuple tuple;
+    final Obj tuple;
     int position;
 
-    RTPatternContext(Map<String, Obj> scope, Tuple tuple, int position) {
+    RTPatternContext(Map<String, Obj> scope, Obj tuple, int position) {
         this.scope = scope;
         this.tuple = tuple;
         this.position = position;

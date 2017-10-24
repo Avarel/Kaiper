@@ -48,16 +48,6 @@ public class InvocationParser extends BinaryParser {
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return InvocationParser.tupleInvocationCheck(left, argument);
-    }
-
-    public static Invocation tupleInvocationCheck(Expr left, Expr argument) {
-        if (argument instanceof TupleExpr) {
-            return new Invocation(argument.getPosition(), left, (TupleExpr) argument);
-        } else {
-            return new Invocation(argument.getPosition(), left,
-                    new TupleExpr(argument.getPosition(), Collections.singletonList(argument))
-            );
-        }
+        return new Invocation(argument.getPosition(), left, argument);
     }
 }

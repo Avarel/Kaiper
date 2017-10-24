@@ -18,6 +18,7 @@ package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
 import xyz.avarel.kaiper.ast.expr.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
@@ -42,7 +43,8 @@ public class AttributeParser extends BinaryParser {
         Identifier id = new Identifier(token.getPosition(), left, name.getString());
 
         if (parser.nextIsAny(InvocationParser.argumentTokens)) {
-            return InvocationParser.tupleInvocationCheck(id, parser.parseExpr());
+            Expr argument = parser.parseExpr();
+            return new Invocation(argument.getPosition(), id, argument);
         }
 
         return id;

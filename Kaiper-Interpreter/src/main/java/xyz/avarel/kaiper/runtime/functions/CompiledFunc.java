@@ -23,7 +23,6 @@ import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
 public class CompiledFunc extends Func implements Comparable<CompiledFunc> {
@@ -52,7 +51,7 @@ public class CompiledFunc extends Func implements Comparable<CompiledFunc> {
 
     // def fun(x, ...y, z = 5) { println x; println y; println z }
     @Override
-    public Obj invoke(Tuple argument) {
+    public Obj invoke(Obj argument) {
         Scope<String, Obj> scope = this.scope.subScope();
 
         if (!new PatternBinder(visitor, scope).bind(patternCase, argument)) {

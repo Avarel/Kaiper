@@ -30,8 +30,12 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
         this.scope = scope;
     }
 
-    public boolean bind(PatternCase patternCase, Tuple tuple) {
-        PatternContext context = new PatternContext(patternCase, tuple);
+    public boolean bind(PatternCase patternCase, Obj obj) {
+        if (obj.size() < patternCase.arity() || obj.size() > patternCase.size()) {
+            return false;
+        }
+
+        PatternContext context = new PatternContext(patternCase, obj);
         for (Pattern pattern : patternCase.getPatterns()) {
             if (!pattern.accept(this, context)) {
                 return false;
@@ -99,12 +103,12 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
 
     static class PatternContext {
         private final PatternCase patternCase;
-        private final Tuple tuple;
+        private final Obj tuple;
 
         private int currentPatternIndex;
         private int tupleIndex;
 
-        private PatternContext(PatternCase patternCase, Tuple tuple) {
+        private PatternContext(PatternCase patternCase, Obj tuple) {
             this.patternCase = patternCase;
             this.tuple = tuple;
         }

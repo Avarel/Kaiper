@@ -24,16 +24,16 @@ import xyz.avarel.kaiper.lexer.Position;
 import java.util.Map;
 
 public class MatchExpr extends Expr {
-    private final TupleExpr target;
+    private final Expr target;
     private final Map<PatternCase, Expr> cases;
 
-    public MatchExpr(Position position, TupleExpr target, Map<PatternCase, Expr> cases) {
+    public MatchExpr(Position position, Expr target, Map<PatternCase, Expr> cases) {
         super(position);
         this.target = target;
         this.cases = cases;
     }
 
-    public TupleExpr getTarget() {
+    public Expr getTarget() {
         return target;
     }
 

@@ -52,7 +52,7 @@ public abstract class Func implements Obj {
     }
 
     @Override
-    public abstract Obj invoke(Tuple argument);
+    public abstract Obj invoke(Obj argument);
 
     @Override
     public Obj shr(Obj other) { // this >> other

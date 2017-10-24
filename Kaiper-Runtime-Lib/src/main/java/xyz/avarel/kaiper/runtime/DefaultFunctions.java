@@ -59,7 +59,7 @@ public enum DefaultFunctions {
         }
 
         @Override
-        public Obj invoke(Tuple argument) {
+        public Obj invoke(Obj argument) {
             return argument;
         }
     }),

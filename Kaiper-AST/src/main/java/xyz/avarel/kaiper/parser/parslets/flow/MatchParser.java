@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets.flow;
 
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.tuples.MatchExpr;
-import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -27,7 +26,6 @@ import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -36,8 +34,6 @@ public class MatchParser implements PrefixParser {
     public Expr parse(ExprParser parser, Token token) {
         Expr expr = parser.parseExpr();
 
-        TupleExpr tuple = new TupleExpr(expr.getPosition(), Collections.singletonList(expr));
-
         Map<PatternCase, Expr> cases = new TreeMap<>();
 
         parser.eat(TokenType.LEFT_BRACE);
@@ -45,10 +41,6 @@ public class MatchParser implements PrefixParser {
         PatternParser patternParser = new PatternParser(parser);
         do {
             PatternCase casePattern = patternParser.parsePatternCase();
-
-            if (casePattern.size() > 1) {
-                throw new SyntaxException("Complex patterns must be inside parentheses");
-            }
 
             Token arrow = parser.eat(TokenType.ARROW);
 
@@ -66,6 +58,6 @@ public class MatchParser implements PrefixParser {
 
         parser.eat(TokenType.RIGHT_BRACE);
 
-        return new MatchExpr(token.getPosition(), tuple, cases);
+        return new MatchExpr(token.getPosition(), expr, cases);
     }
 }

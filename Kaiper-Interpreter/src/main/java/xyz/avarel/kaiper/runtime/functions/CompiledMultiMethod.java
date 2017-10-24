@@ -20,7 +20,6 @@ import xyz.avarel.kaiper.ast.pattern.PatternBinder;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -71,7 +70,7 @@ public class CompiledMultiMethod extends Func {
     }
 
     @Override
-    public Obj invoke(Tuple argument) {
+    public Obj invoke(Obj argument) {
         for (CompiledFunc entry : branches) {
             if (argument.size() < entry.getPattern().arity()) {
                 continue;

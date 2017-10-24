@@ -19,7 +19,6 @@ package xyz.avarel.kaiper.runtime.functions;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
 
 import java.util.HashMap;
@@ -53,7 +52,7 @@ public class RuntimeMultimethod extends Func {
     }
 
     @Override
-    public Obj invoke(Tuple argument) {
+    public Obj invoke(Obj argument) {
         for (Map.Entry<RuntimePatternCase, Function<Map<String, Obj>, Obj>> entry : methodCases.entrySet()) {
             Map<String, Obj> scope = new HashMap<>();
 

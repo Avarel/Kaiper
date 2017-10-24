@@ -129,10 +129,9 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
         Obj target = resultOf(expr.getLeft(), scope);
 
         Obj argument = resultOf(expr.getArgument(), scope);
-        Tuple tuple = (Tuple) argument;
 
         recursionDepth++;
-        Obj result = target.invoke(tuple);
+        Obj result = target.invoke(argument);
         recursionDepth--;
 
         return result;
@@ -464,7 +463,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             value = new Tuple(value);
         }
 
-        boolean result = new PatternBinder(this, scope).bind(expr.getPatternCase(), (Tuple) value);
+        boolean result = new PatternBinder(this, scope).bind(expr.getPatternCase(), value);
 
         if (!result) {
             throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());
@@ -481,13 +480,11 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
     @Override
     public Obj visit(MatchExpr expr, Scope<String, Obj> scope) {
         Obj argument = resultOf(expr.getTarget(), scope);
-        Tuple tuple = (Tuple) argument;
-
 
         for (Map.Entry<PatternCase, Expr> entry : expr.getCases().entrySet()) {
             Scope<String, Obj> subScope = scope.subScope();
 
-            if (new PatternBinder(this, subScope).bind(entry.getKey(), tuple)) {
+            if (new PatternBinder(this, subScope).bind(entry.getKey(), argument)) {
                 return resultOf(entry.getValue(), subScope);
             }
         }
