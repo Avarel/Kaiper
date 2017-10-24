@@ -16,8 +16,8 @@
 
 package xyz.avarel.kaiper;
 
-import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
@@ -38,9 +38,9 @@ public class ScriptExpr extends Expr {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <R, C> R accept(ExprVisitor<R, C> visitor, C scope) {
+    public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         try {
-            return expr.accept(visitor, scope);
+            return expr.accept(visitor, context);
         } catch (ReturnException re) {
             return (R) re.getValue();
         } catch (KaiperException re) {

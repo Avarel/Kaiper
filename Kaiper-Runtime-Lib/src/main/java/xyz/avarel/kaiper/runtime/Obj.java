@@ -202,10 +202,10 @@ public interface Obj {
      * <br> Implementation should default to error if not implemented.
      *
      * @param   argument
-     *          List of {@link Obj} arguments.
+     *          {@link Obj} argument (multiple arguments are represented as a tuple).
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj invoke(Tuple argument) {
+    default Obj invoke(Obj argument) {
         throw unimplemented("invocation");
     }
 
@@ -270,6 +270,17 @@ public interface Obj {
      */
     default Obj setAttr(String name, Obj value) {
         throw new ComputeException("Can not set attribute " + name + " for " + toString());
+    }
+
+    // todo documentaiton
+    default Obj get(int index) {
+        if (index != 0) throw new ComputeException("Index out of bounds");
+        return this;
+    }
+
+    // todo documentation
+    default int size() {
+        return 1;
     }
 
     // no operator, purely internal

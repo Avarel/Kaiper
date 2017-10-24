@@ -19,7 +19,6 @@ package xyz.avarel.kaiper.runtime.functions;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.pattern.RTPattern;
 import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
 
@@ -62,7 +61,7 @@ public abstract class NativeFunc extends Func {
     }
 
     @Override
-    public Obj invoke(Tuple argument) {
+    public Obj invoke(Obj argument) {
         Map<String, Obj> scope = new HashMap<>(getArity());
 
         if (!new RuntimePatternBinder(pattern).bindFrom(scope, argument)) {

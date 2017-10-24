@@ -17,19 +17,19 @@
 package xyz.avarel.kaiper.parser.parslets.nodes;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.collections.ArrayNode;
-import xyz.avarel.kaiper.ast.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.expr.collections.DictionaryNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 import java.util.*;
 
 public class CollectionsParser implements PrefixParser {
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
+    public Expr parse(ExprParser parser, Token token) {
         // EMPTY DICTIONARY
         if (parser.match(TokenType.COLON)) {
             parser.eat(TokenType.RIGHT_BRACKET);
@@ -48,7 +48,7 @@ public class CollectionsParser implements PrefixParser {
                 : parseVector(parser, token, expr);
     }
 
-    private Expr parseVector(KaiperParser parser, Token token, Expr initItem) {
+    private Expr parseVector(ExprParser parser, Token token, Expr initItem) {
         List<Expr> items = new ArrayList<>();
 
         items.add(initItem);
@@ -62,7 +62,7 @@ public class CollectionsParser implements PrefixParser {
         return new ArrayNode(token.getPosition(), items);
     }
 
-    private Expr parseDictionary(KaiperParser parser, Token token, Expr initKey) {
+    private Expr parseDictionary(ExprParser parser, Token token, Expr initKey) {
         Map<Expr, Expr> map = new HashMap<>();
 
         map.put(initKey, parser.parseExpr(Precedence.TUPLE));

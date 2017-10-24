@@ -27,13 +27,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class PatternParser extends KaiperParser {
-    private final KaiperParser parser;
+public class PatternParser extends ExprParser {
     private final Set<String> usedIdentifiers;
 
-    public PatternParser(KaiperParser parser) {
+    public PatternParser(ExprParser parser) {
         super(parser);
-        this.parser = parser;
         this.usedIdentifiers = new HashSet<>();
     }
 
@@ -42,6 +40,7 @@ public class PatternParser extends KaiperParser {
     }
 
     public PatternCase parsePatternCase(List<Pattern> patterns) {
+        usedIdentifiers.clear();
         do {
             patterns.add(parsePattern());
         } while (match(TokenType.COMMA));
@@ -50,37 +49,38 @@ public class PatternParser extends KaiperParser {
     }
 
     private Pattern parsePattern() {
-        Pattern basePattern;
-
         if (nextIs(TokenType.IDENTIFIER)) {
             Token token = eat(TokenType.IDENTIFIER);
             String name = token.getString();
 
             if (usedIdentifiers.contains(name)) {
-                throw new SyntaxException("Duplicate pattern name", token.getPosition());
+                throw new SyntaxException("Duplicate argument name", token.getPosition());
             } else {
                 usedIdentifiers.add(name);
             }
 
-//            if (match(TokenType.COLON)) {
-//                if (match(TokenType.LEFT_PAREN)) {
-//                    basePattern = new NestedPattern(name, new PatternParser(parser).parsePatternCase());
-//                    eat(TokenType.RIGHT_PAREN);
-//                } else {
-//                    basePattern = new TuplePattern(name, parseExpr());
-//                }
-//            } else {
-            basePattern = new VariablePattern(name);
+            VariablePattern pattern = new VariablePattern(name);
 
             if (match(TokenType.ASSIGN)) {
-                basePattern = new DefaultPattern(basePattern, parseExpr());
+                return new DefaultPattern(pattern, parseExpr(Precedence.FREEFORM_STRUCT));
             }
-//            }
+
+            return pattern;
+        } else if (match(TokenType.LEFT_PAREN)) {
+            if (match(TokenType.RIGHT_PAREN)) {
+                return new NestedPattern(PatternCase.EMPTY);
+            }
+
+            PatternCase patternCase = parsePatternCase();
+
+            eat(TokenType.RIGHT_PAREN);
+
+            return new NestedPattern(patternCase);
+        } else if (match(TokenType.UNDERSCORE)) {
+            return WildcardPattern.INSTANCE;
         } else {
             match(TokenType.EQUALS);
-            basePattern = new ValuePattern(parseExpr(Precedence.FREEFORM_STRUCT));
+            return new ValuePattern(parseExpr(Precedence.FREEFORM_STRUCT));
         }
-
-        return basePattern;
     }
 }

@@ -20,8 +20,7 @@ package xyz.avarel.kaiper.ast.pattern;
 public class NestedPattern extends Pattern {
     private final PatternCase pattern;
 
-    public NestedPattern(String name, PatternCase pattern) {
-        super(name);
+    public NestedPattern(PatternCase pattern) {
         this.pattern = pattern;
     }
 
@@ -36,20 +35,22 @@ public class NestedPattern extends Pattern {
 
     @Override
     public int nodeWeight() {
-        return 1;
+        return 2;
+    }
+
+    @Override
+    public int compareTo(Pattern other) {
+        int compare = super.compareTo(other);
+
+        if (compare == 0 && other instanceof NestedPattern) {
+            return pattern.compareTo(((NestedPattern) other).pattern);
+        }
+
+        return compare;
     }
 
     @Override
     public String toString() {
-        return getName() + ": " + pattern;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof NestedPattern)) return false;
-
-        NestedPattern other = (NestedPattern) obj;
-        return getName().equals(other.getName())
-                && getPattern().equals(other.getPattern());
+        return pattern.toString();
     }
 }

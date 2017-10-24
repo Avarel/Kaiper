@@ -17,13 +17,13 @@
 package xyz.avarel.kaiper.parser.parslets.functional;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.invocation.Invocation;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
+import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 
 import java.util.Collections;
 
@@ -38,7 +38,7 @@ public class InvocationParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Expr left, Token token) {
+    public Expr parse(ExprParser parser, Expr left, Token token) {
         Expr argument;
 
         if (parser.match(TokenType.RIGHT_PAREN)) {
@@ -48,16 +48,6 @@ public class InvocationParser extends BinaryParser {
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return InvocationParser.tupleInvocationCheck(left, argument);
-    }
-
-    public static Invocation tupleInvocationCheck(Expr left, Expr argument) {
-        if (argument instanceof TupleExpr) {
-            return new Invocation(argument.getPosition(), left, (TupleExpr) argument);
-        } else {
-            return new Invocation(argument.getPosition(), left,
-                    new TupleExpr(argument.getPosition(), Collections.singletonList(argument))
-            );
-        }
+        return new Invocation(argument.getPosition(), left, argument);
     }
 }

@@ -16,14 +16,13 @@
 
 package xyz.avarel.kaiper.runtime.functions;
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.pattern.PatternBinder;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
 public class CompiledFunc extends Func implements Comparable<CompiledFunc> {
@@ -52,11 +51,11 @@ public class CompiledFunc extends Func implements Comparable<CompiledFunc> {
 
     // def fun(x, ...y, z = 5) { println x; println y; println z }
     @Override
-    public Obj invoke(Tuple argument) {
+    public Obj invoke(Obj argument) {
         Scope<String, Obj> scope = this.scope.subScope();
 
-        if (!new PatternBinder(patternCase).declareFrom(visitor, scope, argument)) {
-            throw new InterpreterException("Could not match arguments (" + argument + ") to " + getName() + "(" + patternCase + ")");
+        if (!new PatternBinder(visitor, scope).bind(patternCase, argument)) {
+            throw new InterpreterException("Could not match arguments " + argument + " to " + getName() + patternCase);
         }
 
         try {

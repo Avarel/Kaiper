@@ -22,8 +22,6 @@ import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -70,29 +68,31 @@ public class Tuple implements Obj {
         declare("TYPE", Tuple.TYPE);
     }};
 
-    // String.trim("hello")
-    // "hello"::trim
-
-    private final List<Obj> list;
+    private final Obj[] values;
 
     public Tuple() {
-        this(Collections.emptyList());
+        this(new Obj[0]);
     }
 
     public Tuple(Obj value) {
-        this(Collections.singletonList(value));
+        this(new Obj[] { value });
     }
 
     public Tuple(Obj... values) {
-        this(Arrays.asList(values));
+        this.values = values;
     }
 
-    public Tuple(List<Obj> list) {
-       this.list = list;
+    public Tuple(List<Obj> values) {
+       this.values = values.toArray(new Obj[values.size()]);
     }
 
     public int size() {
-        return list.size();
+        return values.length;
+    }
+
+    // INTERNAL
+    public List<Obj> asList() {
+        return Arrays.asList(values);
     }
 
     @Override
@@ -100,6 +100,7 @@ public class Tuple implements Obj {
         if (key instanceof Int) {
             return get((Int) key);
         }
+
         return Null.VALUE;
     }
 
@@ -108,7 +109,7 @@ public class Tuple implements Obj {
     }
 
     public Obj get(int index) {
-        return list.get(index);
+        return values[index];
     }
 
     @Override
@@ -117,23 +118,33 @@ public class Tuple implements Obj {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tuple)) return false;
+
+        Tuple tuple = (Tuple) o;
+
+        return Arrays.equals(values, tuple.values);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(values);
+    }
+
+    @Override
     public String toString() {
-        if (list.isEmpty()) {
+        if (values.length == 0) {
             return "()";
         }
 
         StringBuilder builder = new StringBuilder("(");
 
-        Iterator<Obj> iterator = list.iterator();
-        while (true) {
-            builder.append(iterator.next());
-
-            if (iterator.hasNext()) {
-                builder.append(", ");
-            } else {
-                break;
-            }
+        for (int i = 0; i < values.length - 1; i++) {
+            builder.append(values[i]).append(", ");
         }
+
+        builder.append(values[values.length - 1]);
 
         builder.append(')');
 

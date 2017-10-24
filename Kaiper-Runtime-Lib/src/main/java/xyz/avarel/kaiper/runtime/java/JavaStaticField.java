@@ -19,12 +19,13 @@ package xyz.avarel.kaiper.runtime.java;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
-import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,15 +87,20 @@ public class JavaStaticField implements Obj {
     }
 
     @Override
-    public Obj invoke(Tuple tuple) {
+    public Obj invoke(Obj tuple) {
         if (name == null) return Null.VALUE;
 
-        List<Obj> arguments = tuple.getAttr("value").as(Array.TYPE);
+        List<Object> nativeArgs;
 
-        List<Object> nativeArgs = arguments.stream()
-                .map(Obj::toJava)
-                .map(o -> o != Null.VALUE ? o : null)
-                .collect(Collectors.toList());
+        if (tuple instanceof Tuple) {
+            nativeArgs = new ArrayList<>(tuple.size());
+            for (Obj obj : ((Tuple) tuple).asList()) {
+                Object o = obj.toJava();
+                nativeArgs.add(o != Null.VALUE ? o : null);
+            }
+        } else {
+            nativeArgs = Collections.singletonList(tuple.toJava());
+        }
 
         List<Class<?>> classes = nativeArgs.stream()
                 .map(o -> o != null ? o.getClass() : null)

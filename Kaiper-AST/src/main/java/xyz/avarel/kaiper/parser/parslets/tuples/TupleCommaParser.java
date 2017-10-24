@@ -16,12 +16,13 @@
 package xyz.avarel.kaiper.parser.parslets.tuples;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
+import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +33,20 @@ public class TupleCommaParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Expr left, Token token) {
+    public Expr parse(ExprParser parser, Expr left, Token token) {
+        if (parser.match(TokenType.COMMA)) {
+            throw new SyntaxException("Illegal expression", parser.getLast().getPosition());
+        }
+
         List<Expr> exprs = new ArrayList<>();
 
         exprs.add(left);
 
         do {
+            if (parser.getPrefixParsers().get(parser.peek(0).getType()) == null) {
+                break;
+            }
+
             exprs.add(parser.parseExpr(Precedence.TUPLE));
         } while (parser.match(TokenType.COMMA));
 

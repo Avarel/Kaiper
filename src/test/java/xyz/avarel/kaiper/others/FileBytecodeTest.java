@@ -20,10 +20,10 @@
 package xyz.avarel.kaiper.others;
 
 import xyz.avarel.kaiper.KaiperCompiler;
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.scope.DefaultScope;
@@ -53,7 +53,7 @@ public class FileBytecodeTest {
             }
         });
 
-        Expr expr = new KaiperParser(new KaiperLexer(new FileReader(new File("script.kip")))).parse();
+        Expr expr = new ExprParser(new KaiperLexer(new FileReader(new File("script.kip")))).parse();
 
         StringBuilder sb = new StringBuilder();
         expr.ast(sb, "", true);

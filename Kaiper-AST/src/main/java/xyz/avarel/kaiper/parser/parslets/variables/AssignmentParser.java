@@ -17,15 +17,15 @@
 package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.Precedence;
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.collections.GetOperation;
-import xyz.avarel.kaiper.ast.collections.SetOperation;
-import xyz.avarel.kaiper.ast.variables.AssignmentExpr;
-import xyz.avarel.kaiper.ast.variables.Identifier;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.collections.GetOperation;
+import xyz.avarel.kaiper.ast.expr.collections.SetOperation;
+import xyz.avarel.kaiper.ast.expr.variables.AssignmentExpr;
+import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 
 public class AssignmentParser extends BinaryParser {
     public AssignmentParser() {
@@ -33,7 +33,7 @@ public class AssignmentParser extends BinaryParser {
     }
 
     @Override
-    public Expr parse(KaiperParser parser, Expr left, Token token) {
+    public Expr parse(ExprParser parser, Expr left, Token token) {
         Expr value = parser.parseExpr();
 
         if (left instanceof Identifier) {

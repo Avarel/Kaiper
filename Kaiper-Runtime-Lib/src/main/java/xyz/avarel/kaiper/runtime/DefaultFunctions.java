@@ -17,6 +17,7 @@
 package xyz.avarel.kaiper.runtime;
 
 import xyz.avarel.kaiper.runtime.collections.Range;
+import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 
@@ -51,6 +52,17 @@ public enum DefaultFunctions {
         }
     }),
 
+    TUPLE(new Func("t") {
+        @Override
+        public int getArity() {
+            return 0;
+        }
+
+        @Override
+        public Obj invoke(Obj argument) {
+            return argument;
+        }
+    }),
 
     NOT(new NativeFunc("not", "function") {
         @Override
@@ -64,13 +76,13 @@ public enum DefaultFunctions {
         }
     });
 
-    private final NativeFunc function;
+    private final Func function;
 
-    DefaultFunctions(NativeFunc function) {
+    DefaultFunctions(Func function) {
         this.function = function;
     }
 
-    public NativeFunc get() {
+    public Func get() {
         return function;
     }
 }

@@ -16,12 +16,12 @@
 
 package xyz.avarel.kaiper;
 
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
@@ -34,7 +34,7 @@ import java.io.Reader;
  * {@link #compute()} explicitly; {@link KaiperException} and its derivatives would not be thrown until then.
  */
 public class KaiperScript {
-    private final KaiperParser parser;
+    private final ExprParser parser;
     private final Scope<String, Obj> scope;
     private ScriptExpr expr;
 
@@ -95,18 +95,18 @@ public class KaiperScript {
      *          The {@link Scope scope} to evaluate the script from.
      */
     public KaiperScript(KaiperLexer lexer, Scope<String, Obj> scope) {
-        this(new KaiperParser(lexer), scope);
+        this(new ExprParser(lexer), scope);
     }
 
     /**
      * Creates a script based on a stream of tokens from a lexer.
      *
      * @param   parser
-     *          The {@link KaiperParser parser} object that parses Kaiper scripts.
+     *          The {@link ExprParser parser} object that parses Kaiper scripts.
      * @param   scope
      *          The {@link Scope scope} to evaluate the script from.
      */
-    public KaiperScript(KaiperParser parser, Scope<String, Obj> scope) {
+    public KaiperScript(ExprParser parser, Scope<String, Obj> scope) {
         this.parser = parser;
         this.scope = scope;
     }
@@ -169,7 +169,7 @@ public class KaiperScript {
         return compile().compute();
     }
 
-    public KaiperParser getParser() {
+    public ExprParser getParser() {
         return parser;
     }
 

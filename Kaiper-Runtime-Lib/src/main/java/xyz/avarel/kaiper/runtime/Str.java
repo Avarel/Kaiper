@@ -192,12 +192,12 @@ public class Str implements Obj {
     @Override
     public Obj get(Obj key) {
         if (key instanceof Int) {
-            return get((Int) key);
+            return getChar((Int) key);
         }
         return Obj.super.get(key);
     }
 
-    private Obj get(Int index) {
+    private Obj getChar(Int index) {
         int i = index.value();
         if (i < 0) {
             i += length();
@@ -206,10 +206,6 @@ public class Str implements Obj {
             return Null.VALUE;
         }
         return Str.of(value().substring(i, i + 1));
-    }
-
-    public char get(int i) {
-        return value().charAt(i);
     }
 
     public Bool contains(Str str) {

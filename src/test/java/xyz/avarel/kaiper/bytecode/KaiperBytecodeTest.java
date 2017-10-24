@@ -2,7 +2,7 @@ package xyz.avarel.kaiper.bytecode;
 
 import xyz.avarel.kaiper.KaiperCompiler;
 import xyz.avarel.kaiper.KaiperScript;
-import xyz.avarel.kaiper.ast.Expr;
+import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.tools.outliner.BytecodeOutliner;
 import xyz.avarel.kaiper.tools.outliner.OutlineOptions;
 

@@ -16,25 +16,27 @@
 
 package xyz.avarel.kaiper.interpreter;
 
-import xyz.avarel.kaiper.ast.Expr;
 import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.ModuleNode;
-import xyz.avarel.kaiper.ast.TypeNode;
-import xyz.avarel.kaiper.ast.collections.ArrayNode;
-import xyz.avarel.kaiper.ast.collections.DictionaryNode;
-import xyz.avarel.kaiper.ast.collections.GetOperation;
-import xyz.avarel.kaiper.ast.collections.SetOperation;
-import xyz.avarel.kaiper.ast.flow.*;
-import xyz.avarel.kaiper.ast.functions.FunctionNode;
-import xyz.avarel.kaiper.ast.invocation.Invocation;
-import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.operations.SliceOperation;
-import xyz.avarel.kaiper.ast.operations.UnaryOperation;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.ModuleNode;
+import xyz.avarel.kaiper.ast.expr.TypeNode;
+import xyz.avarel.kaiper.ast.expr.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.expr.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.expr.collections.GetOperation;
+import xyz.avarel.kaiper.ast.expr.collections.SetOperation;
+import xyz.avarel.kaiper.ast.expr.flow.*;
+import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
+import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
+import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
+import xyz.avarel.kaiper.ast.expr.operations.SliceOperation;
+import xyz.avarel.kaiper.ast.expr.operations.UnaryOperation;
+import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
+import xyz.avarel.kaiper.ast.expr.tuples.MatchExpr;
+import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
+import xyz.avarel.kaiper.ast.expr.value.*;
+import xyz.avarel.kaiper.ast.expr.variables.*;
 import xyz.avarel.kaiper.ast.pattern.PatternBinder;
-import xyz.avarel.kaiper.ast.tuples.FreeFormStruct;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
-import xyz.avarel.kaiper.ast.value.*;
-import xyz.avarel.kaiper.ast.variables.*;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
@@ -50,7 +52,6 @@ import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.scope.Scope;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -101,7 +102,9 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             declare(scope, expr.getName(), multiMethod);
         }
 
-        multiMethod.addCase(new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope));
+        if (!multiMethod.addCase(new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope))) {
+            throw new InterpreterException("Ambiguous pattern for function " + multiMethod.getName() + expr.getPosition());
+        }
 
         return multiMethod;
     }
@@ -127,10 +130,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
         Obj argument = resultOf(expr.getArgument(), scope);
 
-        Tuple tuple = argument instanceof Tuple ? (Tuple) argument : new Tuple(argument);
-
         recursionDepth++;
-        Obj result = target.invoke(tuple);
+        Obj result = target.invoke(argument);
         recursionDepth--;
 
         return result;
@@ -242,12 +243,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
     @Override
     public Obj visit(SliceOperation expr, Scope<String, Obj> scope) {
-        Obj obj = resultOf(expr.getLeft(), scope);
-        Obj start = resultOf(expr.getStart(), scope);
-        Obj end = resultOf(expr.getEnd(), scope);
-        Obj step = resultOf(expr.getStep(), scope);
-
-        return obj.slice(start, end, step);
+        throw new UnsupportedOperationException("Up for removal");
     }
 
     @Override
@@ -444,27 +440,19 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
     @Override
     public Obj visit(TupleExpr expr, Scope<String, Obj> scope) {
-        List<Obj> list = new ArrayList<>(expr.size());
+        Obj[] values = new Obj[expr.size()];
 
-        for (Expr element : expr.getElements()) {
-            list.add(resultOf(element, scope));
+        List<Expr> elements = expr.getElements();
+        for (int i = 0; i < elements.size(); i++) {
+            values[i] = resultOf(elements.get(i), scope);
         }
 
-        return new Tuple(list);
+        return new Tuple(values);
     }
 
     @Override
     public Obj visit(FreeFormStruct expr, Scope<String, Obj> scope) {
         throw new UnsupportedOperationException("in progress");
-
-//        Map<String, Obj> map = new LinkedHashMap<>();
-//
-//        for (Map.Entry<String, Expr> entry : expr.getElements().entrySet()) {
-//            // confirmed by the compiler
-//            map.put(entry.getKey(), resultOf(entry.getValue(), scope));
-//        }
-//
-//        return new Dictionary(map);
     }
 
     @Override
@@ -475,7 +463,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             value = new Tuple(value);
         }
 
-        boolean result = new PatternBinder(expr.getPatternCase()).declareFrom( this, scope, (Tuple) value);
+        boolean result = new PatternBinder(this, scope).bind(expr.getPatternCase(), value);
 
         if (!result) {
             throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());
@@ -486,19 +474,22 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
     @Override
     public Obj visit(BindAssignmentExpr expr, Scope<String, Obj> scope) {
-//        Obj value = resultOf(expr.getExpr(), scope);
-//
-//        if (!(value instanceof Tuple)) {
-//            value = new Tuple(value);
-//        }
-//
-//        boolean result = new PatternBinder(expr.getPatternCase(), this, scope).assignFrom((Tuple) value);
-//
-//        if (!result) {
-            throw new InterpreterException("unsupported", expr.getPosition());
-//        }
+        throw new InterpreterException("Up for removal", expr.getPosition());
+    }
 
-//        return Null.VALUE;
+    @Override
+    public Obj visit(MatchExpr expr, Scope<String, Obj> scope) {
+        Obj argument = resultOf(expr.getTarget(), scope);
+
+        for (Map.Entry<PatternCase, Expr> entry : expr.getCases().entrySet()) {
+            Scope<String, Obj> subScope = scope.subScope();
+
+            if (new PatternBinder(this, subScope).bind(entry.getKey(), argument)) {
+                return resultOf(entry.getValue(), subScope);
+            }
+        }
+
+        throw new InterpreterException("No match cases", expr.getPosition());
     }
 
     public Obj resultOf(Expr expr, Scope<String, Obj> scope) {

@@ -16,21 +16,21 @@
 
 package xyz.avarel.kaiper.parser.parslets.functions;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.functions.FunctionNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
+import xyz.avarel.kaiper.ast.expr.value.NullNode;
 import xyz.avarel.kaiper.ast.pattern.DefaultPattern;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.ast.pattern.VariablePattern;
-import xyz.avarel.kaiper.ast.value.NullNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 public class LambdaFunctionParser implements PrefixParser {
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
+    public Expr parse(ExprParser parser, Token token) {
         if (parser.match(TokenType.RIGHT_BRACE)) {
             return new FunctionNode(token.getPosition(), PatternCase.EMPTY, NullNode.VALUE);
         }

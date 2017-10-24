@@ -17,7 +17,6 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.pattern.*;
 
 import java.util.Map;
@@ -29,7 +28,7 @@ public class RuntimePatternBinder implements RuntimePatternVisitor<Boolean, RTPa
         this.patternCase = patternCase;
     }
 
-    public boolean bindFrom(Map<String, Obj> scope, Tuple tuple) {
+    public boolean bindFrom(Map<String, Obj> scope, Obj tuple) {
         RTPatternContext context = new RTPatternContext(scope, tuple, 0);
         for (RTPattern pattern : patternCase.getPatterns()) {
             boolean result = pattern.accept(this, context);

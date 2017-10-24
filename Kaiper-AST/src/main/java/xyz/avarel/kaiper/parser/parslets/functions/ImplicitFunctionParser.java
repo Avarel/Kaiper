@@ -16,17 +16,17 @@
 
 package xyz.avarel.kaiper.parser.parslets.functions;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.functions.FunctionNode;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
+import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.ast.pattern.Pattern;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.ast.pattern.VariablePattern;
-import xyz.avarel.kaiper.ast.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.InfixParser;
-import xyz.avarel.kaiper.parser.KaiperParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import java.util.Set;
 
 public class ImplicitFunctionParser implements PrefixParser {
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
+    public Expr parse(ExprParser parser, Token token) {
         ParserProxy ip = new ParserProxy(parser, token);
 
         Expr expr = ip.parseInfix(0, new Identifier(token.getPosition(), token.getString()));
@@ -50,12 +50,12 @@ public class ImplicitFunctionParser implements PrefixParser {
         return new FunctionNode(token.getPosition(), new PatternCase(list), expr);
     }
 
-    private static final class ParserProxy extends KaiperParser {
+    private static final class ParserProxy extends ExprParser {
         private final Set<String> parameters = new LinkedHashSet<>();
-        private final KaiperParser proxy;
-        private KaiperParser current;
+        private final ExprParser proxy;
+        private ExprParser current;
 
-        private ParserProxy(KaiperParser proxy, Token token) {
+        private ParserProxy(ExprParser proxy, Token token) {
             super(proxy);
 
             this.proxy = proxy;

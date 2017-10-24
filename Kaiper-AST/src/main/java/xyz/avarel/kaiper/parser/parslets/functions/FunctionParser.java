@@ -16,26 +16,21 @@
 
 package xyz.avarel.kaiper.parser.parslets.functions;
 
-import xyz.avarel.kaiper.ast.Expr;
-import xyz.avarel.kaiper.ast.functions.FunctionNode;
-import xyz.avarel.kaiper.ast.pattern.NestedPattern;
-import xyz.avarel.kaiper.ast.pattern.Pattern;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FunctionParser implements PrefixParser {
     private LambdaFunctionParser lambda = new LambdaFunctionParser();
     private ImplicitFunctionParser implicit = new ImplicitFunctionParser();
 
     @Override
-    public Expr parse(KaiperParser parser, Token token) {
+    public Expr parse(ExprParser parser, Token token) {
         if (parser.matchSignificant(TokenType.LEFT_BRACE)) {
             return lambda.parse(parser, parser.getLast());
         } else if (parser.match(TokenType.UNDERSCORE)) {
@@ -47,25 +42,25 @@ public class FunctionParser implements PrefixParser {
             parser.eat(TokenType.RIGHT_PAREN);
 
             String name = null;
-            if (parser.match(TokenType.REF)) {
-                name = parser.eat(TokenType.IDENTIFIER).getString();
-
-                NestedPattern nestedPattern = new NestedPattern("self", patternCase);
-
-                List<Pattern> list = new ArrayList<>();
-                list.add(nestedPattern);
-
-                // def (re, im)::conjugate() = re: self.re, im: -self.im
-                // def conjugate(self: (re, im)) = re: self.re, im: -self.im
-
-                parser.eat(TokenType.LEFT_PAREN);
-                if (!parser.match(TokenType.RIGHT_PAREN)) {
-                    patternCase = new PatternParser(parser).parsePatternCase(list);
-                    parser.eat(TokenType.RIGHT_PAREN);
-                } else {
-                    patternCase = new PatternCase(list);
-                }
-            }
+//            if (parser.match(TokenType.REF)) {
+//                name = parser.eat(TokenType.IDENTIFIER).getString();
+//
+//                NestedPattern nestedPattern = new NestedPattern(patternCase);
+//
+//                List<Pattern> list = new ArrayList<>();
+//                list.add(nestedPattern);
+//
+//                // def (re, im)::conjugate() = re: self.re, im: -self.im
+//                // def conjugate(self: (re, im)) = re: self.re, im: -self.im
+//
+//                parser.eat(TokenType.LEFT_PAREN);
+//                if (!parser.match(TokenType.RIGHT_PAREN)) {
+//                    patternCase = new PatternParser(parser).parsePatternCase(list);
+//                    parser.eat(TokenType.RIGHT_PAREN);
+//                } else {
+//                    patternCase = new PatternCase(list);
+//                }
+//            }
 
             Expr expr;
             if (parser.match(TokenType.ASSIGN)) {
@@ -75,7 +70,8 @@ public class FunctionParser implements PrefixParser {
             }
 
             return new FunctionNode(token.getPosition(), name, patternCase, expr);
-        } else {
+        } else
+            {
             String name = parser.eat(TokenType.IDENTIFIER).getString();
 
             PatternCase patternCase;

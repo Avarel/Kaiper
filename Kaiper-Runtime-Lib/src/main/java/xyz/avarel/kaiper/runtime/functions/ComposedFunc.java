@@ -46,7 +46,7 @@ public class ComposedFunc extends Func {
     }
 
     @Override
-    public Obj invoke(Tuple argument) {
+    public Obj invoke(Obj argument) {
         return outer.invoke(new Tuple(inner.invoke(argument)));
     }
 }

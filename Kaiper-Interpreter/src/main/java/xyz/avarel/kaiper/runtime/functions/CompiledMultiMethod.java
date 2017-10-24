@@ -20,7 +20,6 @@ import xyz.avarel.kaiper.ast.pattern.PatternBinder;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -43,10 +42,8 @@ public class CompiledMultiMethod extends Func {
         return branches;
     }
 
-    public void addCase(CompiledFunc func) {
-        if (!branches.add(func)) {
-            throw new InterpreterException("Internal: duplicate definition for method " + getName());
-        }
+    public boolean addCase(CompiledFunc func) {
+        return branches.add(func);
     }
 
     @Override
@@ -73,15 +70,15 @@ public class CompiledMultiMethod extends Func {
     }
 
     @Override
-    public Obj invoke(Tuple argument) {
+    public Obj invoke(Obj argument) {
         for (CompiledFunc entry : branches) {
-            if (entry.getPattern().weight() > argument.size()) {
+            if (argument.size() < entry.getPattern().arity()) {
                 continue;
             }
 
             Scope<String, Obj> scope = entry.getScope().subScope();
 
-            if (!new PatternBinder(entry.getPattern()).declareFrom(entry.getVisitor(), scope, argument)) {
+            if (!new PatternBinder(entry.getVisitor(), scope).bind(entry.getPattern(), argument)) {
                 continue;
             }
 
@@ -92,7 +89,7 @@ public class CompiledMultiMethod extends Func {
             }
         }
 
-        throw new InterpreterException("Could not match arguments (" + argument + ") to any method cases");
+        throw new InterpreterException("Could not match arguments " + argument + " to any method cases");
     }
 
     @Override

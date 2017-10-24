@@ -16,20 +16,24 @@
 
 package xyz.avarel.kaiper.ast;
 
-import xyz.avarel.kaiper.ast.collections.ArrayNode;
-import xyz.avarel.kaiper.ast.collections.DictionaryNode;
-import xyz.avarel.kaiper.ast.collections.GetOperation;
-import xyz.avarel.kaiper.ast.collections.SetOperation;
-import xyz.avarel.kaiper.ast.flow.*;
-import xyz.avarel.kaiper.ast.functions.FunctionNode;
-import xyz.avarel.kaiper.ast.invocation.Invocation;
-import xyz.avarel.kaiper.ast.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.operations.SliceOperation;
-import xyz.avarel.kaiper.ast.operations.UnaryOperation;
-import xyz.avarel.kaiper.ast.tuples.FreeFormStruct;
-import xyz.avarel.kaiper.ast.tuples.TupleExpr;
-import xyz.avarel.kaiper.ast.value.*;
-import xyz.avarel.kaiper.ast.variables.*;
+import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.ModuleNode;
+import xyz.avarel.kaiper.ast.expr.TypeNode;
+import xyz.avarel.kaiper.ast.expr.collections.ArrayNode;
+import xyz.avarel.kaiper.ast.expr.collections.DictionaryNode;
+import xyz.avarel.kaiper.ast.expr.collections.GetOperation;
+import xyz.avarel.kaiper.ast.expr.collections.SetOperation;
+import xyz.avarel.kaiper.ast.expr.flow.*;
+import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
+import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
+import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
+import xyz.avarel.kaiper.ast.expr.operations.SliceOperation;
+import xyz.avarel.kaiper.ast.expr.operations.UnaryOperation;
+import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
+import xyz.avarel.kaiper.ast.expr.tuples.MatchExpr;
+import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
+import xyz.avarel.kaiper.ast.expr.value.*;
+import xyz.avarel.kaiper.ast.expr.variables.*;
 
 /**
  * Visitor patterns for {@link Expr expression} AST classes.
@@ -43,59 +47,63 @@ import xyz.avarel.kaiper.ast.variables.*;
  * @author Avarel
  */
 public interface ExprVisitor<R, C> {
-    R visit(Statements expr, C scope);
+    R visit(Statements expr, C context);
 
-    R visit(FunctionNode expr, C scope);
+    R visit(FunctionNode expr, C context);
 
-    R visit(Identifier expr, C scope);
+    R visit(Identifier expr, C context);
 
-    R visit(Invocation expr, C scope);
+    R visit(Invocation expr, C context);
 
-    R visit(BinaryOperation expr, C scope);
+    R visit(BinaryOperation expr, C context);
 
-    R visit(UnaryOperation expr, C scope);
+    R visit(UnaryOperation expr, C context);
 
-    R visit(ArrayNode expr, C scope);
+    R visit(ArrayNode expr, C context);
 
-    R visit(SliceOperation expr, C scope);
+    @Deprecated
+    R visit(SliceOperation expr, C context);
 
-    R visit(AssignmentExpr expr, C scope);
+    R visit(AssignmentExpr expr, C context);
 
-    R visit(GetOperation expr, C scope);
+    R visit(GetOperation expr, C context);
 
-    R visit(SetOperation expr, C scope);
+    R visit(SetOperation expr, C context);
 
-    R visit(ReturnExpr expr, C scope);
+    R visit(ReturnExpr expr, C context);
 
-    R visit(ConditionalExpr expr, C scope);
+    R visit(ConditionalExpr expr, C context);
 
-    R visit(ForEachExpr expr, C scope);
+    R visit(ForEachExpr expr, C context);
 
-    R visit(DictionaryNode expr, C scope);
+    R visit(DictionaryNode expr, C context);
 
-    R visit(NullNode expr, C scope);
+    R visit(NullNode expr, C context);
 
-    R visit(IntNode expr, C scope);
+    R visit(IntNode expr, C context);
 
-    R visit(DecimalNode expr, C scope);
+    R visit(DecimalNode expr, C context);
 
-    R visit(BooleanNode expr, C scope);
+    R visit(BooleanNode expr, C context);
 
-    R visit(StringNode expr, C scope);
+    R visit(StringNode expr, C context);
 
-    R visit(DeclarationExpr expr, C scope);
+    R visit(DeclarationExpr expr, C context);
 
-    R visit(ModuleNode expr, C scope);
+    R visit(ModuleNode expr, C context);
 
-    R visit(TypeNode expr, C scope);
+    R visit(TypeNode expr, C context);
 
-    R visit(WhileExpr expr, C scope);
+    R visit(WhileExpr expr, C context);
 
-    R visit(FreeFormStruct expr, C scope);
+    R visit(FreeFormStruct expr, C context);
 
-    R visit(BindDeclarationExpr expr, C scope);
+    R visit(BindDeclarationExpr expr, C context);
 
-    R visit(BindAssignmentExpr expr, C scope);
+    @Deprecated
+    R visit(BindAssignmentExpr expr, C context);
 
-    R visit(TupleExpr expr, C scope);
+    R visit(TupleExpr expr, C context);
+
+    R visit(MatchExpr expr, C context);
 }

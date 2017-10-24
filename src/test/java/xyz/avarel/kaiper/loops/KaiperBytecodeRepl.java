@@ -22,7 +22,7 @@ package xyz.avarel.kaiper.loops;
 import xyz.avarel.kaiper.KaiperCompiler;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
-import xyz.avarel.kaiper.parser.KaiperParser;
+import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.NativeFunc;
@@ -66,7 +66,7 @@ public class KaiperBytecodeRepl {
                 Obj result;
 
                 try {
-                    result = new KaiperVM().executeCompressedBytecode(KaiperCompiler.compileCompressed(new KaiperParser(new KaiperLexer(input)).parse()), scope);
+                    result = new KaiperVM().executeCompressedBytecode(KaiperCompiler.compileCompressed(new ExprParser(new KaiperLexer(input)).parse()), scope);
                 } catch (KaiperException | IOException e) {
                     System.out.println("! " + e.getMessage());
                     e.printStackTrace();
