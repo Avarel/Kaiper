@@ -15,6 +15,8 @@ import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
 import xyz.avarel.kaiper.ast.expr.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.expr.operations.UnaryOperation;
 import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
+import xyz.avarel.kaiper.ast.expr.tuples.MatchExpr;
+import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.expr.value.*;
 import xyz.avarel.kaiper.ast.expr.variables.*;
 import xyz.avarel.kaiper.bytecode.io.KDataOutput;
@@ -126,19 +128,9 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
         return null;
     }
 
-    public Void visit(RangeNode expr, KDataOutput out) {
-        visit(out, expr.getLeft(), expr.getRight());
-
-        lineNumber(expr, out);
-
-        out.writeOpcode(NEW_RANGE);
-
-        return null;
-    }
-
     @Override
     public Void visit(ArrayNode expr, KDataOutput out) {
-        List<Single> items = expr.getItems();
+        List<Expr> items = expr.getItems();
 
         if (items.isEmpty()) {
             out.writeOpcode(NEW_ARRAY).writeInt(0);
@@ -256,11 +248,11 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
         out.writeOpcode(NEW_DICTIONARY);
 
-        Map<Single, Single> map = expr.getMap();
+        Map<Expr, Expr> map = expr.getMap();
 
         if (map.isEmpty()) return null;
 
-        for (Map.Entry<Single, Single> entry : map.entrySet()) {
+        for (Map.Entry<Expr, Expr> entry : map.entrySet()) {
             out.writeOpcode(DUP);
 
             visit(out, entry.getKey(), entry.getValue());
@@ -377,12 +369,12 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
     @Override
     public Void visit(FreeFormStruct expr, KDataOutput out) {
-        Map<String, Single> map = new LinkedHashMap<>(expr.getElements());
+        Map<String, Expr> map = new LinkedHashMap<>(expr.getElements());
         lineNumber(expr, out);
 
         out.writeOpcode(NEW_TUPLE).writeInt(map.size());
 
-        for (Map.Entry<String, Single> entry : map.entrySet()) {
+        for (Map.Entry<String, Expr> entry : map.entrySet()) {
             out.writeShort(stringConst(entry.getKey()));
 
             visit(out, entry.getValue());
@@ -417,6 +409,18 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
         patternCompiler.compile(expr.getPatternCase(), out);
         //out.writeOpcode(END);
 
+        return null;
+    }
+
+    @Override
+    public Void visit(TupleExpr expr, KDataOutput out) {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public Void visit(MatchExpr expr, KDataOutput out) {
+        //TODO
         return null;
     }
 
