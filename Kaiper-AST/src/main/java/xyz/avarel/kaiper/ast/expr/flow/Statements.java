@@ -21,6 +21,7 @@ import xyz.avarel.kaiper.ast.expr.Expr;
 
 import java.util.List;
 
+// write a singly linked list impl
 public class Statements extends Expr {
     private final List<Expr> statements;
 

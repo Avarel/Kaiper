@@ -54,23 +54,14 @@ public class ExprParser extends Parser {
     }
 
     public Expr parseStatements() {
-        if (match(TokenType.EOF)) return NullNode.VALUE;
+        List<Expr> exprList = new ArrayList<>();
 
-        Expr expr = parseExpr();
+        do {
+            if (match(TokenType.EOF)) break;
+            exprList.add(parseExpr());
+        } while (match(TokenType.LINE));
 
-        if (match(TokenType.LINE)) {
-            List<Expr> exprList = new ArrayList<>();
-            exprList.add(expr);
-
-            do {
-                if (match(TokenType.EOF)) break;
-                exprList.add(parseExpr());
-            } while (match(TokenType.LINE));
-
-            return new Statements(exprList);
-        }
-
-        return expr;
+        return exprList.size() == 1 ? exprList.get(0) : new Statements(exprList);
     }
 
     public Expr parseExpr() {
