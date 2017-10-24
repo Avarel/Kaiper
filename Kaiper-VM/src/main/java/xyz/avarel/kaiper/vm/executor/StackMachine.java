@@ -39,6 +39,7 @@ import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
+import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.GlobalExecutionSettings;
 import xyz.avarel.kaiper.vm.compiled.CompiledExecution;
 import xyz.avarel.kaiper.vm.compiled.PreparedPatternExecution;
@@ -70,11 +71,11 @@ import static xyz.avarel.kaiper.bytecode.reader.processors.ReadResult.*;
  * @author AdrianTodt
  */
 public class StackMachine extends KOpcodeProcessorAdapter {
-    public static boolean assign(Scope target, String key, Obj value) {
+    public static boolean assign(Scope<String, Obj> target, String key, Obj value) {
         if (target.getMap().containsKey(key)) {
             target.put(key, value);
             return true;
-        } else for (Scope parent : target.getParents()) {
+        } else for (Scope<String, Obj> parent : target.getParents()) {
             if (assign(parent, key, value)) {
                 return true;
             }
@@ -82,12 +83,13 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         return false;
     }
 
-    public static void declare(Scope target, String key, Obj value) {
+    public static void declare(Scope<String, Obj> target, String key, Obj value) {
         if (target.getMap().containsKey(key)) {
             throw new ComputeException(key + " already exists in the scope");
         }
         target.put(key, value);
     }
+
     /**
      * The Breakpoint object (used on resumeBreakpoint and opcodeBreakpoint)
      */
@@ -115,7 +117,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     /**
      * Current Scope
      */
-    public Scope scope;
+    public Scope<String, Obj> scope;
     /**
      * Current Stack
      */
@@ -127,7 +129,8 @@ public class StackMachine extends KOpcodeProcessorAdapter {
      */
     public long lineNumber = -1;
 
-    public StackMachine(String[] stringPool, Scope scope) {
+
+    public StackMachine(String[] stringPool, Scope<String, Obj> scope) {
         this.stringPool = stringPool;
         this.scope = scope;
     }
@@ -276,7 +279,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
                 name.isEmpty() ? null : name,
                 new PreparedPatternExecution(patternArity, patternBytecode, stringPool),
                 new CompiledExecution(function, stringPool),
-                scope.subPool()
+                scope.subScope()
         );
 
         if (func.getName() != null) declare(scope, func.getName(), func);
@@ -288,10 +291,10 @@ public class StackMachine extends KOpcodeProcessorAdapter {
     @Override
     public ReadResult opcodeNewModule(OpcodeReader reader, KDataInput in) {
         String name = stringPool[in.readUnsignedShort()];
-        Scope moduleScope = scope.subPool();
+        Scope<String, Obj> moduleScope = scope.subScope();
 
         //save state
-        Scope lastScope = scope;
+        Scope<String, Obj> lastScope = scope;
         int lastLock = stack.lock();
         scope = moduleScope;
 
@@ -326,7 +329,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         CompiledConstructor constructor = new CompiledConstructor(
                 new PreparedPatternExecution(patternArity, patternBytecode, stringPool),
                 new CompiledExecution(function, stringPool),
-                scope.subPool()
+                scope.subScope()
         );
 
         CompiledType type = new CompiledType(name, constructor);
@@ -634,7 +637,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         KDataInput bufferInput = new KDataInputStream(buffer);
 
         //save state
-        Scope lastScope = scope;
+        Scope<String, Obj> lastScope = scope;
         int lastLock = stack.lock();
 
         int iteration = 0;
@@ -646,7 +649,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
                 throw new ComputeException("Items in iterable do not implement Obj interface");
             }
 
-            scope = lastScope.subPool();
+            scope = lastScope.subScope();
             declare(scope, variant, (Obj) var);
 
             reader.read(this, bufferInput);
@@ -680,7 +683,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         KDataInput actionInput = new KDataInputStream(bufferAction);
 
         //save state
-        Scope lastScope = scope;
+        Scope<String, Obj> lastScope = scope;
         int lastLock = stack.lock();
 
         int iteration = 0;
@@ -688,14 +691,14 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         while (true) {
             GlobalExecutionSettings.checkIterationLimit(iteration);
 
-            scope = lastScope.subPool();
+            scope = lastScope.subScope();
             reader.read(this, conditionInput);
             checkTimeout();
             Obj condition = stack.pop();
             stack.popToLock(); //reset stack
 
             if (condition instanceof Bool && condition == Bool.TRUE) {
-                scope = lastScope.subPool();
+                scope = lastScope.subScope();
                 reader.read(this, actionInput);
                 checkTimeout();
                 stack.popToLock(); //reset stack

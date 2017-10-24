@@ -32,6 +32,8 @@ import java.util.Map;
 
 import static xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes.READER;
 import static xyz.avarel.kaiper.bytecode.reader.processors.ReadResult.*;
+import static xyz.avarel.kaiper.vm.executor.StackMachine.assign;
+import static xyz.avarel.kaiper.vm.executor.StackMachine.declare;
 
 public class PatternProcessor extends PatternOpcodeProcessorAdapter {
     public StackMachine parent;
@@ -185,7 +187,7 @@ public class PatternProcessor extends PatternOpcodeProcessorAdapter {
         if (doRead(tuple, size, input) == ERRORED) return false;
 
         for (Map.Entry<String, Obj> result : results.entrySet()) {
-            parent.scope.declare(result.getKey(), result.getValue());
+            declare(parent.scope, result.getKey(), result.getValue());
         }
 
         results = null;
@@ -197,7 +199,7 @@ public class PatternProcessor extends PatternOpcodeProcessorAdapter {
         if (doRead(tuple, size, input) == ERRORED) return false;
 
         for (Map.Entry<String, Obj> result : results.entrySet()) {
-            parent.scope.assign(result.getKey(), result.getValue());
+            assign(parent.scope, result.getKey(), result.getValue());
         }
 
         results = null;

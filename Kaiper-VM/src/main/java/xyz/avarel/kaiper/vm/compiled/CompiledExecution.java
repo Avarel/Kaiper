@@ -19,6 +19,7 @@ package xyz.avarel.kaiper.vm.compiled;
 import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
 import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
 import xyz.avarel.kaiper.vm.states.StatelessStackMachines;
 import xyz.avarel.kaiper.vm.states.VMState;
@@ -38,7 +39,7 @@ public class CompiledExecution {
         return stringPool;
     }
 
-    public Obj execute(Scope scope) {
+    public Obj execute(Scope<String, Obj> scope) {
         StackMachine machine = StatelessStackMachines.borrow();
         machine.stringPool = stringPool;
         machine.scope = scope;
@@ -51,7 +52,7 @@ public class CompiledExecution {
         return result;
     }
 
-    public Obj execute(StackMachine machine, Scope scope) {
+    public Obj execute(StackMachine machine, Scope<String, Obj> scope) {
         if (machine == null) {
             return execute(scope);
         }

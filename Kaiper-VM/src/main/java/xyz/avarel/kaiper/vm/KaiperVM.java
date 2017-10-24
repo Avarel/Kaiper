@@ -21,6 +21,7 @@ import xyz.avarel.kaiper.bytecode.io.KDataInput;
 import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
 import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
 
 import java.io.ByteArrayInputStream;
@@ -34,11 +35,11 @@ import java.util.zip.GZIPInputStream;
 public class KaiperVM {
     //region DELEGATES
 
-    public Obj executeBytecode(InputStream input, Scope scope) throws IOException {
+    public Obj executeBytecode(InputStream input, Scope<String, Obj> scope) throws IOException {
         return readAndExecute(input, scope);
     }
 
-    public Obj executeBytecode(byte[] input, Scope scope) throws IOException {
+    public Obj executeBytecode(byte[] input, Scope<String, Obj> scope) throws IOException {
         return readAndExecute(new ByteArrayInputStream(input), scope);
     }
 
@@ -46,13 +47,13 @@ public class KaiperVM {
 
     //region DELEGATES WITH COMPRESSION
 
-    public Obj executeCompressedBytecode(InputStream input, Scope scope) throws IOException {
+    public Obj executeCompressedBytecode(InputStream input, Scope<String, Obj> scope) throws IOException {
         try (GZIPInputStream gz = new GZIPInputStream(input)) {
             return readAndExecute(gz, scope);
         }
     }
 
-    public Obj executeCompressedBytecode(byte[] input, Scope scope) throws IOException {
+    public Obj executeCompressedBytecode(byte[] input, Scope<String, Obj> scope) throws IOException {
         try (GZIPInputStream gz = new GZIPInputStream(new ByteArrayInputStream(input))) {
             return readAndExecute(gz, scope);
         }
@@ -62,7 +63,7 @@ public class KaiperVM {
 
     //region MAIN METHOD
 
-    private Obj readAndExecute(InputStream inputStream, Scope scope) throws IOException {
+    private Obj readAndExecute(InputStream inputStream, Scope<String, Obj> scope) throws IOException {
         try {
             KDataInputStream input = new KDataInputStream(inputStream);
             versionHeaderAndCheck(input);

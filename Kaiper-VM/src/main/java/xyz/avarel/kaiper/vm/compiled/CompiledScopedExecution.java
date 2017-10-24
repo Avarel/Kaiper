@@ -17,21 +17,22 @@
 package xyz.avarel.kaiper.vm.compiled;
 
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
 
 public class CompiledScopedExecution extends CompiledExecution {
-    private final Scope baseScope;
+    private final Scope<String, Obj> baseScope;
 
-    public CompiledScopedExecution(byte[] bytecode, String[] stringPool, Scope baseScope) {
+    public CompiledScopedExecution(byte[] bytecode, String[] stringPool, Scope<String, Obj> baseScope) {
         super(bytecode, stringPool);
         this.baseScope = baseScope;
     }
 
     public Obj execute() {
-        return execute(baseScope.subPool());
+        return execute(baseScope.subScope());
     }
 
     public Obj execute(StackMachine executor) {
-        return execute(executor, baseScope.subPool());
+        return execute(executor, baseScope.subScope());
     }
 }

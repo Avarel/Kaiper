@@ -16,6 +16,8 @@
 
 package xyz.avarel.kaiper.vm.states;
 
+import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
 
 public class VMState {
@@ -34,7 +36,7 @@ public class VMState {
     }
 
     private final int stackLock;
-    private final Scope scope;
+    private final Scope<String, Obj> scope;
     private final long lineNumber;
     private final String[] stringPool;
 

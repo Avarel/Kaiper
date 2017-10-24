@@ -17,7 +17,9 @@
 package xyz.avarel.kaiper.vm.compiled;
 
 import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
+import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
+import xyz.avarel.kaiper.scope.Scope;
 import xyz.avarel.kaiper.vm.executor.StackMachine;
 import xyz.avarel.kaiper.vm.states.StatelessStackMachines;
 import xyz.avarel.kaiper.vm.states.VMState;
@@ -36,7 +38,7 @@ public class PreparedPatternExecution {
     }
 
 
-    public boolean executeAssign(Scope scope, Tuple tuple) {
+    public boolean executeAssign(Scope<String, Obj> scope, Tuple tuple) {
         StackMachine machine = StatelessStackMachines.borrow();
         machine.stringPool = stringPool;
         machine.scope = scope;
@@ -48,7 +50,7 @@ public class PreparedPatternExecution {
         }
     }
 
-    public boolean executeDeclare(Scope scope, Tuple tuple) {
+    public boolean executeDeclare(Scope<String, Obj> scope, Tuple tuple) {
         StackMachine machine = StatelessStackMachines.borrow();
         machine.stringPool = stringPool;
         machine.scope = scope;
@@ -60,7 +62,7 @@ public class PreparedPatternExecution {
         }
     }
 
-    public boolean executeAssign(StackMachine machine, Scope scope, Tuple tuple) {
+    public boolean executeAssign(StackMachine machine, Scope<String, Obj> scope, Tuple tuple) {
         if (machine == null) {
             return executeAssign(scope, tuple);
         }
@@ -78,7 +80,7 @@ public class PreparedPatternExecution {
         }
     }
 
-    public boolean executeDeclare(StackMachine machine, Scope scope, Tuple tuple) {
+    public boolean executeDeclare(StackMachine machine, Scope<String, Obj> scope, Tuple tuple) {
         if (machine == null) {
             return executeAssign(scope, tuple);
         }
