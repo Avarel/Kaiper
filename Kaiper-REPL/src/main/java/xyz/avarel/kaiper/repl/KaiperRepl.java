@@ -16,6 +16,8 @@
 
 package xyz.avarel.kaiper.repl;
 
+import biz.source_code.utils.RawConsoleInput;
+import com.kantenkugel.consoleutils.CharConstants;
 import com.kantenkugel.consoleutils.ConsoleUtils;
 import xyz.avarel.kaiper.KaiperEvaluator;
 import xyz.avarel.kaiper.exceptions.KaiperException;
@@ -32,18 +34,14 @@ public class KaiperRepl {
 
         KaiperEvaluator interpreter = new KaiperEvaluator();
 
-        interpreter.getScope().put("print", new RuntimeMultimethod("println")
+        interpreter.getScope().put("println", new RuntimeMultimethod("println")
                 .addCase(new RuntimePatternCase("value"), scope -> {
                     System.out.print(scope.get("value"));
                     return Null.VALUE;
                 })
-                .addCase(new RuntimePatternCase("ln"), scope -> {
-                    System.out.println(scope.get("ln"));
-                    return Null.VALUE;
-                })
         );
 
-        while (true) {
+        outer: while (true) {
             System.out.print("kip \u2502 ");
 
             int openBrackets = 0;
@@ -61,8 +59,9 @@ public class KaiperRepl {
                     initialBuffer.append("    ");
                 }
 
-                String line = ConsoleUtils.readWithInitialBuffer(initialBuffer.toString());
-                System.out.println();
+                String line = readInternal(initialBuffer.toString(), 4, openBrackets);
+
+                if (line == null) break outer;
 
                 entryBuffer.append(line);
                 openBrackets += countMatches(line, '{') - countMatches(line, '}');
@@ -82,7 +81,6 @@ public class KaiperRepl {
                 System.out.println("    \u2514\u2500\u2500 " + result + " : " + result.getType());
             } catch (KaiperException e) {
                 System.out.println("err \u2514\u2500\u2500 " + e.getMessage());
-                e.printStackTrace(System.out);
             }
 
             System.out.println();
@@ -95,5 +93,67 @@ public class KaiperRepl {
             if (target.charAt(i) == character) count++;
         }
         return count;
+    }
+
+    private static String readInternal(String initialBuffer, int indentUnit, int indentLevel) throws IOException {
+        if(initialBuffer != null) System.out.print(initialBuffer);
+        StringBuilder b = initialBuffer == null ? new StringBuilder() : new StringBuilder(initialBuffer);
+        int read;
+        while ((read = RawConsoleInput.read(true)) != -1) {
+            if (!ConsoleUtils.isPrintableChar((char) read)) {
+                if (read == CharConstants.CHAR_BACKSPACE) {
+                    if (b.length() == 0) continue;
+                    b.setLength(b.length() - 1);
+                    ConsoleUtils.backspace();
+                    continue;
+                }
+                if (read == CharConstants.CHAR_CTRL_C) {
+                    return null;
+                }
+                break;
+            }
+
+            if (read == '}') {
+                dedent(b, indentUnit);
+            }
+
+            b.append((char) read);
+            System.out.print((char) read);
+        }
+        System.out.print('\n');
+        return b.toString();
+    }
+
+    private static int spacesPrefix(CharSequence s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) != ' ') {
+                return i;
+            }
+        }
+        return s.length();
+    }
+
+    private static boolean isSpaces(CharSequence s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) != ' ') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static void dedent(StringBuilder b, int indentUnit) {
+        int spaceBefore = spacesPrefix(b);
+        if (spaceBefore != 0 && isSpaces(b)) {
+            int spacesToDelete = spaceBefore % indentUnit;
+            deleteBuffer(b, spacesToDelete == 0 ? indentUnit : spacesToDelete);
+        }
+    }
+
+    private static void deleteBuffer(StringBuilder b, int amount) {
+        b.setLength(b.length() - amount);
+        for (int i = 0; i < amount; i++) {
+            ConsoleUtils.backspace();
+        }
     }
 }
