@@ -36,7 +36,7 @@ public class KaiperRepl {
 
         interpreter.getScope().put("println", new RuntimeMultimethod("println")
                 .addCase(new RuntimePatternCase("value"), scope -> {
-                    System.out.print(scope.get("value"));
+                    System.out.println(scope.get("value"));
                     return Null.VALUE;
                 })
         );
