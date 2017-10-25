@@ -31,10 +31,6 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
     }
 
     public boolean bind(PatternCase patternCase, Obj obj) {
-        if (obj.size() < patternCase.arity() || obj.size() > patternCase.size()) {
-            return false;
-        }
-
         PatternContext context = new PatternContext(patternCase, obj);
         for (Pattern pattern : patternCase.getPatterns()) {
             if (!pattern.accept(this, context)) {
