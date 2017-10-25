@@ -20,7 +20,7 @@ jar {
     baseName = project.name
     manifest {
         attributes 'Implementation-Version': project.version
-        attributes 'Main-Class': 'xyz.avarel.kaiper.repl.KaiperREPL'
+        attributes 'Main-Class': 'xyz.avarel.kaiper.KaiperREPL'
     }
 }
 

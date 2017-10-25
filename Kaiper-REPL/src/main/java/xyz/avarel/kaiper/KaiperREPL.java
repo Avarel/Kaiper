@@ -17,50 +17,55 @@
 package xyz.avarel.kaiper;
 
 import jline.console.ConsoleReader;
+import xyz.avarel.kaiper.exceptions.KaiperException;
+import xyz.avarel.kaiper.runtime.Null;
+import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.functions.RuntimeMultimethod;
+import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class KaiperREPL {
     public static void main(String[] args) throws IOException {
-        new KaiperREPL().readREPLInput();
+        KaiperEvaluator evaluator = new KaiperEvaluator();
+
+        evaluator.getScope().put("println", new RuntimeMultimethod("println")
+                .addCase(new RuntimePatternCase("value"), scope -> {
+                    System.out.print(scope.get("value"));
+                    return Null.VALUE;
+                })
+        );
+
+        new KaiperREPL(evaluator).loop();
     }
 
     private final ConsoleReader reader;
-    private final IndentContext bracketIndent = new IndentContext();
+    private final IndentContext indentContext = new IndentContext();
 
-    public KaiperREPL() {
+    private final KaiperEvaluator evaluator;
+
+    public KaiperREPL(KaiperEvaluator evaluator) {
+        this.evaluator = evaluator;
+
         try {
             reader = new ConsoleReader(System.in, System.out);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
 
-        reader.addTriggeredAction('{', e -> {
-            bracketIndent.indentLevel++;
-            putString(reader, "{");
-            flush(reader);
-        });
-        reader.addTriggeredAction('}', e -> {
-            bracketIndent.indentLevel--;
+        indentContext.add('{', '}');
+        indentContext.add('[', ']');
 
-            if (isSpaces(sbuffer(reader))) {
-                while (sbuffer(reader).length() > bracketIndent.indentLevel * 4) {
-                    backspace(reader);
-                }
-            }
+        reader.setHistoryEnabled(false);
 
-            putString(reader, "}");
-            flush(reader);
-        });
         reader.addTriggeredAction('\b', e -> {
             if (reader.getCursorBuffer().buffer.length() == 0) return;
             char deletedChar = reader.getCursorBuffer().buffer.charAt(reader.getCursorBuffer().cursor - 1);
 
             switch (deletedChar) {
-                case '{': bracketIndent.indentLevel--; break;
-                case '}': bracketIndent.indentLevel++; break;
                 case ' ': if (isSpaces(sbuffer(reader))) {
                     int spaceBefore = spacesPrefix(sbuffer(reader));
                     if (spaceBefore != 0) {
@@ -71,6 +76,7 @@ public class KaiperREPL {
                             backspace(reader);
                     }
                 }
+                default: indentContext.processDeleted(deletedChar);
             }
 
             backspace(reader);
@@ -82,12 +88,35 @@ public class KaiperREPL {
         });
     }
 
+    public void loop() {
+        while (true) {
+            String s = readREPLInput();
+
+            if (s.equals("/quit")) {
+                break;
+            }
+
+            try {
+                Obj result = evaluator.eval(s);
+                System.out.println(result);
+            } catch (KaiperException e) {
+                System.out.print("!!! ");
+                if (e.getMessage() != null) {
+                    System.out.println(e.getMessage());
+                } else {
+                    System.out.println(e.getClass().getSimpleName());
+                }
+            }
+            System.out.println();
+        }
+    }
+
     public String readREPLInput() {
         StringJoiner j = new StringJoiner("\n");
 
         reader.setPrompt(">>> ");
         do {
-            for (int i = 0; i < bracketIndent.indentLevel; i++) {
+            for (int i = 0; i < indentContext.indentLevel(); i++) {
                 reader.getCursorBuffer().write("    ");
             }
 
@@ -101,70 +130,66 @@ public class KaiperREPL {
             j.add(input);
 
             reader.setPrompt("... ");
-        } while (bracketIndent.indentLevel > 0);
+        } while (indentContext.indentLevel() > 0);
 
         return j.toString();
     }
-//    public static void main(String[] args) throws IOException {
-//        //Scanner sc = new Scanner(System.in);
-//
-//        KaiperEvaluator interpreter = new KaiperEvaluator();
-//
-//        interpreter.getScope().put("println", new RuntimeMultimethod("println")
-//                .addCase(new RuntimePatternCase("value"), scope -> {
-//                    System.out.print(scope.get("value"));
-//                    return Null.VALUE;
-//                })
-//        );
-//
-//        outer: while (true) {
-//            System.out.print("kip \u2502 ");
-//
-//            int openBrackets = 0;
-//
-//            StringBuilder entryBuffer = new StringBuilder();
-//
-//            do {
-//                if (openBrackets != 0) {
-//                    entryBuffer.append('\n');
-//                    System.out.print("    \u2502 ");
-//                }
-//
-//                StringBuilder initialBuffer = new StringBuilder();
-//                for (int i = 0; i < openBrackets; i++) {
-//                    initialBuffer.append("    ");
-//                }
-//
-//                String line = readInternal(initialBuffer.toString(), 4, openBrackets);
-//
-//                if (line == null) break outer;
-//
-//                entryBuffer.append(line);
-//                openBrackets += countMatches(line, '{') - countMatches(line, '}');
-//            } while (openBrackets > 0);
-//
-//            String input = entryBuffer.toString();
-//
-//            if (input.equals("/quit")) {
-//                break;
-//            }
-//
-//            Obj result;
-//
-//            try {
-//                result = interpreter.eval(input);
-//
-//                System.out.println("    \u2514\u2500\u2500 " + result + " : " + result.getType());
-//            } catch (KaiperException e) {
-//                System.out.println("err \u2514\u2500\u2500 " + e.getMessage());
-//            }
-//
-//            System.out.println();
-//        }
-//    }
 
-    private static class IndentContext {
-        private int indentLevel = 0;
+    private class IndentContext {
+        private final Map<Character, Integer> indentPairs = new HashMap<>();
+        private final Map<Character, Integer> dedentPairs = new HashMap<>();
+        private final List<AtomicInteger> indentLevels = new ArrayList<>();
+
+        public void add(final char indent, final char dedent) {
+            indentPairs.put(indent, indentLevels.size());
+            dedentPairs.put(dedent, indentLevels.size());
+            indentLevels.add(new AtomicInteger());
+
+            // hack for now until find better solution
+            reader.addTriggeredAction(indent, e -> {
+                indent(indent);
+                putString(reader, String.valueOf(indent));
+                flush(reader);
+            });
+            reader.addTriggeredAction(dedent, e -> {
+                dedent(dedent);
+
+                if (isSpaces(sbuffer(reader))) {
+                    while (sbuffer(reader).length() > indentContext.indentLevel() * 4) {
+                        backspace(reader);
+                    }
+                }
+
+                putString(reader, String.valueOf(dedent));
+                flush(reader);
+            });
+        }
+
+        public void processDeleted(char input) {
+            Integer i = indentPairs.get(input);
+            if (i == null) {
+                i = dedentPairs.get(input);
+                if (i == null) return;
+                indentLevels.get(i).incrementAndGet();
+            }
+            indentLevels.get(i).decrementAndGet();
+        }
+
+        public void indent(char indent) {
+            indentLevels.get(indentPairs.get(indent)).incrementAndGet();
+        }
+
+        public void dedent(char dedent) {
+            indentLevels.get(dedentPairs.get(dedent)).decrementAndGet();
+        }
+
+        private int indentLevel() {
+            int sum = 0;
+            for (AtomicInteger i : indentLevels) {
+                sum += i.get();
+            }
+            return sum;
+        }
     }
 
     private static void flush(ConsoleReader reader) {
