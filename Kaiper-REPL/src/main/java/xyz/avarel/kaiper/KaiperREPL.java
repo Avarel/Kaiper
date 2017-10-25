@@ -58,6 +58,7 @@ public class KaiperREPL {
 
         indentContext.add('{', '}');
         indentContext.add('[', ']');
+        indentContext.add('(', ')');
 
         reader.setHistoryEnabled(false);
 
