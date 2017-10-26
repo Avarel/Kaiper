@@ -17,20 +17,17 @@
 package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.expr.tuples.MatchExpr;
 import xyz.avarel.kaiper.ast.expr.value.NullNode;
-import xyz.avarel.kaiper.ast.expr.variables.BindDeclarationExpr;
 import xyz.avarel.kaiper.ast.expr.variables.DeclarationExpr;
-import xyz.avarel.kaiper.ast.pattern.Pattern;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
-import xyz.avarel.kaiper.ast.pattern.VariablePattern;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 public class DeclarationParser implements PrefixParser {
     @Override
@@ -42,30 +39,35 @@ public class DeclarationParser implements PrefixParser {
 
             parser.eat(TokenType.ASSIGN);
 
-            return new BindDeclarationExpr(token.getPosition(), patternCase, parser.parseExpr());
+            Expr target = parser.parseExpr();
+
+            parser.match(TokenType.LINE);
+
+            Expr actionsAfter = parser.parseStatements();
+            return new MatchExpr(token.getPosition(), target, Collections.singletonMap(patternCase, actionsAfter));
         }
 
         Token name = parser.eat(TokenType.IDENTIFIER);
 
-        if (parser.match(TokenType.COMMA)) {
-            List<Pattern> patterns = new ArrayList<>();
-
-            patterns.add(new VariablePattern(name.getString()));
-
-            do {
-                patterns.add(new VariablePattern(parser.eat(TokenType.IDENTIFIER).getString()));
-            } while (parser.match(TokenType.COMMA));
-
-            PatternCase patternCase = new PatternCase(patterns);
-
-            parser.eat(TokenType.ASSIGN);
-
-            return new BindDeclarationExpr(
-                    token.getPosition(),
-                    patternCase,
-                    parser.parseExpr()
-            );
-        }
+//        if (parser.match(TokenType.COMMA)) {
+//            List<Pattern> patterns = new ArrayList<>();
+//
+//            patterns.add(new VariablePattern(name.getString()));
+//
+//            do {
+//                patterns.add(new VariablePattern(parser.eat(TokenType.IDENTIFIER).getString()));
+//            } while (parser.match(TokenType.COMMA));
+//
+//            PatternCase patternCase = new PatternCase(patterns);
+//
+//            parser.eat(TokenType.ASSIGN);
+//
+//            return new BindDeclarationExpr(
+//                    token.getPosition(),
+//                    patternCase,
+//                    parser.parseExpr()
+//            );
+//        }
 
         if (parser.match(TokenType.ASSIGN)) {
             return new DeclarationExpr(token.getPosition(), name.getString(), parser.parseExpr());

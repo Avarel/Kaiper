@@ -64,13 +64,6 @@ public class GetOperation extends Expr {
     }
 
     @Override
-    public int hashCode() {
-        int result = left.hashCode();
-        result = 31 * result + key.hashCode();
-        return result;
-    }
-
-    @Override
     public String toString() {
         return left + "[" + key + "]";
     }

@@ -28,13 +28,14 @@ import xyz.avarel.kaiper.ast.expr.flow.*;
 import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
 import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.expr.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.expr.operations.UnaryOperation;
 import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
 import xyz.avarel.kaiper.ast.expr.tuples.MatchExpr;
 import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.expr.value.*;
-import xyz.avarel.kaiper.ast.expr.variables.*;
+import xyz.avarel.kaiper.ast.expr.variables.AssignmentExpr;
+import xyz.avarel.kaiper.ast.expr.variables.DeclarationExpr;
+import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.ast.pattern.PatternBinder;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.ComputeException;
@@ -54,6 +55,8 @@ import xyz.avarel.kaiper.scope.Scope;
 
 import java.util.List;
 import java.util.Map;
+
+//import xyz.avarel.kaiper.ast.expr.operations.SliceOperation;
 
 public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
     private final VisitorSettings visitorSettings;
@@ -241,10 +244,10 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
         return array;
     }
 
-    @Override
-    public Obj visit(SliceOperation expr, Scope<String, Obj> scope) {
-        throw new UnsupportedOperationException("Up for removal");
-    }
+//    @Override
+//    public Obj visit(SliceOperation expr, Scope<String, Obj> scope) {
+//        throw new UnsupportedOperationException("Up for removal");
+//    }
 
     @Override
     public Obj visit(AssignmentExpr expr, Scope<String, Obj> scope) {
@@ -455,27 +458,27 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
         throw new UnsupportedOperationException("in progress");
     }
 
-    @Override
-    public Obj visit(BindDeclarationExpr expr, Scope<String, Obj> scope) {
-        Obj value = resultOf(expr.getExpr(), scope);
-
-        if (!(value instanceof Tuple)) {
-            value = new Tuple(value);
-        }
-
-        boolean result = new PatternBinder(this, scope).bind(expr.getPatternCase(), value);
-
-        if (!result) {
-            throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());
-        }
-
-        return Null.VALUE;
-    }
-
-    @Override
-    public Obj visit(BindAssignmentExpr expr, Scope<String, Obj> scope) {
-        throw new InterpreterException("Up for removal", expr.getPosition());
-    }
+//    @Override
+//    public Obj visit(BindDeclarationExpr expr, Scope<String, Obj> scope) {
+//        Obj value = resultOf(expr.getExpr(), scope);
+//
+//        if (!(value instanceof Tuple)) {
+//            value = new Tuple(value);
+//        }
+//
+//        boolean result = new PatternBinder(this, scope).bind(expr.getPatternCase(), value);
+//
+//        if (!result) {
+//            throw new InterpreterException("Could not match (" + value + ") to " + expr.getPatternCase(), expr.getPosition());
+//        }
+//
+//        return Null.VALUE;
+//    }
+//
+//    @Override
+//    public Obj visit(BindAssignmentExpr expr, Scope<String, Obj> scope) {
+//        throw new InterpreterException("Up for removal", expr.getPosition());
+//    }
 
     @Override
     public Obj visit(MatchExpr expr, Scope<String, Obj> scope) {

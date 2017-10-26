@@ -50,11 +50,6 @@ public class TupleExpr extends Expr {
     }
 
     @Override
-    public int hashCode() {
-        return elements.hashCode();
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("(");
 

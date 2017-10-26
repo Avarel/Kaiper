@@ -45,4 +45,15 @@ public class MatchExpr extends Expr {
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MatchExpr)) return false;
+
+        MatchExpr matchExpr = (MatchExpr) o;
+
+        return target.equals(matchExpr.target) && cases.equals(matchExpr.cases);
+    }
+
 }

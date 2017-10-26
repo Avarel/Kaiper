@@ -77,10 +77,4 @@ public class Identifier extends Expr {
                 && name.equals(((Identifier) o).name);
     }
 
-    @Override
-    public int hashCode() {
-        int result = parent != null ? parent.hashCode() : 0;
-        result = 31 * result + name.hashCode();
-        return result;
-    }
 }

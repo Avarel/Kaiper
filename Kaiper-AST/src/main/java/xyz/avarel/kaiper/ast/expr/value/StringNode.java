@@ -42,11 +42,6 @@ public class StringNode extends Expr {
     }
 
     @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
-
-    @Override
     public String toString() {
         return "\"" + value + "\"";
     }

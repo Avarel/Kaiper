@@ -60,13 +60,6 @@ public class UnaryOperation extends Expr {
     }
 
     @Override
-    public int hashCode() {
-        int result = target.hashCode();
-        result = 31 * result + operator.hashCode();
-        return result;
-    }
-
-    @Override
     public String toString() {
         return operator + "(" + target + ")";
     }

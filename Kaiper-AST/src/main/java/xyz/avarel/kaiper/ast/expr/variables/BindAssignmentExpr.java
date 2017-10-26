@@ -16,47 +16,42 @@
 
 package xyz.avarel.kaiper.ast.expr.variables;
 
-import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.expr.Expr;
-import xyz.avarel.kaiper.ast.pattern.PatternCase;
-import xyz.avarel.kaiper.lexer.Position;
-
-public class BindAssignmentExpr extends Expr {
-    private final PatternCase patternCase;
-    private final Expr expr;
-
-    public BindAssignmentExpr(Position position, PatternCase patternCase, Expr expr) {
-        super(position);
-        this.patternCase = patternCase;
-        this.expr = expr;
-    }
-
-    public PatternCase getPatternCase() {
-        return patternCase;
-    }
-
-    public Expr getExpr() {
-        return expr;
-    }
-
-    @Override
-    public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
-        return visitor.visit(this, context);
-    }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("declare");
-
-        builder.append('\n');
-        builder.append(indent).append(isTail ? "    " : "│   ").append("├── pattern ").append(patternCase);
-
-        builder.append('\n');
-        expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
-    }
-
-    @Override
-    public String toString() {
-        return patternCase + " = " + expr;
-    }
-}
+//public class BindAssignmentExpr extends Expr {
+//    private final PatternCase patternCase;
+//    private final Expr expr;
+//
+//    public BindAssignmentExpr(Position position, PatternCase patternCase, Expr expr) {
+//        super(position);
+//        this.patternCase = patternCase;
+//        this.expr = expr;
+//    }
+//
+//    public PatternCase getPatternCase() {
+//        return patternCase;
+//    }
+//
+//    public Expr getExpr() {
+//        return expr;
+//    }
+//
+//    @Override
+//    public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
+//        return visitor.visit(this, context);
+//    }
+//
+//    @Override
+//    public void ast(StringBuilder builder, String indent, boolean isTail) {
+//        builder.append(indent).append(isTail ? "└── " : "├── ").append("declare");
+//
+//        builder.append('\n');
+//        builder.append(indent).append(isTail ? "    " : "│   ").append("├── pattern ").append(patternCase);
+//
+//        builder.append('\n');
+//        expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return patternCase + " = " + expr;
+//    }
+//}

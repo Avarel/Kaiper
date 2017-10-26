@@ -67,13 +67,6 @@ public class SetOperation extends GetOperation {
     }
 
     @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + expr.hashCode();
-        return result;
-    }
-
-    @Override
     public String toString() {
         return super.toString() + " = " + expr;
     }
