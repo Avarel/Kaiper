@@ -25,14 +25,16 @@ import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
+import xyz.avarel.kaiper.runtime.pattern.VariableRTPattern;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.*;
+import java.util.function.UnaryOperator;
 
 /**
  * Kaiper wrapper class for a one dimensional list.
  */
-public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
+public class Array implements Obj, Iterable<Obj>, List<Obj> {
     public static final Type<Array> TYPE = new Type<>("Array");
     public static final Module MODULE = new NativeModule("Array") {{
         declare("TYPE", Array.TYPE);
@@ -55,7 +57,7 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
             @Override
             protected Obj eval(Map<String, Obj> arguments) {
                 Array array = arguments.get("array").as(Array.TYPE);
-                array.addAll(arguments.get("elements").as(Array.TYPE));
+                array.list.addAll(arguments.get("elements").as(Array.TYPE).list);
                 return array;
             }
         });
@@ -107,45 +109,123 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
                         Func operation = arguments.get("operation").as(Func.TYPE);
 
                         for (Obj obj : arguments.get("array").as(Array.TYPE)) {
-                            // todo
-                            //accumulator = operation.invoke(accumulator, obj);
+                            accumulator = operation.invoke(new Tuple(accumulator, obj));
                         }
                         return accumulator;
                     }
                 });
+
+        declare("slice", new NativeFunc("slice",
+                new VariableRTPattern("self"),
+                new VariableRTPattern("start", true),
+                new VariableRTPattern("end", true),
+                new VariableRTPattern("step", true)
+        ) {
+            @Override
+            protected Obj eval(Map<String, Obj> arguments) {
+                Array array = arguments.get("self").as(Array.TYPE);
+                Obj startObj = arguments.get("start");
+                Obj endObj = arguments.get("end");
+                Obj stepObj = arguments.get("step");
+
+                int start, end, step;
+
+                if (startObj == Null.VALUE) {
+                    start = 0;
+                } else {
+                    start = startObj.as(Int.TYPE).value();
+                    if (start < 0) start += array.size();
+                }
+
+                if (endObj == Null.VALUE) {
+                    end = array.size();
+                } else {
+                    end = endObj.as(Int.TYPE).value();
+                    if (end < 0) end += array.size();
+                }
+
+                if (stepObj == Null.VALUE) {
+                    step = 1;
+                } else {
+                    step = stepObj.as(Int.TYPE).value();
+                }
+
+                if (step == 1) {
+                    return Array.ofList(array.subList(Math.max(0, start), Math.min(array.size(), end)));
+                } else {
+                    if (step > 0) {
+                        List<Obj> list = new ArrayList<>();
+
+                        for (int i = start; i < end; i += step) {
+                            list.add(array.get(i));
+                        }
+
+                        return new Array(list);
+                    } else if (step < 0) {
+                        List<Obj> list = new ArrayList<>();
+
+                        for (int i = end - 1; i >= start; i += step) {
+                            list.add(array.get(i));
+                        }
+
+                        return new Array(list);
+                    } else { // step == 0
+                        return Null.VALUE;
+                    }
+                }
+            }
+        });
     }};
+    private final List<Obj> list;
 
     /**
      * Creates an empty array.
      */
     public Array() {
-        super();
+        this(new ArrayList<>());
+    }
+
+    public Array(List<Obj> list) {
+        this.list = list;
     }
 
     /**
      * Creates an array of items.
      *
-     * @param   items
-     *          {@link Obj} items to put into the list.
+     * @param items {@link Obj} items to put into the list.
      * @return The created {@link Array}.
      */
     public static Array of(Obj... items) {
         Array array = new Array();
-        array.addAll(Arrays.asList(items));
+        array.list.addAll(Arrays.asList(items));
         return array;
     }
 
     /**
      * Creates an array of items from a native {@link Collection collection}.
      *
-     * @param   collection
-     *          Native {@link Collection collection} of {@link Obj Kaiper objects}.
+     * @param collection Native {@link Collection collection} of {@link Obj Kaiper objects}.
      * @return The created {@link Array}.
      */
     public static Array ofList(Collection<Obj> collection) {
         Array array = new Array();
-        array.addAll(collection);
+        array.list.addAll(collection);
         return array;
+    }
+
+    @Override
+    public int size() {
+        return list.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return list.contains(o);
     }
 
     /**
@@ -189,73 +269,6 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
     }
 
     @Override
-    public Obj slice(Obj startObj, Obj endObj, Obj stepObj) {
-        int start;
-        int end;
-        int step;
-
-        if (startObj == Null.VALUE) {
-            start = 0;
-        } else {
-            if (startObj instanceof Int) {
-                start = ((Int) startObj).value();
-                if (start < 0) {
-                    start += size();
-                }
-            } else {
-                return Null.VALUE;
-            }
-        }
-
-        if (endObj == Null.VALUE) {
-            end = size();
-        } else {
-            if (endObj instanceof Int) {
-                end = ((Int) endObj).value();
-                if (end < 0) {
-                    end += size();
-                }
-            } else {
-                return Null.VALUE;
-            }
-        }
-
-        if (stepObj == Null.VALUE) {
-            step = 1;
-        } else {
-            if (stepObj instanceof Int) {
-                step = ((Int) stepObj).value();
-            } else {
-                return Null.VALUE;
-            }
-        }
-
-        if (step == 1) {
-            return Array.ofList(subList(Math.max(0, start), Math.min(size(), end)));
-        } else {
-            if (step > 0) {
-                Array newArray = new Array();
-
-                for (int i = start; i < end; i += step) {
-                    newArray.add(get(i));
-                }
-
-                return newArray;
-            } else if (step < 0) {
-                Array newArray = new Array();
-
-                for (int i = end - 1; i >= start; i += step) {
-                    newArray.add(get(i));
-                }
-
-                return newArray;
-            } else { // step == 0
-                return Null.VALUE;
-            }
-        }
-    }
-
-    @Override
     public Obj get(Obj key) {
         if (key instanceof Int) {
             return get((Int) key);
@@ -275,22 +288,48 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         return set(index.value(), element);
     }
 
-    @Override
     public Obj set(int index, Obj element) {
         if (index < 0) {
             index += size();
         }
 
-        if (index < 0) {
-            return Null.VALUE;
-        } else if (index >= size()) {
-            for (int i = size(); i <= index; i++) {
-                super.add(Null.VALUE);
-            }
-        }
-
-        super.set(index, element);
+        list.set(index, element);
         return element;
+    }
+
+    @Override
+    public void add(int index, Obj element) {
+        list.add(index, element);
+    }
+
+    @Override
+    public Obj remove(int index) {
+        return list.remove(index);
+    }
+
+    @Override
+    public int indexOf(Object o) {
+        return list.indexOf(o);
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        return list.lastIndexOf(o);
+    }
+
+    @Override
+    public ListIterator<Obj> listIterator() {
+        return list.listIterator();
+    }
+
+    @Override
+    public ListIterator<Obj> listIterator(int index) {
+        return list.listIterator(index);
+    }
+
+    @Override
+    public List<Obj> subList(int fromIndex, int toIndex) {
+        return list.subList(fromIndex, toIndex);
     }
 
     private Obj get(Int index) {
@@ -299,9 +338,63 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         return get(i);
     }
 
-    @Override
     public boolean add(Obj obj) {
-        return super.add(obj);
+        return list.add(obj);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return list.remove(o);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        return list.containsAll(c);
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends Obj> c) {
+        return list.addAll(c);
+    }
+
+    @Override
+    public boolean addAll(int index, Collection<? extends Obj> c) {
+        return list.addAll(index, c);
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        return list.removeAll(c);
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        return list.retainAll(c);
+    }
+
+    @Override
+    public void replaceAll(UnaryOperator<Obj> operator) {
+        list.replaceAll(operator);
+    }
+
+    @Override
+    public void sort(Comparator<? super Obj> c) {
+        list.sort(c);
+    }
+
+    @Override
+    public void clear() {
+        list.clear();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return list.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return list.hashCode();
     }
 
     @Override
@@ -312,15 +405,13 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
         if (index < 0 || index >= size()) {
             return Null.VALUE;
         }
-        return super.get(index);
+        return list.get(index);
     }
 
     @Override
     public Obj getAttr(String name) {
         switch (name) {
             case "size":
-                return Int.of(size());
-            case "length":
                 return Int.of(size());
             case "lastIndex":
                 return Int.of(size() - 1);
@@ -333,5 +424,25 @@ public class Array extends ArrayList<Obj> implements Obj, Iterable<Obj> {
     public Obj shl(Obj other) {
         this.add(other);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return list.toString();
+    }
+
+    @Override
+    public Iterator<Obj> iterator() {
+        return list.iterator();
+    }
+
+    @Override
+    public Object[] toArray() {
+        return list.toArray();
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        return list.toArray(a);
     }
 }

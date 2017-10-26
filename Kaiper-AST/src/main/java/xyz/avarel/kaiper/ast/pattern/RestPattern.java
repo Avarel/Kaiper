@@ -16,22 +16,24 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-/**
- * Visitor patterns for {@link Pattern patern} AST classes.
- * Each {@link Pattern pattern} implements the accept method which
- * is normally {@code visitor.visit(this, context)}.
- *
- * @param <R> Return type.
- * @param <C> Context type.
- *
- * @see Pattern
- * @author Avarel
- */
-public interface PatternVisitor<R, C> {
-    R visit(VariablePattern pattern, C context);
-    R visit(ValuePattern pattern, C context);
-    R visit(DefaultPattern pattern, C context);
-    R visit(NestedPattern pattern, C context);
-    R visit(WildcardPattern wildcardPattern, C context);
-    R visit(RestPattern restPattern, C scope);
+// x...
+public class RestPattern extends NamedPattern {
+    public RestPattern(String name) {
+        super(name);
+    }
+
+    @Override
+    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
+        return visitor.visit(this, scope);
+    }
+
+    @Override
+    public boolean optional() {
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "..." + getName();
+    }
 }

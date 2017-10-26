@@ -17,7 +17,6 @@
 package xyz.avarel.kaiper.parser;
 
 import xyz.avarel.kaiper.ast.expr.Expr;
-import xyz.avarel.kaiper.ast.expr.InlineExpr;
 import xyz.avarel.kaiper.ast.expr.flow.Statements;
 import xyz.avarel.kaiper.ast.expr.value.NullNode;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
@@ -58,11 +57,7 @@ public class ExprParser extends Parser {
             if (match(TokenType.EOF)) break;
 
             Expr expr = parseExpr();
-
-            if (expr instanceof InlineExpr) {
-            } else {
-                exprList.add(expr);
-            }
+            exprList.add(expr);
         } while (match(TokenType.LINE));
 
         return exprList.size() == 1 ? exprList.get(0) : new Statements(exprList);

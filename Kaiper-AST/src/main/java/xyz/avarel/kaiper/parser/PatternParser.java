@@ -26,13 +26,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PatternParser extends ExprParser {
-    private final Set<String> usedIdentifiers;
 
     public PatternParser(ExprParser parser) {
         super(parser);
-        this.usedIdentifiers = new HashSet<>();
     }
 
     public PatternCase parsePatternCase() {
@@ -40,15 +39,17 @@ public class PatternParser extends ExprParser {
     }
 
     public PatternCase parsePatternCase(List<Pattern> patterns) {
-        usedIdentifiers.clear();
+        Set<String> usedIdentifiers = new HashSet<>();
+        AtomicBoolean rest = new AtomicBoolean();
+
         do {
-            patterns.add(parsePattern());
+            patterns.add(parsePattern(usedIdentifiers, rest));
         } while (match(TokenType.COMMA));
 
         return new PatternCase(patterns);
     }
 
-    private Pattern parsePattern() {
+    private Pattern parsePattern(Set<String> usedIdentifiers, AtomicBoolean rest) {
         if (nextIs(TokenType.IDENTIFIER)) {
             Token token = eat(TokenType.IDENTIFIER);
             String name = token.getString();
@@ -66,6 +67,22 @@ public class PatternParser extends ExprParser {
             }
 
             return pattern;
+        } else if (match(TokenType.REST)) {
+            if (rest.get()) {
+                throw new SyntaxException("Only one rest argument allowed");
+            }
+
+            String name = eat(TokenType.IDENTIFIER).getString();
+
+            if (usedIdentifiers.contains(name)) {
+                throw new SyntaxException("Duplicate argument name", getLast().getPosition());
+            } else {
+                usedIdentifiers.add(name);
+            }
+
+            rest.set(true);
+
+            return new RestPattern(name);
         } else if (match(TokenType.LEFT_PAREN)) {
             if (match(TokenType.RIGHT_PAREN)) {
                 return new NestedPattern(PatternCase.EMPTY);

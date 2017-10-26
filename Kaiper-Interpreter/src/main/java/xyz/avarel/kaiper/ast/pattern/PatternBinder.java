@@ -19,6 +19,7 @@ package xyz.avarel.kaiper.ast.pattern;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
+import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.scope.Scope;
 
 public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.PatternContext> {
@@ -43,24 +44,24 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
     }
 
     @Override
-    public Boolean visit(VariablePattern pattern, PatternContext patternContext) {
-        if (patternContext.tuple.size() <= patternContext.tupleIndex) {
+    public Boolean visit(VariablePattern pattern, PatternContext context) {
+        if (context.tuple.size() <= context.tupleIndex) {
             return false;
         }
 
-        ExprInterpreter.declare(scope, pattern.getName(), patternContext.tuple.get(patternContext.tupleIndex++));
+        ExprInterpreter.declare(scope, pattern.getName(), context.tuple.get(context.tupleIndex++));
         return true;
     }
 
     @Override
-    public Boolean visit(DefaultPattern pattern, PatternContext patternContext) {
+    public Boolean visit(DefaultPattern pattern, PatternContext context) {
         // def what(x = 1, y = 2, z) = "$x $y $z"
         //def what(a, b=2, c=3,d=4,e) = [a,b,c,d,e]
         // def what(a, b=2, c,d=4,e) = [a,b,c,d,e]
 
-        int remainingRequiredArgs = patternContext.patternCase.subList(patternContext.currentPatternIndex).arity();
-        int remainingTupleElements = patternContext.tuple.size() - patternContext.tupleIndex;
-        if (remainingRequiredArgs >= remainingTupleElements || !pattern.getDelegate().accept(this, patternContext)) {
+        int remainingRequiredArgs = context.patternCase.subList(context.currentPatternIndex).arity();
+        int remainingTupleElements = context.tuple.size() - context.tupleIndex;
+        if (remainingRequiredArgs >= remainingTupleElements || !pattern.getDelegate().accept(this, context)) {
             ExprInterpreter.declare(scope, pattern.getName(), pattern.getDefault().accept(interpreter, scope));
         }
 
@@ -68,13 +69,29 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
     }
 
     @Override
-    public Boolean visit(ValuePattern pattern, PatternContext patternContext) {
-        if (patternContext.tuple.size() <= patternContext.tupleIndex) {
+    public Boolean visit(RestPattern pattern, PatternContext context) {
+        int remainingRequiredArgs = context.patternCase.subList(context.currentPatternIndex).arity();
+        int remainingTupleElements = context.tuple.size() - context.tupleIndex;
+
+        Array array = new Array();
+
+        for (; remainingTupleElements > remainingRequiredArgs; remainingTupleElements--) {
+            array.add(context.tuple.get(context.currentPatternIndex++));
+        }
+
+        ExprInterpreter.declare(scope, pattern.getName(), array);
+
+        return true;
+    }
+
+    @Override
+    public Boolean visit(ValuePattern pattern, PatternContext context) {
+        if (context.tuple.size() <= context.tupleIndex) {
             return false;
         }
 
         Obj obj = interpreter.resultOf(pattern.getExpr(), scope);
-        return obj.equals(patternContext.tuple.get(patternContext.tupleIndex++));
+        return obj.equals(context.tuple.get(context.tupleIndex++));
     }
 
     @Override
@@ -83,12 +100,12 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
     }
 
     @Override
-    public Boolean visit(NestedPattern pattern, PatternContext patternContext) {
-        if (patternContext.tuple.size() <= patternContext.tupleIndex) {
+    public Boolean visit(NestedPattern pattern, PatternContext context) {
+        if (context.tuple.size() <= context.tupleIndex) {
             return false;
         }
 
-        Obj obj = patternContext.tuple.get(patternContext.tupleIndex++);
+        Obj obj = context.tuple.get(context.tupleIndex++);
 
         if (!(obj instanceof Tuple)) return false;
 
