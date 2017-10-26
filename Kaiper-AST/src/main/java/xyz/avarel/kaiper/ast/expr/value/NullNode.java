@@ -19,8 +19,6 @@ package xyz.avarel.kaiper.ast.expr.value;
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.expr.Expr;
 
-import java.util.Objects;
-
 public class NullNode extends Expr {
     public static final NullNode VALUE = new NullNode();
 
@@ -36,11 +34,6 @@ public class NullNode extends Expr {
     @Override
     public boolean equals(Object obj) {
         return this == obj;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(null);
     }
 
     @Override

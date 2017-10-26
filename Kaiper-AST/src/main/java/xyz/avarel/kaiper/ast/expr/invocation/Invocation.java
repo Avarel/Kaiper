@@ -64,13 +64,6 @@ public class Invocation extends Expr {
     }
 
     @Override
-    public int hashCode() {
-        int result = left.hashCode();
-        result = 31 * result + argument.hashCode();
-        return result;
-    }
-
-    @Override
     public String toString() {
         return left + "(" + argument + ")";
     }

@@ -56,4 +56,15 @@ public class TypeNode extends Expr {
                 .append('(').append(patternCase).append(')');
         builder.append('\n');
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TypeNode)) return false;
+
+        TypeNode typeNode = (TypeNode) o;
+
+        return name.equals(typeNode.name) && patternCase.equals(typeNode.patternCase);
+    }
+
 }

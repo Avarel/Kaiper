@@ -83,14 +83,6 @@ public class AssignmentExpr extends Expr {
     }
 
     @Override
-    public int hashCode() {
-        int result = parent != null ? parent.hashCode() : 0;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + expr.hashCode();
-        return result;
-    }
-
-    @Override
     public String toString() {
         if (parent == null)
         return name + " = " + expr;

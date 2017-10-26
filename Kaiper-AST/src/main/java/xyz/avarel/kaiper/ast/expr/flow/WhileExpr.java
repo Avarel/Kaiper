@@ -58,4 +58,15 @@ public class WhileExpr extends Expr {
     public String toString() {
         return "while";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof WhileExpr)) return false;
+
+        WhileExpr whileExpr = (WhileExpr) o;
+
+        return condition.equals(whileExpr.condition) && action.equals(whileExpr.action);
+    }
+
 }

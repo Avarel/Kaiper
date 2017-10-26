@@ -61,11 +61,6 @@ public class Statements extends Expr {
     }
 
     @Override
-    public int hashCode() {
-        return statements.hashCode();
-    }
-
-    @Override
     public String toString() {
         return "statements";
     }

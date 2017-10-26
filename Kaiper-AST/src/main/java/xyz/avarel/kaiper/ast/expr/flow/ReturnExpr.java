@@ -43,11 +43,6 @@ public class ReturnExpr extends Expr {
     }
 
     @Override
-    public int hashCode() {
-        return expr.hashCode();
-    }
-
-    @Override
     public String toString() {
         return "return " + expr;
     }

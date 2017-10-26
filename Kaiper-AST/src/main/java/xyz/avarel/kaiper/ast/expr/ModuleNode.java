@@ -50,4 +50,15 @@ public class ModuleNode extends Expr {
         builder.append('\n');
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ModuleNode)) return false;
+
+        ModuleNode that = (ModuleNode) o;
+
+        return name.equals(that.name) && expr.equals(that.expr);
+    }
+
 }

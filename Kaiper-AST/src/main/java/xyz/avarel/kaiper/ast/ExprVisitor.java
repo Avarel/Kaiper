@@ -27,13 +27,14 @@ import xyz.avarel.kaiper.ast.expr.flow.*;
 import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
 import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.expr.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.expr.operations.UnaryOperation;
 import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
 import xyz.avarel.kaiper.ast.expr.tuples.MatchExpr;
 import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.expr.value.*;
-import xyz.avarel.kaiper.ast.expr.variables.*;
+import xyz.avarel.kaiper.ast.expr.variables.AssignmentExpr;
+import xyz.avarel.kaiper.ast.expr.variables.DeclarationExpr;
+import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 
 /**
  * Visitor patterns for {@link Expr expression} AST classes.
@@ -61,8 +62,8 @@ public interface ExprVisitor<R, C> {
 
     R visit(ArrayNode expr, C context);
 
-    @Deprecated
-    R visit(SliceOperation expr, C context);
+//    @Deprecated
+//    R visit(SliceOperation expr, C context);
 
     R visit(AssignmentExpr expr, C context);
 
@@ -98,10 +99,10 @@ public interface ExprVisitor<R, C> {
 
     R visit(FreeFormStruct expr, C context);
 
-    R visit(BindDeclarationExpr expr, C context);
+//    R visit(BindDeclarationExpr expr, C context);
 
-    @Deprecated
-    R visit(BindAssignmentExpr expr, C context);
+//    @Deprecated
+//    R visit(BindAssignmentExpr expr, C context);
 
     R visit(TupleExpr expr, C context);
 

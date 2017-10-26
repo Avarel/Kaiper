@@ -78,14 +78,6 @@ public class ConditionalExpr extends Expr {
     }
 
     @Override
-    public int hashCode() {
-        int result = condition.hashCode();
-        result = 31 * result + ifBranch.hashCode();
-        result = 31 * result + (elseBranch != null ? elseBranch.hashCode() : 0);
-        return result;
-    }
-
-    @Override
     public String toString() {
         return "conditional";
     }

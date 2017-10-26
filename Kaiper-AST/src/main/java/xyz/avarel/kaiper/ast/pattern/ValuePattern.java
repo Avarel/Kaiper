@@ -17,12 +17,7 @@
 package xyz.avarel.kaiper.ast.pattern;
 
 import xyz.avarel.kaiper.ast.expr.Expr;
-import xyz.avarel.kaiper.ast.expr.value.NullNode;
 
-// a: is Int
-// a: 2
-// a: x
-// a: (2, meme: 2, dank: 3)
 public class ValuePattern extends Pattern {
     private final Expr expr;
 
@@ -44,16 +39,7 @@ public class ValuePattern extends Pattern {
         int compare = super.compareTo(other);
 
         if (compare == 0 && other instanceof ValuePattern) {
-            ValuePattern value = (ValuePattern) other;
-
-            // special workaround for null value atterns
-            if (expr == NullNode.VALUE) {
-                return expr == value.expr ? 0 : 1;
-            } else if (value.expr == NullNode.VALUE) {
-                return expr == value.expr ? 0 : -1;
-            }
-
-            return Integer.compare(expr.hashCode(), value.expr.hashCode());
+            return 1;
         }
 
         return compare;

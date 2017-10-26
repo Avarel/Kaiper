@@ -42,11 +42,6 @@ public class BooleanNode extends Expr {
     }
 
     @Override
-    public int hashCode() {
-        return Boolean.hashCode(this == TRUE);
-    }
-
-    @Override
     public String toString() {
         return this == TRUE ? "true" : "false";
     }

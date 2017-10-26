@@ -73,17 +73,9 @@ public class FunctionNode extends Expr {
 
         FunctionNode that = (FunctionNode) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (!patternCase.equals(that.patternCase)) return false;
-        return expr.equals(that.expr);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + patternCase.hashCode();
-        result = 31 * result + expr.hashCode();
-        return result;
+        return (name != null ? name.equals(that.name) : that.name == null)
+                && patternCase.equals(that.patternCase)
+                && expr.equals(that.expr);
     }
 
     @Override
