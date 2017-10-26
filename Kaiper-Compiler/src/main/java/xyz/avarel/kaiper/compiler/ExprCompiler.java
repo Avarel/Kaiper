@@ -12,13 +12,14 @@ import xyz.avarel.kaiper.ast.expr.flow.*;
 import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
 import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.expr.operations.SliceOperation;
 import xyz.avarel.kaiper.ast.expr.operations.UnaryOperation;
 import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
 import xyz.avarel.kaiper.ast.expr.tuples.MatchExpr;
 import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.expr.value.*;
-import xyz.avarel.kaiper.ast.expr.variables.*;
+import xyz.avarel.kaiper.ast.expr.variables.AssignmentExpr;
+import xyz.avarel.kaiper.ast.expr.variables.DeclarationExpr;
+import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.bytecode.io.KDataOutput;
 import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.operations.BinaryOperatorType;
@@ -143,17 +144,6 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
         lineNumber(expr, out);
 
         out.writeOpcode(NEW_ARRAY).writeInt(items.size());
-
-        return null;
-    }
-
-    @Override
-    public Void visit(SliceOperation expr, KDataOutput out) {
-        visit(out, expr.getLeft(), expr.getStart(), expr.getEnd(), expr.getStep());
-
-        lineNumber(expr, out);
-
-        out.writeOpcode(SLICE_OPERATION);
 
         return null;
     }
@@ -380,34 +370,6 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
             visit(out, entry.getValue());
             out.writeOpcode(END);
         }
-
-        return null;
-    }
-
-    @Override
-    public Void visit(BindDeclarationExpr expr, KDataOutput out) {
-        visit(out, expr.getExpr());
-
-        lineNumber(expr, out);
-
-        out.writeOpcode(BIND_DECLARE);
-
-        patternCompiler.compile(expr.getPatternCase(), out);
-        //out.writeOpcode(END);
-
-        return null;
-    }
-
-    @Override
-    public Void visit(BindAssignmentExpr expr, KDataOutput out) {
-        visit(out, expr.getExpr());
-
-        lineNumber(expr, out);
-
-        out.writeOpcode(BIND_ASSIGN);
-
-        patternCompiler.compile(expr.getPatternCase(), out);
-        //out.writeOpcode(END);
 
         return null;
     }

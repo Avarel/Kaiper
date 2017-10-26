@@ -7,6 +7,7 @@ import java.util.List;
 
 import static xyz.avarel.kaiper.bytecode.opcodes.PatternOpcodes.*;
 
+//fixme
 public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
     private final ExprCompiler parent;
 
@@ -35,7 +36,7 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
 
     @Override
     public Void visit(ValuePattern pattern, KDataOutput out) {
-        out.writeOpcode(TUPLE).writeShort(parent.stringConst(pattern.getName()));
+        out.writeOpcode(VALUE);
 
         pattern.getExpr().accept(parent, out);
         out.writeOpcode(END);
@@ -45,7 +46,7 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
 
     @Override
     public Void visit(DefaultPattern pattern, KDataOutput out) {
-        out.writeOpcode(DEFAULT).writeShort(parent.stringConst(pattern.getDelegate().getName()));
+        out.writeOpcode(DEFAULT).writeShort(parent.stringConst(pattern.getDelegate().g()));
 
         pattern.getDelegate().accept(this, out);
 
@@ -56,7 +57,12 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
     }
 
     @Override
-    public Void visit(NestedPattern pattern, KDataOutput context) {
+    public Void visit(NestedPattern pattern, KDataOutput out) {
         throw new UnsupportedOperationException("Adrian pls");
+    }
+
+    @Override
+    public Void visit(WildcardPattern wildcardPattern, KDataOutput out) {
+        return null; //TODO
     }
 }
