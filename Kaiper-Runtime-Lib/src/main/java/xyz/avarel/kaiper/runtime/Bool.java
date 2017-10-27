@@ -65,7 +65,7 @@ public enum Bool implements Obj {
     }
 
     @Override
-    public Type getType() {
+    public Type<Bool> getType() {
         return TYPE;
     }
 

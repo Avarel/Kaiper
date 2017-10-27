@@ -74,7 +74,7 @@ public class Range implements Obj, Iterable<Int> {
     }
 
     @Override
-    public Type getType() {
+    public Type<Range> getType() {
         return TYPE;
     }
 

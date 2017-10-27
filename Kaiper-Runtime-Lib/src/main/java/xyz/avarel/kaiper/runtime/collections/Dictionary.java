@@ -135,7 +135,7 @@ public class Dictionary implements Obj, Map<Obj, Obj> {
     }
 
     @Override
-    public Type getType() {
+    public Type<Dictionary> getType() {
         return TYPE;
     }
 

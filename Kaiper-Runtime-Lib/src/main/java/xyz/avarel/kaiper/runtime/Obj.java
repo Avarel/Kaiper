@@ -33,13 +33,13 @@ public interface Obj {
     /**
      * @return The {@link Type} of the object.
      */
-    Type getType();
+    Type<?> getType();
 
     /**
      * @return The Java object representation of this Kaiper object or {@code null}.
      */
     default Object toJava() {
-        return null;
+        return this;
     }
 
     /**
@@ -283,10 +283,9 @@ public interface Obj {
         return 1;
     }
 
-    // no operator, purely internal
     @SuppressWarnings("unchecked")
     default <T extends Obj> T as(Type<T> type) {
-        if (getType().is(type)) {
+        if (getType().equals(type)) {
             return (T) this;
         }
 

@@ -43,7 +43,7 @@ public enum Null implements Obj {
     }
 
     @Override
-    public Type getType() {
+    public Type<Null> getType() {
         return TYPE;
     }
 }

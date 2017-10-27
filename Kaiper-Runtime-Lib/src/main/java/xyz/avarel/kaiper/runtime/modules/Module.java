@@ -31,7 +31,7 @@ public abstract class Module implements Obj {
     public abstract Obj getAttr(String name);
 
     @Override
-    public Type getType() {
+    public Type<Module> getType() {
         return TYPE;
     }
 

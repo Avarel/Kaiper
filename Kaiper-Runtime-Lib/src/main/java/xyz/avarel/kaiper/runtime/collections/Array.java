@@ -246,7 +246,7 @@ public class Array implements Obj, Iterable<Obj>, List<Obj> {
     }
 
     @Override
-    public Type getType() {
+    public Type<Array> getType() {
         return TYPE;
     }
 
