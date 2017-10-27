@@ -76,7 +76,7 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
         Array array = new Array();
 
         for (; remainingTupleElements > remainingRequiredArgs; remainingTupleElements--) {
-            array.add(context.tuple.get(context.currentPatternIndex++));
+            array.add(context.tuple.get(context.tupleIndex++));
         }
 
         ExprInterpreter.declare(scope, pattern.getName(), array);
