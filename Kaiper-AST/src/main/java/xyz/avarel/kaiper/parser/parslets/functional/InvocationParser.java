@@ -29,8 +29,8 @@ import java.util.Collections;
 
 public class InvocationParser extends BinaryParser {
     public static final TokenType[] argumentTokens = {
-            TokenType.IDENTIFIER, TokenType.STRING, TokenType.INT,
-            TokenType.NUMBER, TokenType.FUNCTION, TokenType.NULL
+            TokenType.STRING, TokenType.INT, TokenType.NUMBER, TokenType.BOOLEAN, TokenType.NULL,
+            TokenType.IDENTIFIER,  TokenType.FUNCTION,
     };
 
     public InvocationParser() {

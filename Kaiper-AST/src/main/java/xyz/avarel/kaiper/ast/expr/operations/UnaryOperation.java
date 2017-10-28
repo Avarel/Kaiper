@@ -61,6 +61,6 @@ public class UnaryOperation extends Expr {
 
     @Override
     public String toString() {
-        return operator + "(" + target + ")";
+        return String.valueOf(operator) + target;
     }
 }

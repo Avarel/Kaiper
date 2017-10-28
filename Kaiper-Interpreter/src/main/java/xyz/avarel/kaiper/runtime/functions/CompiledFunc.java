@@ -45,17 +45,19 @@ public class CompiledFunc extends Func implements Comparable<CompiledFunc> {
     }
 
     @Override
-    public int getArity() {
-        return patternCase.size();
+    public Obj invoke(Obj argument) {
+        Obj result = tryInvoke(argument);
+        if (result == null) {
+            throw new InterpreterException("Could not match arguments " + argument + " to " + getName() + patternCase);
+        }
+        return result;
     }
 
-    // def fun(x, ...y, z = 5) { println x; println y; println z }
-    @Override
-    public Obj invoke(Obj argument) {
+    final Obj tryInvoke(Obj argument) {
         Scope<String, Obj> scope = this.scope.subScope();
 
         if (!new PatternBinder(visitor, scope).bind(patternCase, argument)) {
-            throw new InterpreterException("Could not match arguments " + argument + " to " + getName() + patternCase);
+            return null;
         }
 
         try {

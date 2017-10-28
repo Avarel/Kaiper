@@ -39,7 +39,7 @@ public class KaiperDevRepl {
         });
 
         while (true) {
-            System.out.print("kip \u2502 ");
+            System.out.print(">>> ");
 
             int openBrackets = 0;
 
@@ -48,7 +48,7 @@ public class KaiperDevRepl {
             do {
                 if (openBrackets != 0) {
                     buffer.append('\n');
-                    System.out.print("    \u2502 ");
+                    System.out.print("... ");
                 }
 
                 String line = sc.nextLine();
@@ -59,7 +59,7 @@ public class KaiperDevRepl {
 
             String input = buffer.toString();
 
-            if (input.equals("quit")) {
+            if (input.equals("/quit")) {
                 break;
             }
 
@@ -68,9 +68,9 @@ public class KaiperDevRepl {
             try {
                 result = interpreter.eval(input);
 
-                System.out.println("    \u2514\u2500\u2500 " + result + " : " + result.getType());
+                System.out.println(result + " : " + result.getType());
             } catch (KaiperException e) {
-                System.out.println("err \u2514\u2500\u2500 " + e.getMessage());
+                System.out.println("!!! " + e.getMessage());
             }
 
             System.out.println();

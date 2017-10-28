@@ -103,6 +103,8 @@ public class Int implements Obj, Comparable<Int> {
     public Obj plus(Obj other) {
         if (other instanceof Int) {
             return this.plus((Int) other);
+        } else if (other instanceof Number) {
+            return Number.of(value).plus(other);
         }
         return Obj.super.plus(other);
     }
@@ -115,6 +117,8 @@ public class Int implements Obj, Comparable<Int> {
     public Obj minus(Obj other) {
         if (other instanceof Int) {
             return this.minus((Int) other);
+        } else if (other instanceof Number) {
+            return Number.of(value).minus(other);
         }
         return Obj.super.minus(other);
     }
@@ -127,6 +131,8 @@ public class Int implements Obj, Comparable<Int> {
     public Obj times(Obj other) {
         if (other instanceof Int) {
             return this.times((Int) other);
+        } else if (other instanceof Number) {
+            return Number.of(value).minus(other);
         }
         return Obj.super.times(other);
     }
@@ -139,6 +145,8 @@ public class Int implements Obj, Comparable<Int> {
     public Obj divide(Obj other) {
         if (other instanceof Int) {
             return this.divide((Int) other);
+        } else if (other instanceof Number) {
+            return Number.of(value).divide(other);
         }
         return Obj.super.divide(other);
     }
@@ -154,6 +162,8 @@ public class Int implements Obj, Comparable<Int> {
     public Obj pow(Obj other) {
         if (other instanceof Int) {
             return this.pow((Int) other);
+        } else if (other instanceof Number) {
+            return Number.of(value).pow(other);
         }
         return Obj.super.pow(other);
     }
@@ -166,6 +176,8 @@ public class Int implements Obj, Comparable<Int> {
     public Obj mod(Obj other) {
         if (other instanceof Int) {
             return this.mod((Int) other);
+        } else if (other instanceof Number) {
+            return Number.of(value).mod(other);
         }
         return Obj.super.mod(other);
     }
@@ -183,6 +195,8 @@ public class Int implements Obj, Comparable<Int> {
     public Bool isEqualTo(Obj other) {
         if (other instanceof Int) {
             return this.isEqualTo((Int) other);
+        } else if (other instanceof Number) {
+            return Number.of(value).isEqualTo(other);
         }
         return Bool.FALSE;
     }
@@ -195,6 +209,8 @@ public class Int implements Obj, Comparable<Int> {
     public int compareTo(Obj other) {
         if (other instanceof Int) {
             return this.compareTo((Int) other);
+        } else if (other instanceof Number) {
+            return Number.of(value).compareTo(other);
         }
         return Obj.super.compareTo(other);
     }

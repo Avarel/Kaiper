@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.parser.parslets;
 
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.ModuleNode;
-import xyz.avarel.kaiper.ast.expr.value.NullNode;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;
@@ -28,18 +27,7 @@ public class ModuleParser implements PrefixParser {
     @Override
     public Expr parse(ExprParser parser, Token token) {
         String name = parser.eat(TokenType.IDENTIFIER).getString();
-
-        Expr expr = NullNode.VALUE;
-
-        if (parser.match(TokenType.LEFT_BRACE)) {
-            if (parser.match(TokenType.RIGHT_BRACE)) {
-                expr = NullNode.VALUE;
-            } else {
-                expr = parser.parseStatements();
-                parser.eat(TokenType.RIGHT_BRACE);
-            }
-        }
-
+        Expr expr = parser.parseBlock();
         return new ModuleNode(token.getPosition(), name, expr);
     }
 }

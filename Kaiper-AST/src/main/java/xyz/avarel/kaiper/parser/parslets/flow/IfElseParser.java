@@ -30,20 +30,12 @@ public class IfElseParser implements PrefixParser {
     public Expr parse(ExprParser parser, Token token) {
         Expr condition = parser.parseExpr();
 
-        parser.eat(TokenType.LEFT_BRACE);
-        Expr ifBranch = parser.parseStatements();
-        parser.eat(TokenType.RIGHT_BRACE);
+        Expr ifBranch = parser.parseBlock();
 
         Expr elseBranch = null;
 
         if (parser.matchSignificant(TokenType.ELSE)) {
-            if (parser.nextIs(TokenType.IF)) {
-                elseBranch = parser.parseExpr();
-            } else {
-                parser.eat(TokenType.LEFT_BRACE);
-                elseBranch = parser.parseStatements();
-                parser.eat(TokenType.RIGHT_BRACE);
-            }
+            elseBranch = parser.nextIs(TokenType.IF) ? parser.parseExpr() : parser.parseBlock();
         }
 
         if (condition == BooleanNode.TRUE) {

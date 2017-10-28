@@ -37,7 +37,6 @@ public class FileTest {
         );
 
         // todo update patterns for native because they just dont work
-
         exp.getScope().put("println", new RuntimeMultimethod("println")
                 .addCase(new RuntimePatternCase("value"), scope -> {
                     System.out.println(scope.get("value"));

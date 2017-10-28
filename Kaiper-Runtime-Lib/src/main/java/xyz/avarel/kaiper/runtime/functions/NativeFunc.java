@@ -46,11 +46,6 @@ public abstract class NativeFunc extends Func {
         this.pattern = pattern;
     }
 
-    @Override
-    public int getArity() {
-        return pattern.size();
-    }
-
     public RuntimePatternCase getPattern() {
         return pattern;
     }
@@ -62,7 +57,7 @@ public abstract class NativeFunc extends Func {
 
     @Override
     public Obj invoke(Obj argument) {
-        Map<String, Obj> scope = new HashMap<>(getArity());
+        Map<String, Obj> scope = new HashMap<>();
 
         if (!new RuntimePatternBinder(pattern).bindFrom(scope, argument)) {
             throw new ComputeException("Could not match arguments (" + argument + ") to " + getName() + "(" + pattern + ")");

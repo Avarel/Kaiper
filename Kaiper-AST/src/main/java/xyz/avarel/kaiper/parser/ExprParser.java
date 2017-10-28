@@ -16,11 +16,14 @@
 
 package xyz.avarel.kaiper.parser;
 
+import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.flow.Statements;
 import xyz.avarel.kaiper.ast.expr.value.NullNode;
+import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
+import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 
@@ -67,15 +70,15 @@ public class ExprParser extends Parser {
         return parseExpr(0);
     }
 
-//    public Identifier parseIdentifier() {
-//        Position position = peek(0).getPosition();
-//        Expr expr = parseExpr(Precedence.DOT - 1);
-//        if (expr instanceof Identifier) {
-//            return (Identifier) expr;
-//        } else {
-//            throw new SyntaxException("Expected IDENTIFIER but got " + getLast().getType(), position);
-//        }
-//    }
+    public Identifier parseIdentifier() {
+        Position position = peek(0).getPosition();
+        Expr expr = parseExpr(Precedence.DOT - 1);
+        if (expr instanceof Identifier) {
+            return (Identifier) expr;
+        } else {
+            throw new SyntaxException("Expected IDENTIFIER but got " + getLast().getType(), position);
+        }
+    }
 
     public Expr parseBlock() {
         Expr expr = NullNode.VALUE;

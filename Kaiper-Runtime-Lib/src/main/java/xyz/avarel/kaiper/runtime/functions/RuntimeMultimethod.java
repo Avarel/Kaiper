@@ -47,11 +47,6 @@ public class RuntimeMultimethod extends Func {
     }
 
     @Override
-    public int getArity() {
-        return methodCases.firstKey().size();
-    }
-
-    @Override
     public Obj invoke(Obj argument) {
         for (Map.Entry<RuntimePatternCase, Function<Map<String, Obj>, Obj>> entry : methodCases.entrySet()) {
             Map<String, Obj> scope = new HashMap<>();

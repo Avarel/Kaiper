@@ -47,6 +47,8 @@ import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
 import xyz.avarel.kaiper.runtime.functions.CompiledFunc;
 import xyz.avarel.kaiper.runtime.functions.CompiledMultiMethod;
+import xyz.avarel.kaiper.runtime.functions.CurriedFunction;
+import xyz.avarel.kaiper.runtime.functions.Func;
 import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -156,16 +158,6 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
         Obj left = resultOf(expr.getLeft(), scope);
         Obj right = resultOf(expr.getRight(), scope);
 
-        if (left instanceof Int) {
-            if (right instanceof Number) {
-                left = Number.of(((Int) left).value());
-            }
-        } else if (left instanceof Number) {
-            if (right instanceof Int) {
-                right = Number.of(((Int) right).value());
-            }
-        }
-
         switch (expr.getOperator()) {
             case PLUS:
                 return left.plus(right);
@@ -197,6 +189,13 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
                 return left.shl(right);
             case SHR:
                 return left.shr(right);
+
+            case REF: // todo handle native functions
+                if (right instanceof Func) {
+                    return new CurriedFunction((Func) right, left);
+                } else {
+                    throw new InterpreterException("Illegal currying, right operand is not a function");
+                }
 
             default:
                 throw new InterpreterException("Unknown binary operator", expr.getPosition());

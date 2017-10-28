@@ -101,7 +101,7 @@ public class DefaultGrammar extends Grammar {
         infix(TokenType.AND, new BinaryOperatorParser(Precedence.CONJUNCTION, true, BinaryOperatorType.AND));
         infix(TokenType.OR, new BinaryOperatorParser(Precedence.DISJUNCTION, true, BinaryOperatorType.OR));
 
-        infix(TokenType.IS, new BinaryOperatorParser(Precedence.INFIX, true, BinaryOperatorType.IS));
+//        infix(TokenType.IS, new BinaryOperatorParser(Precedence.INFIX, true, BinaryOperatorType.IS));
 
         // Functional
         infix(TokenType.LEFT_PAREN, new InvocationParser());

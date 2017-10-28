@@ -52,17 +52,12 @@ public enum DefaultFunctions {
         }
     }),
 
-    TUPLE(new Func("t") {
-        @Override
-        public int getArity() {
-            return 0;
-        }
-
-        @Override
-        public Obj invoke(Obj argument) {
-            return argument;
-        }
-    }),
+//    TUPLE(new Func("t") {
+//        @Override
+//        public Obj invoke(Obj argument) {
+//            return argument;
+//        }
+//    }),
 
     NOT(new NativeFunc("not", "function") {
         @Override

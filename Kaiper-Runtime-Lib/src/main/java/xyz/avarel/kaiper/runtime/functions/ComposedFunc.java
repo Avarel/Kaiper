@@ -16,9 +16,7 @@
 
 package xyz.avarel.kaiper.runtime.functions;
 
-import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 
 public class ComposedFunc extends Func {
     private final Func outer;
@@ -30,23 +28,23 @@ public class ComposedFunc extends Func {
         this.outer = outer;
         this.inner = inner;
 
-        if (inner.getArity() != 1) {
-            throw new ComputeException("Composed functions require the outer function to be arity-1.");
-        }
+//        if (inner.getArity() != 1) {
+//            throw new ComputeException("Composed functions require the outer function to be arity-1.");
+//        }
     }
 
-    @Override
-    public int getArity() {
-        return inner.getArity();
-    }
+//    @Override
+//    public int getArity() {
+//        return inner.getArity();
+//    }
 
     @Override
     public String toString() {
-        return super.toString() + " { " + outer.getName() + "(" + inner.toString() + ") }";
+        return "def " + outer.getName() + "<<" + inner.getName();
     }
 
     @Override
     public Obj invoke(Obj argument) {
-        return outer.invoke(new Tuple(inner.invoke(argument)));
+        return outer.invoke(inner.invoke(argument));
     }
 }

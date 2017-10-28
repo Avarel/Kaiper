@@ -103,6 +103,8 @@ public class Number implements Obj, Comparable<Number> {
     public Obj plus(Obj other) {
         if (other instanceof Number) {
             return plus((Number) other);
+        } else if (other instanceof Int) {
+            return plus(Number.of(((Int) other).value()));
         }
         return Obj.super.plus(other);
     }
@@ -115,6 +117,8 @@ public class Number implements Obj, Comparable<Number> {
     public Obj minus(Obj other) {
         if (other instanceof Number) {
             return minus((Number) other);
+        } else if (other instanceof Int) {
+            return minus(Number.of(((Int) other).value()));
         }
         return Obj.super.minus(other);
     }
@@ -127,6 +131,8 @@ public class Number implements Obj, Comparable<Number> {
     public Obj times(Obj other) {
         if (other instanceof Number) {
             return times((Number) other);
+        }  else if (other instanceof Int) {
+            return times(Number.of(((Int) other).value()));
         }
         return Obj.super.times(other);
     }
@@ -139,6 +145,8 @@ public class Number implements Obj, Comparable<Number> {
     public Obj divide(Obj other) {
         if (other instanceof Number) {
             return divide((Number) other);
+        }  else if (other instanceof Int) {
+            return divide(Number.of(((Int) other).value()));
         }
         return Obj.super.divide(other);
     }
@@ -151,6 +159,8 @@ public class Number implements Obj, Comparable<Number> {
     public Obj pow(Obj other) {
         if (other instanceof Number) {
             return pow((Number) other);
+        } else if (other instanceof Int) {
+            return pow(Number.of(((Int) other).value()));
         }
         return Obj.super.pow(other);
     }
@@ -163,12 +173,14 @@ public class Number implements Obj, Comparable<Number> {
     public Obj mod(Obj other) {
         if (other instanceof Number) {
             return mod((Number) other);
+        }  else if (other instanceof Int) {
+            return mod(Number.of(((Int) other).value()));
         }
         return Obj.super.mod(other);
     }
 
     private Number mod(Number other) {
-        return Number.of((value % other.value + other.value) % other.value);
+        return Number.of(Math.abs(value % other.value));
     }
 
     public Number negative() {
@@ -178,7 +190,9 @@ public class Number implements Obj, Comparable<Number> {
     @Override
     public Bool isEqualTo(Obj other) {
         if (other instanceof Number) {
-            return this.isEqualTo((Number) other);
+            return isEqualTo((Number) other);
+        } else if (other instanceof Int) {
+            return isEqualTo(Number.of(((Int) other).value()));
         }
         return Bool.FALSE;
     }
@@ -190,7 +204,9 @@ public class Number implements Obj, Comparable<Number> {
     @Override
     public int compareTo(Obj other) {
         if (other instanceof Number) {
-            return this.compareTo((Number) other);
+            return compareTo((Number) other);
+        } else if (other instanceof Int) {
+            return compareTo(Number.of(((Int) other).value()));
         }
         return Obj.super.compareTo(other);
     }

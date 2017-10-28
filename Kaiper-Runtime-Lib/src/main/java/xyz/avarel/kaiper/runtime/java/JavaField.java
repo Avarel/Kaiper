@@ -105,7 +105,7 @@ public class JavaField extends JavaObject implements Obj {
 
         if (tuple instanceof Tuple) {
             nativeArgs = new ArrayList<>(tuple.size());
-            for (Obj obj : ((Tuple) tuple).asList()) {
+            for (Obj obj : ((Tuple) tuple)._toList()) {
                 Object o = obj.toJava();
                 nativeArgs.add(o != Null.VALUE ? o : null);
             }

@@ -36,9 +36,7 @@ public class ForEachParser implements PrefixParser {
 
         if (match) parser.eat(TokenType.RIGHT_PAREN);
 
-        parser.eat(TokenType.LEFT_BRACE);
-        Expr expr = parser.parseStatements();
-        parser.eat(TokenType.RIGHT_BRACE);
+        Expr expr = parser.parseBlock();
 
         return new ForEachExpr(token.getPosition(), variant, iterable, expr);
     }

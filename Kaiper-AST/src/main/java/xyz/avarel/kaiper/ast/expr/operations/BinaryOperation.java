@@ -71,6 +71,6 @@ public class BinaryOperation extends Expr {
 
     @Override
     public String toString() {
-        return operator + "(" + left + ", " + right + ")";
+        return String.valueOf(left) + operator + right;
     }
 }

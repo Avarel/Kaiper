@@ -18,12 +18,17 @@ package xyz.avarel.kaiper.parser.parslets.functions;
 
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
+import xyz.avarel.kaiper.ast.pattern.NestedPattern;
+import xyz.avarel.kaiper.ast.pattern.Pattern;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FunctionParser implements PrefixParser {
     private LambdaFunctionParser lambda = new LambdaFunctionParser();
@@ -42,25 +47,22 @@ public class FunctionParser implements PrefixParser {
             parser.eat(TokenType.RIGHT_PAREN);
 
             String name = null;
-//            if (parser.match(TokenType.REF)) {
-//                name = parser.eat(TokenType.IDENTIFIER).getString();
-//
-//                NestedPattern nestedPattern = new NestedPattern(patternCase);
-//
-//                List<Pattern> list = new ArrayList<>();
-//                list.add(nestedPattern);
-//
-//                // def (re, im)::conjugate() = re: self.re, im: -self.im
-//                // def conjugate(self: (re, im)) = re: self.re, im: -self.im
-//
-//                parser.eat(TokenType.LEFT_PAREN);
-//                if (!parser.match(TokenType.RIGHT_PAREN)) {
-//                    patternCase = new PatternParser(parser).parsePatternCase(list);
-//                    parser.eat(TokenType.RIGHT_PAREN);
-//                } else {
-//                    patternCase = new PatternCase(list);
-//                }
-//            }
+            if (parser.match(TokenType.REF)) {
+                name = parser.eat(TokenType.IDENTIFIER).getString();
+
+                NestedPattern nestedPattern = new NestedPattern(patternCase);
+
+                List<Pattern> list = new ArrayList<>();
+                list.add(nestedPattern);
+
+                parser.eat(TokenType.LEFT_PAREN);
+                if (!parser.match(TokenType.RIGHT_PAREN)) {
+                    patternCase = new PatternParser(parser).parsePatternCase(list);
+                    parser.eat(TokenType.RIGHT_PAREN);
+                } else {
+                    patternCase = new PatternCase(list);
+                }
+            }
 
             Expr expr;
             if (parser.match(TokenType.ASSIGN)) {

@@ -35,8 +35,6 @@ public abstract class Func implements Obj {
         this.name = name;
     }
 
-    public abstract int getArity();
-
     public String getName() {
         return name == null ? "anonymous" : name;
     }

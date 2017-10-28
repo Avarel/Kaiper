@@ -90,9 +90,20 @@ public class Tuple implements Obj {
         return values.length;
     }
 
-    // INTERNAL
-    public List<Obj> asList() {
+    /*
+     * INTERNAL METHOD
+     * DO NOT EXPOSE TO LANGUAGE
+     */
+    public List<Obj> _toList() {
         return Arrays.asList(values);
+    }
+
+    /*
+     * INTERNAL METHOD
+     * DO NOT EXPOSE TO LANGUAGE
+     */
+    public Obj[] _toArray() {
+        return values;
     }
 
     @Override
