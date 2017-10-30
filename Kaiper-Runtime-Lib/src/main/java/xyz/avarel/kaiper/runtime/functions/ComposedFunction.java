@@ -18,11 +18,11 @@ package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.Obj;
 
-public class ComposedFunc extends Func {
-    private final Func outer;
-    private final Func inner;
+public class ComposedFunction extends Function {
+    private final Function outer;
+    private final Function inner;
 
-    public ComposedFunc(Func outer, Func inner) {
+    public ComposedFunction(Function outer, Function inner) {
         super(outer.getName() + "<<" + inner.getName());
 
         this.outer = outer;

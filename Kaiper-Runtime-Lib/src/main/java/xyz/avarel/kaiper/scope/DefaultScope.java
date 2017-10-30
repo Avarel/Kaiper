@@ -20,7 +20,7 @@ import xyz.avarel.kaiper.runtime.*;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
-import xyz.avarel.kaiper.runtime.functions.Func;
+import xyz.avarel.kaiper.runtime.functions.Function;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.MathModule;
 import xyz.avarel.kaiper.runtime.numbers.Number;
@@ -30,10 +30,10 @@ public class DefaultScope extends Scope<String, Obj> {
     public static final DefaultScope INSTANCE = new DefaultScope();
 
     private DefaultScope() {
-        put("not", DefaultFunctions.NOT.get());
-        put("str", DefaultFunctions.STR.get());
-        put("range", DefaultFunctions.RANGE.get());
-        put("rangeex", DefaultFunctions.RANGE_EX.get());
+//        put("not", DefaultFunctions.NOT.get());
+//        put("str", DefaultFunctions.STR.get());
+//        put("range", DefaultFunctions.RANGE.get());
+//        put("rangeex", DefaultFunctions.RANGE_EX.get());
 
         put("Object", Obj.MODULE);
         put("Math", MathModule.INSTANCE);
@@ -46,7 +46,7 @@ public class DefaultScope extends Scope<String, Obj> {
         put("Range", Range.MODULE);
         put("Dictionary", Dictionary.MODULE);
         put("String", Str.MODULE);
-        put("Function", Func.MODULE);
+        put("Function", Function.MODULE);
         put("Null", Null.MODULE);
     }
 

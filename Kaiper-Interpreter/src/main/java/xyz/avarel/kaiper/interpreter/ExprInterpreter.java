@@ -45,10 +45,9 @@ import xyz.avarel.kaiper.runtime.*;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
-import xyz.avarel.kaiper.runtime.functions.CompiledFunc;
-import xyz.avarel.kaiper.runtime.functions.CompiledMultiMethod;
+import xyz.avarel.kaiper.runtime.functions.CompiledFunction;
 import xyz.avarel.kaiper.runtime.functions.CurriedFunction;
-import xyz.avarel.kaiper.runtime.functions.Func;
+import xyz.avarel.kaiper.runtime.functions.Function;
 import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -96,18 +95,20 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
     @Override
     public Obj visit(FunctionNode expr, Scope<String, Obj> scope) {
         if (expr.getName() == null) {
-            return new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope);
+            CompiledFunction func = new CompiledFunction(expr.getName(), this, scope);
+            func.addCase(expr.getPatternCase(), expr.getExpr());
+            return func;
         }
 
-        CompiledMultiMethod multiMethod;
-        if (scope.getMap().get(expr.getName()) instanceof CompiledMultiMethod) {
-            multiMethod = (CompiledMultiMethod) scope.get(expr.getName());
+        CompiledFunction multiMethod;
+        if (scope.getMap().get(expr.getName()) instanceof CompiledFunction) {
+            multiMethod = (CompiledFunction) scope.get(expr.getName());
         } else {
-            multiMethod = new CompiledMultiMethod(expr.getName());
+            multiMethod = new CompiledFunction(expr.getName(), this, scope);
             declare(scope, expr.getName(), multiMethod);
         }
 
-        if (!multiMethod.addCase(new CompiledFunc(expr.getName(), expr.getPatternCase(), expr.getExpr(), this, scope))) {
+        if (!multiMethod.addCase(expr.getPatternCase(), expr.getExpr())) {
             throw new InterpreterException("Ambiguous pattern for function " + multiMethod.getName() + expr.getPosition());
         }
 
@@ -191,8 +192,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
                 return left.shr(right);
 
             case REF: // todo handle native functions
-                if (right instanceof Func) {
-                    return new CurriedFunction((Func) right, left);
+                if (right instanceof Function) {
+                    return new CurriedFunction((Function) right, left);
                 } else {
                     throw new InterpreterException("Illegal currying, right operand is not a function");
                 }
@@ -491,7 +492,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             }
         }
 
-        throw new InterpreterException("No match cases", expr.getPosition());
+        throw new InterpreterException("No match found", expr.getPosition());
     }
 
     public Obj resultOf(Expr expr, Scope<String, Obj> scope) {
@@ -502,7 +503,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             if (expr.getPosition() != null) {
                 throw new InterpreterException(e.getMessage(), expr.getPosition());
             } else {
-                throw new InterpreterException(e.getMessage());
+                throw new ComputeException(e.getMessage()); //rethrow
             }
         }
     }

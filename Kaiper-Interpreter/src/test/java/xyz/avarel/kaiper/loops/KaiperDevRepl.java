@@ -19,9 +19,7 @@ package xyz.avarel.kaiper.loops;
 import xyz.avarel.kaiper.KaiperEvaluator;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 
-import java.util.Map;
 import java.util.Scanner;
 
 public class KaiperDevRepl {
@@ -30,13 +28,13 @@ public class KaiperDevRepl {
 
         KaiperEvaluator interpreter = new KaiperEvaluator();
 
-        interpreter.getScope().put("println", new NativeFunc("println", "obj") {
-            @Override
-            protected Obj eval(Map<String, Obj> arguments) {
-                System.out.println(arguments.get("obj"));
-                return null;
-            }
-        });
+//        interpreter.getScope().put("println", new NativeFunc("println", "obj") {
+//            @Override
+//            protected Obj eval(Map<String, Obj> arguments) {
+//                System.out.println(arguments.get("obj"));
+//                return null;
+//            }
+//        });
 
         while (true) {
             System.out.print(">>> ");

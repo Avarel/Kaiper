@@ -17,21 +17,18 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
-import java.util.function.Function;
-
-public abstract class Func implements Obj {
-    public static final Type<Func> TYPE = new Type<>("Function");
+public abstract class Function implements Obj {
+    public static final Type<Function> TYPE = new Type<>("Function");
     public static final Module MODULE = new NativeModule("Function") {{
-        declare("TYPE", Func.TYPE);
+        declare("TYPE", Function.TYPE);
     }};
     private final String name;
 
-    protected Func(String name) {
+    protected Function(String name) {
         this.name = name;
     }
 
@@ -40,13 +37,8 @@ public abstract class Func implements Obj {
     }
 
     @Override
-    public Type<Func> getType() {
+    public Type<Function> getType() {
         return TYPE;
-    }
-
-    @Override
-    public Function<Tuple, Obj> toJava() {
-        return this::invoke;
     }
 
     @Override
@@ -54,16 +46,16 @@ public abstract class Func implements Obj {
 
     @Override
     public Obj shr(Obj other) { // this >> other
-        if (other instanceof Func) {
-            return new ComposedFunc((Func) other, this);
+        if (other instanceof Function) {
+            return new ComposedFunction((Function) other, this);
         }
         return Obj.super.shr(other);
     }
 
     @Override
     public Obj shl(Obj other) { // this << other
-        if (other instanceof Func) {
-            return new ComposedFunc(this, (Func) other);
+        if (other instanceof Function) {
+            return new ComposedFunction(this, (Function) other);
         }
         return Obj.super.shr(other);
     }

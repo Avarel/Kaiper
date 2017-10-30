@@ -19,23 +19,23 @@ package xyz.avarel.kaiper.exceptions;
 import xyz.avarel.kaiper.lexer.Position;
 
 public class InterpreterException extends KaiperException {
+    private final Position position;
+
     public InterpreterException(String msg) {
-        super(msg);
+        this(msg, null);
     }
 
     public InterpreterException(String msg, Position position) {
-        this(msg + position);
+        super(msg + (position != null ? position : ""));
+        this.position = position;
     }
 
-    public InterpreterException(String s, Throwable throwable) {
-        super(s, throwable);
-    }
-
-    public InterpreterException(String s, Position position, Throwable throwable) {
-        super(s + position, throwable);
+    public Position getPosition() {
+        return position;
     }
 
     public InterpreterException(Throwable throwable) {
         super(throwable);
+        this.position = null;
     }
 }

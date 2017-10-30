@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.runtime.collections;
 
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -37,12 +36,12 @@ public class Dictionary implements Obj, Map<Obj, Obj> {
     public static final Module MODULE = new NativeModule("Dictionary") {{
         declare("TYPE", Dictionary.TYPE);
 
-        declare("size", new NativeFunc("size", "dict") {
-            @Override
-            protected Obj eval(Map<String, Obj> arguments) {
-                return Int.of(arguments.get("dict").size());
-            }
-        });
+//        declare("size", new NativeFunc("size", "dict") {
+//            @Override
+//            protected Obj eval(Map<String, Obj> arguments) {
+//                return Int.of(arguments.get("dict").size());
+//            }
+//        });
     }};
     private final Map<Obj, Obj> map;
 

@@ -34,7 +34,7 @@ import xyz.avarel.kaiper.runtime.*;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.runtime.collections.Dictionary;
 import xyz.avarel.kaiper.runtime.collections.Range;
-import xyz.avarel.kaiper.runtime.functions.Func;
+import xyz.avarel.kaiper.runtime.functions.Function;
 import xyz.avarel.kaiper.runtime.modules.CompiledModule;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -275,7 +275,7 @@ public class StackMachine extends KOpcodeProcessorAdapter {
         reader.read(buffer.setOut(byteBufferOutput), in);
         byte[] function = byteBuffer.toByteArray();
 
-        Func func = new CompiledFunc(
+        Function func = new CompiledFunc(
                 name.isEmpty() ? null : name,
                 new PreparedPatternExecution(patternArity, patternBytecode, stringPool),
                 new CompiledExecution(function, stringPool),

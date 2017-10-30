@@ -28,7 +28,7 @@ class KaiperTest {
         exp.add("tau", new KaiperScript("2 * pi"));
 
 //        // Add a normal function.
-//        exp.add("double", new NativeFunction(Numeric.TYPE) {
+//        exp.add("double", new JavaFunction(Numeric.TYPE) {
 //            @Override
 //            protected Obj eval(Obj target, List<Obj> arguments) {
 //                return arguments.get(0).times(2);
@@ -36,7 +36,7 @@ class KaiperTest {
 //        });
 //
 //        // Add a varargs function.
-//        exp.add("sum", new NativeFunction(true, Numeric.TYPE) {
+//        exp.add("sum", new JavaFunction(true, Numeric.TYPE) {
 //            @Override
 //            protected Obj eval(Obj target, List<Obj> arguments) {
 //                if (arguments.isEmpty()) return Int.of(0);

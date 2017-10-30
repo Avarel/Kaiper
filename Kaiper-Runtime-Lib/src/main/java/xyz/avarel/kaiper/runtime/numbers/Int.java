@@ -16,15 +16,11 @@
 
 package xyz.avarel.kaiper.runtime.numbers;
 
-import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Bool;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
-
-import java.util.Map;
 
 public class Int implements Obj, Comparable<Int> {
     public static final Type<Int> TYPE = new Type<>("Int");
@@ -36,22 +32,22 @@ public class Int implements Obj, Comparable<Int> {
         declare("BYTES", Int.of(Integer.BYTES));
         declare("SIZE", Int.of(Integer.SIZE));
 
-        declare("parse", new NativeFunc("parse", "a") {
-            @Override
-            protected Obj eval(Map<String, Obj> arguments) {
-                Obj obj = arguments.get("a");
-                if (obj instanceof Int) {
-                    return obj;
-                } else if (obj instanceof Number) {
-                    return Int.of((int) ((Number) obj).value());
-                }
-                try {
-                    return Int.of(Integer.parseInt(obj.toString()));
-                } catch (NumberFormatException e) {
-                    throw new ComputeException(e);
-                }
-            }
-        });
+//        declare("parse", new NativeFunc("parse", "a") {
+//            @Override
+//            protected Obj eval(Map<String, Obj> arguments) {
+//                Obj obj = arguments.get("a");
+//                if (obj instanceof Int) {
+//                    return obj;
+//                } else if (obj instanceof Number) {
+//                    return Int.of((int) ((Number) obj).value());
+//                }
+//                try {
+//                    return Int.of(Integer.parseInt(obj.toString()));
+//                } catch (NumberFormatException e) {
+//                    throw new ComputeException(e);
+//                }
+//            }
+//        });
     }};
     private final int value;
 

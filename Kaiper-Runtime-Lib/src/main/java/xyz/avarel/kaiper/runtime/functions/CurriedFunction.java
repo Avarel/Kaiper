@@ -19,11 +19,11 @@ package xyz.avarel.kaiper.runtime.functions;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 
-public class CurriedFunction extends Func {
+public class CurriedFunction extends Function {
     private final Obj argument;
-    private final Func delegate;
+    private final Function delegate;
 
-    public CurriedFunction(Func delegate, Obj argument) {
+    public CurriedFunction(Function delegate, Obj argument) {
         super(delegate.getName());
 
         this.delegate = delegate;

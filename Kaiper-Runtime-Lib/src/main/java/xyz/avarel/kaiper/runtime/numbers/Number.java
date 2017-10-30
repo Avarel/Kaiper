@@ -16,15 +16,11 @@
 
 package xyz.avarel.kaiper.runtime.numbers;
 
-import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Bool;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.functions.NativeFunc;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
-
-import java.util.Map;
 
 public class Number implements Obj, Comparable<Number> {
     public static final Type<Number> TYPE = new Type<>("Number");
@@ -39,22 +35,22 @@ public class Number implements Obj, Comparable<Number> {
         declare("BYTES", Number.of(Double.BYTES));
         declare("SIZE", Number.of(Double.SIZE));
 
-        declare("parse", new NativeFunc("parse", "a") {
-            @Override
-            protected Obj eval(Map<String, Obj> arguments) {
-                Obj obj = arguments.get("a");
-                if (obj instanceof Number) {
-                    return obj;
-                } else if (obj instanceof Int) {
-                    return Number.of(((Int) obj).value());
-                }
-                try {
-                    return Number.of(Double.parseDouble(obj.toString()));
-                } catch (NumberFormatException e) {
-                    throw new ComputeException(e);
-                }
-            }
-        });
+//        declare("parse", new NativeFunc("parse", "a") {
+//            @Override
+//            protected Obj eval(Map<String, Obj> arguments) {
+//                Obj obj = arguments.get("a");
+//                if (obj instanceof Number) {
+//                    return obj;
+//                } else if (obj instanceof Int) {
+//                    return Number.of(((Int) obj).value());
+//                }
+//                try {
+//                    return Number.of(Double.parseDouble(obj.toString()));
+//                } catch (NumberFormatException e) {
+//                    throw new ComputeException(e);
+//                }
+//            }
+//        });
     }};
     private final double value;
 
