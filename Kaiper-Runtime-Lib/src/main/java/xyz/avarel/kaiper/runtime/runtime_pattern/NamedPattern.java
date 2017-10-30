@@ -14,21 +14,16 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.runtime.pattern;
+package xyz.avarel.kaiper.runtime.runtime_pattern;
 
-/**
- * Visitor patterns for {@link RTPattern patern} AST classes.
- * Each {@link RTPattern pattern} implements the accept method which
- * is normally {@code visitor.visit(this, context)}.
- *
- * @param <R> Return type.
- * @param <C> Context type.
- *
- * @see RTPattern
- * @author Avarel
- */
-public interface RuntimePatternVisitor<R, C> {
-    R visit(VariableRTPattern pattern, C context);
-    R visit(ValueRTPattern pattern, C context);
-    R visit(DefaultRTPattern pattern, C context);
+public abstract class NamedPattern extends Pattern {
+    private final String name;
+
+    protected NamedPattern(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

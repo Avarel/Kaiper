@@ -18,17 +18,11 @@ package xyz.avarel.kaiper.parser.parslets.functions;
 
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
-import xyz.avarel.kaiper.ast.pattern.NestedPattern;
-import xyz.avarel.kaiper.ast.pattern.Pattern;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;
-import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FunctionParser implements PrefixParser {
     private LambdaFunctionParser lambda = new LambdaFunctionParser();
@@ -43,26 +37,32 @@ public class FunctionParser implements PrefixParser {
         }
 
         if (parser.match(TokenType.LEFT_PAREN)) {
-            PatternCase patternCase = new PatternParser(parser).parsePatternCase();
+            PatternCase patternCase = parser.parsePattern();
             parser.eat(TokenType.RIGHT_PAREN);
 
             String name = null;
-            if (parser.match(TokenType.REF)) {
-                name = parser.eat(TokenType.IDENTIFIER).getString();
+//            if (parser.match(TokenType.REF)) {
+//                name = parser.eat(TokenType.IDENTIFIER).getString();
+//
+//                NestedPattern nestedPattern = new NestedPattern(patternCase);
+//
+//                List<Pattern> list = new ArrayList<>();
+//                list.add(nestedPattern);
+//
+//                parser.eat(TokenType.LEFT_PAREN);
+//
+//                if (!parser.match(TokenType.RIGHT_PAREN)) {
+//                    list.addAll(new PatternParser(parser).parsePatternCase().getPatterns());
+//                    parser.eat(TokenType.RIGHT_PAREN);
+//                } else {
+//                    list = patternCase.getPatterns();
+//                }
+//
+//                patternCase = new PatternCase(list);
+//            }]
 
-                NestedPattern nestedPattern = new NestedPattern(patternCase);
 
-                List<Pattern> list = new ArrayList<>();
-                list.add(nestedPattern);
 
-                parser.eat(TokenType.LEFT_PAREN);
-                if (!parser.match(TokenType.RIGHT_PAREN)) {
-                    patternCase = new PatternParser(parser).parsePatternCase(list);
-                    parser.eat(TokenType.RIGHT_PAREN);
-                } else {
-                    patternCase = new PatternCase(list);
-                }
-            }
 
             Expr expr;
             if (parser.match(TokenType.ASSIGN)) {
@@ -72,14 +72,13 @@ public class FunctionParser implements PrefixParser {
             }
 
             return new FunctionNode(token.getPosition(), name, patternCase, expr);
-        } else
-            {
+        } else {
             String name = parser.eat(TokenType.IDENTIFIER).getString();
 
             PatternCase patternCase;
             parser.eat(TokenType.LEFT_PAREN);
             if (!parser.match(TokenType.RIGHT_PAREN)) {
-                patternCase = new PatternParser(parser).parsePatternCase();
+                patternCase = parser.parsePattern();
                 parser.eat(TokenType.RIGHT_PAREN);
             } else {
                 patternCase = PatternCase.EMPTY;

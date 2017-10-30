@@ -14,16 +14,25 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.ast.pattern;
+package xyz.avarel.kaiper.runtime.runtime_pattern;
 
-public abstract class NamedPattern extends Pattern {
-    private final String name;
-
-    protected NamedPattern(String name) {
-        this.name = name;
+// Nested Patterns
+// Value Patterns
+// Variable Pattern, Default Patterns, Wildcards
+// Lower arity
+public abstract class Pattern implements Comparable<Pattern> {
+    @Override
+    public int compareTo(Pattern other) {
+        return Integer.compare(other.nodeWeight(), nodeWeight());
     }
 
-    public String getName() {
-        return name;
+    public boolean optional() {
+        return false;
     }
+
+    public int nodeWeight() {
+        return 0;
+    }
+
+    public abstract <R, C> R accept(PatternVisitor<R, C> visitor, C scope);
 }

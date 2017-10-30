@@ -14,36 +14,44 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.runtime.pattern;
+package xyz.avarel.kaiper.runtime.runtime_pattern;
 
 import xyz.avarel.kaiper.runtime.Obj;
 
-// (delegate) = (defaultExpr)
-public class DefaultRTPattern extends RTPattern {
-    private final RTPattern delegate;
-    private final Obj defaultObj;
+import java.util.Map;
+import java.util.function.Function;
 
-    public DefaultRTPattern(RTPattern delegate, Obj defaultObj) {
+// (delegate) = (defaultExpr)
+public class DefaultPattern extends NamedPattern {
+    private final Pattern delegate;
+    private final Function<Map<String, Obj>, Obj> defaultExpr;
+
+    public DefaultPattern(NamedPattern delegate, Function<Map<String, Obj>, Obj> defaultExpr) {
         super(delegate.getName());
         this.delegate = delegate;
-        this.defaultObj = defaultObj;
+        this.defaultExpr = defaultExpr;
     }
 
-    public RTPattern getDelegate() {
+    public Pattern getDelegate() {
         return delegate;
     }
 
-    public Obj getDefault() {
-        return defaultObj;
+    public Function<Map<String, Obj>, Obj> getDefault() {
+        return defaultExpr;
     }
 
     @Override
-    public <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope) {
+    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
     }
 
     @Override
+    public boolean optional() {
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return delegate + " = " + defaultObj;
+        return delegate + " = " + defaultExpr;
     }
 }

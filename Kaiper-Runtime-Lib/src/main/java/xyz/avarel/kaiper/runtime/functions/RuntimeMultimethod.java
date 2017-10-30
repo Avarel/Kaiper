@@ -19,7 +19,7 @@ package xyz.avarel.kaiper.runtime.functions;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.ReturnException;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
+import xyz.avarel.kaiper.runtime.runtime_pattern.RuntimePatternCase;
 
 import java.util.HashMap;
 import java.util.Map;

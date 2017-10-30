@@ -22,7 +22,6 @@ import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;
-import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 /**
@@ -36,7 +35,7 @@ public class TypeParser implements PrefixParser {
 
         PatternCase patternCase = PatternCase.EMPTY;
         if (parser.match(TokenType.LEFT_PAREN)) {
-            patternCase = new PatternParser(parser).parsePatternCase();
+            patternCase = parser.parsePattern();
             parser.eat(TokenType.RIGHT_PAREN);
         }
 

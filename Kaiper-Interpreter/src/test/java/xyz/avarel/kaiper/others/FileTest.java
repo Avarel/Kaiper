@@ -20,7 +20,7 @@ import xyz.avarel.kaiper.KaiperScript;
 import xyz.avarel.kaiper.ScriptExpr;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.functions.RuntimeMultimethod;
-import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
+import xyz.avarel.kaiper.runtime.runtime_pattern.RuntimePatternCase;
 
 import java.io.File;
 import java.io.FileReader;

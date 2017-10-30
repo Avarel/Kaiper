@@ -33,21 +33,20 @@ public class PatternParser extends ExprParser {
     }
 
     public PatternCase parsePatternCase() {
-        return parsePatternCase(new ArrayList<>());
+        return parsePatternCase(new ArrayList<>(), new ParseContext());
     }
 
-    public PatternCase parsePatternCase(List<Pattern> patterns) {
-        ParseContext parseContext = new ParseContext();
+    public PatternCase parsePatternCase(List<Pattern> patterns, ParseContext context) {
         do {
-            patterns.add(parsePattern(parseContext));
+            patterns.add(parsePattern(context));
         } while (match(TokenType.COMMA));
 
         return new PatternCase(patterns);
     }
 
     private Pattern parsePattern(ParseContext context) {
-        if (nextIs(TokenType.IDENTIFIER)) {
-            Token token = eat(TokenType.IDENTIFIER);
+        if (match(TokenType.IDENTIFIER)) {
+            Token token = getLast();
             String name = token.getString();
 
             if (context.usedIdentifiers.contains(name)) {
@@ -84,7 +83,7 @@ public class PatternParser extends ExprParser {
                 return new NestedPattern(PatternCase.EMPTY);
             }
 
-            PatternCase patternCase = parsePatternCase();
+            PatternCase patternCase = parsePatternCase(new ArrayList<>(), context);
 
             eat(TokenType.RIGHT_PAREN);
 

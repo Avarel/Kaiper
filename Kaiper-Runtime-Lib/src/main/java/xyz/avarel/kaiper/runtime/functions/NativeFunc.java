@@ -19,34 +19,35 @@ package xyz.avarel.kaiper.runtime.functions;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.pattern.RTPattern;
-import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
+import xyz.avarel.kaiper.runtime.runtime_pattern.Pattern;
+import xyz.avarel.kaiper.runtime.runtime_pattern.PatternCase;
+import xyz.avarel.kaiper.runtime.runtime_pattern.VariablePattern;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class NativeFunc extends Func {
-    private final RuntimePatternCase pattern;
+    private final PatternCase pattern;
 
     public NativeFunc(String name) {
         this(name, new String[0]);
     }
 
-    public NativeFunc(String name, RTPattern... parameters) {
-        this(name, new RuntimePatternCase(Arrays.asList(parameters)));
+    public NativeFunc(String name, Pattern... parameters) {
+        this(name, new PatternCase(Arrays.asList(parameters)));
     }
 
     public NativeFunc(String name, String... params) {
-        this(name, new RuntimePatternCase(params));
+        this(name, new PatternCase(Arrays.stream(params).map(VariablePattern::new).toArray(VariablePattern[]::new)));
     }
 
-    public NativeFunc(String name, RuntimePatternCase pattern) {
+    public NativeFunc(String name, PatternCase pattern) {
         super(name);
         this.pattern = pattern;
     }
 
-    public RuntimePatternCase getPattern() {
+    public PatternCase getPattern() {
         return pattern;
     }
 
@@ -59,7 +60,7 @@ public abstract class NativeFunc extends Func {
     public Obj invoke(Obj argument) {
         Map<String, Obj> scope = new HashMap<>();
 
-        if (!new RuntimePatternBinder(pattern).bindFrom(scope, argument)) {
+        if (!new RuntimePatternBinder(scope).bind(pattern, argument)) {
             throw new ComputeException("Could not match arguments (" + argument + ") to " + getName() + "(" + pattern + ")");
         }
 

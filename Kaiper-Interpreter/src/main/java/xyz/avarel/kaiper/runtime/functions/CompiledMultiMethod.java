@@ -63,10 +63,6 @@ public class CompiledMultiMethod extends Func {
     @Override
     public Obj invoke(Obj argument) {
         for (CompiledFunc entry : branches) {
-            if (argument.size() < entry.getPattern().arity()) {
-                continue;
-            }
-
             Obj result = entry.tryInvoke(argument);
             if (result != null) return result;
         }

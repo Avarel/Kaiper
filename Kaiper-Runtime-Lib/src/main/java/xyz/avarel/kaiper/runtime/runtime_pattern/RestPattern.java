@@ -14,32 +14,26 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.runtime.pattern;
+package xyz.avarel.kaiper.runtime.runtime_pattern;
 
-// x
-public class VariableRTPattern extends RTPattern {
-    private final boolean nullable;
-
-    public VariableRTPattern(String name) {
-        this(name, true);
-    }
-
-    public VariableRTPattern(String name, boolean nullable) {
+// x...
+public class RestPattern extends NamedPattern {
+    public RestPattern(String name) {
         super(name);
-        this.nullable = nullable;
-    }
-
-    public boolean isNullable() {
-        return nullable;
     }
 
     @Override
-    public <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope) {
+    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
     }
 
     @Override
+    public boolean optional() {
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return getName();
+        return "..." + getName();
     }
 }

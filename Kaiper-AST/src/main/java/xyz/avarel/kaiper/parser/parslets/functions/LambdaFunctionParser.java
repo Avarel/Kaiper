@@ -25,7 +25,6 @@ import xyz.avarel.kaiper.ast.pattern.VariablePattern;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;
-import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 public class LambdaFunctionParser implements PrefixParser {
@@ -60,7 +59,7 @@ public class LambdaFunctionParser implements PrefixParser {
             if (parser.match(TokenType.ARROW)) {
                 patternCase = PatternCase.EMPTY;
             } else {
-                patternCase = new PatternParser(parser).parsePatternCase();
+                patternCase = parser.parsePattern();
                 parser.eat(TokenType.ARROW);
             }
         } else {

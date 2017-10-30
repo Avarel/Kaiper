@@ -499,7 +499,11 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
         try {
             return expr.accept(this, scope);
         } catch (ComputeException e) {
-            throw new InterpreterException(e.getMessage(), expr.getPosition());
+            if (expr.getPosition() != null) {
+                throw new InterpreterException(e.getMessage(), expr.getPosition());
+            } else {
+                throw new InterpreterException(e.getMessage());
+            }
         }
     }
 

@@ -21,6 +21,7 @@ import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.flow.Statements;
 import xyz.avarel.kaiper.ast.expr.value.NullNode;
 import xyz.avarel.kaiper.ast.expr.variables.Identifier;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.lexer.Position;
@@ -32,12 +33,21 @@ import java.util.List;
 import java.util.Objects;
 
 public class ExprParser extends Parser {
+    private PatternParser patternParser = null;
+
     public ExprParser(KaiperLexer tokens) {
         super(tokens, DefaultGrammar.INSTANCE);
     }
 
     public ExprParser(ExprParser proxy) {
         super(proxy);
+    }
+
+    public PatternCase parsePattern() {
+        if (patternParser == null) {
+            patternParser = new PatternParser(this);
+        }
+        return patternParser.parsePatternCase();
     }
 
     public Expr parse() {

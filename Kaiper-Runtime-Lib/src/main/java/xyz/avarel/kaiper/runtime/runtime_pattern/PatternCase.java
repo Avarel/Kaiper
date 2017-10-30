@@ -14,45 +14,48 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.runtime.pattern;
+package xyz.avarel.kaiper.runtime.runtime_pattern;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class RuntimePatternCase implements Comparable<RuntimePatternCase> {
-    public static final RuntimePatternCase EMPTY = new RuntimePatternCase(Collections.emptyList());
+public class PatternCase implements Comparable<PatternCase> {
+    public static final PatternCase EMPTY = new PatternCase(Collections.emptyList());
 
-    private final List<RTPattern> patterns;
+    private final List<Pattern> patterns;
 
-    public RuntimePatternCase(String... variables) {
-        this(Arrays.stream(variables).map(VariableRTPattern::new).collect(Collectors.toList()));
-    }
-
-    public RuntimePatternCase(RTPattern... patterns) {
+    public PatternCase(Pattern... patterns) {
         this(Arrays.asList(patterns));
     }
 
-    public RuntimePatternCase(List<RTPattern> patterns) {
+    public PatternCase(List<Pattern> patterns) {
         this.patterns = patterns;
     }
 
-    public List<RTPattern> getPatterns() {
+    public List<Pattern> getPatterns() {
         return patterns;
+    }
+
+    public PatternCase subList(int start) {
+        return subList(start, size());
+    }
+
+    public PatternCase subList(int start, int end) {
+        return new PatternCase(patterns.subList(start, end));
     }
 
     public String toString() {
         if (patterns.isEmpty()) {
-            return "";
+            return "()";
         }
 
-        StringBuilder sb = new StringBuilder();
-        Iterator<RTPattern> iterator = patterns.iterator();
+        StringBuilder sb = new StringBuilder("(");
+        Iterator<Pattern> iterator = patterns.iterator();
 
         while (true) {
-            RTPattern pattern = iterator.next();
+            Pattern pattern = iterator.next();
             sb.append(pattern);
             if (iterator.hasNext()) {
                 sb.append(", ");
@@ -61,6 +64,8 @@ public class RuntimePatternCase implements Comparable<RuntimePatternCase> {
             }
         }
 
+        sb.append(")");
+
         return sb.toString();
     }
 
@@ -68,8 +73,16 @@ public class RuntimePatternCase implements Comparable<RuntimePatternCase> {
         return patterns.size();
     }
 
+    public int arity() {
+        int sum = 0;
+        for (Pattern pattern : patterns) {
+            sum += pattern.optional() ? 0 : 1;
+        }
+        return sum;
+    }
+
     @Override
-    public int compareTo(RuntimePatternCase other) {
+    public int compareTo(PatternCase other) {
         if (other.size() != size()) {
             return Integer.compare(other.size(), size());
         }
@@ -86,6 +99,6 @@ public class RuntimePatternCase implements Comparable<RuntimePatternCase> {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof RuntimePatternCase && this.compareTo((RuntimePatternCase) obj) == 0;
+        return obj instanceof PatternCase && this.compareTo((PatternCase) obj) == 0;
     }
 }

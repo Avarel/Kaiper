@@ -18,7 +18,6 @@ package xyz.avarel.kaiper.ast.pattern;
 
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -106,12 +105,7 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
         }
 
         Obj obj = context.tuple.get(context.tupleIndex++);
-
-        if (!(obj instanceof Tuple)) return false;
-
-        Tuple tuple = (Tuple) obj;
-
-        return bind(pattern.getPattern(), tuple);
+        return bind(pattern.getPattern(), obj);
     }
 
     static class PatternContext {

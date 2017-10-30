@@ -14,41 +14,20 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.runtime.pattern;
+package xyz.avarel.kaiper.runtime.runtime_pattern;
 
-import xyz.avarel.kaiper.runtime.Obj;
-
-// a: is Int
-// a: 2
-// a: x
-// a: (2, meme: 2, dank: 3)
-public class ValueRTPattern extends RTPattern {
-    private final Obj obj;
-
-    public ValueRTPattern(Obj obj) {
-        super(null);
-        this.obj = obj;
+// x
+public class VariablePattern extends NamedPattern {
+    public VariablePattern(String name) {
+        super(name);
     }
 
-    public Obj getObj() {
-        return obj;
-    }
-
-    @Override
-    public <R, C> R accept(RuntimePatternVisitor<R, C> visitor, C scope) {
+    public <R, C> R accept(PatternVisitor<R, C> visitor, C scope) {
         return visitor.visit(this, scope);
     }
 
     @Override
     public String toString() {
-        return getName() + ": " + getObj();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof ValueRTPattern)) return false;
-        ValueRTPattern other = (ValueRTPattern) obj;
-
-        return getObj().equals(other.getObj());
+        return getName();
     }
 }

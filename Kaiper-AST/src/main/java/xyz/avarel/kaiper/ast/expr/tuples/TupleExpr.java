@@ -20,6 +20,7 @@ import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.lexer.Position;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,6 +30,37 @@ public class TupleExpr extends Expr {
     public TupleExpr(Position position, List<Expr> elements) {
         super(position);
         this.elements = elements;
+    }
+
+    public static TupleExpr flatten(Expr one, Expr two) {
+        List<Expr> elements = new ArrayList<>();
+
+        if (one instanceof TupleExpr) {
+            elements.addAll(((TupleExpr) one).elements);
+        } else {
+            elements.add(one);
+        }
+
+        if (two instanceof TupleExpr) {
+            elements.addAll(((TupleExpr) two).elements);
+        } else {
+            elements.add(two);
+        }
+
+        return new TupleExpr(one.getPosition(), elements);
+    }
+
+    public static TupleExpr flattenRight(Expr one, Expr two) {
+        List<Expr> elements = new ArrayList<>();
+        elements.add(one);
+
+        if (two instanceof TupleExpr) {
+            elements.addAll(((TupleExpr) two).elements);
+        } else {
+            elements.add(two);
+        }
+
+        return new TupleExpr(one.getPosition(), elements);
     }
 
     public List<Expr> getElements() {

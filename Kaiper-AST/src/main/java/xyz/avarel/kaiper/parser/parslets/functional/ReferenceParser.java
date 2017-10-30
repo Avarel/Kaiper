@@ -20,7 +20,6 @@ import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
 import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
-import xyz.avarel.kaiper.ast.expr.tuples.FreeFormStruct;
 import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
@@ -29,11 +28,11 @@ import xyz.avarel.kaiper.operations.BinaryOperatorType;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.ExprParser;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
+import java.util.Collections;
 
-// def (re, im)::conjugate() = re: self.re, im: -self.im
-// def conjugate(self: (re, im)) = re: self.re, im: -self.im
+// def (re, im)::conjugate() = re, -im
+// def conjugate(re, im) = re, -im
 public class ReferenceParser extends BinaryParser {
     public ReferenceParser() {
         super(Precedence.REF);
@@ -45,28 +44,19 @@ public class ReferenceParser extends BinaryParser {
 
         boolean leftParen = parser.match(TokenType.LEFT_PAREN);
         if (leftParen || parser.nextIsAny(InvocationParser.argumentTokens)) {
-            Expr expr;
+            Expr right;
             if (leftParen) {
                 if (parser.match(TokenType.RIGHT_PAREN)) {
-                    expr = new FreeFormStruct(parser.getLast().getPosition(), new LinkedHashMap<>());
+                    right = new TupleExpr(parser.getLast().getPosition(), Collections.emptyList());
                 } else {
-                    expr = parser.parseExpr();
+                    right = parser.parseExpr();
                     parser.eat(TokenType.RIGHT_PAREN);
                 }
             } else {
-                expr = parser.parseExpr();
+                right = parser.parseExpr();
             }
 
-            TupleExpr tuple;
-
-            if (expr instanceof TupleExpr) {
-                tuple = (TupleExpr) expr;
-            } else {
-                tuple = new TupleExpr(expr.getPosition(), new ArrayList<>());
-            }
-
-            tuple.getElements().add(left);
-
+            TupleExpr tuple = new TupleExpr(left.getPosition(), Arrays.asList(left, right));
             return new Invocation(tuple.getPosition(), identifier, tuple);
         }
 

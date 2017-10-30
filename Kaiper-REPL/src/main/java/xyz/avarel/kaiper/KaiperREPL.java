@@ -21,7 +21,7 @@ import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.functions.RuntimeMultimethod;
-import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
+import xyz.avarel.kaiper.runtime.runtime_pattern.RuntimePatternCase;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

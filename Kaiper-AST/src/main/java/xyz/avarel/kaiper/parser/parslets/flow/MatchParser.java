@@ -23,7 +23,6 @@ import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;
-import xyz.avarel.kaiper.parser.PatternParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
 import java.util.Map;
@@ -39,9 +38,8 @@ public class MatchParser implements PrefixParser {
 
         parser.eat(TokenType.LEFT_BRACE);
 
-        PatternParser patternParser = new PatternParser(parser);
         do {
-            PatternCase casePattern = patternParser.parsePatternCase();
+            PatternCase casePattern = parser.parsePattern();
 
             Token arrow = parser.eat(TokenType.ARROW);
 

@@ -17,53 +17,91 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.pattern.*;
+import xyz.avarel.kaiper.runtime.collections.Array;
+import xyz.avarel.kaiper.runtime.runtime_pattern.*;
 
 import java.util.Map;
 
-public class RuntimePatternBinder implements RuntimePatternVisitor<Boolean, RTPatternContext> {
-    private final RuntimePatternCase patternCase;
+public class RuntimePatternBinder implements PatternVisitor<Boolean, RuntimePatternBinder.PatternContext> {
+    private final Map<String, Obj> scope;
 
-    public RuntimePatternBinder(RuntimePatternCase patternCase) {
-        this.patternCase = patternCase;
+    public RuntimePatternBinder(Map<String, Obj> scope) {
+        this.scope = scope;
     }
 
-    public boolean bindFrom(Map<String, Obj> scope, Obj tuple) {
-        RTPatternContext context = new RTPatternContext(scope, tuple, 0);
-        for (RTPattern pattern : patternCase.getPatterns()) {
-            boolean result = pattern.accept(this, context);
-
-            if (!result) {
+    public boolean bind(PatternCase patternCase, Obj obj) {
+        PatternContext context = new PatternContext(patternCase, obj);
+        for (Pattern pattern : patternCase.getPatterns()) {
+            if (!pattern.accept(this, context)) {
                 return false;
             }
+            context.currentPatternIndex++;
         }
 
         return true;
     }
 
     @Override
-    public Boolean visit(VariableRTPattern pattern, RTPatternContext patternContext) {
-        if (patternContext.tuple.size() <= patternContext.position) {
+    public Boolean visit(VariablePattern pattern, PatternContext context) {
+        if (context.tuple.size() <= context.tupleIndex) {
             return false;
         }
 
-        patternContext.scope.put(pattern.getName(), patternContext.tuple.get(patternContext.position++));
+        scope.put(pattern.getName(), context.tuple.get(context.tupleIndex++));
         return true;
     }
 
     @Override
-    public Boolean visit(DefaultRTPattern pattern, RTPatternContext patternContext) {
-        if (!pattern.getDelegate().accept(this, patternContext)) {
-            patternContext.scope.put(pattern.getName(), pattern.getDefault());
+    public Boolean visit(DefaultPattern pattern, PatternContext context) {
+        // def what(x = 1, y = 2, z) = "$x $y $z"
+        //def what(a, b=2, c=3,d=4,e) = [a,b,c,d,e]
+        // def what(a, b=2, c,d=4,e) = [a,b,c,d,e]
+
+        int remainingRequiredArgs = context.patternCase.subList(context.currentPatternIndex).arity();
+        int remainingTupleElements = context.tuple.size() - context.tupleIndex;
+        if (remainingRequiredArgs >= remainingTupleElements || !pattern.getDelegate().accept(this, context)) {
+            scope.put(pattern.getName(), pattern.getDefault().apply(scope));
         }
 
         return true;
     }
 
     @Override
-    public Boolean visit(ValueRTPattern pattern, RTPatternContext patternContext) {
-        Obj obj = pattern.getObj();
+    public Boolean visit(RestPattern pattern, PatternContext context) {
+        int remainingRequiredArgs = context.patternCase.subList(context.currentPatternIndex).arity();
+        int remainingTupleElements = context.tuple.size() - context.tupleIndex;
 
-        return obj.equals(patternContext.tuple.get(patternContext.position++));
+        Array array = new Array();
+
+        for (; remainingTupleElements > remainingRequiredArgs; remainingTupleElements--) {
+            array.add(context.tuple.get(context.tupleIndex++));
+        }
+
+        scope.put(pattern.getName(), array);
+
+        return true;
+    }
+
+    @Override
+    public Boolean visit(NestedPattern pattern, PatternContext context) {
+        if (context.tuple.size() <= context.tupleIndex) {
+            return false;
+        }
+
+        Obj obj = context.tuple.get(context.tupleIndex++);
+        return bind(pattern.getPattern(), obj);
+    }
+
+    static class PatternContext {
+        private final PatternCase patternCase;
+        private final Obj tuple;
+
+        private int currentPatternIndex;
+        private int tupleIndex;
+
+        private PatternContext(PatternCase patternCase, Obj tuple) {
+            this.patternCase = patternCase;
+            this.tuple = tuple;
+        }
     }
 }

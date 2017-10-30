@@ -22,8 +22,8 @@ import xyz.avarel.kaiper.runtime.functions.RuntimeMultimethod;
 import xyz.avarel.kaiper.runtime.modules.Module;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
-import xyz.avarel.kaiper.runtime.pattern.RuntimePatternCase;
-import xyz.avarel.kaiper.runtime.pattern.VariableRTPattern;
+import xyz.avarel.kaiper.runtime.runtime_pattern.RuntimePatternCase;
+import xyz.avarel.kaiper.runtime.runtime_pattern.VariableRTPattern;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.util.Map;
