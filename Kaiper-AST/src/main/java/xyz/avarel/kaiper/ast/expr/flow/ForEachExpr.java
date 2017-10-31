@@ -63,21 +63,4 @@ public class ForEachExpr extends Expr {
         action.ast("action", builder, indent + (isTail ? "    " : "│   "), true);
     }
 
-    @Override
-    public String toString() {
-        return "foreach";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ForEachExpr)) return false;
-
-        ForEachExpr that = (ForEachExpr) o;
-
-        if (!variant.equals(that.variant)) return false;
-        if (!iterable.equals(that.iterable)) return false;
-        return action.equals(that.action);
-    }
-
 }

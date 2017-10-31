@@ -52,13 +52,4 @@ public class ArrayNode extends Expr {
         }
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof ArrayNode && items.equals(((ArrayNode) obj).items);
-    }
-
-    @Override
-    public String toString() {
-        return items.toString();
-    }
 }

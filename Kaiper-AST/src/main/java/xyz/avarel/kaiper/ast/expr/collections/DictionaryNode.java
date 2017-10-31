@@ -44,13 +44,4 @@ public class DictionaryNode extends Expr {
         builder.append(indent).append(isTail ? "└── " : "├── ").append("dictionary");
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof DictionaryNode && map.equals(((DictionaryNode) obj).map);
-    }
-
-    @Override
-    public String toString() {
-        return map.toString();
-    }
 }

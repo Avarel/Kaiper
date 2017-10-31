@@ -61,16 +61,4 @@ public class BinaryOperation extends Expr {
         right.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof BinaryOperation
-                && operator.equals(((BinaryOperation) o).operator)
-                && left.equals(((BinaryOperation) o).left)
-                && right.equals(((BinaryOperation) o).right);
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(left) + operator + right;
-    }
 }

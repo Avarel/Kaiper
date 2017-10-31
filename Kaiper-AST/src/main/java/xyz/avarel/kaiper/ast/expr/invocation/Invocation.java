@@ -54,17 +54,4 @@ public class Invocation extends Expr {
         argument.ast("argument", builder, indent + (isTail ? "    " : "│   "), true);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Invocation)) return false;
-
-        Invocation that = (Invocation) o;
-        return left.equals(that.left) && argument.equals(that.argument);
-    }
-
-    @Override
-    public String toString() {
-        return left + "(" + argument + ")";
-    }
 }

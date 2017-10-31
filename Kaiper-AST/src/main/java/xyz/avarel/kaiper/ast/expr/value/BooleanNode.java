@@ -36,13 +36,4 @@ public class BooleanNode extends Expr {
         return visitor.visit(this, context);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return this == obj;
-    }
-
-    @Override
-    public String toString() {
-        return this == TRUE ? "true" : "false";
-    }
 }

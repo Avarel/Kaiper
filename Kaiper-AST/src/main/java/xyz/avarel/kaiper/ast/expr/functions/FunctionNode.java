@@ -66,20 +66,4 @@ public class FunctionNode extends Expr {
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FunctionNode)) return false;
-
-        FunctionNode that = (FunctionNode) o;
-
-        return (name != null ? name.equals(that.name) : that.name == null)
-                && patternCase.equals(that.patternCase)
-                && expr.equals(that.expr);
-    }
-
-    @Override
-    public String toString() {
-        return "def" + (name != null ? " " + name : "") + patternCase;
-    }
 }

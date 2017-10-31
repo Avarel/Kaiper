@@ -18,17 +18,15 @@ package xyz.avarel.kaiper.parser.parslets.variables;
 
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.expr.Expr;
-import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
 import xyz.avarel.kaiper.ast.expr.variables.AssignmentExpr;
 import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.ExprParser;
-import xyz.avarel.kaiper.parser.parslets.functional.InvocationParser;
 
-public class AttributeParser extends BinaryParser {
-    public AttributeParser() {
+public class MemberParser extends BinaryParser {
+    public MemberParser() {
         super(Precedence.DOT);
     }
 
@@ -40,13 +38,6 @@ public class AttributeParser extends BinaryParser {
             return new AssignmentExpr(token.getPosition(), left, name.getString(), parser.parseExpr());
         }
 
-        Identifier id = new Identifier(token.getPosition(), left, name.getString());
-
-        if (parser.nextIsAny(InvocationParser.argumentTokens)) {
-            Expr argument = parser.parseExpr();
-            return new Invocation(argument.getPosition(), id, argument);
-        }
-
-        return id;
+        return new Identifier(token.getPosition(), left, name.getString());
     }
 }

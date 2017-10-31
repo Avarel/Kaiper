@@ -42,8 +42,4 @@ public class ReturnExpr extends Expr {
         expr.ast("return", builder, indent, true);
     }
 
-    @Override
-    public String toString() {
-        return "return " + expr;
-    }
 }

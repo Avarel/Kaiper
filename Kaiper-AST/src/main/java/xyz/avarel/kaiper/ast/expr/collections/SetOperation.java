@@ -55,19 +55,4 @@ public class SetOperation extends GetOperation {
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SetOperation)) return false;
-        if (!super.equals(o)) return false;
-
-        SetOperation that = (SetOperation) o;
-
-        return expr.equals(that.expr);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + " = " + expr;
-    }
 }

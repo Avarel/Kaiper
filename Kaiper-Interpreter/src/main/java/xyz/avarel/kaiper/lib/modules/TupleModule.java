@@ -22,7 +22,7 @@ import xyz.avarel.kaiper.runtime.modules.NativeModule;
 
 public class TupleModule extends NativeModule {
     public TupleModule(ExprInterpreter interpreter) {
-        super("Obj");
+        super("Tuple");
         declare("TYPE", Tuple.TYPE);
     }
 }

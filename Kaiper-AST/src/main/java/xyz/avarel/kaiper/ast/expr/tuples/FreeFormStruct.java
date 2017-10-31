@@ -43,13 +43,4 @@ public class FreeFormStruct extends Expr {
         return visitor.visit(this, context);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof FreeFormStruct && elements.equals(((FreeFormStruct) o).elements);
-    }
-
-    @Override
-    public String toString() {
-        return elements.toString();
-    }
 }

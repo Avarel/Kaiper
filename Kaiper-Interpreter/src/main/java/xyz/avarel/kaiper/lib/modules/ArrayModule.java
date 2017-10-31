@@ -22,7 +22,7 @@ import xyz.avarel.kaiper.runtime.modules.NativeModule;
 
 public class ArrayModule extends NativeModule {
     public ArrayModule(ExprInterpreter interpreter) {
-        super("Obj");
+        super("Array");
         declare("TYPE", Array.TYPE);
 
 

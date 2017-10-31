@@ -21,7 +21,6 @@ import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class TupleExpr extends Expr {
@@ -74,31 +73,6 @@ public class TupleExpr extends Expr {
     @Override
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof TupleExpr && elements.equals(((TupleExpr) o).elements);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("(");
-
-        Iterator<Expr> iterator = elements.iterator();
-
-        while (true) {
-            sb.append(iterator.next());
-            if (iterator.hasNext()) {
-                sb.append(", ");
-            } else {
-                break;
-            }
-        }
-
-        sb.append(')');
-
-        return sb.toString();
     }
 
     @Override

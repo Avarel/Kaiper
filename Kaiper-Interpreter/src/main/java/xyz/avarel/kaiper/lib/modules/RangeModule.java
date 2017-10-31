@@ -22,7 +22,7 @@ import xyz.avarel.kaiper.runtime.modules.NativeModule;
 
 public class RangeModule extends NativeModule {
     public RangeModule(ExprInterpreter interpreter) {
-        super("Obj");
+        super("Range");
         declare("TYPE", Range.TYPE);
 
         //        declare("length", new NativeFunc("length", "range") {

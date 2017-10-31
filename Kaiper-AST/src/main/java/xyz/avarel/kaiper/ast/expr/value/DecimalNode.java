@@ -36,13 +36,4 @@ public class DecimalNode extends Expr {
         return visitor.visit(this, context);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof DecimalNode && value == ((DecimalNode) obj).value;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
 }

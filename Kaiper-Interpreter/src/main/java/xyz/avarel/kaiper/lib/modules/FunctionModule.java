@@ -22,7 +22,7 @@ import xyz.avarel.kaiper.runtime.modules.NativeModule;
 
 public class FunctionModule extends NativeModule {
     public FunctionModule(ExprInterpreter interpreter) {
-        super("Obj");
+        super("Function");
         declare("TYPE", Function.TYPE);
     }
 }

@@ -52,15 +52,4 @@ public class UnaryOperation extends Expr {
         target.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof UnaryOperation
-                && operator.equals(((UnaryOperation) o).operator)
-                && target.equals(((UnaryOperation) o).target);
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(operator) + target;
-    }
 }

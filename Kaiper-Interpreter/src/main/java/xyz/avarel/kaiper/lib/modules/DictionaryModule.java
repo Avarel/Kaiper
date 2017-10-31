@@ -22,7 +22,7 @@ import xyz.avarel.kaiper.runtime.modules.NativeModule;
 
 public class DictionaryModule extends NativeModule {
     public DictionaryModule(ExprInterpreter interpreter) {
-        super("Obj");
+        super("Dictionary");
         declare("TYPE", Dictionary.TYPE);
 
         //        declare("size", new NativeFunc("size", "dict") {

@@ -25,7 +25,7 @@ import xyz.avarel.kaiper.runtime.numbers.Number;
 
 public class MathModule extends NativeModule {
     public MathModule(ExprInterpreter interpreter) {
-        super("Obj");
+        super("Math");
         declare("TYPE", Obj.TYPE);
 
         declare("PI", Number.of(Math.PI));

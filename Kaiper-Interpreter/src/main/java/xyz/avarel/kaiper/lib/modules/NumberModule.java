@@ -27,7 +27,7 @@ import xyz.avarel.kaiper.runtime.numbers.Number;
 
 public class NumberModule extends NativeModule {
     public NumberModule(ExprInterpreter interpreter) {
-        super("Obj");
+        super("Number");
         declare("TYPE", Number.TYPE);
 
         declare("MAX_VALUE", Number.of(Double.MAX_VALUE));

@@ -109,7 +109,7 @@ public class DefaultGrammar extends Grammar {
         //infix(TokenType.LEFT_BRACE, new BlockParameterParser());
 
         infix(TokenType.LEFT_BRACKET, new GetSetParser());
-        infix(TokenType.DOT, new AttributeParser());
+        infix(TokenType.DOT, new MemberParser());
 
 //        infix(TokenType.PIPE_BACKWARD, new PipeBackwardParser());
         infix(TokenType.PIPE_FORWARD, new PipeForwardParser());

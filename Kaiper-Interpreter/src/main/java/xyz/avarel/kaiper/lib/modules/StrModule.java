@@ -22,7 +22,7 @@ import xyz.avarel.kaiper.runtime.modules.NativeModule;
 
 public class StrModule extends NativeModule {
     public StrModule(ExprInterpreter interpreter) {
-        super("Obj");
+        super("Str");
         declare("TYPE", Str.TYPE);
 
         // "self", "start", "end", "step"

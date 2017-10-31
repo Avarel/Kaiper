@@ -50,18 +50,4 @@ public class Statements extends Expr {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Statements)) return false;
-
-        Statements that = (Statements) o;
-
-        return statements.equals(that.statements);
-    }
-
-    @Override
-    public String toString() {
-        return "statements";
-    }
 }

@@ -54,17 +54,4 @@ public class GetOperation extends Expr {
         key.ast("key", builder, indent + (isTail ? "    " : "│   "), true);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GetOperation)) return false;
-
-        GetOperation that = (GetOperation) o;
-        return left.equals(that.left) && key.equals(that.key);
-    }
-
-    @Override
-    public String toString() {
-        return left + "[" + key + "]";
-    }
 }

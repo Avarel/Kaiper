@@ -36,13 +36,4 @@ public class StringNode extends Expr {
         return visitor.visit(this, context);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof StringNode && value.equals(((StringNode) obj).value);
-    }
-
-    @Override
-    public String toString() {
-        return "\"" + value + "\"";
-    }
 }

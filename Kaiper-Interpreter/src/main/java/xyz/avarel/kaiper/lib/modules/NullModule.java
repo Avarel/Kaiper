@@ -22,7 +22,7 @@ import xyz.avarel.kaiper.runtime.modules.NativeModule;
 
 public class NullModule extends NativeModule {
     public NullModule(ExprInterpreter interpreter) {
-        super("Obj");
+        super("Null");
         declare("TYPE", Null.TYPE);
     }
 }

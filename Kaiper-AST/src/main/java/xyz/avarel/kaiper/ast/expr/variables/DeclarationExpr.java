@@ -54,19 +54,4 @@ public class DeclarationExpr extends Expr {
         expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
     }
 
-    @Override
-    public String toString() {
-        return "let " + name + " = " + expr;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DeclarationExpr)) return false;
-
-        DeclarationExpr that = (DeclarationExpr) o;
-
-        return name.equals(that.name) && expr.equals(that.expr);
-    }
-
 }

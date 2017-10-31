@@ -25,7 +25,7 @@ import xyz.avarel.kaiper.runtime.modules.NativeModule;
 
 public class BoolModule extends NativeModule {
     public BoolModule(ExprInterpreter interpreter) {
-        super("Obj");
+        super("Boolean");
         declare("TYPE", Bool.TYPE);
 
         declare("parse", new JavaFunction("parse", interpreter)
