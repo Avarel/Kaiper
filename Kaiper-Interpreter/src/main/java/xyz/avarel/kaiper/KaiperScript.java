@@ -21,9 +21,9 @@ import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
+import xyz.avarel.kaiper.lib.std.DefaultScope;
 import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
 
 import java.io.Reader;
@@ -47,7 +47,8 @@ public class KaiperScript {
      *          The {@link String string} of Kaiper expression.
      */
     public KaiperScript(String script) {
-        this(script, DefaultScope.INSTANCE.copy());
+        this(script, new Scope<>());
+
     }
 
     /**
@@ -59,7 +60,7 @@ public class KaiperScript {
      *          The {@link Reader reader} instance that reads Kaiper expressions.\
      */
     public KaiperScript(Reader reader) {
-        this(reader, DefaultScope.INSTANCE.copy());
+        this(reader, new Scope<>());
     }
 
     /**

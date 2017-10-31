@@ -16,15 +16,20 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class PatternCase implements Comparable<PatternCase> {
     public static final PatternCase EMPTY = new PatternCase(Collections.emptyList());
 
     private final List<Pattern> patterns;
+
+    public PatternCase(String... variables) {
+        List<Pattern> list = new ArrayList<>(variables.length);
+        for (String variable : variables) {
+            list.add(new VariablePattern(variable));
+        }
+        this.patterns = list;
+    }
 
     public PatternCase(Pattern... patterns) {
         this(Arrays.asList(patterns));

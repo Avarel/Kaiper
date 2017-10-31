@@ -68,9 +68,7 @@ public class ExprParser extends Parser {
 
         do {
             if (match(TokenType.EOF)) break;
-
-            Expr expr = parseExpr();
-            exprList.add(expr);
+            exprList.add(parseExpr());
         } while (match(TokenType.LINE));
 
         return exprList.size() == 1 ? exprList.get(0) : new Statements(exprList);

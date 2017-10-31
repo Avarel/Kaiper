@@ -21,10 +21,10 @@ import xyz.avarel.kaiper.exceptions.*;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.interpreter.VisitorSettings;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
+import xyz.avarel.kaiper.lib.std.DefaultScope;
 import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.scope.DefaultScope;
 import xyz.avarel.kaiper.scope.Scope;
 
 import java.io.*;
@@ -43,7 +43,9 @@ public class KaiperEvaluator {
      * Creates a new Evaluator instantiated with default values and functions copied from {@link DefaultScope}.
      */
     public KaiperEvaluator() {
-        this(DefaultScope.INSTANCE.copy());
+        this.visitor = new ExprInterpreter(new VisitorSettings());
+        this.scope = new DefaultScope(visitor);
+        this.answer = Null.VALUE;
     }
 
     /**
@@ -53,8 +55,8 @@ public class KaiperEvaluator {
      *          The initial {@link Scope} values to copy from.
      */
     public KaiperEvaluator(Scope<String, Obj> scope) {
-        this.scope = scope;
         this.visitor = new ExprInterpreter(new VisitorSettings());
+        this.scope = scope;
         this.answer = Null.VALUE;
     }
 
@@ -125,22 +127,6 @@ public class KaiperEvaluator {
         return eval(new KaiperLexer(reader));
     }
 
-    /**
-     * Evaluates the script object.
-     * This method changes the state of the scope.
-     *
-     * @param   script
-     *          The {@link KaiperScript Kaiper script} object.
-     * @return  The {@link Obj} answer to the script.
-     *
-     * @throws  ComputeException
-     *          Error during the execution of the expression.
-     * @throws  SyntaxException
-     *          Error during the lexing or parsing process of the expression.
-     */
-    public Obj eval(KaiperScript script) {
-        return eval(new KaiperScript(script.getParser(), getScope().copyWithParent(scope)).compile());
-    }
 
     /**
      * Evaluates a stream of tokens from a lexer.
@@ -193,6 +179,10 @@ public class KaiperEvaluator {
      */
     public Obj getAnswer() {
         return answer;
+    }
+
+    public ExprInterpreter getVisitor() {
+        return visitor;
     }
 
     /**

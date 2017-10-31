@@ -17,11 +17,11 @@
 package xyz.avarel.kaiper;
 
 import jline.console.ConsoleReader;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.functions.RuntimeMultimethod;
-import xyz.avarel.kaiper.runtime.runtime_pattern.RuntimePatternCase;
+import xyz.avarel.kaiper.runtime.functions.JavaFunction;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -32,8 +32,8 @@ public class KaiperREPL {
     public static void main(String[] args) throws IOException {
         KaiperEvaluator evaluator = new KaiperEvaluator();
 
-        evaluator.getScope().put("println", new RuntimeMultimethod("println")
-                .addCase(new RuntimePatternCase("value"), scope -> {
+        evaluator.getScope().put("println", new JavaFunction("println", evaluator.getVisitor())
+                .addDispatch(new PatternCase("value"), scope -> {
                     System.out.print(scope.get("value"));
                     return Null.VALUE;
                 })

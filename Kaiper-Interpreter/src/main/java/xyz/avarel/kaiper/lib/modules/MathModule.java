@@ -14,27 +14,30 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.runtime.numbers;
+package xyz.avarel.kaiper.lib.modules;
 
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
+import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.functions.JavaFunction;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
+import xyz.avarel.kaiper.runtime.numbers.Number;
 
 public class MathModule extends NativeModule {
-    public static MathModule INSTANCE = new MathModule();
-
-    private MathModule() {
-        super("Math");
+    public MathModule(ExprInterpreter interpreter) {
+        super("Obj");
+        declare("TYPE", Obj.TYPE);
 
         declare("PI", Number.of(Math.PI));
         declare("E", Number.of(Math.E));
-//
-//        declare("sqrt", new NativeFunc("sqrt", "a") {
-//            @Override
-//            protected Obj eval(Map<String, Obj> arguments) {
-//                Obj a = arguments.get("a");
-//                double value = a.as(Number.TYPE).toJava();
-//                return Number.of(Math.sqrt(value));
-//            }
-//        });
+
+        declare("sqrt", new JavaFunction("sqrt", interpreter)
+                .addDispatch(new PatternCase("a"), scope -> {
+                    Obj a = scope.get("a");
+                    double value = a.as(Number.TYPE).toJava();
+                    return Number.of(Math.sqrt(value));
+                })
+        );
 //        declare("cbrt", new NativeFunc("cbrt", "a") {
 //            @Override
 //            protected Obj eval(Map<String, Obj> arguments) {

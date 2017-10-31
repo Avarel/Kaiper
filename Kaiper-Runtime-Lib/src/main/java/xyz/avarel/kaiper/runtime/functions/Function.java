@@ -17,15 +17,10 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.modules.Module;
-import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 public abstract class Function implements Obj {
     public static final Type<Function> TYPE = new Type<>("Function");
-    public static final Module MODULE = new NativeModule("Function") {{
-        declare("TYPE", Function.TYPE);
-    }};
     private final String name;
 
     protected Function(String name) {

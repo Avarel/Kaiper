@@ -16,8 +16,6 @@
 
 package xyz.avarel.kaiper.runtime;
 
-import xyz.avarel.kaiper.runtime.modules.Module;
-import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 public enum Bool implements Obj {
@@ -25,22 +23,6 @@ public enum Bool implements Obj {
     FALSE(false);
 
     public static final Type<Bool> TYPE = new Type<>("Boolean");
-
-    public static final Module MODULE = new NativeModule("Boolean") {{
-        declare("TYPE", Bool.TYPE);
-
-//        declare("parse", new NativeFunc("parse", "a") {
-//            @Override
-//            protected Obj eval(Map<String, Obj> arguments) {
-//                Obj obj = arguments.get(0);
-//                if (obj instanceof Bool) {
-//                    return obj;
-//                }
-//                return Bool.of(Boolean.valueOf(obj.toString()));
-//            }
-//        });
-    }};
-
     private final boolean value;
 
     Bool(boolean value) {

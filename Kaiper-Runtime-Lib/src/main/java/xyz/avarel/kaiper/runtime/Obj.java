@@ -17,8 +17,6 @@
 package xyz.avarel.kaiper.runtime;
 
 import xyz.avarel.kaiper.exceptions.ComputeException;
-import xyz.avarel.kaiper.runtime.modules.Module;
-import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 /**
@@ -26,9 +24,6 @@ import xyz.avarel.kaiper.runtime.types.Type;
  */
 public interface Obj {
     Type<Obj> TYPE = new Type<>("Object");
-    Module MODULE = new NativeModule("Object") {{
-        declare("TYPE", Obj.TYPE);
-    }};
 
     /**
      * @return The {@link Type} of the object.

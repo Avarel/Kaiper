@@ -16,8 +16,7 @@
 
 package xyz.avarel.kaiper.others;
 
-import xyz.avarel.kaiper.KaiperScript;
-import xyz.avarel.kaiper.ScriptExpr;
+import xyz.avarel.kaiper.KaiperEvaluator;
 
 public class SpeedTester {
     public static void main(String[] args) {
@@ -25,40 +24,38 @@ public class SpeedTester {
         // [1,2,[3,4,[5,6,[7,8],90, [91, 92],100]],9,10,[11, [50,52],12],13]
         // (8+2i)*(5i+3)
         // [1..10] * [10]
-        String script = "1+2";
+        String script = "Math.sqrt 4";
         int testsAmt = 10000;
 
         testPrecompiledSpeed(script, 100);
-        testRecompileSpeed(script, 100);
+//        testRecompileSpeed(script, 100);
 
         System.out.println(testsAmt + " Tests");
-        System.out.println("Precompiled: " + testPrecompiledSpeed(script, testsAmt) + "ns avg");
-        System.out.println("  Recompile: " + testRecompileSpeed(script, testsAmt) + "ns avg");
+        System.out.println("SPEED: " + testPrecompiledSpeed(script, testsAmt) + "ns avg");
+//        System.out.println("  Recompile: " + testRecompileSpeed(script, testsAmt) + "ns avg");
     }
 
     private static long testPrecompiledSpeed(String script, long tests) {
-        KaiperScript exp = new KaiperScript(script);
-
-        ScriptExpr expr = exp.compile();
+        KaiperEvaluator evaluator = new KaiperEvaluator();
 
         long start = System.nanoTime();
         for (int i = 0; i < tests; i++) {
-            expr.compute();
+            evaluator.eval(script);
         }
         long end = System.nanoTime();
 
         return (end - start) / tests;
     }
 
-    private static long testRecompileSpeed(String script, long tests) {
-        long start = System.nanoTime();
-        for (int i = 0; i < tests; i++) {
-            KaiperScript exp = new KaiperScript(script);
-            ScriptExpr expr = exp.compile();
-            expr.compute();
-        }
-        long end = System.nanoTime();
-
-        return (end - start) / tests;
-    }
+//    private static long testRecompileSpeed(String script, long tests) {
+//        long start = System.nanoTime();
+//        for (int i = 0; i < tests; i++) {
+//            KaiperScript exp = new KaiperScript(script);
+//            ScriptExpr expr = exp.compile();
+//            expr.compute();
+//        }
+//        long end = System.nanoTime();
+//
+//        return (end - start) / tests;
+//    }
 }

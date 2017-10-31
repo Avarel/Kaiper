@@ -96,7 +96,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
     public Obj visit(FunctionNode expr, Scope<String, Obj> scope) {
         if (expr.getName() == null) {
             CompiledFunction func = new CompiledFunction(expr.getName(), this, scope);
-            func.addCase(expr.getPatternCase(), expr.getExpr());
+            func.addDispatch(expr.getPatternCase(), expr.getExpr());
             return func;
         }
 
@@ -108,7 +108,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             declare(scope, expr.getName(), multiMethod);
         }
 
-        if (!multiMethod.addCase(expr.getPatternCase(), expr.getExpr())) {
+        if (!multiMethod.addDispatch(expr.getPatternCase(), expr.getExpr())) {
             throw new InterpreterException("Ambiguous pattern for function " + multiMethod.getName() + expr.getPosition());
         }
 

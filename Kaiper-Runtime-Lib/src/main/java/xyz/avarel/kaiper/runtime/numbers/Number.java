@@ -26,31 +26,6 @@ public class Number implements Obj, Comparable<Number> {
     public static final Type<Number> TYPE = new Type<>("Number");
     public static final Module MODULE = new NativeModule("Number") {{
         declare("TYPE", Number.TYPE);
-
-        declare("MAX_VALUE", Number.of(Double.MAX_VALUE));
-        declare("MIN_VALUE", Number.of(Double.MIN_VALUE));
-        declare("NEGATIVE_INFINITY", Number.of(Double.NEGATIVE_INFINITY));
-        declare("POSITIVE_INFINITY", Number.of(Double.POSITIVE_INFINITY));
-        declare("NaN", Number.of(Double.NaN));
-        declare("BYTES", Number.of(Double.BYTES));
-        declare("SIZE", Number.of(Double.SIZE));
-
-//        declare("parse", new NativeFunc("parse", "a") {
-//            @Override
-//            protected Obj eval(Map<String, Obj> arguments) {
-//                Obj obj = arguments.get("a");
-//                if (obj instanceof Number) {
-//                    return obj;
-//                } else if (obj instanceof Int) {
-//                    return Number.of(((Int) obj).value());
-//                }
-//                try {
-//                    return Number.of(Double.parseDouble(obj.toString()));
-//                } catch (NumberFormatException e) {
-//                    throw new ComputeException(e);
-//                }
-//            }
-//        });
     }};
     private final double value;
 

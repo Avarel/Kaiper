@@ -16,8 +16,6 @@
 
 package xyz.avarel.kaiper.runtime;
 
-import xyz.avarel.kaiper.runtime.modules.Module;
-import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 /**
@@ -28,9 +26,6 @@ public enum Null implements Obj {
     VALUE;
 
     public static final Type<Null> TYPE = new Type<>("Null");
-    public static final Module MODULE = new NativeModule("Null") {{
-        declare("TYPE", Null.TYPE);
-    }};
 
     @Override
     public String toString() {

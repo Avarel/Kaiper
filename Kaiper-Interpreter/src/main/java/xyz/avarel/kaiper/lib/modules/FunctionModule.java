@@ -14,28 +14,15 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.runtime.functions;
+package xyz.avarel.kaiper.lib.modules;
 
-import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.runtime.functions.Function;
+import xyz.avarel.kaiper.runtime.modules.NativeModule;
 
-public class ComposedFunction extends Function {
-    private final Function outer;
-    private final Function inner;
-
-    public ComposedFunction(Function outer, Function inner) {
-        super(outer.getName() + "<<" + inner.getName());
-
-        this.outer = outer;
-        this.inner = inner;
-    }
-
-    @Override
-    public String toString() {
-        return "def " + outer.getName() + "<<" + inner.getName();
-    }
-
-    @Override
-    public Obj invoke(Obj argument) {
-        return outer.invoke(inner.invoke(argument));
+public class FunctionModule extends NativeModule {
+    public FunctionModule(ExprInterpreter interpreter) {
+        super("Obj");
+        declare("TYPE", Function.TYPE);
     }
 }

@@ -26,28 +26,6 @@ public class Int implements Obj, Comparable<Int> {
     public static final Type<Int> TYPE = new Type<>("Int");
     public static final Module MODULE = new NativeModule("Int") {{
         declare("TYPE", Int.TYPE);
-
-        declare("MAX_VALUE", Int.of(Integer.MAX_VALUE));
-        declare("MIN_VALUE", Int.of(Integer.MIN_VALUE));
-        declare("BYTES", Int.of(Integer.BYTES));
-        declare("SIZE", Int.of(Integer.SIZE));
-
-//        declare("parse", new NativeFunc("parse", "a") {
-//            @Override
-//            protected Obj eval(Map<String, Obj> arguments) {
-//                Obj obj = arguments.get("a");
-//                if (obj instanceof Int) {
-//                    return obj;
-//                } else if (obj instanceof Number) {
-//                    return Int.of((int) ((Number) obj).value());
-//                }
-//                try {
-//                    return Int.of(Integer.parseInt(obj.toString()));
-//                } catch (NumberFormatException e) {
-//                    throw new ComputeException(e);
-//                }
-//            }
-//        });
     }};
     private final int value;
 

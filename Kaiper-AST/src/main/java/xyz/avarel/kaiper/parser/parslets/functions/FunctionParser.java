@@ -91,6 +91,8 @@ public class FunctionParser implements PrefixParser {
                 expr = parser.parseBlock();
             }
 
+
+
             return new FunctionNode(token.getPosition(), name, patternCase, expr);
         }
     }
