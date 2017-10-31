@@ -35,5 +35,4 @@ public class StringNode extends Expr {
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
     }
-
 }

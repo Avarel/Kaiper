@@ -43,14 +43,14 @@ public class OptAssignmentParser extends BinaryParser {
         Expr setOp;
         if (left instanceof Identifier) {
             setOp = new AssignmentExpr(
-                    parser.getLast().getPosition(),
+                    token.getPosition(),
                     (Identifier) left,
                     value
             );
 
         } else if (left instanceof GetOperation) {
             setOp = new SetOperation(
-                    parser.getLast().getPosition(),
+                    token.getPosition(),
                     (GetOperation) left,
                     value
             );
@@ -59,7 +59,7 @@ public class OptAssignmentParser extends BinaryParser {
         }
 
         return new ConditionalExpr(
-                parser.getLast().getPosition(),
+                token.getPosition(),
                 new BinaryOperation(
                         left.getPosition(),
                         left,

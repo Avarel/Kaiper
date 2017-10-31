@@ -27,19 +27,4 @@ public class MemberExpr extends Expr {
 //      todo  return visitor.visit(this, context);
         return null;
     }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        if (parent != null) {
-            builder.append(indent).append(isTail ? "└── " : "├── ").append("attribute");
-
-            builder.append('\n');
-            parent.ast("parent", builder, indent + (isTail ? "    " : "│   "), false);
-
-            builder.append('\n');
-            builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append(name);
-        } else {
-            super.ast(builder, indent, isTail);
-        }
-    }
 }

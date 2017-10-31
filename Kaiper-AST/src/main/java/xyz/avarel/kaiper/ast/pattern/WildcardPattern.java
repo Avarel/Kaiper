@@ -27,11 +27,6 @@ public class WildcardPattern extends Pattern {
     }
 
     @Override
-    public String toString() {
-        return "_";
-    }
-
-    @Override
     public int hashCode() {
         return 0;
     }

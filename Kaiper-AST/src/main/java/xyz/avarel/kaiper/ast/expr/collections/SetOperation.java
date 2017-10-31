@@ -40,19 +40,4 @@ public class SetOperation extends GetOperation {
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
     }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("get");
-
-        builder.append('\n');
-        getLeft().ast("target", builder, indent + (isTail ? "    " : "│   "), false);
-
-        builder.append('\n');
-        getKey().ast("key", builder, indent + (isTail ? "    " : "│   "), false);
-
-        builder.append('\n');
-        expr.ast(builder, indent + (isTail ? "    " : "│   "), true);
-    }
-
 }

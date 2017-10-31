@@ -84,7 +84,7 @@ public class ExprParser extends Parser {
         if (expr instanceof Identifier) {
             return (Identifier) expr;
         } else {
-            throw new SyntaxException("Expected IDENTIFIER but got " + getLast().getType(), position);
+            throw new SyntaxException("Expected IDENTIFIER", position);
         }
     }
 
@@ -130,9 +130,9 @@ public class ExprParser extends Parser {
     }
 
     public void eatSoftKeyword(String keyword) {
-        if (!Objects.equals(eat().getString(), keyword)) {
-            throw new SyntaxException("Expected " + keyword.toUpperCase() + " but found " + getLast().getType(),
-                    getLast().getPosition());
+        Token token;
+        if (!Objects.equals((token = eat()).getString(), keyword)) {
+            throw new SyntaxException("Expected `" + keyword + "`", token.getPosition());
         }
     }
 

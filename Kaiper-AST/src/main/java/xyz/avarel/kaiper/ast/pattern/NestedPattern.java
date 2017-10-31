@@ -48,9 +48,4 @@ public class NestedPattern extends Pattern {
 
         return compare;
     }
-
-    @Override
-    public String toString() {
-        return pattern.toString();
-    }
 }

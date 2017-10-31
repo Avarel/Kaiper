@@ -25,6 +25,7 @@ import xyz.avarel.kaiper.parser.parslets.flow.ForEachParser;
 import xyz.avarel.kaiper.parser.parslets.flow.IfElseParser;
 import xyz.avarel.kaiper.parser.parslets.flow.MatchParser;
 import xyz.avarel.kaiper.parser.parslets.flow.ReturnParser;
+import xyz.avarel.kaiper.parser.parslets.functional.InfixInvocationParser;
 import xyz.avarel.kaiper.parser.parslets.functional.InvocationParser;
 import xyz.avarel.kaiper.parser.parslets.functional.PipeForwardParser;
 import xyz.avarel.kaiper.parser.parslets.functional.ReferenceParser;
@@ -64,8 +65,6 @@ public class DefaultGrammar extends Grammar {
 
 
         prefix(TokenType.FUNCTION, new FunctionParser());
-//        prefix(TokenType.LEFT_BRACE, new LambdaFunctionParser());
-//        prefix(TokenType.UNDERSCORE, new ImplicitFunctionParser());
 
         prefix(TokenType.IDENTIFIER, new NameParser());
         prefix(TokenType.LET, new DeclarationParser());
@@ -106,7 +105,7 @@ public class DefaultGrammar extends Grammar {
         // Functional
         infix(TokenType.LEFT_PAREN, new InvocationParser());
         infix(TokenType.REF, new ReferenceParser());
-        //infix(TokenType.LEFT_BRACE, new BlockParameterParser());
+        infix(TokenType.IDENTIFIER, new InfixInvocationParser());
 
         infix(TokenType.LEFT_BRACKET, new GetSetParser());
         infix(TokenType.DOT, new MemberParser());

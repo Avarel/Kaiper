@@ -46,9 +46,4 @@ public class DefaultPattern extends NamedPattern {
     public boolean optional() {
         return true;
     }
-
-    @Override
-    public String toString() {
-        return delegate + " = " + defaultExpr;
-    }
 }

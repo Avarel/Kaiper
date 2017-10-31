@@ -38,16 +38,4 @@ public class Statements extends Expr {
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
     }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        for (int i = 0; i < statements.size() - 1; i++) {
-            statements.get(i).ast(builder, indent, false);
-            builder.append('\n');
-        }
-        if (statements.size() >= 1) {
-            statements.get(statements.size() - 1).ast(builder, indent, true);
-        }
-    }
-
 }

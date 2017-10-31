@@ -27,6 +27,10 @@ import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.ExprParser;
 
+import java.util.ArrayList;
+import java.util.List;
+
+// FLATTENS BOTH SIDES
 public class PipeForwardParser extends BinaryParser {
     public PipeForwardParser() {
         super(Precedence.INFIX);
@@ -40,10 +44,25 @@ public class PipeForwardParser extends BinaryParser {
             Invocation invocation = (Invocation) right;
             Expr argument = invocation.getArgument();
 
+            /*
+             * FLATTEN BOTH ARGUMENTS
+             */
+            List<Expr> elements = new ArrayList<>();
+            if (left instanceof TupleExpr) {
+                elements.addAll(((TupleExpr) left).getElements());
+            } else {
+                elements.add(left);
+            }
+            if (argument instanceof TupleExpr) {
+                elements.addAll(((TupleExpr) argument).getElements());
+            } else {
+                elements.add(argument);
+            }
+
             return new Invocation(
                     token.getPosition(),
                     invocation.getLeft(),
-                    TupleExpr.flattenRight(left, argument)
+                    new TupleExpr(left.getPosition(), elements)
             );
         } else if (right instanceof FunctionNode || right instanceof Identifier) {
             return new Invocation(token.getPosition(), right, left);

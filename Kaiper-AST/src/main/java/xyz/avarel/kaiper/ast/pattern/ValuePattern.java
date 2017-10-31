@@ -46,11 +46,6 @@ public class ValuePattern extends Pattern {
     }
 
     @Override
-    public String toString() {
-        return getExpr().toString();
-    }
-
-    @Override
     public int nodeWeight() {
         return 1;
     }

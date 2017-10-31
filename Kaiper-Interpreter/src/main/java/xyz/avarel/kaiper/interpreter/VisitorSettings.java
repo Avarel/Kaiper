@@ -19,14 +19,12 @@ package xyz.avarel.kaiper.interpreter;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 
 public class VisitorSettings {
+    public static final VisitorSettings DEFAULT = new VisitorSettings(-1, -1, -1, -1);
+
     private final int loopLimit;
     private final int sizeLimit;
     private final long msLimit;
     private final int recursionDepthLimit;
-
-    public VisitorSettings() {
-        this(-1, -1, -1, -1);
-    }
 
     public VisitorSettings(int loopLimit, int sizeLimit, long msLimit, int recursionDepthLimit) {
         this.loopLimit = loopLimit;

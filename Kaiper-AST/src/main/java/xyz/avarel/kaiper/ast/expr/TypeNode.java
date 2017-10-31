@@ -48,12 +48,4 @@ public class TypeNode extends Expr {
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
     }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ")
-                .append("type").append(name != null ? " " + name : "")
-                .append('(').append(patternCase).append(')');
-        builder.append('\n');
-    }
 }

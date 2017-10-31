@@ -85,7 +85,6 @@ public enum TokenType {
 
     // SCRIPT
     MATCH,
-    CASE,
     MODULE,
     TYPE,
     IDENTIFIER,
@@ -97,6 +96,21 @@ public enum TokenType {
     ELSE,
     FOR,
 
-    LINE,
+    LINE(false),
     EOF,
+    ;
+
+    private final boolean significant;
+
+    TokenType() {
+        this(true);
+    }
+
+    TokenType(boolean significant) {
+        this.significant = significant;
+    }
+
+    public boolean isSignificant() {
+        return significant;
+    }
 }

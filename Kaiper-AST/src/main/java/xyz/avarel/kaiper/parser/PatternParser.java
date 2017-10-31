@@ -45,8 +45,8 @@ public class PatternParser extends ExprParser {
     }
 
     private Pattern parsePattern(ParseContext context) {
-        if (match(TokenType.IDENTIFIER)) {
-            Token token = getLast();
+        if (nextIs(TokenType.IDENTIFIER)) {
+            Token token = eat();
             String name = token.getString();
 
             if (context.usedIdentifiers.contains(name)) {
@@ -67,10 +67,11 @@ public class PatternParser extends ExprParser {
                 throw new SyntaxException("Only one rest argument allowed");
             }
 
-            String name = eat(TokenType.IDENTIFIER).getString();
+            Token token = eat();
+            String name = token.getString();
 
             if (context.usedIdentifiers.contains(name)) {
-                throw new SyntaxException("Duplicate argument name", getLast().getPosition());
+                throw new SyntaxException("Duplicate argument name", token.getPosition());
             } else {
                 context.usedIdentifiers.add(name);
             }

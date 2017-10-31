@@ -46,19 +46,4 @@ public class Identifier extends Expr {
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
     }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        if (parent != null) {
-            builder.append(indent).append(isTail ? "└── " : "├── ").append("attribute");
-
-            builder.append('\n');
-            parent.ast("parent", builder, indent + (isTail ? "    " : "│   "), false);
-
-            builder.append('\n');
-            builder.append(indent).append(isTail ? "    " : "│   ").append("└── ").append(name);
-        } else {
-            super.ast(builder, indent, isTail);
-        }
-    }
 }

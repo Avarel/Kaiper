@@ -42,18 +42,13 @@ public class ReferenceParser extends BinaryParser {
     public Expr parse(ExprParser parser, Expr left, Token token) {
         Identifier identifier = parser.parseIdentifier();
 
-        boolean leftParen = parser.match(TokenType.LEFT_PAREN);
-        if (leftParen || parser.nextIsAny(InvocationParser.argumentTokens)) {
+        if (parser.match(TokenType.LEFT_PAREN)) {
             Expr right;
-            if (leftParen) {
-                if (parser.match(TokenType.RIGHT_PAREN)) {
-                    right = new TupleExpr(parser.getLast().getPosition(), Collections.emptyList());
-                } else {
-                    right = parser.parseExpr();
-                    parser.eat(TokenType.RIGHT_PAREN);
-                }
+            if (parser.match(TokenType.RIGHT_PAREN)) {
+                right = new TupleExpr(parser.getPosition(), Collections.emptyList());
             } else {
                 right = parser.parseExpr();
+                parser.eat(TokenType.RIGHT_PAREN);
             }
 
             TupleExpr tuple = new TupleExpr(left.getPosition(), Arrays.asList(left, right));

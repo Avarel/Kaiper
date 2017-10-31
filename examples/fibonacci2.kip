@@ -9,5 +9,5 @@ def fibMaker() {
 
 let nextFibNumber = fibMaker()
 for i in 0..9 {
-    println nextFibNumber()
+    println(nextFibNumber())
 }

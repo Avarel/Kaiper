@@ -35,7 +35,7 @@ public class TupleCommaParser extends BinaryParser {
     @Override
     public Expr parse(ExprParser parser, Expr left, Token token) {
         if (parser.match(TokenType.COMMA)) {
-            throw new SyntaxException("Illegal expression", parser.getLast().getPosition());
+            throw new SyntaxException("Illegal expression", token.getPosition());
         }
 
         List<Expr> exprs = new ArrayList<>();

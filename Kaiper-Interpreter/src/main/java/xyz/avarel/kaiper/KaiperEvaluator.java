@@ -19,7 +19,6 @@ package xyz.avarel.kaiper;
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.exceptions.*;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.interpreter.VisitorSettings;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
 import xyz.avarel.kaiper.lib.std.DefaultScope;
 import xyz.avarel.kaiper.parser.ExprParser;
@@ -43,7 +42,7 @@ public class KaiperEvaluator {
      * Creates a new Evaluator instantiated with default values and functions copied from {@link DefaultScope}.
      */
     public KaiperEvaluator() {
-        this.visitor = new ExprInterpreter(new VisitorSettings());
+        this.visitor = new ExprInterpreter();
         this.scope = new DefaultScope(visitor);
         this.answer = Null.VALUE;
     }
@@ -55,7 +54,7 @@ public class KaiperEvaluator {
      *          The initial {@link Scope} values to copy from.
      */
     public KaiperEvaluator(Scope<String, Obj> scope) {
-        this.visitor = new ExprInterpreter(new VisitorSettings());
+        this.visitor = new ExprInterpreter();
         this.scope = scope;
         this.answer = Null.VALUE;
     }

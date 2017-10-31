@@ -38,18 +38,4 @@ public class ArrayNode extends Expr {
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
     }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("list");
-        for (int i = 0; i < items.size() - 1; i++) {
-            builder.append('\n');
-            items.get(i).ast(builder, indent + (isTail ? "    " : "│   "), false);
-        }
-        if (items.size() > 0) {
-            builder.append('\n');
-            items.get(items.size() - 1).ast(builder, indent + (isTail ? "    " : "│   "), true);
-        }
-    }
-
 }

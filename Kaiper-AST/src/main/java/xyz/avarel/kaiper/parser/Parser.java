@@ -18,6 +18,7 @@ package xyz.avarel.kaiper.parser;
 
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.KaiperLexer;
+import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 
@@ -68,6 +69,10 @@ public abstract class Parser {
         return lexer;
     }
 
+    public void pushToken(Token token) {
+        tokens.add(0, token);
+    }
+
     public boolean match(TokenType expected) {
         Token token = peek(0);
         if (token.getType() != expected) {
@@ -113,11 +118,9 @@ public abstract class Parser {
     }
 
     public Token eatSignificant() {
-        while (peek(0).getType() == TokenType.LINE) {
-            eat();
-        }
-
-        return eat();
+        Token last;
+        while ((last = eat()).getType().isSignificant());
+        return last;
     }
 
     public Token peek(int distance) {
@@ -136,7 +139,7 @@ public abstract class Parser {
         Token token = null;
         while (i <= distance) {
             token = peek(peek);
-            if (token.getType() != TokenType.LINE) {
+            if (token.getType().isSignificant()) {
                 i++;
             }
             peek++;
@@ -169,5 +172,9 @@ public abstract class Parser {
         if (parser != null) return parser.getPrecedence();
 
         return 0;
+    }
+
+    public Position getPosition() {
+        return getLast().getPosition();
     }
 }

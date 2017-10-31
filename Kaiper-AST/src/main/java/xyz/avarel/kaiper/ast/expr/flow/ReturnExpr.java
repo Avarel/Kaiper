@@ -36,10 +36,4 @@ public class ReturnExpr extends Expr {
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
     }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        expr.ast("return", builder, indent, true);
-    }
-
 }

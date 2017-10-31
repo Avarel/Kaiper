@@ -31,9 +31,4 @@ public class RestPattern extends NamedPattern {
     public boolean optional() {
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "..." + getName();
-    }
 }

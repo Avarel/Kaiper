@@ -48,21 +48,4 @@ public class ConditionalExpr extends Expr {
     public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
         return visitor.visit(this, context);
     }
-
-    @Override
-    public void ast(StringBuilder builder, String indent, boolean isTail) { // return if (sin(0) == 0) sin(50) else false
-        builder.append(indent).append(isTail ? "└── " : "├── ").append("if");
-
-        builder.append('\n');
-        condition.ast("condition", builder, indent + (isTail ? "    " : "│   "), false);
-
-        builder.append('\n');
-        ifBranch.ast("true", builder, indent + (isTail ? "    " : "│   "), elseBranch == null);
-
-        if (elseBranch != null) {
-            builder.append('\n');
-            elseBranch.ast("false", builder, indent + (isTail ? "    " : "│   "), true);
-        }
-    }
-
 }

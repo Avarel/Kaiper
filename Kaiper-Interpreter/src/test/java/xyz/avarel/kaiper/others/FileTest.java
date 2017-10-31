@@ -17,7 +17,8 @@
 package xyz.avarel.kaiper.others;
 
 import xyz.avarel.kaiper.KaiperScript;
-import xyz.avarel.kaiper.ScriptExpr;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
+import xyz.avarel.kaiper.runtime.functions.JavaFunction;
 
 import java.io.File;
 import java.io.FileReader;
@@ -26,26 +27,13 @@ public class FileTest {
     public static void main(String[] args) throws Exception {
         KaiperScript exp = new KaiperScript(new FileReader(new File("script.kip")));
 
-//        exp.getScope().put("print", new RuntimeMultimethod("print")
-//                .addCase(new RuntimePatternCase("value"), scope -> {
-//                    System.out.print(scope.get("value"));
-//                    return Null.VALUE;
-//                })
-//        );
-//
-//        // todo update patterns for native because they just dont work
-//        exp.getScope().put("println", new RuntimeMultimethod("println")
-//                .addCase(new RuntimePatternCase("value"), scope -> {
-//                    System.out.println(scope.get("value"));
-//                    return Null.VALUE;
-//                })
-//        );
+        exp.getScope().put("println", new JavaFunction("println", exp.getInterpreter())
+                .addDispatch(new PatternCase("value"), scope -> {
+                    System.out.println(scope.get("value"));
+                    return null;
+                })
+        );
 
-        ScriptExpr expr = exp.compile();
-
-        StringBuilder sb = new StringBuilder();
-        expr.ast(sb, "", true);
-
-        System.out.println(expr.compute());
+        System.out.println(exp.compute());
     }
 }

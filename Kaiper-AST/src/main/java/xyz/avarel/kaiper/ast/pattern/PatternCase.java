@@ -16,7 +16,10 @@
 
 package xyz.avarel.kaiper.ast.pattern;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class PatternCase implements Comparable<PatternCase> {
     public static final PatternCase EMPTY = new PatternCase(Collections.emptyList());
@@ -43,44 +46,12 @@ public class PatternCase implements Comparable<PatternCase> {
         return patterns;
     }
 
-//    public boolean isNested() {
-//        for (Pattern i : patterns) {
-//            if (i instanceof NestedPattern) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
     public PatternCase subList(int start) {
         return subList(start, size());
     }
 
     public PatternCase subList(int start, int end) {
         return new PatternCase(patterns.subList(start, end));
-    }
-
-    public String toString() {
-        if (patterns.isEmpty()) {
-            return "()";
-        }
-
-        StringBuilder sb = new StringBuilder("(");
-        Iterator<Pattern> iterator = patterns.iterator();
-
-        while (true) {
-            Pattern pattern = iterator.next();
-            sb.append(pattern);
-            if (iterator.hasNext()) {
-                sb.append(", ");
-            } else {
-                break;
-            }
-        }
-
-        sb.append(")");
-
-        return sb.toString();
     }
 
     public int size() {

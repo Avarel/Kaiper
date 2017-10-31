@@ -65,6 +65,10 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
     private int recursionDepth = 0;
     private long timeout;
 
+    public ExprInterpreter() {
+        this(VisitorSettings.DEFAULT);
+    }
+
     public ExprInterpreter(VisitorSettings visitorSettings) {
         this.visitorSettings = visitorSettings;
         resetTimeout();

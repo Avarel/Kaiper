@@ -32,32 +32,6 @@ public abstract class Expr {
     public abstract <R, C> R accept(ExprVisitor<R, C> visitor, C context);
 
     /**
-     * Appends the AST information of the node to the buffer.
-     *
-     * @param builder Target buffer.
-     * @param indent Current indentation level.
-     * @param isTail If the node is a tail node.
-     */
-    public void ast(StringBuilder builder, String indent, boolean isTail) {
-        builder.append(indent).append(isTail ? "└── " : "├── ").append(toString());
-    }
-
-    /**
-     * Appends the AST information of the node to the buffer.
-     *
-     * @param label String label.
-     * @param builder Target buffer.
-     * @param indent Current indentation level.
-     * @param tail If the node is a tail node.
-     */
-    public void ast(String label, StringBuilder builder, String indent, boolean tail) {
-        builder.append(indent).append(tail ? "└── " : "├── ").append(label).append(':');
-
-        builder.append('\n');
-        ast(builder, indent + (tail ? "    " : "│   "), true);
-    }
-
-    /**
      * @return The position of the node.
      * @see Position
      */
