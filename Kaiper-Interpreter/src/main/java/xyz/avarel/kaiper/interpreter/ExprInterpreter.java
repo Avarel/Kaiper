@@ -138,7 +138,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
         Obj target = resultOf(expr.getLeft(), scope);
 
-        Obj argument = resultOf(expr.getArgument(), scope);
+        Tuple argument = (Tuple) resultOf(expr.getArgument(), scope);
 
         recursionDepth++;
         Obj result = target.invoke(argument);
@@ -486,7 +486,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
     @Override
     public Obj visit(MatchExpr expr, Scope<String, Obj> scope) {
-        Obj argument = resultOf(expr.getTarget(), scope);
+        Tuple argument = (Tuple) resultOf(expr.getTarget(), scope);
 
         for (Map.Entry<PatternCase, Expr> entry : expr.getCases().entrySet()) {
             Scope<String, Obj> subScope = scope.subScope();

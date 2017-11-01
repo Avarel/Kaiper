@@ -17,22 +17,7 @@
 package xyz.avarel.kaiper.operations;
 
 public enum UnaryOperatorType {
-    PLUS("+"),
-    MINUS("-"),
-    NEGATE("!");
-
-    private final String symbol;
-
-    UnaryOperatorType(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    @Override
-    public String toString() {
-        return symbol;
-    }
+    PLUS,
+    MINUS,
+    NEGATE,
 }

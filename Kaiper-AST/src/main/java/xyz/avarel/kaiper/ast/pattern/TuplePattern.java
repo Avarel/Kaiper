@@ -17,10 +17,10 @@
 package xyz.avarel.kaiper.ast.pattern;
 
 // (delegate) = (defaultExpr)
-public class NestedPattern extends Pattern {
+public class TuplePattern extends Pattern {
     private final PatternCase pattern;
 
-    public NestedPattern(PatternCase pattern) {
+    public TuplePattern(PatternCase pattern) {
         this.pattern = pattern;
     }
 
@@ -42,8 +42,8 @@ public class NestedPattern extends Pattern {
     public int compareTo(Pattern other) {
         int compare = super.compareTo(other);
 
-        if (compare == 0 && other instanceof NestedPattern) {
-            return pattern.compareTo(((NestedPattern) other).pattern);
+        if (compare == 0 && other instanceof TuplePattern) {
+            return pattern.compareTo(((TuplePattern) other).pattern);
         }
 
         return compare;

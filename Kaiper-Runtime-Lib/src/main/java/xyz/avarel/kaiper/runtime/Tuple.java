@@ -16,8 +16,6 @@
 
 package xyz.avarel.kaiper.runtime;
 
-import xyz.avarel.kaiper.runtime.modules.Module;
-import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.types.Type;
 
@@ -62,12 +60,8 @@ import java.util.List;
 // x: 2, 3          ILLEGAL
 //
 
-public class Tuple implements Obj {
+public class Tuple implements IndexedObj {
     public static final Type<Tuple> TYPE = new Type<>("Tuple");
-    public static final Module MODULE = new NativeModule("Tuple") {{
-        declare("TYPE", Tuple.TYPE);
-    }};
-
     private final Obj[] values;
 
     public Tuple() {

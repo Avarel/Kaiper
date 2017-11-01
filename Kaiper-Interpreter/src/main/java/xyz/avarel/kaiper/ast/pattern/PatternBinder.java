@@ -17,7 +17,9 @@
 package xyz.avarel.kaiper.ast.pattern;
 
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.runtime.IndexedObj;
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.scope.Scope;
 
@@ -30,7 +32,7 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
         this.scope = scope;
     }
 
-    public boolean bind(PatternCase patternCase, Obj obj) {
+    public boolean bind(PatternCase patternCase, IndexedObj obj) {
         PatternContext context = new PatternContext(patternCase, obj);
         for (Pattern pattern : patternCase.getPatterns()) {
             if (!pattern.accept(this, context)) {
@@ -99,23 +101,28 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
     }
 
     @Override
-    public Boolean visit(NestedPattern pattern, PatternContext context) {
+    public Boolean visit(TuplePattern pattern, PatternContext context) {
         if (context.tuple.size() <= context.tupleIndex) {
             return false;
         }
 
         Obj obj = context.tuple.get(context.tupleIndex++);
-        return bind(pattern.getPattern(), obj);
+
+        if (obj instanceof Tuple) {
+            return bind(pattern.getPattern(), (IndexedObj) obj);
+        } else {
+            return false;
+        }
     }
 
     static class PatternContext {
         private final PatternCase patternCase;
-        private final Obj tuple;
+        private final IndexedObj tuple;
 
         private int currentPatternIndex;
         private int tupleIndex;
 
-        private PatternContext(PatternCase patternCase, Obj tuple) {
+        private PatternContext(PatternCase patternCase, IndexedObj tuple) {
             this.patternCase = patternCase;
             this.tuple = tuple;
         }

@@ -65,7 +65,7 @@ public class PipeForwardParser extends BinaryParser {
                     new TupleExpr(left.getPosition(), elements)
             );
         } else if (right instanceof FunctionNode || right instanceof Identifier) {
-            return new Invocation(token.getPosition(), right, left);
+            return new Invocation(token.getPosition(), right, TupleExpr.coerce(left));
         }
 
         throw new SyntaxException("Invalid pipe-forward operand " + token.getType(), token.getPosition());

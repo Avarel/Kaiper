@@ -17,6 +17,7 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 public abstract class Function implements Obj {
@@ -37,7 +38,7 @@ public abstract class Function implements Obj {
     }
 
     @Override
-    public abstract Obj invoke(Obj argument);
+    public abstract Obj invoke(Tuple argument);
 
     @Override
     public Obj shr(Obj other) { // this >> other

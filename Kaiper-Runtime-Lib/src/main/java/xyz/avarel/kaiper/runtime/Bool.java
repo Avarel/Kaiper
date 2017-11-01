@@ -73,12 +73,4 @@ public enum Bool implements Obj {
     public Bool pow(Bool other) {
         return Bool.of(value ^ other.value);
     }
-
-    @Override
-    public Bool isEqualTo(Obj other) {
-        if (other instanceof Bool) {
-            return Bool.of(value == ((Bool) other).value);
-        }
-        return FALSE;
-    }
 }

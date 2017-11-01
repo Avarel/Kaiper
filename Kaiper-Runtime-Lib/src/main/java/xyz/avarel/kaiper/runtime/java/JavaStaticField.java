@@ -87,14 +87,14 @@ public class JavaStaticField implements Obj {
     }
 
     @Override
-    public Obj invoke(Obj tuple) {
+    public Obj invoke(Tuple tuple) {
         if (name == null) return Null.VALUE;
 
         List<Object> nativeArgs;
 
         if (tuple instanceof Tuple) {
             nativeArgs = new ArrayList<>(tuple.size());
-            for (Obj obj : ((Tuple) tuple)._toList()) {
+            for (Obj obj : tuple._toList()) {
                 Object o = obj.toJava();
                 nativeArgs.add(o != Null.VALUE ? o : null);
             }

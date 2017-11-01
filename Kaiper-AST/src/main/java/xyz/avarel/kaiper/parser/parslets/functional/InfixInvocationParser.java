@@ -38,7 +38,7 @@ public class InfixInvocationParser extends BinaryParser {
     public Expr parse(ExprParser parser, Expr left, Token token) {
         parser.pushToken(token);
         Identifier identifier = parser.parseIdentifier();
-        Expr right = parser.parseExpr();
+        Expr right = parser.parseExpr(getPrecedence());
         return new Invocation(token.getPosition(), identifier, new TupleExpr(left.getPosition(), Arrays.asList(left, right)));
     }
 }

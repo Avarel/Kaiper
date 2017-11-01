@@ -18,15 +18,10 @@ package xyz.avarel.kaiper.runtime.numbers;
 
 import xyz.avarel.kaiper.runtime.Bool;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.modules.Module;
-import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 public class Int implements Obj, Comparable<Int> {
     public static final Type<Int> TYPE = new Type<>("Int");
-    public static final Module MODULE = new NativeModule("Int") {{
-        declare("TYPE", Int.TYPE);
-    }};
     private final int value;
 
     private Int(int value) {

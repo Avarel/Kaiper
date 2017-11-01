@@ -20,6 +20,7 @@ import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.lexer.Position;
 
+import java.util.Collections;
 import java.util.List;
 
 public class TupleExpr extends Expr {
@@ -28,6 +29,14 @@ public class TupleExpr extends Expr {
     public TupleExpr(Position position, List<Expr> elements) {
         super(position);
         this.elements = elements;
+    }
+
+    public static TupleExpr coerce(Expr expr) {
+        if (expr instanceof TupleExpr) {
+            return (TupleExpr) expr;
+        } else {
+            return new TupleExpr(expr.getPosition(), Collections.singletonList(expr));
+        }
     }
 
     public List<Expr> getElements() {

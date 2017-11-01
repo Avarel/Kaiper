@@ -17,6 +17,7 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 
 public class ComposedFunction extends Function {
     private final Function outer;
@@ -35,7 +36,7 @@ public class ComposedFunction extends Function {
     }
 
     @Override
-    public Obj invoke(Obj argument) {
-        return outer.invoke(inner.invoke(argument));
+    public Obj invoke(Tuple argument) {
+        return outer.invoke(new Tuple(inner.invoke(argument)));
     }
 }

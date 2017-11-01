@@ -31,12 +31,12 @@ public class CurriedFunction extends Function {
     }
 
     @Override
-    public Obj invoke(Obj argument) {
+    public Obj invoke(Tuple argument) {
         if (argument instanceof Tuple) {
             Obj[] arguments = new Obj[argument.size() + 1];
 
             arguments[0] = this.argument;
-            System.arraycopy(((Tuple) argument)._toArray(), 0, arguments, 1, argument.size());
+            System.arraycopy(argument._toArray(), 0, arguments, 1, argument.size());
 
             argument = new Tuple(arguments);
         } else {

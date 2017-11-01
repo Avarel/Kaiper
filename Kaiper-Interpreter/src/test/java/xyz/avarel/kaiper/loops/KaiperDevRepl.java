@@ -17,8 +17,11 @@
 package xyz.avarel.kaiper.loops;
 
 import xyz.avarel.kaiper.KaiperEvaluator;
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.KaiperException;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.functions.JavaFunction;
 
 import java.util.Scanner;
 
@@ -28,13 +31,12 @@ public class KaiperDevRepl {
 
         KaiperEvaluator interpreter = new KaiperEvaluator();
 
-//        interpreter.getScope().put("println", new NativeFunc("println", "obj") {
-//            @Override
-//            protected Obj eval(Map<String, Obj> arguments) {
-//                System.out.println(arguments.get("obj"));
-//                return null;
-//            }
-//        });
+        interpreter.getScope().put("println", new JavaFunction("println", interpreter.getVisitor())
+                .addDispatch(new PatternCase("value"), scope -> {
+                    System.out.println(scope.get("value"));
+                    return Null.VALUE;
+                })
+        );
 
         while (true) {
             System.out.print(">>> ");
@@ -66,7 +68,8 @@ public class KaiperDevRepl {
             try {
                 result = interpreter.eval(input);
 
-                System.out.println(result + " : " + result.getType());
+                System.out.println(result + " : "
+                        + result.getType());
             } catch (KaiperException e) {
                 System.out.println("!!! " + e.getMessage());
             }

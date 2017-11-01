@@ -145,32 +145,6 @@ public interface Obj {
     }
 
     /**
-     * Or operator in Kaiper. Default symbol is {@code ||}.
-     * <br> Implementation should default to error if not implemented.
-     *
-     * @param   other
-     *          Right {@link Obj} operand.
-     * @return  The {@link Obj} result of the operation.
-     */
-    @Deprecated
-    default Bool or(Obj other) {
-        throw unimplemented("or", other);
-    }
-
-    /**
-     * And operator in Kaiper. Default symbol is {@code &&}.
-     * <br> Implementation should default to error if not implemented.
-     *
-     * @param   other
-     *          Right {@link Obj} operand.
-     * @return  The {@link Obj} result of the operation.
-     */
-    @Deprecated
-    default Bool and(Obj other) {
-        throw unimplemented("and", other);
-    }
-
-    /**
      * Left Shift operator in Kaiper. Default symbol is {@code <<}.
      * <br> Implementation should default to error if not implemented.
      *
@@ -200,25 +174,8 @@ public interface Obj {
      *          {@link Obj} argument (multiple arguments are represented as a tuple).
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj invoke(Obj argument) {
+    default Obj invoke(Tuple argument) {
         throw unimplemented("invocation");
-    }
-
-//    /**
-//     * Invcoation operator in Kaiper. Default symbol is {@code a(b, c...)}.
-//     * <br> Implementation should default to error if not implemented.
-//     *
-//     * @param   arguments
-//     *          Array of {@link Obj} arguments.
-//     * @return  The {@link Obj} result of the operation.
-//     */
-//    default Obj invoke(Obj... arguments) {
-//        return invoke(Tuple.of(arguments));
-//    }
-
-    @Deprecated
-    default Obj slice(Obj start, Obj end, Obj step) {
-        throw unimplemented("slice");
     }
 
     /**
@@ -267,24 +224,13 @@ public interface Obj {
         throw new ComputeException("Can not set attribute " + name + " for " + toString());
     }
 
-    // todo documentaiton
-    default Obj get(int index) {
-        if (index != 0) throw new ComputeException("Index out of bounds");
-        return this;
-    }
-
-    // todo documentation
-    default int size() {
-        return 1;
-    }
-
     @SuppressWarnings("unchecked")
     default <T extends Obj> T as(Type<T> type) {
         if (getType().equals(type)) {
             return (T) this;
         }
 
-        throw new ComputeException("Type mismatch: " + getType() + " can not be casted to " + type);
+        throw new ComputeException("Type mismatch: " + this + " is not a " + type);
     }
 
     default ComputeException unimplemented(String string) {

@@ -18,6 +18,7 @@ package xyz.avarel.kaiper.others;
 
 import xyz.avarel.kaiper.KaiperScript;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
+import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.functions.JavaFunction;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class FileTest {
         exp.getScope().put("println", new JavaFunction("println", exp.getInterpreter())
                 .addDispatch(new PatternCase("value"), scope -> {
                     System.out.println(scope.get("value"));
-                    return null;
+                    return Null.VALUE;
                 })
         );
 

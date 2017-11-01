@@ -22,6 +22,7 @@ import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
+import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
 import java.util.Map;
@@ -49,7 +50,7 @@ public class CompiledFunction extends Function {
     }
 
     @Override
-    public Obj invoke(Obj argument) {
+    public Obj invoke(Tuple argument) {
         for (Map.Entry<PatternCase, Expr> entry : dispatches.entrySet()) {
             Scope<String, Obj> subScope = scope.subScope();
 

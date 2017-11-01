@@ -43,6 +43,6 @@ public class InvocationParser extends BinaryParser {
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return new Invocation(argument.getPosition(), left, argument);
+        return new Invocation(argument.getPosition(), left, TupleExpr.coerce(argument));
     }
 }

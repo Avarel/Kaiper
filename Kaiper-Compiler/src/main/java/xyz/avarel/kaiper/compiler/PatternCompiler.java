@@ -57,7 +57,7 @@ public class PatternCompiler implements PatternVisitor<Void, KDataOutput> {
     }
 
     @Override
-    public Void visit(NestedPattern pattern, KDataOutput out) {
+    public Void visit(TuplePattern pattern, KDataOutput out) {
         throw new UnsupportedOperationException("Adrian pls");
     }
 

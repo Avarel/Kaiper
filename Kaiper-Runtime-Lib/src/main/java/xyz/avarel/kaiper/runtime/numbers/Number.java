@@ -18,15 +18,10 @@ package xyz.avarel.kaiper.runtime.numbers;
 
 import xyz.avarel.kaiper.runtime.Bool;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.modules.Module;
-import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 public class Number implements Obj, Comparable<Number> {
     public static final Type<Number> TYPE = new Type<>("Number");
-    public static final Module MODULE = new NativeModule("Number") {{
-        declare("TYPE", Number.TYPE);
-    }};
     private final double value;
 
     private Number(double value) {
@@ -185,9 +180,5 @@ public class Number implements Obj, Comparable<Number> {
     @Override
     public int compareTo(Number other) {
         return Double.compare(value, other.value);
-    }
-
-    private Bool lessThan(Number other) {
-        return Bool.of(value < other.value);
     }
 }

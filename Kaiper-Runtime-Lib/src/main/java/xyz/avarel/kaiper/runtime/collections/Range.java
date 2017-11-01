@@ -16,10 +16,9 @@
 
 package xyz.avarel.kaiper.runtime.collections;
 
+import xyz.avarel.kaiper.runtime.IndexedObj;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.modules.Module;
-import xyz.avarel.kaiper.runtime.modules.NativeModule;
 import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.types.Type;
 
@@ -27,11 +26,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Range implements Obj, Iterable<Int> {
+public class Range implements Iterable<Int>, IndexedObj {
     public static final Type<Range> TYPE = new Type<>("Range");
-    public static final Module MODULE = new NativeModule("Range") {{
-        declare("TYPE", Range.TYPE);
-    }};
     private final int start;
     private final int end;
 
@@ -80,19 +76,22 @@ public class Range implements Obj, Iterable<Int> {
         if (key instanceof Int) {
             return get((Int) key);
         }
-        return Obj.super.get(key);
+        return IndexedObj.super.get(key);
     }
 
     public Obj get(Int index) {
-        if (index.value() < size()) {
-            return Int.of(start + index.value());
-        }
-        return Null.VALUE;
+        return get(index.value());
     }
 
     @Override
     public Iterator<Int> iterator() {
         return new RangeIterator();
+    }
+
+    @Override
+    public Obj get(int i) {
+        if (i < size()) return Int.of(start + i);
+        return Null.VALUE;
     }
 
     public int size() {
@@ -109,7 +108,7 @@ public class Range implements Obj, Iterable<Int> {
             case "lastIndex":
                 return Int.of(size() - 1);
             default:
-                return Obj.super.getAttr(name);
+                return IndexedObj.super.getAttr(name);
         }
     }
 

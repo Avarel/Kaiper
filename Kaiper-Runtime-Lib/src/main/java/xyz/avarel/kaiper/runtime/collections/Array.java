@@ -16,7 +16,7 @@
 
 package xyz.avarel.kaiper.runtime.collections;
 
-import xyz.avarel.kaiper.runtime.Bool;
+import xyz.avarel.kaiper.runtime.IndexedObj;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -28,7 +28,7 @@ import java.util.function.UnaryOperator;
 /**
  * Kaiper wrapper class for a one dimensional list.
  */
-public class Array implements Obj, Iterable<Obj>, List<Obj> {
+public class Array implements Iterable<Obj>, List<Obj>, IndexedObj {
     public static final Type<Array> TYPE = new Type<>("Array");
     private final List<Obj> list;
 
@@ -102,24 +102,6 @@ public class Array implements Obj, Iterable<Obj>, List<Obj> {
     @Override
     public Type<Array> getType() {
         return TYPE;
-    }
-
-    @Override
-    public Bool isEqualTo(Obj other) {
-        if (other instanceof Array) {
-            return isEqualTo((Array) other);
-        }
-        return Bool.FALSE;
-    }
-
-    public Bool isEqualTo(Array other) {
-        if (this == other) {
-            return Bool.TRUE;
-        } else if (size() != other.size()) {
-            return Bool.FALSE;
-        }
-
-        return Bool.of(this.equals(other));
     }
 
     @Override
@@ -243,7 +225,12 @@ public class Array implements Obj, Iterable<Obj>, List<Obj> {
 
     @Override
     public boolean equals(Object o) {
-        return list.equals(o);
+        if (this == o) return true;
+        if (!(o instanceof Array)) return false;
+
+        Array objs = (Array) o;
+
+        return list.equals(objs.list);
     }
 
     @Override
@@ -270,7 +257,7 @@ public class Array implements Obj, Iterable<Obj>, List<Obj> {
             case "lastIndex":
                 return Int.of(size() - 1);
             default:
-                return Obj.super.getAttr(name);
+                return IndexedObj.super.getAttr(name);
         }
     }
 
