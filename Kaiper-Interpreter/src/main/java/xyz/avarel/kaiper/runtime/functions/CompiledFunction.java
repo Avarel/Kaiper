@@ -22,9 +22,9 @@ import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -50,15 +50,15 @@ public class CompiledFunction extends Function {
     }
 
     @Override
-    public Obj invoke(Tuple argument) {
+    public Obj invoke(List<Obj> arguments) {
         for (Map.Entry<PatternCase, Expr> entry : dispatches.entrySet()) {
             Scope<String, Obj> subScope = scope.subScope();
 
-            if (new PatternBinder(visitor, subScope).bind(entry.getKey(), argument)) {
+            if (new PatternBinder(visitor, subScope).bind(entry.getKey(), arguments)) {
                 return entry.getValue().accept(visitor, subScope);
             }
         }
 
-        throw new InterpreterException("No method matches for " + argument);
+        throw new InterpreterException("No method matches for " + arguments);
     }
 }

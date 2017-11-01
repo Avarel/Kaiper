@@ -86,7 +86,7 @@ public class ExprCompiler implements ExprVisitor<Void, KDataOutput> {
 
     @Override
     public Void visit(Invocation expr, KDataOutput out) {
-        visit(out, expr.getLeft(), expr.getArgument());
+        visit(out, expr.getLeft(), expr.getArguments());
 
         lineNumber(expr, out);
 

@@ -16,7 +16,6 @@
 
 package xyz.avarel.kaiper.runtime.collections;
 
-import xyz.avarel.kaiper.runtime.IndexedObj;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -26,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Range implements Iterable<Int>, IndexedObj {
+public class Range implements Iterable<Int>, Obj {
     public static final Type<Range> TYPE = new Type<>("Range");
     private final int start;
     private final int end;
@@ -76,7 +75,7 @@ public class Range implements Iterable<Int>, IndexedObj {
         if (key instanceof Int) {
             return get((Int) key);
         }
-        return IndexedObj.super.get(key);
+        return Obj.super.get(key);
     }
 
     public Obj get(Int index) {
@@ -88,7 +87,6 @@ public class Range implements Iterable<Int>, IndexedObj {
         return new RangeIterator();
     }
 
-    @Override
     public Obj get(int i) {
         if (i < size()) return Int.of(start + i);
         return Null.VALUE;
@@ -108,7 +106,7 @@ public class Range implements Iterable<Int>, IndexedObj {
             case "lastIndex":
                 return Int.of(size() - 1);
             default:
-                return IndexedObj.super.getAttr(name);
+                return Obj.super.getAttr(name);
         }
     }
 

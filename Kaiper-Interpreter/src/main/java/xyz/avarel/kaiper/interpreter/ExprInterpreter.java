@@ -54,6 +54,8 @@ import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.scope.Scope;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -138,10 +140,13 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
         Obj target = resultOf(expr.getLeft(), scope);
 
-        Tuple argument = (Tuple) resultOf(expr.getArgument(), scope);
+        List<Obj> arguments = new ArrayList<>();
+        for (Expr it : expr.getArguments()) {
+            arguments.add(resultOf(it, scope));
+        }
 
         recursionDepth++;
-        Obj result = target.invoke(argument);
+        Obj result = target.invoke(arguments);
         recursionDepth--;
 
         return result;
@@ -484,14 +489,14 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 //        throw new InterpreterException("Up for removal", expr.getPosition());
 //    }
 
-    @Override
+    @Override // TODO
     public Obj visit(MatchExpr expr, Scope<String, Obj> scope) {
-        Tuple argument = (Tuple) resultOf(expr.getTarget(), scope);
+        Obj argument = resultOf(expr.getTarget(), scope);
 
         for (Map.Entry<PatternCase, Expr> entry : expr.getCases().entrySet()) {
             Scope<String, Obj> subScope = scope.subScope();
 
-            if (new PatternBinder(this, subScope).bind(entry.getKey(), argument)) {
+            if (new PatternBinder(this, subScope).bind(entry.getKey(), Collections.singletonList(argument))) {
                 return resultOf(entry.getValue(), subScope);
             }
         }

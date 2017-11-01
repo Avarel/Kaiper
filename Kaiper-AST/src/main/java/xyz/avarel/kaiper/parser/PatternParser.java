@@ -81,14 +81,14 @@ public class PatternParser extends ExprParser {
             return new RestPattern(name);
         } else if (match(TokenType.LEFT_PAREN)) {
             if (match(TokenType.RIGHT_PAREN)) {
-                return new TuplePattern(PatternCase.EMPTY);
+                return new NestedPattern(PatternCase.EMPTY);
             }
 
             PatternCase patternCase = parsePatternCase(new ArrayList<>(), context);
 
             eat(TokenType.RIGHT_PAREN);
 
-            return new TuplePattern(patternCase);
+            return new NestedPattern(patternCase);
         } else if (match(TokenType.UNDERSCORE)) {
             return WildcardPattern.INSTANCE;
         } else {

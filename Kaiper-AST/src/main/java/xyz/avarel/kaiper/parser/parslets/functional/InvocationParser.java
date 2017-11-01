@@ -19,13 +19,14 @@ package xyz.avarel.kaiper.parser.parslets.functional;
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
-import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
+import xyz.avarel.kaiper.ast.expr.operations.BinaryOperation;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.ExprParser;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InvocationParser extends BinaryParser {
     public InvocationParser() {
@@ -34,15 +35,21 @@ public class InvocationParser extends BinaryParser {
 
     @Override
     public Expr parse(ExprParser parser, Expr left, Token token) {
-        Expr argument;
+        List<Expr> arguments = new ArrayList<>();
 
-        if (parser.match(TokenType.RIGHT_PAREN)) {
-            argument = new TupleExpr(left.getPosition(), Collections.emptyList());
-        } else {
-            argument = parser.parseExpr();
+        if (left instanceof BinaryOperation) {
+            BinaryOperation operation = (BinaryOperation) left;
+            arguments.add(operation.getLeft());
+            left = operation.getRight();
+        }
+
+        if (!parser.match(TokenType.RIGHT_PAREN)) {
+            do {
+                arguments.add(parser.parseExpr(Precedence.TUPLE));
+            } while (parser.match(TokenType.COMMA));
             parser.eat(TokenType.RIGHT_PAREN);
         }
 
-        return new Invocation(argument.getPosition(), left, TupleExpr.coerce(argument));
+        return new Invocation(token.getPosition(), left, arguments);
     }
 }

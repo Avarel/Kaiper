@@ -18,25 +18,26 @@ package xyz.avarel.kaiper.ast.expr.invocation;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.expr.Expr;
-import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.lexer.Position;
+
+import java.util.List;
 
 public class Invocation extends Expr {
     private final Expr left;
-    private final TupleExpr argument;
+    private final List<Expr> arguments;
 
-    public Invocation(Position position, Expr left, TupleExpr argument) {
+    public Invocation(Position position, Expr left, List<Expr> arguments) {
         super(position);
         this.left = left;
-        this.argument = argument;
+        this.arguments = arguments;
     }
 
     public Expr getLeft() {
         return left;
     }
 
-    public TupleExpr getArgument() {
-        return argument;
+    public List<Expr> getArguments() {
+        return arguments;
     }
 
     @Override

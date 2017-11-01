@@ -60,7 +60,7 @@ import java.util.List;
 // x: 2, 3          ILLEGAL
 //
 
-public class Tuple implements IndexedObj {
+public class Tuple implements Obj {
     public static final Type<Tuple> TYPE = new Type<>("Tuple");
     private final Obj[] values;
 
@@ -84,19 +84,11 @@ public class Tuple implements IndexedObj {
         return values.length;
     }
 
-    /*
-     * INTERNAL METHOD
-     * DO NOT EXPOSE TO LANGUAGE
-     */
-    public List<Obj> _toList() {
+    public List<Obj> asList() {
         return Arrays.asList(values);
     }
 
-    /*
-     * INTERNAL METHOD
-     * DO NOT EXPOSE TO LANGUAGE
-     */
-    public Obj[] _toArray() {
+    public Obj[] asArray() {
         return values;
     }
 

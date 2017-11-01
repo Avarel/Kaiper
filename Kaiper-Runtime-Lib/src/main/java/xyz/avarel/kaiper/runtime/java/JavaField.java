@@ -18,14 +18,12 @@ package xyz.avarel.kaiper.runtime.java;
 
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.types.Type;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,19 +96,13 @@ public class JavaField extends JavaObject implements Obj {
     }
 
     @Override
-    public Obj invoke(Tuple tuple) {
+    public Obj invoke(List<Obj> arguments) {
         if (name == null) return Null.VALUE;
 
-        List<Object> nativeArgs;
-
-        if (tuple instanceof Tuple) {
-            nativeArgs = new ArrayList<>(tuple.size());
-            for (Obj obj : tuple._toList()) {
-                Object o = obj.toJava();
-                nativeArgs.add(o != Null.VALUE ? o : null);
-            }
-        } else {
-            nativeArgs = Collections.singletonList(tuple.toJava());
+        List<Object> nativeArgs = new ArrayList<>(arguments.size());
+        for (Obj obj :  arguments) {
+            Object o = obj.toJava();
+            nativeArgs.add(o != Null.VALUE ? o : null);
         }
 
         List<Class<?>> classes = nativeArgs.stream()

@@ -16,7 +16,6 @@
 
 package xyz.avarel.kaiper.runtime.collections;
 
-import xyz.avarel.kaiper.runtime.IndexedObj;
 import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.numbers.Int;
@@ -28,7 +27,7 @@ import java.util.function.UnaryOperator;
 /**
  * Kaiper wrapper class for a one dimensional list.
  */
-public class Array implements Iterable<Obj>, List<Obj>, IndexedObj {
+public class Array implements Iterable<Obj>, List<Obj>, Obj {
     public static final Type<Array> TYPE = new Type<>("Array");
     private final List<Obj> list;
 
@@ -80,6 +79,10 @@ public class Array implements Iterable<Obj>, List<Obj>, IndexedObj {
     @Override
     public boolean contains(Object o) {
         return list.contains(o);
+    }
+
+    public List<Obj> asList() {
+        return list;
     }
 
     /**
@@ -257,7 +260,7 @@ public class Array implements Iterable<Obj>, List<Obj>, IndexedObj {
             case "lastIndex":
                 return Int.of(size() - 1);
             default:
-                return IndexedObj.super.getAttr(name);
+                return Obj.super.getAttr(name);
         }
     }
 

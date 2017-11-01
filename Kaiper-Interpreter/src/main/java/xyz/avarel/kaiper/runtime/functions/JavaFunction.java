@@ -5,9 +5,9 @@ import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.InterpreterException;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.scope.Scope;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -27,16 +27,16 @@ public class JavaFunction extends Function {
     }
 
     @Override
-    public Obj invoke(Tuple argument) {
+    public Obj invoke(List<Obj> arguments) {
         for (Map.Entry<PatternCase, Transformer> entry : dispatches.entrySet()) {
             Scope<String, Obj> subScope = new Scope<>();
 
-            if (new PatternBinder(interpreter, subScope).bind(entry.getKey(), argument)) {
+            if (new PatternBinder(interpreter, subScope).bind(entry.getKey(), arguments)) {
                 return entry.getValue().invoke(subScope);
             }
         }
 
-        throw new InterpreterException("No method matches for " + argument);
+        throw new InterpreterException("No method matches for " + arguments);
     }
 
     @FunctionalInterface

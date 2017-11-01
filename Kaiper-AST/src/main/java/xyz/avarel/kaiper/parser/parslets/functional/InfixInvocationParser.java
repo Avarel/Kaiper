@@ -19,12 +19,12 @@ package xyz.avarel.kaiper.parser.parslets.functional;
 import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
-import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.ExprParser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 // a function b
@@ -39,6 +39,6 @@ public class InfixInvocationParser extends BinaryParser {
         parser.pushToken(token);
         Identifier identifier = parser.parseIdentifier();
         Expr right = parser.parseExpr(getPrecedence());
-        return new Invocation(token.getPosition(), identifier, new TupleExpr(left.getPosition(), Arrays.asList(left, right)));
+        return new Invocation(token.getPosition(), identifier, new ArrayList<>(Arrays.asList(left, right)));
     }
 }

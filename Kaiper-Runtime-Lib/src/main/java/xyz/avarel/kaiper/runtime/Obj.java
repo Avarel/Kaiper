@@ -19,6 +19,9 @@ package xyz.avarel.kaiper.runtime;
 import xyz.avarel.kaiper.exceptions.ComputeException;
 import xyz.avarel.kaiper.runtime.types.Type;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * An interface containing all natively implemented operations.
  */
@@ -170,12 +173,16 @@ public interface Obj {
      * Invcoation operator in Kaiper. Default symbol is {@code a(b, c...)}.
      * <br> Implementation should default to error if not implemented.
      *
-     * @param   argument
-     *          {@link Obj} argument (multiple arguments are represented as a tuple).
+     * @param   arguments
+     *          {@link Obj} arguments.
      * @return  The {@link Obj} result of the operation.
      */
-    default Obj invoke(Tuple argument) {
+    default Obj invoke(List<Obj> arguments) {
         throw unimplemented("invocation");
+    }
+
+    default Obj invoke(Obj... arguments) {
+        return invoke(Arrays.asList(arguments));
     }
 
     /**

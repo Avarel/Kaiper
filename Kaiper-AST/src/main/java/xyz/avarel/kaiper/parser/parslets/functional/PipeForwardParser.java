@@ -20,7 +20,6 @@ import xyz.avarel.kaiper.Precedence;
 import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.functions.FunctionNode;
 import xyz.avarel.kaiper.ast.expr.invocation.Invocation;
-import xyz.avarel.kaiper.ast.expr.tuples.TupleExpr;
 import xyz.avarel.kaiper.ast.expr.variables.Identifier;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
 import xyz.avarel.kaiper.lexer.Token;
@@ -28,7 +27,7 @@ import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.ExprParser;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 // FLATTENS BOTH SIDES
 public class PipeForwardParser extends BinaryParser {
@@ -42,30 +41,10 @@ public class PipeForwardParser extends BinaryParser {
 
         if (right instanceof Invocation) {
             Invocation invocation = (Invocation) right;
-            Expr argument = invocation.getArgument();
-
-            /*
-             * FLATTEN BOTH ARGUMENTS
-             */
-            List<Expr> elements = new ArrayList<>();
-            if (left instanceof TupleExpr) {
-                elements.addAll(((TupleExpr) left).getElements());
-            } else {
-                elements.add(left);
-            }
-            if (argument instanceof TupleExpr) {
-                elements.addAll(((TupleExpr) argument).getElements());
-            } else {
-                elements.add(argument);
-            }
-
-            return new Invocation(
-                    token.getPosition(),
-                    invocation.getLeft(),
-                    new TupleExpr(left.getPosition(), elements)
-            );
+            invocation.getArguments().add(right);
+            return invocation;
         } else if (right instanceof FunctionNode || right instanceof Identifier) {
-            return new Invocation(token.getPosition(), right, TupleExpr.coerce(left));
+            return new Invocation(token.getPosition(), right, new ArrayList<>(Arrays.asList(left, right)));
         }
 
         throw new SyntaxException("Invalid pipe-forward operand " + token.getType(), token.getPosition());

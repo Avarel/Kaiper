@@ -17,11 +17,12 @@
 package xyz.avarel.kaiper.ast.pattern;
 
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
-import xyz.avarel.kaiper.runtime.IndexedObj;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.Tuple;
 import xyz.avarel.kaiper.runtime.collections.Array;
 import xyz.avarel.kaiper.scope.Scope;
+
+import java.util.List;
 
 public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.PatternContext> {
     private final ExprInterpreter interpreter;
@@ -32,8 +33,8 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
         this.scope = scope;
     }
 
-    public boolean bind(PatternCase patternCase, IndexedObj obj) {
-        PatternContext context = new PatternContext(patternCase, obj);
+    public boolean bind(PatternCase patternCase, List<Obj> list) {
+        PatternContext context = new PatternContext(patternCase, list);
         for (Pattern pattern : patternCase.getPatterns()) {
             if (!pattern.accept(this, context)) {
                 return false;
@@ -46,11 +47,11 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
 
     @Override
     public Boolean visit(VariablePattern pattern, PatternContext context) {
-        if (context.tuple.size() <= context.tupleIndex) {
+        if (context.list.size() <= context.tupleIndex) {
             return false;
         }
 
-        ExprInterpreter.declare(scope, pattern.getName(), context.tuple.get(context.tupleIndex++));
+        ExprInterpreter.declare(scope, pattern.getName(), context.list.get(context.tupleIndex++));
         return true;
     }
 
@@ -61,7 +62,7 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
         // def what(a, b=2, c,d=4,e) = [a,b,c,d,e]
 
         int remainingRequiredArgs = context.patternCase.subList(context.currentPatternIndex).arity();
-        int remainingTupleElements = context.tuple.size() - context.tupleIndex;
+        int remainingTupleElements = context.list.size() - context.tupleIndex;
         if (remainingRequiredArgs >= remainingTupleElements || !pattern.getDelegate().accept(this, context)) {
             ExprInterpreter.declare(scope, pattern.getName(), pattern.getDefault().accept(interpreter, scope));
         }
@@ -72,12 +73,12 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
     @Override
     public Boolean visit(RestPattern pattern, PatternContext context) {
         int remainingRequiredArgs = context.patternCase.subList(context.currentPatternIndex).arity();
-        int remainingTupleElements = context.tuple.size() - context.tupleIndex;
+        int remainingTupleElements = context.list.size() - context.tupleIndex;
 
         Array array = new Array();
 
         for (; remainingTupleElements > remainingRequiredArgs; remainingTupleElements--) {
-            array.add(context.tuple.get(context.tupleIndex++));
+            array.add(context.list.get(context.tupleIndex++));
         }
 
         ExprInterpreter.declare(scope, pattern.getName(), array);
@@ -87,44 +88,40 @@ public class PatternBinder implements PatternVisitor<Boolean, PatternBinder.Patt
 
     @Override
     public Boolean visit(ValuePattern pattern, PatternContext context) {
-        if (context.tuple.size() <= context.tupleIndex) {
+        if (context.list.size() <= context.tupleIndex) {
             return false;
         }
 
         Obj obj = interpreter.resultOf(pattern.getExpr(), scope);
-        return obj.equals(context.tuple.get(context.tupleIndex++));
+        return obj.equals(context.list.get(context.tupleIndex++));
     }
 
     @Override
     public Boolean visit(WildcardPattern wildcardPattern, PatternContext context) {
-        return context.tuple.size() > context.tupleIndex++;
+        return context.list.size() > context.tupleIndex++;
     }
 
-    @Override
-    public Boolean visit(TuplePattern pattern, PatternContext context) {
-        if (context.tuple.size() <= context.tupleIndex) {
+    @Override // todo add list nested pattern, flag or separate?
+    public Boolean visit(NestedPattern pattern, PatternContext context) {
+        if (context.list.size() <= context.tupleIndex) {
             return false;
         }
 
-        Obj obj = context.tuple.get(context.tupleIndex++);
+        Obj obj = context.list.get(context.tupleIndex++);
 
-        if (obj instanceof Tuple) {
-            return bind(pattern.getPattern(), (IndexedObj) obj);
-        } else {
-            return false;
-        }
+        return obj instanceof Tuple && bind(pattern.getPattern(), ((Tuple) obj).asList());
     }
 
     static class PatternContext {
         private final PatternCase patternCase;
-        private final IndexedObj tuple;
+        private final List<Obj> list;
 
         private int currentPatternIndex;
         private int tupleIndex;
 
-        private PatternContext(PatternCase patternCase, IndexedObj tuple) {
+        private PatternContext(PatternCase patternCase, List<Obj> list) {
             this.patternCase = patternCase;
-            this.tuple = tuple;
+            this.list = list;
         }
     }
 }

@@ -17,7 +17,9 @@
 package xyz.avarel.kaiper.runtime.functions;
 
 import xyz.avarel.kaiper.runtime.Obj;
-import xyz.avarel.kaiper.runtime.Tuple;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CurriedFunction extends Function {
     private final Obj argument;
@@ -31,19 +33,11 @@ public class CurriedFunction extends Function {
     }
 
     @Override
-    public Obj invoke(Tuple argument) {
-        if (argument instanceof Tuple) {
-            Obj[] arguments = new Obj[argument.size() + 1];
+    public Obj invoke(List<Obj> arguments) {
+        arguments = new ArrayList<>(arguments);
+        arguments.add(argument);
 
-            arguments[0] = this.argument;
-            System.arraycopy(argument._toArray(), 0, arguments, 1, argument.size());
-
-            argument = new Tuple(arguments);
-        } else {
-            argument = new Tuple(this.argument, argument);
-        }
-
-        return delegate.invoke(argument);
+        return delegate.invoke(arguments);
     }
 
     @Override
