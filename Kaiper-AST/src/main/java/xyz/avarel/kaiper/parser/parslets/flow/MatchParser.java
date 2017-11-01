@@ -41,6 +41,10 @@ public class MatchParser implements PrefixParser {
         do {
             PatternCase casePattern = parser.parsePattern();
 
+            if (casePattern.size() != 1) {
+                throw new SyntaxException("Complex match cases must be in parentheses");
+            }
+
             Token arrow = parser.eat(TokenType.ARROW);
 
             Expr caseExpr;

@@ -18,6 +18,7 @@ package xyz.avarel.kaiper.ast.expr.flow;
 
 import xyz.avarel.kaiper.ast.ExprVisitor;
 import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.lexer.Position;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Statements extends Expr {
     private final List<Expr> statements;
 
     public Statements(List<Expr> statements) {
-        super(statements.get(0).getPosition());
+        super(statements.isEmpty() ? new Position(0, 0, 0) : statements.get(0).getPosition());
         this.statements = statements;
     }
 
