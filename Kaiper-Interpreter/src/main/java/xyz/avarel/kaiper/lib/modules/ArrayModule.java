@@ -16,8 +16,12 @@
 
 package xyz.avarel.kaiper.lib.modules;
 
+import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.interpreter.ExprInterpreter;
+import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.collections.Array;
+import xyz.avarel.kaiper.runtime.functions.Function;
+import xyz.avarel.kaiper.runtime.functions.JavaFunction;
 import xyz.avarel.kaiper.runtime.modules.NativeModule;
 
 public class ArrayModule extends NativeModule {
@@ -88,19 +92,17 @@ public class ArrayModule extends NativeModule {
 //            }
 //        });
 //
-//        declare("fold",
-//                new NativeFunc("fold", "array", "accumulator", "operation") {
-//                    @Override
-//                    protected Obj eval(Map<String, Obj> arguments) {
-//                        Obj accumulator = arguments.get("accumulator");
-//                        Function operation = arguments.get("operation").as(Function.TYPE);
-//
-//                        for (Obj obj : arguments.get("array").as(Array.TYPE)) {
-//                            accumulator = operation.invoke(new Tuple(accumulator, obj));
-//                        }
-//                        return accumulator;
-//                    }
-//                });
+        //"array", "accumulator", "operation"
+        declare("fold", new JavaFunction("fold", interpreter)
+                .addDispatch(new PatternCase("array", "accumulator", "operation"), scope -> {
+                    Obj accumulator = scope.get("accumulator");
+                    Function operation = scope.get("operation").as(Function.TYPE);
+
+                    for (Obj obj : scope.get("array").as(Array.TYPE)) {
+                        accumulator = operation.invoke(accumulator, obj);
+                    }
+                    return accumulator;
+                }));
 //
 //        declare("slice", new NativeFunc("slice",
 //                new VariableRTPattern("self"),

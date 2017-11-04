@@ -149,6 +149,11 @@ public class Number implements Obj, Comparable<Number> {
         return Number.of(Math.abs(value % other.value));
     }
 
+    @Override
+    public Obj positive() {
+        return this;
+    }
+
     public Number negative() {
         return Number.of(-value);
     }

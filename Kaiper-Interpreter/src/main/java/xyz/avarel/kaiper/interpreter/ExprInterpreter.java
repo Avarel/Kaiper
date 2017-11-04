@@ -218,7 +218,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
         switch (expr.getOperator()) {
             case PLUS:
-                return operand;
+                return operand.positive();
             case MINUS:
                 return operand.negative();
             case NEGATE:

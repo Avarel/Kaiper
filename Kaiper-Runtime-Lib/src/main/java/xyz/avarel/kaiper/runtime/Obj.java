@@ -111,14 +111,18 @@ public interface Obj {
     default Obj pow(Obj other) {
         throw unimplemented("exponentiation", other);
     }
-    
+
+    default Obj positive() {
+        throw unimplemented("positive");
+    }
+
     /**
      * Negative numeric unary operator in Kaiper. Default symbol is {@code -}.
      *
      * @return  The {@link Obj} result of the operation.
      */
     default Obj negative() {
-        throw unimplemented("numeric negation");
+        throw unimplemented("negative");
     }
 
     /**
@@ -127,7 +131,7 @@ public interface Obj {
      * @return  The {@link Obj} result of the operation.
      */
     default Obj negate() {
-        throw unimplemented("boolean negation");
+        throw unimplemented("not");
     }
 
     /**

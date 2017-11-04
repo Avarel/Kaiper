@@ -26,8 +26,7 @@ import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.parser.BinaryParser;
 import xyz.avarel.kaiper.parser.ExprParser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 // FLATTENS BOTH SIDES
 public class PipeForwardParser extends BinaryParser {
@@ -41,10 +40,10 @@ public class PipeForwardParser extends BinaryParser {
 
         if (right instanceof Invocation) {
             Invocation invocation = (Invocation) right;
-            invocation.getArguments().add(right);
+            invocation.getArguments().add(0, left);
             return invocation;
         } else if (right instanceof FunctionNode || right instanceof Identifier) {
-            return new Invocation(token.getPosition(), right, new ArrayList<>(Arrays.asList(left, right)));
+            return new Invocation(token.getPosition(), right, Collections.singletonList(left));
         }
 
         throw new SyntaxException("Invalid pipe-forward operand " + token.getType(), token.getPosition());

@@ -20,6 +20,7 @@ import xyz.avarel.kaiper.ast.expr.Expr;
 import xyz.avarel.kaiper.ast.expr.tuples.MatchExpr;
 import xyz.avarel.kaiper.ast.pattern.PatternCase;
 import xyz.avarel.kaiper.exceptions.SyntaxException;
+import xyz.avarel.kaiper.lexer.Position;
 import xyz.avarel.kaiper.lexer.Token;
 import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;
@@ -32,20 +33,20 @@ public class MatchParser implements PrefixParser {
     @Override
     public Expr parse(ExprParser parser, Token token) {
         Expr expr = parser.parseExpr();
-        // make expr into tuple
 
         Map<PatternCase, Expr> cases = new TreeMap<>();
 
         parser.eat(TokenType.LEFT_BRACE);
 
         do {
+            Position position = parser.peek(0).getPosition();
             PatternCase casePattern = parser.parsePattern();
 
             if (casePattern.size() != 1) {
-                throw new SyntaxException("Complex match cases must be in parentheses");
+                throw new SyntaxException("Complex match cases must be in parentheses", position);
             }
 
-            Token arrow = parser.eat(TokenType.ARROW);
+            parser.eat(TokenType.ARROW);
 
             Expr caseExpr;
             if (parser.nextIs(TokenType.LEFT_BRACE)) {
@@ -55,7 +56,7 @@ public class MatchParser implements PrefixParser {
             }
 
             if (cases.put(casePattern, caseExpr) != null) {
-                throw new SyntaxException("Ambiguous match case " + casePattern, arrow.getPosition());
+                throw new SyntaxException("Ambiguous match case " + casePattern, position);
             }
         } while (parser.match(TokenType.LINE));
 

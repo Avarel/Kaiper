@@ -156,6 +156,11 @@ public class Int implements Obj, Comparable<Int> {
     }
 
     @Override
+    public Obj positive() {
+        return this;
+    }
+
+    @Override
     public Int negative() {
         return Int.of(-value);
     }

@@ -55,11 +55,6 @@ public class DefaultScope extends Scope<String, Obj> {
                 .addDispatch(new PatternCase("a"), scope -> scope.get("a").negate())
         );
 
-        // todo figure a way to do unary plus
-        // probably by having unary operator parser return an invocation like +(1)
-//        put("+", new JavaFunction("+", interpreter)
-//                .addDispatch(new PatternCase("a", "b"), scope -> scope.get("a").plus(scope.get("b"))));
-
         put("Object", new ObjModule(interpreter));
         put("Math", new MathModule(interpreter));
         put("Tuple", new TupleModule(interpreter));
