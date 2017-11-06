@@ -16,7 +16,7 @@
 
 package xyz.avarel.kaiper.interpreter;
 
-import xyz.avarel.kaiper.exceptions.ComputeException;
+import xyz.avarel.kaiper.exceptions.VisitorException;
 
 public class VisitorSettings {
     public static final VisitorSettings DEFAULT = new VisitorSettings(-1, -1, -1, -1);
@@ -51,25 +51,25 @@ public class VisitorSettings {
 
     public void checkIterationLimit(int iteration) {
         if (loopLimit != -1 && iteration > loopLimit) {
-            throw new ComputeException("Iteration limit");
+            throw new VisitorException("Iteration limit");
         }
     }
 
     public void checkRecursionDepthLimit(int recursionDepth) {
         if (recursionDepthLimit != -1 && recursionDepth > recursionDepthLimit) {
-            throw new ComputeException("Recursion depth limit");
+            throw new VisitorException("Recursion depth limit");
         }
     }
 
     public void checkSizeLimit(int size) {
         if (sizeLimit != -1 && size > sizeLimit) {
-            throw new ComputeException("Size limit");
+            throw new VisitorException("Size limit");
         }
     }
 
     public void checkTimeout(long timeout) {
         if (msLimit != -1 && System.currentTimeMillis() >= timeout) {
-            throw new ComputeException("Computation timeout");
+            throw new VisitorException("Computation timeout");
         }
     }
 }
