@@ -17,7 +17,9 @@
 package xyz.avarel.kaiper.tools.outliner;
 
 import xyz.avarel.kaiper.bytecode.BytecodeUtils;
-import xyz.avarel.kaiper.bytecode.reader.OpcodeReader;
+import xyz.avarel.kaiper.bytecode.io.KDataInput;
+import xyz.avarel.kaiper.bytecode.io.KDataInputStream;
+import xyz.avarel.kaiper.bytecode.opcodes.KOpcodes;
 import xyz.avarel.kaiper.exceptions.KaiperException;
 
 import java.io.*;
@@ -42,38 +44,38 @@ public class BytecodeOutliner {
 
     //region DELEGATES
 
-    public void doOutline(DataInput input, Writer writer) throws IOException {
+    public void doOutline(KDataInput input, Writer writer) throws IOException {
         readAndDump(input, new PrintWriter(writer, true));
     }
 
-    public void doOutline(DataInput input, OutputStream out) throws IOException {
+    public void doOutline(KDataInput input, OutputStream out) throws IOException {
         readAndDump(input, new PrintWriter(out, true));
     }
 
     public void doOutline(InputStream input, Writer writer) throws IOException {
-        readAndDump(new DataInputStream(input), new PrintWriter(writer, true));
+        readAndDump(new KDataInputStream(input), new PrintWriter(writer, true));
     }
 
     public void doOutline(InputStream input, OutputStream out) throws IOException {
-        readAndDump(new DataInputStream(input), new PrintWriter(out, true));
+        readAndDump(new KDataInputStream(input), new PrintWriter(out, true));
     }
 
     public void doOutline(byte[] input, Writer writer) throws IOException {
-        readAndDump(new DataInputStream(new ByteArrayInputStream(input)), new PrintWriter(writer, true));
+        readAndDump(new KDataInputStream(new ByteArrayInputStream(input)), new PrintWriter(writer, true));
     }
 
     public void doOutline(byte[] input, OutputStream out) throws IOException {
-        readAndDump(new DataInputStream(new ByteArrayInputStream(input)), new PrintWriter(out, true));
+        readAndDump(new KDataInputStream(new ByteArrayInputStream(input)), new PrintWriter(out, true));
     }
 
-    public String doOutline(DataInput input) throws IOException {
+    public String doOutline(KDataInput input) throws IOException {
         StringWriter writer = new StringWriter();
         doOutline(input, writer);
         return writer.toString();
     }
 
     public String doOutline(InputStream input) throws IOException {
-        return doOutline((DataInput) new DataInputStream(input));
+        return doOutline((KDataInput) new KDataInputStream(input));
     }
 
     public String doOutline(byte[] input) throws IOException {
@@ -86,25 +88,25 @@ public class BytecodeOutliner {
 
     public void doOutlineCompressed(InputStream input, Writer writer) throws IOException {
         try (GZIPInputStream gz = new GZIPInputStream(input)) {
-            readAndDump(new DataInputStream(gz), new PrintWriter(writer, true));
+            readAndDump(new KDataInputStream(gz), new PrintWriter(writer, true));
         }
     }
 
     public void doOutlineCompressed(InputStream input, OutputStream out) throws IOException {
         try (GZIPInputStream gz = new GZIPInputStream(input)) {
-            readAndDump(new DataInputStream(gz), new PrintWriter(out, true));
+            readAndDump(new KDataInputStream(gz), new PrintWriter(out, true));
         }
     }
 
     public void doOutlineCompressed(byte[] input, Writer writer) throws IOException {
         try (GZIPInputStream gz = new GZIPInputStream(new ByteArrayInputStream(input))) {
-            readAndDump(new DataInputStream(gz), new PrintWriter(writer, true));
+            readAndDump(new KDataInputStream(gz), new PrintWriter(writer, true));
         }
     }
 
     public void doOutlineCompressed(byte[] input, OutputStream out) throws IOException {
         try (GZIPInputStream gz = new GZIPInputStream(new ByteArrayInputStream(input))) {
-            readAndDump(new DataInputStream(gz), new PrintWriter(out, true));
+            readAndDump(new KDataInputStream(gz), new PrintWriter(out, true));
         }
     }
 
@@ -122,12 +124,12 @@ public class BytecodeOutliner {
 
     //region MAIN METHOD
 
-    private void readAndDump(DataInput input, PrintWriter out) throws IOException {
+    private void readAndDump(KDataInput input, PrintWriter out) throws IOException {
         headerCheck(input, out);
         versionHeaderAndCheck(input, out);
         List<String> stringPool = stringPool(input, out);
         out.println("Main: {");
-        new OpcodeReader(opcodes, foreignOpcodes).read(input, new OutlineProcessor(options, out, 0, stringPool), stringPool, 0);
+        KOpcodes.READER.read(new OutlineProcessor(options, out, stringPool), input);
         out.println("}");
     }
 
@@ -135,7 +137,7 @@ public class BytecodeOutliner {
 
     //region HEADERS
 
-    private void headerCheck(DataInput input, PrintWriter out) throws IOException {
+    private void headerCheck(KDataInput input, PrintWriter out) throws IOException {
         byte k = input.readByte();
         byte a = input.readByte();
         byte i = input.readByte();
@@ -153,7 +155,7 @@ public class BytecodeOutliner {
         }
     }
 
-    private void versionHeaderAndCheck(DataInput input, PrintWriter out) throws IOException {
+    private void versionHeaderAndCheck(KDataInput input, PrintWriter out) throws IOException {
         int versionMajor = input.readByte(), versionMinor = input.readByte();
 
         //Skip Header
@@ -174,12 +176,12 @@ public class BytecodeOutliner {
         }
     }
 
-    private List<String> stringPool(DataInput input, PrintWriter out) throws IOException {
+    private List<String> stringPool(KDataInput input, PrintWriter out) throws IOException {
         int poolSize = input.readShort();
         List<String> constants = new ArrayList<>(poolSize);
 
         for (int i = 0; i < poolSize; i++) {
-            constants.add(input.readUTF());
+            constants.add(input.readString());
         }
 
         if (!options.skipStringPool()) {

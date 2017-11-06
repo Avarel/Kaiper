@@ -31,13 +31,11 @@ import static xyz.avarel.kaiper.bytecode.reader.processors.ReadResult.*;
 public class OutlineProcessor extends MultiOpcodeProcessorAdapter {
     private final OutlineOptions options;
     private final PrintWriter out;
-    private final int depth;
     private final List<String> stringPool;
 
-    public OutlineProcessor(OutlineOptions options, PrintWriter out, int depth, List<String> stringPool) {
+    public OutlineProcessor(OutlineOptions options, PrintWriter out, List<String> stringPool) {
         this.options = options;
         this.out = out;
-        this.depth = depth;
         this.stringPool = stringPool;
     }
 
@@ -52,12 +50,6 @@ public class OutlineProcessor extends MultiOpcodeProcessorAdapter {
 
     @Override
     public ReadResult opcodeEnd(OpcodeReader reader, KDataInput in) {
-        int endId = in.readUnsignedShort();
-        boolean valid = endId == (depth - 1);
-
-        out.print(" " + endId);
-        if (!valid) out.write(" (Invalid)");
-
         return ENDED;
     }
 
@@ -145,19 +137,19 @@ public class OutlineProcessor extends MultiOpcodeProcessorAdapter {
     @Override
     public ReadResult opcodeNewFunction(OpcodeReader reader, KDataInput in) {
         //TODO
-        OutlineProcessor walker = new OutlineProcessor(options, out, this.depth + 1, stringPool);
+        OutlineProcessor walker = new OutlineProcessor(options, out, stringPool);
         int constIndex = in.readUnsignedShort();
 
         out.print(" ");
         writeString(stringPool, constIndex);
         out.println(": (");
 
-        reader.read(input, walker, stringPool, depth + 1);
+        reader.read(walker, in);
 
         beginLine();
         out.println("), {");
 
-        reader.read(input, walker, stringPool, depth + 1);
+        reader.read(walker, in);
 
         beginLine();
         out.println("}");
@@ -259,20 +251,20 @@ public class OutlineProcessor extends MultiOpcodeProcessorAdapter {
     @Override
     public ReadResult opcodeConditional(OpcodeReader reader, KDataInput in) {
         //TODO
-        OutlineProcessor walker = new OutlineProcessor(options, out, this.depth + 1, stringPool);
+        OutlineProcessor walker = new OutlineProcessor(options, out, stringPool);
 
         boolean hasElseBranch = in.readBoolean();
         beginLine();
         out.printf(" %s ", hasElseBranch);
         out.println(": (");
-        reader.read(input, walker, stringPool, depth + 1);
+        reader.read(walker, in);
         beginLine();
         out.println("), {");
-        reader.read(input, walker, stringPool, depth + 1);
+        reader.read(walker, in);
         if (hasElseBranch) {
             beginLine();
             out.println("}, {");
-            reader.read(input, walker, stringPool, depth + 1);
+            reader.read(walker, in);
         }
         beginLine();
         out.println("}");
@@ -282,16 +274,16 @@ public class OutlineProcessor extends MultiOpcodeProcessorAdapter {
     @Override
     public ReadResult opcodeForEach(OpcodeReader reader, KDataInput in) {
         //TODO
-        OutlineProcessor walker = new OutlineProcessor(options, out, this.depth + 1, stringPool);
+        OutlineProcessor walker = new OutlineProcessor(options, out, stringPool);
 
         int constIndex = in.readUnsignedShort();
         out.print(" ");
         writeString(stringPool, constIndex);
         out.println(": (");
-        reader.read(input, walker, stringPool, depth + 1);
+        reader.read(walker, in);
         beginLine();
         out.println("), {");
-        reader.read(input, walker, stringPool, depth + 1);
+        reader.read(walker, in);
         beginLine();
         out.println("}");
         return CONTINUE;

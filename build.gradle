@@ -26,7 +26,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '2.0.0'
 }
 
-def projectGroup = 'xyz.avarel'
+def projectGroup = 'xyz.avarel.kaiper'
 def projectVersion = new Version(major: 1, minor: 1, revision: 0)
 
 def dontPublish = [
