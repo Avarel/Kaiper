@@ -58,6 +58,9 @@ allprojects {
     task sourcesForRelease(type: Copy) {
         from 'src/main/java'
         into 'build/prepared-src'
+
+        filteringCharset = 'UTF-8'
+
         filter(ReplaceTokens, tokens: [
                 version: project.version
         ])
