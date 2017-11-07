@@ -26,7 +26,7 @@ plugins {
 }
 
 group = 'xyz.avarel'
-version = new Version(major: 1, minor: 1, revision: 0)
+version = new Version(major: 1, minor: 1, revision: 1)
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -65,6 +65,9 @@ allprojects {
     task sourcesForRelease(type: Copy) {
         from 'src/main/java'
         into 'build/prepared-src'
+
+        filteringCharset = 'UTF-8'
+
         filter(ReplaceTokens, tokens: [
                 version: project.version
         ])
