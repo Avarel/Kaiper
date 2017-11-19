@@ -34,7 +34,7 @@ import xyz.avarel.kaiper.parser.parslets.nodes.*;
 import xyz.avarel.kaiper.parser.parslets.operators.BinaryOperatorParser;
 import xyz.avarel.kaiper.parser.parslets.operators.UnaryOperatorParser;
 import xyz.avarel.kaiper.parser.parslets.tuples.TupleColonParser;
-import xyz.avarel.kaiper.parser.parslets.tuples.TupleCommaParser;
+//import xyz.avarel.kaiper.parser.parslets.tuples.TupleCommaParser;
 import xyz.avarel.kaiper.parser.parslets.variables.*;
 
 public class DefaultGrammar extends Grammar {
@@ -43,10 +43,10 @@ public class DefaultGrammar extends Grammar {
     private DefaultGrammar() {
         // BLOCKS
         prefix(TokenType.LEFT_BRACKET, new CollectionsParser());
-        prefix(TokenType.LEFT_PAREN, new GroupParser());
+        prefix(TokenType.LEFT_PAREN, new GroupTupleParser());
 
         // TUPLE
-        infix(TokenType.COMMA, new TupleCommaParser());
+//        infix(TokenType.COMMA, new TupleCommaParser());
         infix(TokenType.COLON, new TupleColonParser());
 
         // FLOW CONTROL

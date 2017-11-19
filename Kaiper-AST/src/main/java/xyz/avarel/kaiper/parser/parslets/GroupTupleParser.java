@@ -23,17 +23,29 @@ import xyz.avarel.kaiper.lexer.TokenType;
 import xyz.avarel.kaiper.parser.ExprParser;
 import xyz.avarel.kaiper.parser.PrefixParser;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-public class GroupParser implements PrefixParser {
+public class GroupTupleParser implements PrefixParser {
     @Override
     public Expr parse(ExprParser parser, Token token) {
         if (parser.match(TokenType.RIGHT_PAREN)) {
             return new TupleExpr(token.getPosition(), Collections.emptyList());
         }
 
-        Expr expr = parser.parseExpr();
+        List<Expr> list = new ArrayList<>();
+
+        do {
+            if (parser.match(TokenType.RIGHT_PAREN)) {
+                return new TupleExpr(token.getPosition(), list);
+            }
+
+            list.add(parser.parseExpr());
+        } while (parser.match(TokenType.COMMA));
+
         parser.eat(TokenType.RIGHT_PAREN);
-        return expr;
+
+        return list.size() == 1 ? list.get(0) : new TupleExpr(token.getPosition(), list);
     }
 }
