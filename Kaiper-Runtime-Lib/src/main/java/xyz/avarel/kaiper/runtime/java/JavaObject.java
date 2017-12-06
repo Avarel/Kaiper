@@ -20,7 +20,10 @@ import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.types.Type;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 public class JavaObject implements Obj {
     protected final Type<?> type;
@@ -29,10 +32,6 @@ public class JavaObject implements Obj {
     public JavaObject(Object object) {
         this.object = object;
         this.type = JavaUtils.JAVA_PROTOTYPES.computeIfAbsent(object.getClass(), JavaType::new);
-    }
-
-    public Object getObject() {
-        return object;
     }
 
     @Override
@@ -46,23 +45,39 @@ public class JavaObject implements Obj {
     }
 
     @Override
-    public Obj setAttr(String name, Obj value) {
-        if (name != null) {
-            try {
-                Field field = getObject().getClass().getField(name);
-                Object val = value.toJava();
-                field.set(object, val);
-                return value;
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                return Null.VALUE;
-            }
-        }
-        return Null.VALUE;
+    public Obj getAttr(String name) {
+        return new JavaField(this, name);
     }
 
     @Override
-    public Obj getAttr(String name) {
-        return new JavaField(this, name);
+    public Obj setAttr(String name, Obj value) {
+        if (name == null) return Null.VALUE;
+
+        Map<String, PropertyDescriptor> beans = JavaUtils.getBeanInfo(object.getClass());
+
+        if (beans.containsKey(name)) {
+            try {
+                Object val = value.toJava();
+                beans.get(name).getWriteMethod().invoke(object, val);
+                return value;
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                return Null.VALUE;
+            }
+        }
+
+        try {
+            Field field = getObject().getClass().getField(name);
+            Object val = value.toJava();
+            field.set(object, val);
+            return value;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return Null.VALUE;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return object.hashCode();
     }
 
     @Override
@@ -84,8 +99,7 @@ public class JavaObject implements Obj {
         return object.toString();
     }
 
-    @Override
-    public int hashCode() {
-        return object.hashCode();
+    public Object getObject() {
+        return object;
     }
 }

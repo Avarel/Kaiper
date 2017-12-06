@@ -26,10 +26,10 @@ import xyz.avarel.kaiper.runtime.numbers.Int;
 import xyz.avarel.kaiper.runtime.numbers.Number;
 import xyz.avarel.kaiper.runtime.types.Type;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.util.*;
 
 public class JavaUtils {
     /* Apache common langs */
@@ -57,6 +57,32 @@ public class JavaUtils {
                 wrapperPrimitiveMap.put(wrapperClass, primitiveClass);
             }
         }
+    }
+
+
+    private static final Map<Class<?>, Map<String, PropertyDescriptor>> cache = new WeakHashMap<>();
+
+    static synchronized Map<String, PropertyDescriptor> scanAndCacheBeans(Class<?> c) {
+        Map<String, PropertyDescriptor> map = new LinkedHashMap<>();
+        cache.put(c, map);
+
+        try {
+            for (PropertyDescriptor descriptor : Introspector.getBeanInfo(c).getPropertyDescriptors()) {
+                map.put(descriptor.getName(), descriptor);
+            }
+        } catch (IntrospectionException e) {
+            //ignore
+        }
+
+        return map;
+    }
+
+    static synchronized Map<String, PropertyDescriptor> getBeanInfo(Class<?> c) {
+        if (cache.containsKey(c)) {
+            return cache.get(c);
+        }
+
+        return scanAndCacheBeans(c);
     }
 
     static Class<?> primitiveToWrapper(final Class<?> cls) {

@@ -20,11 +20,13 @@ import xyz.avarel.kaiper.runtime.Null;
 import xyz.avarel.kaiper.runtime.Obj;
 import xyz.avarel.kaiper.runtime.types.Type;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JavaField extends JavaObject implements Obj {
@@ -44,15 +46,26 @@ public class JavaField extends JavaObject implements Obj {
     }
 
     public Object getField() {
-        if (name != null) {
+        if (name == null) return null;
+
+        Object object = getObject();
+
+        Map<String, PropertyDescriptor> beans = JavaUtils.scanAndCacheBeans(object.getClass());
+
+        if (beans.containsKey(name)) {
             try {
-                Field field = getObject().getClass().getField(name);
-                return field.get(getObject());
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+                return beans.get(name).getReadMethod().invoke(object);
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 return null;
             }
         }
-        return null;
+
+        try {
+            Field field = object.getClass().getField(name);
+            return field.get(object);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return null;
+        }
     }
 
     @Override
@@ -77,17 +90,30 @@ public class JavaField extends JavaObject implements Obj {
 
     @Override
     public Obj setAttr(String name, Obj value) {
-        if (name != null) {
+        if (name == null) return Null.VALUE;
+
+        Object object = getField();
+
+        Map<String, PropertyDescriptor> beans = JavaUtils.getBeanInfo(object.getClass());
+
+        if (beans.containsKey(name)) {
             try {
-                Field field = getField().getClass().getField(name);
                 Object val = value.toJava();
-                field.set(getField(), val);
+                beans.get(name).getWriteMethod().invoke(object, val);
                 return value;
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 return Null.VALUE;
             }
         }
-        return Null.VALUE;
+
+        try {
+            Field field = object.getClass().getField(name);
+            Object val = value.toJava();
+            field.set(object, val);
+            return value;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return Null.VALUE;
+        }
     }
 
     @Override
