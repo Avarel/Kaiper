@@ -14,14 +14,13 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.ast.expr
+package xyz.avarel.kaiper.ast.expr.flow
 
 import xyz.avarel.kaiper.ast.ExprVisitor
-import xyz.avarel.kaiper.lexer.Position
+import xyz.avarel.kaiper.ast.expr.Expr
 
-/**
- * Base implementation of a node for the visitor pattern.
- */
-abstract class Expr(val position: Position = Position.PLACEHOLDER) {
-    abstract fun <R, C> accept(visitor: ExprVisitor<R, C>, context: C): R
+class Block(val expr: Expr): Expr(expr.position) {
+    override fun <R, C> accept(visitor: ExprVisitor<R, C>, context: C): R {
+        return visitor.visit(this, context)
+    }
 }

@@ -14,20 +14,15 @@
  *  limitations under the License.
  */
 
-package xyz.avarel.kaiper.ast.expr.value;
+package xyz.avarel.kaiper.ast.expr.flow
 
-import xyz.avarel.kaiper.ast.ExprVisitor;
-import xyz.avarel.kaiper.ast.expr.Expr;
+import xyz.avarel.kaiper.ast.ExprVisitor
+import xyz.avarel.kaiper.ast.expr.Expr
+import xyz.avarel.kaiper.lexer.Position
 
-public class NullNode extends Expr {
-    public static final NullNode VALUE = new NullNode();
-
-    private NullNode() {
-        super(null);
-    }
-
-    @Override
-    public <R, C> R accept(ExprVisitor<R, C> visitor, C context) {
-        return visitor.visit(this, context);
+// write a singly linked list impl
+class Statements(val exprs: List<Expr>) : Expr(if (exprs.isEmpty()) Position.PLACEHOLDER else exprs[0].position) {
+    override fun <R, C> accept(visitor: ExprVisitor<R, C>, context: C): R {
+        return visitor.visit(this, context)
     }
 }

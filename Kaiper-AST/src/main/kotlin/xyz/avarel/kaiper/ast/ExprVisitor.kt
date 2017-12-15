@@ -74,4 +74,5 @@ interface ExprVisitor<out R, in C> {
     fun visit(expr: FreeFormStruct, context: C): R
     fun visit(expr: TupleExpr, context: C): R
     fun visit(expr: MatchExpr, context: C): R
+    fun visit(block: Block, context: C): R
 }

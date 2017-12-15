@@ -38,14 +38,14 @@ public class DefaultScope extends Scope<String, Obj> {
                 })
         );
         put("range", new JavaFunction("range", interpreter)
-                .addDispatch(new PatternCase("a"), scope -> {
+                .addDispatch(new PatternCase("from", "to"), scope -> {
                     int start = scope.get("from").as(Int.TYPE).value();
                     int end = scope.get("to").as(Int.TYPE).value();
                     return new Range(start, end);
                 })
         );
         put("rangeex", new JavaFunction("rangeex", interpreter)
-                .addDispatch(new PatternCase("a"), scope -> {
+                .addDispatch(new PatternCase("from", "to"), scope -> {
                     int start = scope.get("from").as(Int.TYPE).value();
                     int end = scope.get("to").as(Int.TYPE).value() - 1;
                     return new Range(start, end);

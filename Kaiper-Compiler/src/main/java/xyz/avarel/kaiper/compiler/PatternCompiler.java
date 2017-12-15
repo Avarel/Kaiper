@@ -1,7 +1,9 @@
 package xyz.avarel.kaiper.compiler;
 
+import ast.pattern.*;
 import xyz.avarel.kaiper.ast.pattern.*;
 import xyz.avarel.kaiper.bytecode.io.KDataOutput;
+import xyz.avarel.kaiper.pattern.*;
 
 import java.util.List;
 

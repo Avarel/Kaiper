@@ -18,9 +18,8 @@ package xyz.avarel.kaiper.ast.expr.value
 
 import xyz.avarel.kaiper.ast.ExprVisitor
 import xyz.avarel.kaiper.ast.expr.Expr
-import xyz.avarel.kaiper.lexer.Position
 
-class StringNode(val value: String) : Expr(Position.PLACEHOLDER) {
+class StringNode(val value: String) : Expr() {
     override fun <R, C> accept(visitor: ExprVisitor<R, C>, context: C): R {
         return visitor.visit(this, context)
     }

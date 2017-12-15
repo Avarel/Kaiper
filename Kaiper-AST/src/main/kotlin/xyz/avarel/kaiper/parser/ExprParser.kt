@@ -96,7 +96,7 @@ open class ExprParser : Parser {
 
     open fun parseInfix(precedence: Int, left: Expr): Expr {
         var leftVar = left
-        while (precedence < precedence) {
+        while (precedence < this.precedence) {
             val token = eat()
 
             val infix = infixParsers[token.type]

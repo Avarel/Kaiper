@@ -28,7 +28,6 @@ import xyz.avarel.kaiper.parser.ExprParser
 import xyz.avarel.kaiper.parser.PrefixParser
 
 class UnaryOperatorParser(private val operator: UnaryOperatorType) : PrefixParser {
-
     override fun parse(parser: ExprParser, token: Token): Expr {
         val left = parser.parseExpr(Precedence.PREFIX)
 

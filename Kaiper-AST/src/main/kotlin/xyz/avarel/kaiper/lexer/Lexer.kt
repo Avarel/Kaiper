@@ -18,10 +18,9 @@ package xyz.avarel.kaiper.lexer
 
 import xyz.avarel.kaiper.exceptions.SyntaxException
 import java.io.*
-import java.util.*
 
 abstract class Lexer<T> @JvmOverloads constructor(reader: Reader, historyBuffer: Int = 2) {
-    protected val tokens: MutableList<T> = LinkedList()
+    val tokens: MutableList<T> = arrayListOf()
 
     protected val reader: Reader
     protected val history: Array<Entry?>

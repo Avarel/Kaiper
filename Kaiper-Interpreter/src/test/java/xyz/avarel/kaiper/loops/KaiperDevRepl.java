@@ -72,6 +72,7 @@ public class KaiperDevRepl {
                         + result.getType());
             } catch (KaiperException e) {
                 System.out.println("!!! " + e.getMessage());
+                e.printStackTrace(System.out);
             }
 
             System.out.println();

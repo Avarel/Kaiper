@@ -393,6 +393,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
                 visitorSettings.checkIterationLimit(iteration);
 
                 if (var instanceof Obj) {
+                    // TODO FIX
                     Scope<String, Obj> copy = scope.subScope();
                     declare(copy, variant, (Obj) var);
                     resultOf(loopExpr, copy);
@@ -438,7 +439,7 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
 
     @Override
     public Obj visit(BooleanNode expr, Scope<String, Obj> scope) {
-        if (expr == BooleanNode.TRUE) {
+        if (expr == BooleanNode.Companion.getTRUE()) {
             return Bool.TRUE;
         } else {
             return Bool.FALSE;
@@ -467,7 +468,12 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
         throw new UnsupportedOperationException("in progress");
     }
 
-//    @Override
+    @Override
+    public Obj visit(Block block, Scope<String, Obj> context) {
+        return block.getExpr().accept(this, context.subScope());
+    }
+
+    //    @Override
 //    public Obj visit(BindDeclarationExpr expr, Scope<String, Obj> scope) {
 //        Obj value = resultOf(expr.getExpr(), scope);
 //
