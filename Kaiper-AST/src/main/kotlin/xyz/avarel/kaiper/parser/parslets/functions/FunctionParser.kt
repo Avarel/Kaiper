@@ -17,9 +17,9 @@
 package xyz.avarel.kaiper.parser.parslets.functions
 
 import xyz.avarel.kaiper.ast.expr.Expr
+import xyz.avarel.kaiper.ast.expr.flow.BlockExpr
 import xyz.avarel.kaiper.ast.expr.functions.FunctionNode
 import xyz.avarel.kaiper.ast.expr.variables.Identifier
-import xyz.avarel.kaiper.ast.pattern.Pattern
 import xyz.avarel.kaiper.ast.pattern.PatternCase
 import xyz.avarel.kaiper.ast.pattern.VariablePattern
 import xyz.avarel.kaiper.exceptions.SyntaxException
@@ -50,13 +50,7 @@ class FunctionParser : PrefixParser {
             patternCase = PatternCase.EMPTY
         }
 
-        val expr: Expr
-
-        if (parser.match(TokenType.ASSIGN)) {
-            expr = parser.parseExpr()
-        } else {
-            expr = parser.parseBlock()
-        }
+        val expr = BlockExpr(if (parser.match(TokenType.ASSIGN)) parser.parseExpr() else parser.parseBlock())
 
         return FunctionNode(token.position, name, patternCase, expr)
     }
@@ -66,11 +60,7 @@ class FunctionParser : PrefixParser {
 
         val expr = ip.parseInfix(0, Identifier(token.position, token.string))
 
-        val list = ArrayList<Pattern>()
-
-        for (param in ip.parameters) {
-            list.add(VariablePattern(param))
-        }
+        val list = ip.parameters.map { VariablePattern(it) }
 
         return FunctionNode(token.position, PatternCase(list), expr)
     }

@@ -115,7 +115,7 @@ abstract class Parser {
 
     fun eatSignificant(): Token? {
         var token: Token? = null
-        while (eat().type.isSignificant) {
+        while (!eat().type.isSignificant) {
             token = last
         }
         return token

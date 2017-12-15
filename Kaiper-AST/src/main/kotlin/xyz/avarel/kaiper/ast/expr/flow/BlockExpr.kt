@@ -19,7 +19,7 @@ package xyz.avarel.kaiper.ast.expr.flow
 import xyz.avarel.kaiper.ast.ExprVisitor
 import xyz.avarel.kaiper.ast.expr.Expr
 
-class Block(val expr: Expr): Expr(expr.position) {
+class BlockExpr(val expr: Expr): Expr(expr.position) {
     override fun <R, C> accept(visitor: ExprVisitor<R, C>, context: C): R {
         return visitor.visit(this, context)
     }

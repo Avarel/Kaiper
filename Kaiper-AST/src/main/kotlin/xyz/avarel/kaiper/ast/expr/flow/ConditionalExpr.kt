@@ -20,7 +20,7 @@ import xyz.avarel.kaiper.ast.ExprVisitor
 import xyz.avarel.kaiper.ast.expr.Expr
 import xyz.avarel.kaiper.lexer.Position
 
-class ConditionalExpr(position: Position, val condition: Expr, val ifBranch: Expr, val elseBranch: Expr) : Expr(position) {
+class ConditionalExpr(position: Position, val condition: Expr, val ifBranch: Expr, val elseBranch: Expr?) : Expr(position) {
     override fun <R, C> accept(visitor: ExprVisitor<R, C>, context: C): R {
         return visitor.visit(this, context)
     }

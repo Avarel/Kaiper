@@ -106,17 +106,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
             return func;
         }
 
-        CompiledFunction multiMethod;
-        if (scope.getMap().get(expr.getName()) instanceof CompiledFunction) {
-            multiMethod = (CompiledFunction) scope.get(expr.getName());
-        } else {
-            multiMethod = new CompiledFunction(expr.getName(), this, scope);
-            declare(scope, expr.getName(), multiMethod);
-        }
-
-        if (!multiMethod.addDispatch(expr.getPatternCase(), expr.getExpr())) {
-            throw new InterpreterException("Ambiguous pattern for function " + multiMethod.getName() + expr.getPosition());
-        }
+        CompiledFunction multiMethod = new CompiledFunction(expr.getName(), this, scope);
+        declare(scope, expr.getName(), multiMethod);
 
         return multiMethod;
     }
@@ -469,8 +460,8 @@ public class ExprInterpreter implements ExprVisitor<Obj, Scope<String, Obj>> {
     }
 
     @Override
-    public Obj visit(Block block, Scope<String, Obj> context) {
-        return block.getExpr().accept(this, context.subScope());
+    public Obj visit(BlockExpr expr, Scope<String, Obj> context) {
+        return expr.getExpr().accept(this, context.subScope());
     }
 
     //    @Override

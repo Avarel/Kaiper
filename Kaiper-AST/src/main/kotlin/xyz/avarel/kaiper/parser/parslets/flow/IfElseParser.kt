@@ -17,9 +17,8 @@
 package xyz.avarel.kaiper.parser.parslets.flow
 
 import xyz.avarel.kaiper.ast.expr.Expr
+import xyz.avarel.kaiper.ast.expr.flow.BlockExpr
 import xyz.avarel.kaiper.ast.expr.flow.ConditionalExpr
-import xyz.avarel.kaiper.ast.expr.value.BooleanNode
-import xyz.avarel.kaiper.ast.expr.value.NullNode
 import xyz.avarel.kaiper.lexer.Token
 import xyz.avarel.kaiper.lexer.TokenType
 import xyz.avarel.kaiper.parser.ExprParser
@@ -29,7 +28,7 @@ class IfElseParser : PrefixParser {
     override fun parse(parser: ExprParser, token: Token): Expr {
         val condition = parser.parseExpr()
 
-        val ifBranch = parser.parseBlock()
+        val ifBranch = BlockExpr(parser.parseBlock())
 
         var elseBranch: Expr? = null
 
@@ -37,12 +36,6 @@ class IfElseParser : PrefixParser {
             elseBranch = if (parser.nextIs(TokenType.IF)) parser.parseExpr() else parser.parseBlock()
         }
 
-        if (condition === BooleanNode.TRUE) {
-            return ifBranch
-        } else if (condition === BooleanNode.FALSE) {
-            return if (elseBranch != null) elseBranch else NullNode.VALUE
-        }
-
-        return ConditionalExpr(token.position, condition, ifBranch, elseBranch!!)
+        return ConditionalExpr(token.position, condition, ifBranch, elseBranch)
     }
 }
