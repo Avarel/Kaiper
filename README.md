@@ -6,3 +6,15 @@ Kaiper [![TeamCity](https://ci.theorangehub.com/app/rest/builds/buildType:(id:Ka
 Kaiper is an in-development, dynamic, and functional scripting language for the Java programming language.
     Kaiper supports embedded execution in the runtime using the interpreter or the custom bytecode VM.
     The parser support expressions provided from texts, readers, or input streams.
+
+Parser, AST-builder, and Type-checker Research
+---
+https://github.com/Avarel/Lobos
+
+Currently the Lobos project (extension of Kaiper) is a work in progress.
+
+Syntax Highlighter
+---
+https://codepen.io/Avarel/project/editor/ABoxjB
+
+Online syntax highlighter using CodeMirror.
